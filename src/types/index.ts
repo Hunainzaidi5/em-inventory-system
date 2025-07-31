@@ -92,7 +92,7 @@ export interface InventoryItem {
   unitPrice?: number;
   supplier?: string;
   partType?: string;
-  specifications?: Record<string, any>;
+  specifications?: Record<string, unknown>;
   status: ItemStatus;
   qrCode?: string;
   notes?: string;
@@ -234,7 +234,7 @@ export interface InsuranceRecord {
   linkedItemId?: string;
   status: 'active' | 'expired' | 'cancelled';
   renewalReminderSent: boolean;
-  documents?: Record<string, any>;
+  documents?: Record<string, unknown>;
   notes?: string;
   createdBy: string;
   createdAt: string;
