@@ -57,19 +57,16 @@ const inventoryMenuItems = [
 ];
 
 const trackingMenuItems = [
-  { title: "Transactions", url: "/transactions", icon: FileCheck },
   { title: "Faulty Returns", url: "/faulty-returns", icon: AlertTriangle },
 ];
 
 const documentsMenuItems = [
-  { title: "Gate Pass Generator", url: "/gate-pass", icon: FileCheck },
-  { title: "Issuance Record", url: "/issuance-record", icon: FileCheck },
-  { title: "Insurance Records", url: "/insurance", icon: FileText },
+  { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
+  { title: "Issuance Form", url: "/issuance-record", icon: FileCheck },
   { title: "QR Code Generator", url: "/qr-generator", icon: QrCode },
 ];
 
 const systemMenuItems = [
-  { title: "User Management", url: "/users", icon: Users },
   { title: "System Settings", url: "/settings", icon: Settings },
 ];
 

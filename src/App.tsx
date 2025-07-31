@@ -19,6 +19,7 @@ import InsurancePage from "./pages/InsurancePage";
 import QRGeneratorPage from "./pages/QRGeneratorPage";
 import UsersPage from "./pages/UsersPage";
 import IssuanceRecordPage from "./pages/IssuanceRecordPage";
+import SystemSettingsPage from "./pages/SystemSettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,10 +86,9 @@ const App = () => {
                 <Route path="/transactions" element={<TransactionsPage />} />
                 <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
                 <Route path="/gate-pass" element={<GatePassPage />} />
-                <Route path="/insurance" element={<InsurancePage />} />
-                <Route path="/qr-generator" element={<QRGeneratorPage />} />
-                <Route path="/users" element={<UsersPage />} />
                 <Route path="/issuance-record" element={<IssuanceRecordPage />} />
+                <Route path="/qr-generator" element={<QRGeneratorPage />} />
+                <Route path="/settings" element={<SystemSettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AppLayout>
