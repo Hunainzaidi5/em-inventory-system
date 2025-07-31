@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,36 +20,46 @@ import QRGeneratorPage from "./pages/QRGeneratorPage";
 import UsersPage from "./pages/UsersPage";
 import IssuanceRecordPage from "./pages/IssuanceRecordPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppLayout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/inventory" element={<InventoryPage />} />
-            <Route path="/availability" element={<AvailabilityOverview />} />
-            <Route path="/tools" element={<ToolsPage />} />
-            <Route path="/ppe" element={<PPEPage />} />
-            <Route path="/general" element={<GeneralItemsPage />} />
-            <Route path="/transactions" element={<TransactionsPage />} />
-            <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
-            <Route path="/gate-pass" element={<GatePassPage />} />
-            <Route path="/insurance" element={<InsurancePage />} />
-            <Route path="/qr-generator" element={<QRGeneratorPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/issuance-record" element={<IssuanceRecordPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AppLayout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppLayout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/inventory" element={<InventoryPage />} />
+                <Route path="/availability" element={<AvailabilityOverview />} />
+                <Route path="/tools" element={<ToolsPage />} />
+                <Route path="/ppe" element={<PPEPage />} />
+                <Route path="/general" element={<GeneralItemsPage />} />
+                <Route path="/transactions" element={<TransactionsPage />} />
+                <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
+                <Route path="/gate-pass" element={<GatePassPage />} />
+                <Route path="/insurance" element={<InsurancePage />} />
+                <Route path="/qr-generator" element={<QRGeneratorPage />} />
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/issuance-record" element={<IssuanceRecordPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AppLayout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;
