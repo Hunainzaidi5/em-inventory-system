@@ -63,6 +63,7 @@ const trackingMenuItems = [
 
 const documentsMenuItems = [
   { title: "Gate Pass Generator", url: "/gate-pass", icon: FileCheck },
+  { title: "Issuance Record", url: "/issuance-record", icon: FileCheck },
   { title: "Insurance Records", url: "/insurance", icon: FileText },
   { title: "QR Code Generator", url: "/qr-generator", icon: QrCode },
 ];
