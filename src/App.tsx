@@ -14,8 +14,8 @@ import PPEPage from "./pages/PPEPage";
 import GeneralItemsPage from "./pages/GeneralItemsPage";
 import FaultyReturnsPage from "./pages/FaultyReturnsPage";
 import GatePassPage from "./pages/GatePassPage";
-import IssuanceRecordPage from "./pages/IssuanceRecordPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
+import IssuancePage from "./pages/IssuancePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,8 +80,8 @@ const App = () => {
                 <Route path="/ppe" element={<PPEPage />} />
                 <Route path="/general" element={<GeneralItemsPage />} />
                 <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
+                <Route path="/issuance" element={<IssuancePage />} />
                 <Route path="/gate-pass" element={<GatePassPage />} />
-                <Route path="/issuance-record" element={<IssuanceRecordPage />} />
                 <Route path="/settings" element={<SystemSettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
