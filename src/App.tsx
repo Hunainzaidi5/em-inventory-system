@@ -12,12 +12,9 @@ import AvailabilityOverview from "./pages/AvailabilityOverview";
 import ToolsPage from "./pages/ToolsPage";
 import PPEPage from "./pages/PPEPage";
 import GeneralItemsPage from "./pages/GeneralItemsPage";
-import TransactionsPage from "./pages/TransactionsPage";
 import FaultyReturnsPage from "./pages/FaultyReturnsPage";
 import GatePassPage from "./pages/GatePassPage";
-import InsurancePage from "./pages/InsurancePage";
 import QRGeneratorPage from "./pages/QRGeneratorPage";
-import UsersPage from "./pages/UsersPage";
 import IssuanceRecordPage from "./pages/IssuanceRecordPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
 
@@ -83,11 +80,10 @@ const App = () => {
                 <Route path="/tools" element={<ToolsPage />} />
                 <Route path="/ppe" element={<PPEPage />} />
                 <Route path="/general" element={<GeneralItemsPage />} />
-                <Route path="/transactions" element={<TransactionsPage />} />
                 <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
                 <Route path="/gate-pass" element={<GatePassPage />} />
-                <Route path="/issuance-record" element={<IssuanceRecordPage />} />
                 <Route path="/qr-generator" element={<QRGeneratorPage />} />
+                <Route path="/issuance-record" element={<IssuanceRecordPage />} />
                 <Route path="/settings" element={<SystemSettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

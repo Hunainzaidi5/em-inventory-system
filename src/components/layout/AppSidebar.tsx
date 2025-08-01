@@ -56,10 +56,6 @@ const inventoryMenuItems = [
   { title: "General Items", url: "/general", icon: Gift },
 ];
 
-const trackingMenuItems = [
-  { title: "Faulty Returns", url: "/faulty-returns", icon: AlertTriangle },
-];
-
 const documentsMenuItems = [
   { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
   { title: "Issuance Form", url: "/issuance-record", icon: FileCheck },
@@ -79,7 +75,6 @@ export function AppSidebar({ className }: AppSidebarProps) {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const [inventoryOpen, setInventoryOpen] = useState(true);
-  const [trackingOpen, setTrackingOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(false);
 
@@ -153,33 +148,6 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {inventoryMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavClassName(item.url)}>
-                          <item.icon className="h-4 w-4" />
-                          {!collapsed && <span>{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <Collapsible open={trackingOpen} onOpenChange={setTrackingOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Tracking & Monitoring
-                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${trackingOpen ? 'rotate-180' : ''}`} />}
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {trackingMenuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClassName(item.url)}>
