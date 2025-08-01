@@ -94,7 +94,6 @@ export interface InventoryItem {
   partType?: string;
   specifications?: Record<string, unknown>;
   status: ItemStatus;
-  qrCode?: string;
   notes?: string;
   createdBy?: string;
   createdAt: string;
@@ -210,7 +209,6 @@ export interface GatePass {
   approvalStatus: 'pending' | 'approved' | 'rejected';
   approvedBy?: string;
   approvalDate?: string;
-  qrCode?: string;
   pdfUrl?: string;
   isActive: boolean;
   notes?: string;

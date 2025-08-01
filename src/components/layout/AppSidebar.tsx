@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   FileCheck,
   FileText,
-  QrCode,
   BarChart3,
   Users,
   Home,
@@ -59,7 +58,6 @@ const inventoryMenuItems = [
 const documentsMenuItems = [
   { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
   { title: "Issuance Form", url: "/issuance-record", icon: FileCheck },
-  { title: "QR Code Generator", url: "/qr-generator", icon: QrCode },
 ];
 
 const systemMenuItems = [
