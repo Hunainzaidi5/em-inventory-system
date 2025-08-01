@@ -57,7 +57,7 @@ const inventoryMenuItems = [
 
 const documentsMenuItems = [
   { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
-  { title: "Issuance Form", url: "/issuance-record", icon: FileCheck },
+  { title: "Issuance Form", url: "/issuance", icon: FileCheck },
 ];
 
 const systemMenuItems = [
