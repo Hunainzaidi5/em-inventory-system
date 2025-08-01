@@ -2,8 +2,37 @@ import React, { useState, useRef, useCallback } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const IssuancePage = () => {
-  const [formData, setFormData] = useState({
+// Define TypeScript interfaces for our data structure
+interface Tool {
+  description: string;
+  unit: string;
+  qty: string;
+  remarks: string;
+}
+
+interface Receiver {
+  name: string;
+  department: string;
+  sign: string;
+  instructionFrom: string;
+  oltNo: string;
+  contact: string;
+}
+
+interface FormData {
+  issuerName: string;
+  date: string;
+  designation: string;
+  department: string;
+  contact: string;
+  signature: string;
+  oltNo: string;
+  tools: Tool[];
+  receiver: Receiver;
+}
+
+const IssuancePage: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     issuerName: "",
     date: new Date().toISOString().split('T')[0],
     designation: "",
@@ -11,11 +40,11 @@ const IssuancePage = () => {
     contact: "",
     signature: "",
     oltNo: "",
-    tools: Array.from({ length: 30 }, () => ({ 
-      description: "", 
-      unit: "", 
-      qty: "", 
-      remarks: "" 
+    tools: Array.from({ length: 30 }, () => ({
+      description: "",
+      unit: "",
+      qty: "",
+      remarks: ""
     })),
     receiver: {
       name: "",
@@ -27,17 +56,21 @@ const IssuancePage = () => {
     }
   });
 
-  const [isExporting, setIsExporting] = useState(false);
-  const [activeTab, setActiveTab] = useState('form');
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
 
-  const handleToolChange = (index, field, value) => {
-    const updated = [...formData.tools];
-    updated[index][field] = value;
-    setFormData({ ...formData, tools: updated });
-  };
+  // Add proper type for the handleToolChange parameters
+  const handleToolChange = useCallback((index: number, field: keyof Tool, value: string): void => {
+    setFormData(prev => ({
+      ...prev,
+      tools: prev.tools.map((tool, i) => 
+        i === index ? { ...tool, [field]: value } : tool
+      )
+    }));
+  }, []);
 
-  const containerRef = useRef(null);
-  const printRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const exportToExcel = async () => {
     try {
