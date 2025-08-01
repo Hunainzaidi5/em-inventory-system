@@ -1,318 +1,152 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from 'uuid';
-import { UserRole } from "../types";
-
-interface GatePassFormData {
-  requesterName: string;
-  employeeId: string;
-  department: string;
-  designation: string;
-  contactNumber: string;
-  destination: string;
-  purpose: string;
-  itemsDescription: string;
-  quantity: string;
-  expectedReturnDate: string;
-  authorizedBy: string;
-  securityCheck: boolean;
-  remarks: string;
-}
+import React, { useState, useRef } from "react";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const GatePassPage = () => {
-  const [generatedPass, setGeneratedPass] = useState<any>(null);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<GatePassFormData>();
+  const [formData, setFormData] = useState({
+    issuerName: "",
+    date: "",
+    designation: "",
+    department: "",
+    contact: "",
+    signature: "",
+    oltNo: "",
+    tools: Array.from({ length: 30 }, () => ({ description: "", unit: "", qty: "", remarks: "" })),
+    receiver: {
+      name: "",
+      department: "",
+      sign: "",
+      instructionFrom: "",
+      oltNo: "",
+      contact: ""
+    }
+  });
 
-  const userRole: UserRole = 'engineer'; // This would come from auth context in a real app
-  const currentDate = new Date().toISOString().split('T')[0];
-  const passNumber = `GP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-  const onSubmit = (data: GatePassFormData) => {
-    const passData = {
-      ...data,
-      id: uuidv4(),
-      passNumber,
-      issueDate: currentDate,
-      status: 'active',
-    };
-    
-    setGeneratedPass(passData);
+  const handleToolChange = (index, field, value) => {
+    const updated = [...formData.tools];
+    updated[index][field] = value;
+    setFormData({ ...formData, tools: updated });
   };
 
-  const downloadPass = () => {
-    // This would generate a PDF in a real app
-    alert('PDF generation would be implemented here');
+  const containerRef = useRef(null);
+
+  const exportToExcel = () => {
+    const wsData = [
+      ["Name of Issuer:", formData.issuerName, "", "Date:", formData.date],
+      ["Designation:", formData.designation, "", "Department:", formData.department],
+      ["Contact:", formData.contact, "", "Signature:", formData.signature],
+      ["OLT No:", formData.oltNo],
+      [],
+      ["Sr.", "Tools Description", "M/U", "QTY", "Remarks"],
+      ...formData.tools.map((t, i) => [i + 1, t.description, t.unit, t.qty, t.remarks]),
+      [],
+      ["Receiver Name:", formData.receiver.name, "Department:", formData.receiver.department],
+      ["Sign:", formData.receiver.sign, "Instruction From:", formData.receiver.instructionFrom],
+      ["OLT No:", formData.receiver.oltNo, "Contact:", formData.receiver.contact]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Gate Pass");
+    const wbout = XLSX.write(wb, { type: "array", bookType: "xlsx" });
+    saveAs(new Blob([wbout], { type: "application/octet-stream" }), "GatePass.xlsx");
+  };
+
+  const exportToPDF = () => {
+    if (containerRef.current) {
+      html2canvas(containerRef.current).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("GatePass.pdf");
+      });
+    }
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Gate Pass & Issuance System</h1>
-      
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Generate New Gate Pass</h2>
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Requester Name *</label>
-              <input
-                type="text"
-                {...register('requesterName', { required: 'Name is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.requesterName && <p className="text-red-500 text-xs mt-1">{errors.requesterName.message}</p>}
-            </div>
+    <div className="p-4 text-sm" ref={containerRef}>
+      <h1 className="text-center text-lg font-bold mb-4">E&M DEPARTMENT GATE PASS</h1>
+      <table className="table-fixed w-full border border-black text-left">
+        <tbody>
+          <tr>
+            <td className="border p-1">Name of Issuer:</td>
+            <td className="border p-1"><input value={formData.issuerName} onChange={e => setFormData({ ...formData, issuerName: e.target.value })} className="w-full" /></td>
+            <td className="border p-1">Date:</td>
+            <td className="border p-1"><input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} className="w-full" /></td>
+          </tr>
+          <tr>
+            <td className="border p-1">Designation:</td>
+            <td className="border p-1"><input value={formData.designation} onChange={e => setFormData({ ...formData, designation: e.target.value })} className="w-full" /></td>
+            <td className="border p-1">Department:</td>
+            <td className="border p-1"><input value={formData.department} onChange={e => setFormData({ ...formData, department: e.target.value })} className="w-full" /></td>
+          </tr>
+          <tr>
+            <td className="border p-1">Contact:</td>
+            <td className="border p-1"><input value={formData.contact} onChange={e => setFormData({ ...formData, contact: e.target.value })} className="w-full" /></td>
+            <td className="border p-1">Signature:</td>
+            <td className="border p-1"><input value={formData.signature} onChange={e => setFormData({ ...formData, signature: e.target.value })} className="w-full" /></td>
+          </tr>
+          <tr>
+            <td className="border p-1">OLT No:</td>
+            <td colSpan={3} className="border p-1"><input value={formData.oltNo} onChange={e => setFormData({ ...formData, oltNo: e.target.value })} className="w-full" /></td>
+          </tr>
+        </tbody>
+      </table>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Employee ID *</label>
-              <input
-                type="text"
-                {...register('employeeId', { required: 'Employee ID is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.employeeId && <p className="text-red-500 text-xs mt-1">{errors.employeeId.message}</p>}
-            </div>
+      <table className="w-full border border-black mt-4 text-center">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border p-1">Sr.</th>
+            <th className="border p-1">Tools Description</th>
+            <th className="border p-1">M/U</th>
+            <th className="border p-1">QTY</th>
+            <th className="border p-1">Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {formData.tools.map((tool, i) => (
+            <tr key={i}>
+              <td className="border p-1">{i + 1}</td>
+              <td className="border p-1"><input className="w-full" value={tool.description} onChange={e => handleToolChange(i, "description", e.target.value)} /></td>
+              <td className="border p-1"><input className="w-full" value={tool.unit} onChange={e => handleToolChange(i, "unit", e.target.value)} /></td>
+              <td className="border p-1"><input className="w-full" value={tool.qty} onChange={e => handleToolChange(i, "qty", e.target.value)} /></td>
+              <td className="border p-1"><input className="w-full" value={tool.remarks} onChange={e => handleToolChange(i, "remarks", e.target.value)} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
-              <select
-                {...register('department', { required: 'Department is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Department</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="Operations">Operations</option>
-                <option value="Logistics">Logistics</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors.department && <p className="text-red-500 text-xs mt-1">{errors.department.message}</p>}
-            </div>
+      <table className="table-fixed w-full border border-black text-left mt-4">
+        <tbody>
+          <tr>
+            <td className="border p-1">Receiver Name:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.name} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, name: e.target.value } })} /></td>
+            <td className="border p-1">Department:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.department} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, department: e.target.value } })} /></td>
+          </tr>
+          <tr>
+            <td className="border p-1">Sign:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.sign} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, sign: e.target.value } })} /></td>
+            <td className="border p-1">Instruction From:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.instructionFrom} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, instructionFrom: e.target.value } })} /></td>
+          </tr>
+          <tr>
+            <td className="border p-1">OLT No:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.oltNo} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, oltNo: e.target.value } })} /></td>
+            <td className="border p-1">Contact:</td>
+            <td className="border p-1"><input className="w-full" value={formData.receiver.contact} onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, contact: e.target.value } })} /></td>
+          </tr>
+        </tbody>
+      </table>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Designation *</label>
-              <input
-                type="text"
-                {...register('designation', { required: 'Designation is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.designation && <p className="text-red-500 text-xs mt-1">{errors.designation.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
-              <input
-                type="tel"
-                {...register('contactNumber', { 
-                  required: 'Contact number is required',
-                  pattern: {
-                    value: /^[0-9]{10,15}$/,
-                    message: 'Please enter a valid phone number'
-                  }
-                })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.contactNumber && <p className="text-red-500 text-xs mt-1">{errors.contactNumber.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Destination *</label>
-              <input
-                type="text"
-                {...register('destination', { required: 'Destination is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.destination && <p className="text-red-500 text-xs mt-1">{errors.destination.message}</p>}
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Purpose *</label>
-              <textarea
-                {...register('purpose', { required: 'Purpose is required' })}
-                rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              ></textarea>
-              {errors.purpose && <p className="text-red-500 text-xs mt-1">{errors.purpose.message}</p>}
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Items Description *</label>
-              <textarea
-                {...register('itemsDescription', { required: 'Items description is required' })}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Provide detailed description of items including quantities, serial numbers, etc."
-              ></textarea>
-              {errors.itemsDescription && <p className="text-red-500 text-xs mt-1">{errors.itemsDescription.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
-              <input
-                type="text"
-                {...register('quantity', { required: 'Quantity is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Expected Return Date *</label>
-              <input
-                type="date"
-                {...register('expectedReturnDate', { required: 'Expected return date is required' })}
-                min={currentDate}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.expectedReturnDate && <p className="text-red-500 text-xs mt-1">{errors.expectedReturnDate.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Authorized By *</label>
-              <select
-                {...register('authorizedBy', { required: 'Authorized by is required' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Authorizer</option>
-                <option value="Manager">Manager</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Team Lead">Team Lead</option>
-              </select>
-              {errors.authorizedBy && <p className="text-red-500 text-xs mt-1">{errors.authorizedBy.message}</p>}
-            </div>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="securityCheck"
-                {...register('securityCheck', { required: 'Security check confirmation is required' })}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="securityCheck" className="ml-2 block text-sm text-gray-700">
-                I confirm that all items have been checked by security
-              </label>
-              {errors.securityCheck && <p className="text-red-500 text-xs mt-1">This confirmation is required</p>}
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
-              <textarea
-                {...register('remarks')}
-                rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Any additional information or special instructions"
-              ></textarea>
-            </div>
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4">
-            <button
-              type="button"
-              onClick={() => reset()}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Clear Form
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Generate Gate Pass
-            </button>
-          </div>
-        </form>
+      <div className="flex justify-center gap-4 mt-4">
+        <button onClick={exportToExcel} className="px-4 py-2 bg-green-600 text-white rounded">Export to XLSX</button>
+        <button onClick={exportToPDF} className="px-4 py-2 bg-blue-600 text-white rounded">Export to PDF</button>
       </div>
-
-      {generatedPass && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-            <div>
-              <h2 className="text-xl font-semibold">Gate Pass Generated Successfully!</h2>
-              <p className="text-gray-600">Pass Number: <span className="font-medium">{generatedPass.passNumber}</span></p>
-            </div>
-            <div className="mt-4 md:mt-0">
-              <button
-                onClick={downloadPass}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
-                Download Gate Pass (PDF)
-              </button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Gate Pass Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Requester Information</h4>
-                <dl className="mt-2 space-y-1">
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Name</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.requesterName}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Employee ID</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.employeeId}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Department</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.department}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Designation</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.designation}</dd>
-                  </div>
-                </dl>
-              </div>
-              
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Pass Information</h4>
-                <dl className="mt-2 space-y-1">
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Pass Number</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.passNumber}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Issue Date</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.issueDate}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Expected Return</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.expectedReturnDate}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-sm text-gray-500">Authorized By</dt>
-                    <dd className="text-sm text-gray-900">{generatedPass.authorizedBy}</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Items</h4>
-              <p className="text-sm text-gray-900 whitespace-pre-line">{generatedPass.itemsDescription}</p>
-              <p className="text-sm font-medium text-gray-900 mt-2">Quantity: {generatedPass.quantity}</p>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Purpose</h4>
-              <p className="text-sm text-gray-900">{generatedPass.purpose}</p>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Destination</h4>
-              <p className="text-sm text-gray-900">{generatedPass.destination}</p>
-            </div>
-
-            {generatedPass.remarks && (
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Remarks</h4>
-                <p className="text-sm text-gray-900">{generatedPass.remarks}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
