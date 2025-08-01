@@ -75,7 +75,7 @@ export const APPROVAL_STATUSES = [
   { value: 'rejected', label: 'Rejected', color: 'error' },
 ];
 
-export const INSURANCE_STATUSES = [
+export const issuance_STATUSES = [
   { value: 'active', label: 'Active', color: 'success' },
   { value: 'expired', label: 'Expired', color: 'error' },
   { value: 'cancelled', label: 'Cancelled', color: 'muted' },

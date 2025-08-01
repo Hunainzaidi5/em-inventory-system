@@ -217,10 +217,10 @@ export interface GatePass {
   updatedAt: string;
 }
 
-export interface InsuranceRecord {
+export interface issuanceRecord {
   id: string;
   policyNumber: string;
-  insuranceProvider: string;
+  issuanceProvider: string;
   policyType: string;
   coverageDescription?: string;
   premiumAmount?: number;

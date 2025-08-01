@@ -254,11 +254,11 @@ CREATE TABLE gate_passes (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insurance records table
-CREATE TABLE insurance_records (
+-- issuance records table
+CREATE TABLE issuance_records (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   policy_number TEXT UNIQUE NOT NULL,
-  insurance_provider TEXT NOT NULL,
+  issuance_provider TEXT NOT NULL,
   policy_type TEXT NOT NULL,
   coverage_description TEXT,
   premium_amount DECIMAL(10,2),
@@ -310,8 +310,8 @@ CREATE INDEX idx_general_items_category ON general_items(category);
 
 CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at);
 CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status);
-CREATE INDEX idx_insurance_records_end_date ON insurance_records(end_date);
-CREATE INDEX idx_insurance_records_status ON insurance_records(status);
+CREATE INDEX idx_issuance_records_end_date ON issuance_records(end_date);
+CREATE INDEX idx_issuance_records_status ON issuance_records(status);
 
 CREATE INDEX idx_audit_logs_table_record ON audit_logs(table_name, record_id);
 CREATE INDEX idx_audit_logs_changed_at ON audit_logs(changed_at);
@@ -337,7 +337,7 @@ CREATE TRIGGER update_general_items_updated_at BEFORE UPDATE ON general_items FO
 CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_insurance_records_updated_at BEFORE UPDATE ON insurance_records FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Create a function to automatically update available quantities
 CREATE OR REPLACE FUNCTION update_available_quantity()
@@ -389,5 +389,5 @@ COMMENT ON TABLE general_items IS 'General items like tape, stationery, gifts';
 COMMENT ON TABLE transactions IS 'All issue/return/consume transactions across item types';
 COMMENT ON TABLE faulty_returns IS 'Items returned due to faults';
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';
-COMMENT ON TABLE insurance_records IS 'Insurance policies and coverage tracking';
+COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
