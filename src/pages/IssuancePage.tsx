@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const InsurancePage = () => {
+const IssuancePage = () => {
   const [formData, setFormData] = useState({
     issuerName: "",
     date: new Date().toISOString().split('T')[0],
@@ -43,7 +43,7 @@ const InsurancePage = () => {
     try {
       setIsExporting(true);
       
-      // Create HTML table that looks exactly like the Insurance
+      // Create HTML table that looks exactly like the Issuance
       let htmlContent = `
         <table border="1" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
           <tr>
@@ -53,7 +53,7 @@ const InsurancePage = () => {
           </tr>
           <tr>
             <td colspan="5" style="text-align: center; font-weight: bold; font-size: 14px; background-color: #cce5ff; padding: 8px; border: 2px solid black;">
-              Insurance
+              Issuance
             </td>
           </tr>
           <tr>
@@ -135,7 +135,7 @@ const InsurancePage = () => {
         <html>
           <head>
             <meta charset="utf-8">
-            <title>Insurance</title>
+            <title>Issuance</title>
             <style>
               body { font-family: Arial, sans-serif; margin: 20px; }
               table { page-break-inside: avoid; }
@@ -152,7 +152,7 @@ const InsurancePage = () => {
       link.href = url;
       
       const currentDate = new Date().toISOString().split('T')[0];
-      link.download = `Insurance_${currentDate}_${Date.now()}.xls`;
+      link.download = `Issuance_${currentDate}_${Date.now()}.xls`;
       
       document.body.appendChild(link);
       link.click();
@@ -213,7 +213,7 @@ const InsurancePage = () => {
       pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight, '', 'FAST');
       
       const currentDate = new Date().toISOString().split('T')[0];
-      const filename = `Insurance_${currentDate}_${Date.now()}.pdf`;
+      const filename = `Issuance_${currentDate}_${Date.now()}.pdf`;
       
       pdf.save(filename);
       
@@ -287,7 +287,7 @@ const InsurancePage = () => {
         {activeTab === 'form' && (
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Insurance Form</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Issuance Form</h2>
               <button
                 onClick={clearForm}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
@@ -486,7 +486,7 @@ const InsurancePage = () => {
         {activeTab === 'preview' && (
           <div className="p-6">
             <div className="flex justify-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">Insurance Preview</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Issuance Preview</h2>
             </div>
             
             {/* Exact replica for display/export */}
@@ -497,9 +497,9 @@ const InsurancePage = () => {
                   <h1 className="text-2xl font-bold">E & M Sub-Department</h1>
                 </div>
                 
-                {/* Insurance Header */}
+                {/* Issuance Header */}
                 <div className="bg-blue-200 text-center py-3 border-b-2 border-black">
-                  <h2 className="text-xl font-semibold">Insurance</h2>
+                  <h2 className="text-xl font-semibold">Issuance</h2>
                 </div>
 
                 {/* Top Information Grid */}
@@ -751,4 +751,4 @@ const InsurancePage = () => {
   );
 };
 
-export default InsurancePage;
+export default IssuancePage;
