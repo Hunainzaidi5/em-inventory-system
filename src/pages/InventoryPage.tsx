@@ -70,7 +70,7 @@ const InventoryPage = () => {
     const loadSpareParts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/spare-parts.json');
+        const response = await fetch('/spare-parts-OM.json');
         if (!response.ok) throw new Error('Failed to load data');
         const data = await response.json();
         

@@ -1,0 +1,432 @@
+{
+  "LV": [
+    {
+      "Ilumination (Spares Inventory)": "BOQ #"
+    },
+    {
+      "Sr. #": "1",
+      "IMIS Code": "303-0001-01-001001",
+      "Ilumination (Spares Inventory)": "2.1.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "2",
+      "IMIS Code": "303-0001-01-001002",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "3",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "4",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "5",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "6",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "7",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "8",
+      "Ilumination (Spares Inventory)": "2.1.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "9",
+      "IMIS Code": "303-0001-01-001003",
+      "Ilumination (Spares Inventory)": "2.2.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "10",
+      "Ilumination (Spares Inventory)": "2.2.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "11",
+      "Ilumination (Spares Inventory)": "2.2.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "12",
+      "Ilumination (Spares Inventory)": "2.2.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "13",
+      "IMIS Code": "303-0001-02-001004",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "14",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "15",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "16",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "17",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "18",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "19",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "20",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "21",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "22",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "23",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "24",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "25",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "26",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "27",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "28",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "29",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "30",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "31",
+      "Ilumination (Spares Inventory)": "2.3.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "32",
+      "IMIS Code": "303-0001-02-001005",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "33",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "34",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "35",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "36",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "37",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "38",
+      "Ilumination (Spares Inventory)": "2.4.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "39",
+      "IMIS Code": "303-0001-02-001006",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "40",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "41",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "42",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "43",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "44",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "45",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "46",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "47",
+      "Ilumination (Spares Inventory)": "2.4.2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "48",
+      "IMIS Code": "303-0001-03-001007",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "49",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "50",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "51",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "52",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "53",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "54",
+      "Ilumination (Spares Inventory)": "2.5.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "55",
+      "IMIS Code": "303-0001-04-001008",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "56",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "57",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "58",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "59",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "60",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "61",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "62",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "63",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "64",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "65",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "66",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "67",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "68",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "69",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "70",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "71",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "72",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "73",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "74",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "75",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "76",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "77",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "78",
+      "Ilumination (Spares Inventory)": "2.6.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "79",
+      "IMIS Code": "303-0001-03-001009",
+      "Ilumination (Spares Inventory)": "2.7.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "80",
+      "IMIS Code": "303-0001-05-001010",
+      "Ilumination (Spares Inventory)": "2.8.1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "IMIS Code": "2.3.1",
+      "Ilumination (Spares Inventory)": "In lights section there are 946-Tubes & Shells are included (Hided)"
+    },
+    {
+      "IMIS Code": "2.5.1",
+      "Ilumination (Spares Inventory)": "Single Core Wires will be minus from IMIS stock"
+    },
+    {
+      "IMIS Code": "2.6.1"
+    },
+    {
+      "IMIS Code": "2.1.2",
+      "Ilumination (Spares Inventory)": "Push Buttons & Indicator lights will be minus from IMIS"
+    }
+  ]
+}

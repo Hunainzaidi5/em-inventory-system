@@ -1,0 +1,904 @@
+{
+  "Escalator": [
+    {
+      "Sr. #": "1",
+      "IMIS Codes": "318-0001-01-001001",
+      "BOQ #": "1",
+      "Escalator (Spares Inventory)": "Step Chain",
+      "Part #": "FKB078\r\n FKN051",
+      "UOM": "No,s",
+      "Current Balance": "300",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "2",
+      "IMIS Codes": "318-0001-02-001002",
+      "BOQ #": "2",
+      "Escalator (Spares Inventory)": "Step",
+      "Part #": "FKA06310\r\n FKN07301",
+      "UOM": "No,s",
+      "Current Balance": "93",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "3",
+      "IMIS Codes": "318-0001-03-001003",
+      "BOQ #": "3",
+      "Escalator (Spares Inventory)": "Hand Rail Belt Driving Device",
+      "Part #": "FDN068",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "4",
+      "Escalator (Spares Inventory)": "Step Chain Roller and Step Roller",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "4",
+      "IMIS Codes": "318-0001-04-001004",
+      "BOQ #": "4.1",
+      "Escalator (Spares Inventory)": "Step Chain Roller and Step Roller for FEH20",
+      "Part #": "FKN07504",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "5",
+      "IMIS Codes": "318-0001-05-001005",
+      "BOQ #": "4.2",
+      "Escalator (Spares Inventory)": "Step Chain Roller and Step Roller for FEH",
+      "Part #": "FKB07101",
+      "UOM": "No,s",
+      "Current Balance": "130",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "6",
+      "IMIS Codes": "318-0001-06-001006",
+      "BOQ #": "5",
+      "Escalator (Spares Inventory)": "Step Chain Roller Bearing and Step Roller Bearing",
+      "Part #": "B4511030",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "6",
+      "Escalator (Spares Inventory)": "Step Driving Shaft and Step Chain Tension Shaft",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "7",
+      "IMIS Codes": "318-0001-07-001007",
+      "BOQ #": "6.1",
+      "Escalator (Spares Inventory)": "Step driving Shaft and Step Chain Tension Shaft for FEH20",
+      "Part #": "FCN08304\r\n FCN07001",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "8",
+      "IMIS Codes": "318-0001-07-001008",
+      "BOQ #": "6.2",
+      "Escalator (Spares Inventory)": "Step Driving Shaft and Step Chain Tension Shaft for FEH",
+      "Part #": "FCK05604\r\n FCK15901",
+      "UOM": "No,s",
+      "Current Balance": "10",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "9",
+      "BOQ #": "7",
+      "Escalator (Spares Inventory)": "Step driving shaft bearing and step chain tension shaft bearing",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "10",
+      "IMIS Codes": "318-0001-06-001009",
+      "BOQ #": "7.1",
+      "Escalator (Spares Inventory)": "Step driving shaft bearing and step chain tension shaft bearing for FEH20",
+      "Part #": "B4501076\r\n B4504056",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "11",
+      "IMIS Codes": "318-0001-06-001010",
+      "BOQ #": "7.2",
+      "Escalator (Spares Inventory)": "Step driving shaft bearing and step chain tension shaft bearing for FEH",
+      "Part #": "B4501075\r\n B4509055",
+      "UOM": "No,s",
+      "Current Balance": "10",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "12",
+      "IMIS Codes": "318-0001-08-001011",
+      "BOQ #": "8",
+      "Escalator (Spares Inventory)": "Auto-Lubrication System Assembled",
+      "Part #": "VERSA",
+      "UOM": "No,s",
+      "Current Balance": "10",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "13",
+      "IMIS Codes": "318-0001-08-001012",
+      "BOQ #": "9",
+      "Escalator (Spares Inventory)": "Lubrication Oil Pump",
+      "Part #": "VIII 6LSLR",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "10",
+      "Escalator (Spares Inventory)": "Gear box",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "14",
+      "IMIS Codes": "318-0001-09-001013",
+      "BOQ #": "10.1",
+      "Escalator (Spares Inventory)": "Gear Box CG26-112",
+      "Part #": "FJN09402/01",
+      "UOM": "No,s",
+      "Current Balance": "10",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "15",
+      "IMIS Codes": "318-0001-10-001014",
+      "BOQ #": "10.3",
+      "Escalator (Spares Inventory)": "Gear Box K87",
+      "Part #": "FJK05204/03",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "16",
+      "IMIS Codes": "318-0001-10-001015",
+      "BOQ #": "10.4",
+      "Escalator (Spares Inventory)": "Gear Box K97",
+      "Part #": "FJK07106/05",
+      "UOM": "No,s",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "11",
+      "Escalator (Spares Inventory)": "Braking Magnet",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "17",
+      "IMIS Codes": "318-0001-03-001016",
+      "BOQ #": "11.1",
+      "Escalator (Spares Inventory)": "Braking Magnet for FEH",
+      "Part #": "FJA07401",
+      "UOM": "No,s",
+      "Current Balance": "25",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "18",
+      "IMIS Codes": "318-0001-11-001017",
+      "BOQ #": "11.2",
+      "Escalator (Spares Inventory)": "Braking Magnet for FEH20",
+      "Part #": "FJN08801",
+      "UOM": "No,s",
+      "Current Balance": "12",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "19",
+      "BOQ #": "12",
+      "Escalator (Spares Inventory)": "Auxiliary brake",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "20",
+      "IMIS Codes": "318-0001-12-001018",
+      "BOQ #": "12.1",
+      "Escalator (Spares Inventory)": "Auxiliary brake for FEH20",
+      "Part #": "FMN00201",
+      "UOM": "No,s",
+      "Current Balance": "4",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "21",
+      "IMIS Codes": "318-0001-12-001019",
+      "BOQ #": "12.2",
+      "Escalator (Spares Inventory)": "Auxiliary brake for FEH",
+      "Part #": "FMK00201",
+      "UOM": "No,s",
+      "Current Balance": "8",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "13",
+      "Escalator (Spares Inventory)": "Motor",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "22",
+      "IMIS Codes": "318-0001-13-001020",
+      "BOQ #": "13.1",
+      "Escalator (Spares Inventory)": "Motor 11kw for FEH",
+      "Part #": "FJK10101",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "23",
+      "IMIS Codes": "318-0001-14-001021",
+      "BOQ #": "13.2",
+      "Escalator (Spares Inventory)": "Motor 15kw for FEH20",
+      "Part #": "FJN10708",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "24",
+      "IMIS Codes": "318-0001-13-001022",
+      "BOQ #": "13.3",
+      "Escalator (Spares Inventory)": "Motor 15kw for FEH(left)",
+      "Part #": "FJK07001",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "25",
+      "IMIS Codes": "318-0001-13-001023",
+      "BOQ #": "13.4",
+      "Escalator (Spares Inventory)": "Motor 15kw for FEH(right)",
+      "Part #": "FJK07002",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "14",
+      "Escalator (Spares Inventory)": "Main Driving Chain",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "26",
+      "IMIS Codes": "318-0001-15-001024",
+      "BOQ #": "14.1",
+      "Escalator (Spares Inventory)": "Main driving chain for FEH",
+      "Part #": "FJA11114",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "27",
+      "IMIS Codes": "318-0001-15-001025",
+      "BOQ #": "14.2",
+      "Escalator (Spares Inventory)": "Main driving chain for FEH20",
+      "Part #": "FJN11102",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "28",
+      "IMIS Codes": "318-0001-15-001026",
+      "BOQ #": "15",
+      "Escalator (Spares Inventory)": "Handail driving chain",
+      "Part #": "FCA06004\r\n FCN14701",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "16",
+      "Escalator (Spares Inventory)": "Inverter",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "29",
+      "IMIS Codes": "318-0001-16-001027",
+      "BOQ #": "16.1",
+      "Escalator (Spares Inventory)": "Inverter FC-301P22KT4E55",
+      "Part #": "FC-301P22KT4E55",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "30",
+      "IMIS Codes": "318-0001-16-001028",
+      "BOQ #": "16.2",
+      "Escalator (Spares Inventory)": "Inverter FC-301P30KT4E55",
+      "Part #": "FC-301P30KT4E55",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "31",
+      "IMIS Codes": "318-0001-16-001029",
+      "BOQ #": "16.3",
+      "Escalator (Spares Inventory)": "Inverter FC-301P37KT4E55",
+      "Part #": "FC-301P37KT4E55",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "32",
+      "IMIS Codes": "318-0001-17-001030",
+      "BOQ #": "17",
+      "Escalator (Spares Inventory)": "PLC",
+      "Part #": "TM218LDA40DRN",
+      "UOM": "No,s",
+      "Current Balance": "5",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "33",
+      "IMIS Codes": "318-0001-18-001031",
+      "BOQ #": "18",
+      "Escalator (Spares Inventory)": "All safety swtiches",
+      "Part #": "Z1R/T1R/ZS236Serial",
+      "UOM": "No,s",
+      "Current Balance": "50",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "19",
+      "Escalator (Spares Inventory)": "Contact",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "34",
+      "IMIS Codes": "318-0001-17-001032",
+      "BOQ #": "19.1",
+      "Escalator (Spares Inventory)": "Contact LC1-D65AF7C",
+      "Part #": "LC1-D65AF7C",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "35",
+      "IMIS Codes": "318-0001-17-001033",
+      "BOQ #": "19.2",
+      "Escalator (Spares Inventory)": "Contact LC1-D80AF7C",
+      "Part #": "LC1-D80F7C",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "36",
+      "IMIS Codes": "318-0001-17-001034",
+      "BOQ #": "19.3",
+      "Escalator (Spares Inventory)": "Contact LC1-D95F7C",
+      "Part #": "LC1-D95F7C",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "37",
+      "IMIS Codes": "318-0001-19-001035",
+      "BOQ #": "20",
+      "Escalator (Spares Inventory)": "Relay",
+      "Part #": "RJ2S/SF1V Serial",
+      "UOM": "No,s",
+      "Current Balance": "30",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "38",
+      "IMIS Codes": "318-0001-20-001036",
+      "BOQ #": "21",
+      "Escalator (Spares Inventory)": "Comb, Left",
+      "Part #": "FGA10001FGA07501",
+      "UOM": "No,s",
+      "Current Balance": "1,199",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "39",
+      "IMIS Codes": "318-0001-20-001037",
+      "BOQ #": "22",
+      "Escalator (Spares Inventory)": "Comb, Middle",
+      "Part #": "FGA10101",
+      "UOM": "No,s",
+      "Current Balance": "2,200",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "40",
+      "IMIS Codes": "318-0001-20-001038",
+      "BOQ #": "23",
+      "Escalator (Spares Inventory)": "Comb, Right",
+      "Part #": "FGA10102\r\n FGA07502",
+      "UOM": "No,s",
+      "Current Balance": "1,200",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "41",
+      "IMIS Codes": "318-0001-05-001039",
+      "BOQ #": "24",
+      "Escalator (Spares Inventory)": "Driving Block",
+      "Part #": "FMA09101",
+      "UOM": "No,s",
+      "Current Balance": "100",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "42",
+      "IMIS Codes": "318-0001-05-001040",
+      "BOQ #": "25",
+      "Escalator (Spares Inventory)": "l",
+      "Part #": "FDA09701",
+      "UOM": "No,s",
+      "Current Balance": "240",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "43",
+      "IMIS Codes": "318-0001-22-001041",
+      "BOQ #": "26",
+      "Escalator (Spares Inventory)": "Tension Roller",
+      "Part #": "FDD07002",
+      "UOM": "No,s",
+      "Current Balance": "100",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "44",
+      "IMIS Codes": "318-0001-23-001042",
+      "BOQ #": "27",
+      "Escalator (Spares Inventory)": "Friction Wheel",
+      "Part #": "FCK14901",
+      "UOM": "No,s",
+      "Current Balance": "56",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "45",
+      "IMIS Codes": "318-0001-04-001043",
+      "BOQ #": "28",
+      "Escalator (Spares Inventory)": "Motor vibration abatement pad",
+      "Part #": "FJN07001",
+      "UOM": "No,s",
+      "Current Balance": "200",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "46",
+      "IMIS Codes": "318-0001-17-001044",
+      "BOQ #": "29",
+      "Escalator (Spares Inventory)": "Auxiliary contact",
+      "Part #": "LAD-N20C",
+      "UOM": "No,s",
+      "Current Balance": "160",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "47",
+      "IMIS Codes": "318-0001-24-001045",
+      "BOQ #": "30",
+      "Escalator (Spares Inventory)": "Heating-Rod",
+      "Part #": "FLA16601/FLA16602",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "48",
+      "IMIS Codes": "318-0001-19-001046",
+      "BOQ #": "31",
+      "Escalator (Spares Inventory)": "Machine room lighting switch",
+      "Part #": "YW1S-2E10",
+      "UOM": "No,s",
+      "Current Balance": "50",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "49",
+      "IMIS Codes": "318-0001-19-001047",
+      "BOQ #": "32",
+      "Escalator (Spares Inventory)": "emergency stop button",
+      "Part #": "YW1B-V4E01R",
+      "UOM": "No,s",
+      "Current Balance": "80",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "50",
+      "IMIS Codes": "318-0001-19-001048",
+      "BOQ #": "33",
+      "Escalator (Spares Inventory)": "Traffic direction switch",
+      "Part #": "YW1K-33DE20",
+      "UOM": "No,s",
+      "Current Balance": "80",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "51",
+      "IMIS Codes": "318-0001-19-001049",
+      "BOQ #": "34",
+      "Escalator (Spares Inventory)": "stop button",
+      "Part #": "YW1BM1E01R",
+      "UOM": "No,s",
+      "Current Balance": "80",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "52",
+      "IMIS Codes": "318-0001-25-001050",
+      "BOQ #": "35",
+      "Escalator (Spares Inventory)": "Brake opening switch",
+      "Part #": "ZS236-02z-M20",
+      "UOM": "No,s",
+      "Current Balance": "100",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "53",
+      "IMIS Codes": "318-0001-26-001051",
+      "BOQ #": "36",
+      "Escalator (Spares Inventory)": "Motor speed sensor",
+      "Part #": "ETF58-H-12",
+      "UOM": "No,s",
+      "Current Balance": "50",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "54",
+      "IMIS Codes": "318-0001-03-001052",
+      "BOQ #": "37",
+      "Escalator (Spares Inventory)": "Fault collection board",
+      "Part #": "ET03",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "38",
+      "Escalator (Spares Inventory)": "Fault Display",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "55",
+      "IMIS Codes": "318-0001-03-001053",
+      "BOQ #": "38.1",
+      "Escalator (Spares Inventory)": "Fault display board FZB05801",
+      "Part #": "ED04.V1",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "56",
+      "IMIS Codes": "318-0001-17-001054",
+      "BOQ #": "38.2",
+      "Escalator (Spares Inventory)": "Fault display board HMIGXO3502",
+      "Part #": "HMISTU655",
+      "UOM": "No,s",
+      "Current Balance": "18",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "57",
+      "IMIS Codes": "318-0001-27-001055",
+      "BOQ #": "39",
+      "Escalator (Spares Inventory)": "Skirting screw",
+      "Part #": "B0180507",
+      "UOM": "No,s",
+      "Current Balance": "4,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "58",
+      "IMIS Codes": "318-0001-27-001056",
+      "BOQ #": "40",
+      "Escalator (Spares Inventory)": "Hexagon screws 6mm",
+      "Part #": "B0100713\r\n B0100714\r\n B0100715",
+      "UOM": "No,s",
+      "Current Balance": "4,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "59",
+      "IMIS Codes": "318-0001-27-001057",
+      "BOQ #": "41",
+      "Escalator (Spares Inventory)": "Square nut 6mm",
+      "Part #": "B0240400",
+      "UOM": "No,s",
+      "Current Balance": "2,500",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "60",
+      "IMIS Codes": "318-0001-28-001058",
+      "BOQ #": "42",
+      "Escalator (Spares Inventory)": "Step gap illumination tube",
+      "Part #": "LED-T8B60-8W/DC24V",
+      "UOM": "No,s",
+      "Current Balance": "120",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "61",
+      "IMIS Codes": "318-0001-03-001059",
+      "BOQ #": "45",
+      "Escalator (Spares Inventory)": "Maintenance box",
+      "Part #": "FUA05103",
+      "UOM": "No,s",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "BOQ #": "46",
+      "Escalator (Spares Inventory)": "Handrail",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "62",
+      "IMIS Codes": "318-0001-29-001060",
+      "BOQ #": "46.1",
+      "Escalator (Spares Inventory)": "Handrail Belt for FEH",
+      "Part #": "FDK10601",
+      "UOM": "Meter",
+      "Current Balance": "501",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "63",
+      "IMIS Codes": "318-0001-29-001061",
+      "BOQ #": "46.2",
+      "Escalator (Spares Inventory)": "Handrail Belt for FEH20",
+      "Part #": "FDN05101",
+      "UOM": "Meter",
+      "Current Balance": "500",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "64",
+      "IMIS Codes": "318-0001-30-001062",
+      "BOQ #": "47",
+      "Escalator (Spares Inventory)": "Oil for Gear box Teeth",
+      "Part #": "Shell Omala S2G220",
+      "UOM": "LTR",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "65",
+      "IMIS Codes": "318-0001-31-001063",
+      "BOQ #": "48",
+      "Escalator (Spares Inventory)": "Lubrication Oil",
+      "Part #": "N46",
+      "UOM": "LTR",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "66",
+      "IMIS Codes": "318-0001-00-001081",
+      "BOQ #": "52",
+      "Escalator (Spares Inventory)": "Process Auxiliary Pin for Segmentation ￠20 / \r\n 分段用工艺辅助销 ￠20",
+      "Part #": "F01.K10HK.008A01/02",
+      "UOM": "No,s",
+      "Current Balance": "24",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "67",
+      "IMIS Codes": "318-0001-27-001065",
+      "BOQ #": "71",
+      "Escalator (Spares Inventory)": "Washer 8 (dacromet) for Balustrade System",
+      "Part #": "B0300800",
+      "UOM": "No,s",
+      "Current Balance": "4,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "68",
+      "IMIS Codes": "318-0001-27-001066",
+      "BOQ #": "72",
+      "Escalator (Spares Inventory)": "Bolt M8 x 25 (Dacromet) for Balustrade System",
+      "Part #": "B0180507",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "69",
+      "IMIS Codes": "318-0001-27-001067",
+      "BOQ #": "73",
+      "Escalator (Spares Inventory)": "Spring washer 8(dacromet) for Balustrade system",
+      "Part #": "B0330700",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "70",
+      "IMIS Codes": "318-0001-27-001068",
+      "BOQ #": "74",
+      "Escalator (Spares Inventory)": "Screw 8 (Dacromet) for Balustrade System",
+      "Part #": "B0200800",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "71",
+      "IMIS Codes": "318-0001-27-001069",
+      "BOQ #": "75",
+      "Escalator (Spares Inventory)": "Washer 12 (dacromet) for Balustrade System",
+      "Part #": "B0301000",
+      "UOM": "No,s",
+      "Current Balance": "4,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "72",
+      "IMIS Codes": "318-0001-27-001070",
+      "BOQ #": "76",
+      "Escalator (Spares Inventory)": "Bolt M-12 x 25 (Dacromet) for Balustrade System",
+      "Part #": "B0180707",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "73",
+      "IMIS Codes": "318-0001-27-001071",
+      "BOQ #": "77",
+      "Escalator (Spares Inventory)": "Spring Washer 12 (Dacromet) for Balustrade System",
+      "Part #": "B0330900",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "74",
+      "IMIS Codes": "318-0001-27-001072",
+      "BOQ #": "78",
+      "Escalator (Spares Inventory)": "Screw M12 (Dacromet) for Balustrade System",
+      "Part #": "B0201000",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "75",
+      "IMIS Codes": "318-0001-27-001073",
+      "BOQ #": "79",
+      "Escalator (Spares Inventory)": "Washer 10 (Dacromet) for Balustrade System",
+      "Part #": "B0300900",
+      "UOM": "No,s",
+      "Current Balance": "2,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "76",
+      "IMIS Codes": "318-0001-27-001074",
+      "BOQ #": "80",
+      "Escalator (Spares Inventory)": "Bolt M-10 x 25 (Dacromet) for Balustrade System",
+      "Part #": "B0180607",
+      "UOM": "No,s",
+      "Current Balance": "1,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "77",
+      "IMIS Codes": "318-0001-27-001075",
+      "BOQ #": "81",
+      "Escalator (Spares Inventory)": "Spring Washer 10 (Dacromet) for Balustrade System",
+      "Part #": "B0330800",
+      "UOM": "No,s",
+      "Current Balance": "1,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "78",
+      "IMIS Codes": "318-0001-27-001076",
+      "BOQ #": "82",
+      "Escalator (Spares Inventory)": "Screws M-10 (Dacromet) for Balustrade System",
+      "Part #": "B0200900",
+      "UOM": "No,s",
+      "Current Balance": "1,000",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "79",
+      "IMIS Codes": "318-0001-27-001077",
+      "BOQ #": "83",
+      "Escalator (Spares Inventory)": "Comb Screws (HSS)",
+      "Part #": "B0030808",
+      "UOM": "No,s",
+      "Current Balance": "400",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "80",
+      "IMIS Codes": "318-0001-27-001078",
+      "BOQ #": "84",
+      "Escalator (Spares Inventory)": "Handrail Belt Guiding Block (with Dacromet Screws)",
+      "Part #": "FDA09901",
+      "UOM": "No,s",
+      "Current Balance": "600",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "81",
+      "IMIS Codes": "318-0001-27-001079",
+      "BOQ #": "85",
+      "Escalator (Spares Inventory)": "Skirting Connecting Device(Dacromet)",
+      "Part #": "FEA05501",
+      "UOM": "No,s",
+      "Current Balance": "600",
+      "Location": "C&C Warehouse, Stabling Yard"
+    },
+    {
+      "Sr. #": "Sr. #",
+      "IMIS Codes": "IMIS Codes",
+      "BOQ #": "BOQ #",
+      "Escalator (Spares Inventory)": "Escalator (Special Tools)",
+      "Part #": "Part #",
+      "UOM": "UOM"
+    },
+    {
+      "Sr. #": "1",
+      "IMIS Codes": "318-0001-00-001082",
+      "BOQ #": "50",
+      "Escalator (Spares Inventory)": "Portable Lamp for Mainting Cable",
+      "Part #": "FUB00202",
+      "UOM": "No,s",
+      "Current Balance": "20"
+    },
+    {
+      "Sr. #": "2",
+      "IMIS Codes": "318-0001-00-001096",
+      "BOQ #": "65",
+      "Escalator (Spares Inventory)": "Sound Level Meter",
+      "Part #": "TES-1350A",
+      "UOM": "No,s",
+      "Current Balance": "2"
+    },
+    {
+      "Sr. #": "3",
+      "IMIS Codes": "318-0001-00-001097",
+      "BOQ #": "66",
+      "Escalator (Spares Inventory)": "Leveling Insturment",
+      "Part #": "BX2-S90",
+      "UOM": "No,s",
+      "Current Balance": "4"
+    }
+  ]
+}
