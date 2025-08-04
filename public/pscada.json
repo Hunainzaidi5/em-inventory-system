@@ -1,432 +1,214 @@
 {
-  "LV": [
+  "Pscada": [
     {
-      "Ilumination (Spares Inventory)": "BOQ #"
-    },
-    {
-      "Sr. #": "1",
-      "IMIS Code": "303-0001-01-001001",
-      "Ilumination (Spares Inventory)": "2.1.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "2",
-      "IMIS Code": "303-0001-01-001002",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "3",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "4",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "5",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "6",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "7",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "8",
-      "Ilumination (Spares Inventory)": "2.1.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "9",
-      "IMIS Code": "303-0001-01-001003",
-      "Ilumination (Spares Inventory)": "2.2.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "10",
-      "Ilumination (Spares Inventory)": "2.2.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "11",
-      "Ilumination (Spares Inventory)": "2.2.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "12",
-      "Ilumination (Spares Inventory)": "2.2.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "13",
-      "IMIS Code": "303-0001-02-001004",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "14",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "15",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "16",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "17",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "18",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "19",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "20",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "21",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "22",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "23",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "24",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "25",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "26",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "27",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "28",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "29",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "30",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "31",
-      "Ilumination (Spares Inventory)": "2.3.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "32",
-      "IMIS Code": "303-0001-02-001005",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "33",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "34",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "35",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "36",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "37",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "38",
-      "Ilumination (Spares Inventory)": "2.4.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "39",
-      "IMIS Code": "303-0001-02-001006",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "40",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "41",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "42",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "43",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "44",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "45",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "46",
-      "Ilumination (Spares Inventory)": "2.4.2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "47",
-      "Ilumination (Spares Inventory)": "2.4.2",
+      "Sr. #": 1.0,
+      "IMIS Codes": "323-0001-00-001001",
+      "BOQ #": 1.0,
+      "PSCADA System - (Spares Inventory)": "Multi Function Digital Multimeter",
+      "Part #": "15B+",
+      "UOM": "No,s",
+      "Current Balance": 5.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "48",
-      "IMIS Code": "303-0001-03-001007",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 2.0,
+      "IMIS Codes": "323-0001-00-001002",
+      "BOQ #": 2.0,
+      "PSCADA System - (Spares Inventory)": "Network Cable Test Tool",
+      "Part #": "MY-468",
+      "UOM": "No,s",
+      "Current Balance": 1.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "49",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 3.0,
+      "IMIS Codes": "323-0001-00-001003",
+      "BOQ #": 3.0,
+      "PSCADA System - (Spares Inventory)": "Special Tool Unit",
+      "Part #": "89-883-53",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "50",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 4.0,
+      "IMIS Codes": "323-0001-00-001004",
+      "BOQ #": 4.0,
+      "PSCADA System - (Spares Inventory)": "Test Pencil",
+      "Part #": "SATA-62601",
+      "UOM": "No,s",
+      "Current Balance": 10.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "51",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 5.0,
+      "IMIS Codes": "323-0001-00-001005",
+      "BOQ #": 5.0,
+      "PSCADA System - (Spares Inventory)": "Cable Maker for Control Network",
+      "Part #": "808-376C",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "52",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 6.0,
+      "IMIS Codes": "323-0001-00-001006",
+      "BOQ #": 6.0,
+      "PSCADA System - (Spares Inventory)": "Oscilloscope (2)+ Signal Generator (2)",
+      "Part #": "UTG4082A + UP02072CS",
+      "UOM": "Set",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "53",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 7.0,
+      "IMIS Codes": "323-0001-00-001007",
+      "BOQ #": 7.0,
+      "PSCADA System - (Spares Inventory)": "Handheld Lan Test Instruement",
+      "Part #": "MS2-100",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "54",
-      "Ilumination (Spares Inventory)": "2.5.1",
+      "Sr. #": 8.0,
+      "IMIS Codes": "323-0001-00-001008",
+      "BOQ #": 8.0,
+      "PSCADA System - (Spares Inventory)": "Hard Disk",
+      "Part #": "600-G",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "55",
-      "IMIS Code": "303-0001-04-001008",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 9.0,
+      "IMIS Codes": "323-0001-00-001009",
+      "BOQ #": 9.0,
+      "PSCADA System - (Spares Inventory)": "Server Memory",
+      "Part #": "16G",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "56",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 10.0,
+      "IMIS Codes": "323-0001-00-001010",
+      "BOQ #": 10.0,
+      "PSCADA System - (Spares Inventory)": "DVD Rom for Server",
+      "Part #": "GH24NSCO",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "57",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 11.0,
+      "IMIS Codes": "323-0001-00-001011",
+      "BOQ #": 11.0,
+      "PSCADA System - (Spares Inventory)": "Main CPU Board",
+      "Part #": "XeonE5",
+      "UOM": "No,s",
+      "Current Balance": 3.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "58",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 12.0,
+      "IMIS Codes": "323-0001-00-001012",
+      "BOQ #": 12.0,
+      "PSCADA System - (Spares Inventory)": "Workstation Hard Disk",
+      "Part #": "500-G",
+      "UOM": "No,s",
+      "Current Balance": 3.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "59",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 13.0,
+      "IMIS Codes": "323-0001-00-001013",
+      "BOQ #": 13.0,
+      "PSCADA System - (Spares Inventory)": "DVD Rom for Workstation",
+      "Part #": "GH24NSCO",
+      "UOM": "No,s",
+      "Current Balance": 2.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "60",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 14.0,
+      "IMIS Codes": "323-0001-00-001014",
+      "BOQ #": 14.0,
+      "PSCADA System - (Spares Inventory)": "Network Card for Workstation",
+      "Part #": "HSTNC-IN01",
+      "UOM": "No,s",
+      "Current Balance": 5.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "61",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 15.0,
+      "IMIS Codes": "323-0001-00-001015",
+      "BOQ #": 15.0,
+      "PSCADA System - (Spares Inventory)": "Keyboard & Mouse for Workstation",
+      "Part #": "J8F15AA",
+      "UOM": "No,s",
+      "Current Balance": 10.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "62",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 16.0,
+      "IMIS Codes": "323-0001-00-001016",
+      "BOQ #": 16.0,
+      "PSCADA System - (Spares Inventory)": "Graphics Card",
+      "Part #": "NVIDIA NVS 510",
+      "UOM": "No,s",
+      "Current Balance": 3.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "63",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 17.0,
+      "IMIS Codes": "323-0001-00-001017",
+      "BOQ #": 17.0,
+      "PSCADA System - (Spares Inventory)": "Display",
+      "Part #": "HP-232",
+      "UOM": "No,s",
+      "Current Balance": 3.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "64",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 18.0,
+      "IMIS Codes": "323-0001-00-001018",
+      "BOQ #": 18.0,
+      "PSCADA System - (Spares Inventory)": "Twisted Pair",
+      "Part #": "DZR-RVVP22-2 x 0.75",
+      "UOM": "Lot",
+      "Current Balance": 1.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "65",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 19.0,
+      "IMIS Codes": "323-0001-00-001019",
+      "BOQ #": 19.0,
+      "PSCADA System - (Spares Inventory)": "Optical Cable",
+      "Part #": "GYTZA53",
+      "UOM": "Lot",
+      "Current Balance": 1.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "66",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 20.0,
+      "IMIS Codes": "323-0001-00-001020",
+      "BOQ #": 20.0,
+      "PSCADA System - (Spares Inventory)": "Black & White Laser Printer Cartridge",
+      "Part #": "HP",
+      "UOM": "No,s",
+      "Current Balance": 5.0,
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "67",
-      "Ilumination (Spares Inventory)": "2.6.1",
+      "Sr. #": 21.0,
+      "IMIS Codes": "323-0001-00-001021",
+      "BOQ #": 21.0,
+      "PSCADA System - (Spares Inventory)": "Color Laser Printer Cartridge",
+      "Part #": "HP",
+      "UOM": "No,s",
+      "Current Balance": 5.0,
       "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "68",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "69",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "70",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "71",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "72",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "73",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "74",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "75",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "76",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "77",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "78",
-      "Ilumination (Spares Inventory)": "2.6.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "79",
-      "IMIS Code": "303-0001-03-001009",
-      "Ilumination (Spares Inventory)": "2.7.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "80",
-      "IMIS Code": "303-0001-05-001010",
-      "Ilumination (Spares Inventory)": "2.8.1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "IMIS Code": "2.3.1",
-      "Ilumination (Spares Inventory)": "In lights section there are 946-Tubes & Shells are included (Hided)"
-    },
-    {
-      "IMIS Code": "2.5.1",
-      "Ilumination (Spares Inventory)": "Single Core Wires will be minus from IMIS stock"
-    },
-    {
-      "IMIS Code": "2.6.1"
-    },
-    {
-      "IMIS Code": "2.1.2",
-      "Ilumination (Spares Inventory)": "Push Buttons & Indicator lights will be minus from IMIS"
     }
   ]
 }

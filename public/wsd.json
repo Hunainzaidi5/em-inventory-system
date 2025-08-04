@@ -1,3 +1,1142 @@
-{
-  "O&M Spare Part": []
-}
+[
+  {
+    "Sr_No": 1.0,
+    "IMIS_Code": "311-111-01-001002",
+    "BOQ_No": "1.1.1",
+    "Item_Description": "Sealing Rubber Ring",
+    "Specification": "East Pump",
+    "UOM": "Pcs",
+    "Quantity": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 2.0,
+    "IMIS_Code": "311-111-02-001003",
+    "BOQ_No": "1.1.2",
+    "Item_Description": "Switch 125-Amp",
+    "Specification": "125-Amp",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 3.0,
+    "IMIS_Code": "311-111-03-001004",
+    "BOQ_No": "1.1.3",
+    "Item_Description": "AC Contactor",
+    "Specification": "75-22",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 4.0,
+    "IMIS_Code": "311-111-03-001005",
+    "BOQ_No": "1.1.4",
+    "Item_Description": "Relay Base",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 5.0,
+    "IMIS_Code": "311-111-04-001006",
+    "BOQ_No": "1.1.5",
+    "Item_Description": "Switching Power Supply",
+    "Specification": "25-W, 24-V, 1.1-A",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 6.0,
+    "IMIS_Code": "311-111-05-001007",
+    "BOQ_No": "1.1.6",
+    "Item_Description": "Stop Button",
+    "Specification": "Taidian",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 7.0,
+    "IMIS_Code": "311-111-05-001008",
+    "BOQ_No": "1.1.7",
+    "Item_Description": "Start Button",
+    "Specification": "Taidian",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 8.0,
+    "IMIS_Code": "311-111-06-001009",
+    "BOQ_No": "1.1.8",
+    "Item_Description": "Transformer 12-Volt",
+    "Specification": "Deldci",
+    "UOM": "Pcs",
+    "Quantity": 8,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 9.0,
+    "IMIS_Code": "311-111-07-001010",
+    "BOQ_No": "1.1.9",
+    "Item_Description": "PLC",
+    "Specification": "Siemens",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 10.0,
+    "IMIS_Code": "311-111-03-001011",
+    "BOQ_No": "1.1.10",
+    "Item_Description": "Intermediate Relay 24-Volt",
+    "Specification": "24-V Tengen",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 11.0,
+    "IMIS_Code": "311-111-03-001012",
+    "BOQ_No": "1.1.11",
+    "Item_Description": "Intermediate Relay 220-Volt",
+    "Specification": "220-V Tengen",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 12.0,
+    "IMIS_Code": "311-111-00-001013",
+    "BOQ_No": "1.1.12",
+    "Item_Description": "Fuse 10-Amp",
+    "Specification": "10-Amp",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 13.0,
+    "IMIS_Code": "311-111-08-001014",
+    "BOQ_No": 1.2,
+    "Item_Description": "Alarm Valve DN-100",
+    "Specification": "ZSFZ 100",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 14.0,
+    "IMIS_Code": "311-111-00-001116",
+    "BOQ_No": 1.3,
+    "Item_Description": "Water Flow Indicator DN-150",
+    "Specification": "ZSJZ 150",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 15.0,
+    "IMIS_Code": "311-111-08-001015",
+    "BOQ_No": "1.3.1",
+    "Item_Description": "Water Flow Indicator DN-100",
+    "Specification": "ZSJZ 100",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 16.0,
+    "IMIS_Code": "311-111-00-001117",
+    "BOQ_No": "1.3.2",
+    "Item_Description": "Water Flow Indicator DN-80",
+    "Specification": "ZSJZ 80",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 17.0,
+    "IMIS_Code": "311-111-00-001118",
+    "BOQ_No": "1.3.3",
+    "Item_Description": "Water Flow Indicator DN-65",
+    "Specification": "ZSJZ 65",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 18.0,
+    "IMIS_Code": "311-111-08-001016",
+    "BOQ_No": 1.4,
+    "Item_Description": "Signal Valve DN-65",
+    "Specification": "ZSXF-65",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 19.0,
+    "IMIS_Code": "311-111-09-001017",
+    "BOQ_No": 1.5,
+    "Item_Description": "Flygate DN150 / Sluce Valve DN150",
+    "Specification": "Z41X-16Q",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 20.0,
+    "IMIS_Code": "311-111-10-001018",
+    "BOQ_No": 1.6,
+    "Item_Description": "Extinguisher Cylinder Dry Powder (Amonium Phosphate)",
+    "Specification": "MFZ/ABC5D",
+    "UOM": "Pcs",
+    "Quantity": 25,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 21.0,
+    "IMIS_Code": "311-111-09-001019",
+    "BOQ_No": 1.7,
+    "Item_Description": "End Water Test Equipments DN25",
+    "Specification": "DN25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 22.0,
+    "IMIS_Code": "311-111-09-001020",
+    "BOQ_No": 1.8,
+    "Item_Description": "Safety Relief Valve DN65",
+    "Specification": "500X-16C",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 23.0,
+    "IMIS_Code": "311-111-09-001021",
+    "BOQ_No": 1.9,
+    "Item_Description": "Wash Out Valve DN65",
+    "Specification": "Z45X-16Q",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 24.0,
+    "IMIS_Code": "311-111-08-001022",
+    "BOQ_No": 1.1,
+    "Item_Description": "Spray Header DN25 K-80",
+    "Specification": "K=80",
+    "UOM": "Pcs",
+    "Quantity": 50,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 25.0,
+    "IMIS_Code": "311-111-09-001023",
+    "BOQ_No": 1.11,
+    "Item_Description": "Hydraulic Ball Float Valve DN50",
+    "Specification": "F745X-16C",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 26.0,
+    "IMIS_Code": "311-111-11-001024",
+    "BOQ_No": 1.12,
+    "Item_Description": "Electric Contact Pressure Guage DN150",
+    "Specification": "DN150",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 27.0,
+    "IMIS_Code": "311-111-11-001025",
+    "BOQ_No": 1.13,
+    "Item_Description": "Pressure Guage Y-150",
+    "Specification": "Y-150",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 28.0,
+    "IMIS_Code": "311-111-09-001026",
+    "BOQ_No": 1.14,
+    "Item_Description": "Sluice Valve DN150",
+    "Specification": "Z41X-16Q",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 29.0,
+    "IMIS_Code": "311-111-09-001027",
+    "BOQ_No": 1.15,
+    "Item_Description": "Check Valve DN65",
+    "Specification": "DN65",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 30.0,
+    "IMIS_Code": "311-111-01-001029",
+    "BOQ_No": "1.16.1",
+    "Item_Description": "\"T\" DN150",
+    "Specification": "DN150",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 31.0,
+    "IMIS_Code": "311-111-01-001030",
+    "BOQ_No": "1.16.2",
+    "Item_Description": "Elbow DN150",
+    "Specification": "DN150",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 32.0,
+    "IMIS_Code": "311-111-01-001031",
+    "BOQ_No": "1.16.3",
+    "Item_Description": "Groove Fitting DN150",
+    "Specification": "DN150",
+    "UOM": "Pcs",
+    "Quantity": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 33.0,
+    "IMIS_Code": "311-111-01-001032",
+    "BOQ_No": "1.16.4",
+    "Item_Description": "Elbow DN90",
+    "Specification": "DN90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 34.0,
+    "IMIS_Code": "311-111-01-001033",
+    "BOQ_No": "1.16.5",
+    "Item_Description": "Elbow DN40",
+    "Specification": "DN40",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 35.0,
+    "IMIS_Code": "311-111-01-001034",
+    "BOQ_No": "1.16.6",
+    "Item_Description": "Elbow DN25",
+    "Specification": "DN25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 36.0,
+    "IMIS_Code": "311-111-01-001035",
+    "BOQ_No": "1.16.7",
+    "Item_Description": "\"T\" DN90",
+    "Specification": "DN90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 37.0,
+    "IMIS_Code": "311-111-01-001036",
+    "BOQ_No": "1.16.8",
+    "Item_Description": "\"T\" DN 63 x 32",
+    "Specification": "DN63 x 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 38.0,
+    "IMIS_Code": "311-111-01-001037",
+    "BOQ_No": "1.16.9",
+    "Item_Description": "\"T\" DN 40",
+    "Specification": "DN40",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 39.0,
+    "IMIS_Code": "311-111-01-001038",
+    "BOQ_No": "1.16.10",
+    "Item_Description": "Adjustable Joints DN 32 x 25",
+    "Specification": "DN 32 x 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 40.0,
+    "IMIS_Code": "311-111-01-001039",
+    "BOQ_No": "1.16.11",
+    "Item_Description": "Adjustable Joints DN 25 x 15",
+    "Specification": "DN 25 x 15",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 41.0,
+    "IMIS_Code": "311-111-01-001040",
+    "BOQ_No": "1.16.12",
+    "Item_Description": "Direct Connector DN90",
+    "Specification": "DN 90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 42.0,
+    "IMIS_Code": "311-111-01-001041",
+    "BOQ_No": "1.16.13",
+    "Item_Description": "Fighting Pipe DN 150",
+    "Specification": "DN150",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 43.0,
+    "IMIS_Code": "311-111-01-001042",
+    "BOQ_No": "1.16.14",
+    "Item_Description": "Fighting Pipe DN 100",
+    "Specification": "DN 100",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 44.0,
+    "IMIS_Code": "311-111-01-001043",
+    "BOQ_No": "1.16.15",
+    "Item_Description": "Fighting Pipe DN 65",
+    "Specification": "DN 65",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 45.0,
+    "IMIS_Code": "311-111-01-001044",
+    "BOQ_No": "1.16.16",
+    "Item_Description": "Fighting Pipe DN 50",
+    "Specification": "DN 50",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 46.0,
+    "IMIS_Code": "311-111-01-001045",
+    "BOQ_No": "1.16.17",
+    "Item_Description": "Fighting Pipe DN 40",
+    "Specification": "DN 40",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 47.0,
+    "IMIS_Code": "311-111-01-001046",
+    "BOQ_No": "1.16.18",
+    "Item_Description": "Fighting Pipe DN 32",
+    "Specification": "DN 32",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 48.0,
+    "IMIS_Code": "311-111-12-001048",
+    "BOQ_No": "1.17.1",
+    "Item_Description": "Cutting Machine",
+    "Specification": "B-2",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 49.0,
+    "IMIS_Code": "311-111-00-001049",
+    "BOQ_No": "1.17.2",
+    "Item_Description": "China Pipe Wrench 4\"",
+    "Specification": "4\"",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 50.0,
+    "IMIS_Code": "311-111-13-001050",
+    "BOQ_No": "1.17.3",
+    "Item_Description": "Pipe Wrench 900 mm",
+    "Specification": "900 mm",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 51.0,
+    "IMIS_Code": "311-111-14-001051",
+    "BOQ_No": "1.17.4",
+    "Item_Description": "Socket Wrench 12.5 mm",
+    "Specification": "12.5 mm",
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 52.0,
+    "IMIS_Code": "311-111-00-001108",
+    "BOQ_No": "2.1.1",
+    "Item_Description": "Frequency Converter (1.5-KW)",
+    "Specification": "ACS 510 (ABB)",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 53.0,
+    "IMIS_Code": "311-111-00-001109",
+    "BOQ_No": "2.1.2",
+    "Item_Description": "Machinery Seal",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 54.0,
+    "IMIS_Code": "311-111-00-001110",
+    "BOQ_No": "2.1.3",
+    "Item_Description": "Machinery Seal (0.75 KW)",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 55.0,
+    "IMIS_Code": "311-111-00-001111",
+    "BOQ_No": "2.1.4",
+    "Item_Description": "Machinery Seal (1.5 KW)",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 56.0,
+    "IMIS_Code": "311-111-00-001112",
+    "BOQ_No": "2.1.5",
+    "Item_Description": "Machinery Seal (7.5 KW)",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 57.0,
+    "IMIS_Code": "311-111-00-001113",
+    "BOQ_No": "2.1.6",
+    "Item_Description": "Sewage Lifting Equipment Spare Parts",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 58.0,
+    "IMIS_Code": "311-111-00-001114",
+    "BOQ_No": "2.1.7",
+    "Item_Description": "Stop Button",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 59.0,
+    "IMIS_Code": "311-111-00-001115",
+    "BOQ_No": "2.1.8",
+    "Item_Description": "Start Button",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 60.0,
+    "IMIS_Code": "311-111-15-001053",
+    "BOQ_No": 2.3,
+    "Item_Description": "Hand Basin",
+    "Specification": "W5123",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 61.0,
+    "IMIS_Code": "311-111-15-001054",
+    "BOQ_No": 2.4,
+    "Item_Description": "Slop Sink West Bank",
+    "Specification": "W0415",
+    "UOM": "Pcs",
+    "Quantity": "-",
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 62.0,
+    "IMIS_Code": "311-111-15-001055",
+    "BOQ_No": 2.5,
+    "Item_Description": "Disabled Toilet Seat",
+    "Specification": "W1001 A05T/FYQ",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 63.0,
+    "IMIS_Code": "311-111-15-001056",
+    "BOQ_No": 2.6,
+    "Item_Description": "Squatting Stool Pan (W.C)",
+    "Specification": "W09890500QB",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 64.0,
+    "IMIS_Code": "311-0002-00-000201",
+    "BOQ_No": "2.6 A",
+    "Item_Description": "Flushing Tank",
+    "Specification": NaN,
+    "UOM": "Pcs",
+    "Quantity": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 65.0,
+    "IMIS_Code": "311-111-15-001057",
+    "BOQ_No": 2.7,
+    "Item_Description": "Tap",
+    "Specification": "Dongpeng",
+    "UOM": "Pcs",
+    "Quantity": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 66.0,
+    "IMIS_Code": "311-111-15-001058",
+    "BOQ_No": 2.8,
+    "Item_Description": "Automatic Air Valve DN 15",
+    "Specification": "DN 15",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 67.0,
+    "IMIS_Code": "311-111-09-001059",
+    "BOQ_No": 2.9,
+    "Item_Description": "Cut Off Valve DN 40",
+    "Specification": "DN 40",
+    "UOM": "Pcs",
+    "Quantity": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 68.0,
+    "IMIS_Code": "311-111-09-001060",
+    "BOQ_No": 2.1,
+    "Item_Description": "Cut Off Valve DN 32",
+    "Specification": "DN 32",
+    "UOM": "Pcs",
+    "Quantity": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 69.0,
+    "IMIS_Code": "311-111-09-001061",
+    "BOQ_No": 2.11,
+    "Item_Description": "Cut Off Valve DN 25",
+    "Specification": "DN 25",
+    "UOM": "Pcs",
+    "Quantity": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 70.0,
+    "IMIS_Code": "311-111-09-001062",
+    "BOQ_No": 2.12,
+    "Item_Description": "Slow Closure Check Valve DN 80",
+    "Specification": "XC41X-10C",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 71.0,
+    "IMIS_Code": "311-111-09-001063",
+    "BOQ_No": 2.13,
+    "Item_Description": "Hydraulic Ball Float Valve DN 25",
+    "Specification": "F745X-16C",
+    "UOM": "Pcs",
+    "Quantity": 3,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 72.0,
+    "IMIS_Code": "311-111-09-001064",
+    "BOQ_No": 2.14,
+    "Item_Description": "Floor Drain DN 50",
+    "Specification": "DN 50",
+    "UOM": "Pcs",
+    "Quantity": 16,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 73.0,
+    "IMIS_Code": "311-0001-09-001119",
+    "BOQ_No": "2.14.1",
+    "Item_Description": "Floor Drain DN 100",
+    "Specification": "DN 100",
+    "UOM": "Pcs",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 74.0,
+    "IMIS_Code": "311-111-09-001065",
+    "BOQ_No": 2.15,
+    "Item_Description": "Flexible Rubber Joint DN 80",
+    "Specification": "DN 80",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 75.0,
+    "IMIS_Code": "311-111-16-001066",
+    "BOQ_No": 2.16,
+    "Item_Description": "Metal Bellow DN 150",
+    "Specification": "DN 150",
+    "UOM": "Pcs",
+    "Quantity": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 76.0,
+    "IMIS_Code": "311-111-16-001067",
+    "BOQ_No": 2.17,
+    "Item_Description": "Expansion Joint",
+    "Specification": "DE 110",
+    "UOM": "Pcs",
+    "Quantity": 30,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 77.0,
+    "IMIS_Code": "311-111-16-001068",
+    "BOQ_No": 2.18,
+    "Item_Description": "Bath Trap De 110",
+    "Specification": "DE 110",
+    "UOM": "Pcs",
+    "Quantity": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 78.0,
+    "IMIS_Code": "311-0001-16-001070",
+    "BOQ_No": "2.19.1",
+    "Item_Description": "Drainage Pipe DN 110",
+    "Specification": "DN 110",
+    "UOM": "Pcs",
+    "Quantity": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 79.0,
+    "IMIS_Code": "311-0001-16-001071",
+    "BOQ_No": "2.19.2",
+    "Item_Description": "Elbow De 110 x 45",
+    "Specification": "DE 110 x 45",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 80.0,
+    "IMIS_Code": "311-0001-16-001072",
+    "BOQ_No": "2.19.3",
+    "Item_Description": "Elbow De 75 x 90",
+    "Specification": "DE 75 x 90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 81.0,
+    "IMIS_Code": "311-0001-16-001073",
+    "BOQ_No": "2.19.4",
+    "Item_Description": "\"T\" De 110",
+    "Specification": "DE 110",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 82.0,
+    "IMIS_Code": "311-0001-16-001074",
+    "BOQ_No": "2.19.5",
+    "Item_Description": "\"T\" De 75",
+    "Specification": "DE 75",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 83.0,
+    "IMIS_Code": "311-0001-16-001075",
+    "BOQ_No": "2.19.6",
+    "Item_Description": "\"T\" De 110 x 75",
+    "Specification": "DE 110 x 75",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 84.0,
+    "IMIS_Code": "311-0001-16-001076",
+    "BOQ_No": "2.19.7",
+    "Item_Description": "\"T\" De 110 x 50",
+    "Specification": "DE 110 x 50",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 85.0,
+    "IMIS_Code": "311-0001-16-001077",
+    "BOQ_No": "2.19.8",
+    "Item_Description": "Pipe Hoop De 110",
+    "Specification": "DE 110",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 86.0,
+    "IMIS_Code": "311-0001-16-001078",
+    "BOQ_No": "2.19.9",
+    "Item_Description": "Water Supply Pipe De 75",
+    "Specification": "DE 75",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 87.0,
+    "IMIS_Code": "311-0001-16-001079",
+    "BOQ_No": "2.19.10",
+    "Item_Description": "Water Supply Pipe De 63",
+    "Specification": "DE 63",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 88.0,
+    "IMIS_Code": "311-0001-16-001080",
+    "BOQ_No": "2.19.11",
+    "Item_Description": "Water Supply Pipe De 50",
+    "Specification": "DE 50",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 89.0,
+    "IMIS_Code": "311-0001-16-001081",
+    "BOQ_No": "2.19.12",
+    "Item_Description": "Water Supply Pipe De 40",
+    "Specification": "DE 40",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 90.0,
+    "IMIS_Code": "311-0001-16-001082",
+    "BOQ_No": "2.19.13",
+    "Item_Description": "Water Supply Pipe De 32",
+    "Specification": "DE 32",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 91.0,
+    "IMIS_Code": "311-0001-16-001083",
+    "BOQ_No": "2.19.14",
+    "Item_Description": "Water Supply Pipe De 25",
+    "Specification": "DE 25",
+    "UOM": "Pcs",
+    "Quantity": 4,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 92.0,
+    "IMIS_Code": "311-0001-16-001084",
+    "BOQ_No": "2.19.15",
+    "Item_Description": "Male Thread Directly De 75 x 50",
+    "Specification": "DE 75 x 50",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 93.0,
+    "IMIS_Code": "311-0001-16-001085",
+    "BOQ_No": "2.19.16",
+    "Item_Description": "Internal Thread Directly De 40 x 32",
+    "Specification": "DE 40 x 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 94.0,
+    "IMIS_Code": "311-0001-16-001086",
+    "BOQ_No": "2.19.17",
+    "Item_Description": "Male Thread Directly De 40 x 32",
+    "Specification": "DE 40 x 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 95.0,
+    "IMIS_Code": "311-0001-16-001087",
+    "BOQ_No": "2.19.18",
+    "Item_Description": "Male Thread Directly De 25",
+    "Specification": "DE 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 96.0,
+    "IMIS_Code": "311-0001-16-001088",
+    "BOQ_No": "2.19.19",
+    "Item_Description": "Elbow De 90 x 90",
+    "Specification": "DE 90 x 90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 97.0,
+    "IMIS_Code": "311-0001-16-001089",
+    "BOQ_No": "2.19.20",
+    "Item_Description": "Elbow De 75 x 90",
+    "Specification": "DE 75 x 90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 98.0,
+    "IMIS_Code": "311-0001-16-001090",
+    "BOQ_No": "2.19.21",
+    "Item_Description": "Elbow De 63 x 90",
+    "Specification": "DE 63 x 90",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 99.0,
+    "IMIS_Code": "311-0001-16-001091",
+    "BOQ_No": "2.19.22",
+    "Item_Description": "Elbow De 40 x 25",
+    "Specification": "DE 40 x 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 100.0,
+    "IMIS_Code": "311-0001-16-001092",
+    "BOQ_No": "2.19.23",
+    "Item_Description": "Tee De 75",
+    "Specification": "DE 75",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 101.0,
+    "IMIS_Code": "311-0001-16-001093",
+    "BOQ_No": "2.19.24",
+    "Item_Description": "Tee De 63",
+    "Specification": "DE 63",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 102.0,
+    "IMIS_Code": "311-0001-16-001094",
+    "BOQ_No": "2.19.25",
+    "Item_Description": "Tee De 32",
+    "Specification": "DE 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 103.0,
+    "IMIS_Code": "311-0001-16-001095",
+    "BOQ_No": "2.19.26",
+    "Item_Description": "Tee De 25",
+    "Specification": "DE 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 104.0,
+    "IMIS_Code": "311-0001-16-001096",
+    "BOQ_No": "2.19.27",
+    "Item_Description": "Tee De 50 x 25",
+    "Specification": "DE 50 x 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 105.0,
+    "IMIS_Code": "311-0001-16-001097",
+    "BOQ_No": "2.19.28",
+    "Item_Description": "Tee De 63 x 32",
+    "Specification": "DE 63 x 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 106.0,
+    "IMIS_Code": "311-0001-16-001098",
+    "BOQ_No": "2.19.29",
+    "Item_Description": "Tee De 75 x 32",
+    "Specification": "DE 75 x 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 107.0,
+    "IMIS_Code": "311-0001-16-001099",
+    "BOQ_No": "2.19.30",
+    "Item_Description": "Tee De 32 x 1/2\"",
+    "Specification": "DE 32",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 108.0,
+    "IMIS_Code": "311-0001-16-001100",
+    "BOQ_No": "2.19.31",
+    "Item_Description": "Adjustable Joints De 75 x 63",
+    "Specification": "DE 75 x 63",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 109.0,
+    "IMIS_Code": "311-0001-16-001101",
+    "BOQ_No": "2.19.32",
+    "Item_Description": "Pipe Hoop De 63",
+    "Specification": "DE 63",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 110.0,
+    "IMIS_Code": "311-0001-16-001102",
+    "BOQ_No": "2.19.33",
+    "Item_Description": "Pipe Hoop De 50",
+    "Specification": "DE 50",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 111.0,
+    "IMIS_Code": "311-0001-16-001103",
+    "BOQ_No": "2.19.34",
+    "Item_Description": "Pipe Hoop De 40",
+    "Specification": "DE 40",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 112.0,
+    "IMIS_Code": "311-0001-16-001104",
+    "BOQ_No": "2.19.35",
+    "Item_Description": "Pipe Hoop De 25",
+    "Specification": "DE 25",
+    "UOM": "Pcs",
+    "Quantity": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 113.0,
+    "IMIS_Code": "311-0001-00-001106",
+    "BOQ_No": "2.20.1",
+    "Item_Description": "Hot Melt Welding Machine (PPR)",
+    "Specification": "75 - 110 mm",
+    "UOM": "Set",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Sr_No": 114.0,
+    "IMIS_Code": "311-0001-00-001107",
+    "BOQ_No": "2.20.2",
+    "Item_Description": "Hot Melt Welding Machine (PE)",
+    "Specification": "50 - 150 mm",
+    "UOM": "Set",
+    "Quantity": 1,
+    "Location": "C&C Warehouse, Depot"
+  }
+]

@@ -1,222 +1,934 @@
 {
-  "FES": [
+  "HVAC": [
+    {
+      "BOQ #": "1",
+      "HVAC (Spares Inventory)": "Motorized Damper Set"
+    },
     {
       "Sr. #": "1",
-      "IMIS Code": "314-001-01-001001",
-      "BOQ #": "1",
-      "FES (Spares Inventory)": "70-LTR Extenguisher Cylinder (Empty) HFC-227",
-      "Part #": "QMP 70/4.2",
+      "IMIS Code": "310-0001-01-001001",
+      "BOQ #": "1.1",
+      "HVAC (Spares Inventory)": "Electric Actuator",
+      "Part #": "SY4-230-3T",
       "UOM": "No,s",
-      "Current Balance": "42",
+      "Current Balance": "1",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "2",
-      "IMIS Code": "314-001-01-001002",
+      "IMIS Code": "310-0001-01-001002",
+      "BOQ #": "1.2",
+      "HVAC (Spares Inventory)": "Silicon Rubber Sealing (3-Pcs)",
+      "UOM": "Kgs",
+      "Current Balance": "12",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
       "BOQ #": "2",
-      "FES (Spares Inventory)": "High Pressure Flexible Metal Tubing (HFC)",
-      "Part #": "JR 32 L 2-600",
-      "UOM": "No,s",
-      "Current Balance": "20",
+      "HVAC (Spares Inventory)": "Fan",
+      "Current Balance": "-",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "3",
-      "IMIS Code": "314-001-01-001003",
-      "BOQ #": "3",
-      "FES (Spares Inventory)": "Pressure Switch",
-      "Part #": "XF 0.8/17.2",
+      "IMIS Code": "310-0001-02-001003",
+      "BOQ #": "2.1",
+      "HVAC (Spares Inventory)": "Reverseable Axial Fan Impeller",
+      "Part #": "DTF-20",
       "UOM": "No,s",
-      "Current Balance": "10",
+      "Current Balance": "1",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "4",
-      "IMIS Code": "314-001-01-001005",
-      "BOQ #": "4",
-      "FES (Spares Inventory)": "Safety Valve (HFC)",
-      "Part #": "QAX 7.5",
+      "IMIS Code": "310-0001-02-001004",
+      "BOQ #": "2.2",
+      "HVAC (Spares Inventory)": "Reverseable Axial Fan Motor",
+      "Part #": "DTF-20",
       "UOM": "No,s",
-      "Current Balance": "5",
+      "Current Balance": "1",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "5",
-      "IMIS Code": "314-001-01-001004",
-      "BOQ #": "5",
-      "FES (Spares Inventory)": "Actuating Device (Small N2 Cylinders)",
-      "Part #": "HQP4/6",
+      "IMIS Code": "310-0001-02-001005",
+      "BOQ #": "2.3",
+      "HVAC (Spares Inventory)": "Axial Fan Impeller",
+      "Part #": "DTF-6.3-7.1",
       "UOM": "No,s",
-      "Current Balance": "8",
+      "Current Balance": "4",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "6",
-      "IMIS Code": "314-001-01-001006",
-      "BOQ #": "6",
-      "FES (Spares Inventory)": "Selector Valve DN 100",
-      "Part #": "HXZ 100/17.2-Y",
+      "IMIS Code": "310-0001-02-001006",
+      "BOQ #": "2.4",
+      "HVAC (Spares Inventory)": "Axial Fan Motor",
+      "Part #": "DTF-6.3-7.2",
       "UOM": "No,s",
-      "Current Balance": "1",
+      "Current Balance": "4",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "7",
-      "IMIS Code": "314-001-01-001007",
-      "BOQ #": "7",
-      "FES (Spares Inventory)": "Selector Valve DN 80",
-      "Part #": "HXZ 80/17.2",
-      "UOM": "No,s",
-      "Current Balance": "1",
+      "IMIS Code": "310-0001-02-001007",
+      "BOQ #": "2.5",
+      "HVAC (Spares Inventory)": "Special Grease",
+      "Part #": "7019-1",
+      "UOM": "Kgs",
+      "Current Balance": "20",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "3",
+      "HVAC (Spares Inventory)": "Fire Proof Valve",
+      "Current Balance": "-",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "8",
-      "IMIS Code": "314-001-01-001008",
-      "BOQ #": "8",
-      "FES (Spares Inventory)": "Selector Valve DN 65",
-      "Part #": "HXZ 65/17.2",
-      "UOM": "No,s",
-      "Current Balance": "2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "9",
-      "IMIS Code": "314-001-01-001009",
-      "BOQ #": "9",
-      "FES (Spares Inventory)": "Selector Valve DN 50",
-      "Part #": "HXZ 50/17.2",
-      "UOM": "No,s",
-      "Current Balance": "2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "10",
-      "IMIS Code": "314-001-01-001010",
-      "BOQ #": "10",
-      "FES (Spares Inventory)": "Selector Valve DN 40",
-      "Part #": "HXZ 40/17.2",
-      "UOM": "No,s",
-      "Current Balance": "1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "11",
-      "IMIS Code": "314-001-01-001011",
-      "BOQ #": "11",
-      "FES (Spares Inventory)": "Selector Valve DN 32",
-      "Part #": "HXZ 32/17.2",
-      "UOM": "No,s",
-      "Current Balance": "1",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "12",
-      "IMIS Code": "314-001-01-001012",
-      "BOQ #": "12",
-      "FES (Spares Inventory)": "Extinguishing Agent (HFC-227 ea) (GAS)",
-      "Part #": "Gas is filled in Line item # 1",
-      "UOM": "Kgs",
-      "Current Balance": "2,355",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "13",
-      "IMIS Code": "314-001-01-001013",
-      "BOQ #": "13",
-      "FES (Spares Inventory)": "Gas Flow Check Valve",
-      "Part #": "QD 6/6.6",
-      "UOM": "No,s",
-      "Current Balance": "5",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "14",
-      "IMIS Code": "314-001-01-001014",
-      "BOQ #": "14",
-      "FES (Spares Inventory)": "Nozzle HFC - 227",
-      "Part #": "QPT XX/XX",
-      "UOM": "No,s",
-      "Current Balance": "5",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "15",
-      "IMIS Code": "314-001-01-001015",
-      "BOQ #": "15",
-      "FES (Spares Inventory)": "Leakage Alarm Unit- HFC",
-      "Part #": "BXLQXX",
-      "UOM": "No,s",
-      "Current Balance": "2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "16",
-      "IMIS Code": "314-001-01-001016",
-      "BOQ #": "16",
-      "FES (Spares Inventory)": "Low Venting High Close Valve",
-      "Part #": "HDG 0.5/8",
-      "UOM": "No,s",
-      "Current Balance": "5",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      "Sr. #": "17",
-      "IMIS Code": "314-001-01-001017",
-      "BOQ #": "17",
-      "FES (Spares Inventory)": "CO2 Storage Cylinders (70-LTR)",
-      "Part #": "EMP 70",
+      "IMIS Code": "310-0001-01-001008",
+      "BOQ #": "3.1",
+      "HVAC (Spares Inventory)": "Manual Smoke Dampers",
+      "Part #": "DL-1",
       "UOM": "No,s",
       "Current Balance": "50",
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "18",
-      "IMIS Code": "314-001-01-001018",
-      "BOQ #": "18",
-      "FES (Spares Inventory)": "High Pressure Flexible Metal Tubing (CO2)",
-      "Part #": "JR 12 L 1-650",
+      "Sr. #": "9",
+      "IMIS Code": "310-0001-01-001009 310-0001-01-001010",
+      "BOQ #": "3.2",
+      "HVAC (Spares Inventory)": "Electric Actuator of the Damper",
+      "Part #": "WSD-FK / KF-WSDJ-FKM",
       "UOM": "No,s",
-      "Current Balance": "20",
+      "Current Balance": "50",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "10",
+      "IMIS Code": "310-0001-01-001011",
+      "BOQ #": "3.3",
+      "HVAC (Spares Inventory)": "Silicon Rubber Sealing Member (Small)",
+      "UOM": "No,s",
+      "Current Balance": "84",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "11",
+      "IMIS Code": "310-0001-01-001012",
+      "BOQ #": "3.4",
+      "HVAC (Spares Inventory)": "Coliquable Plate (70c)",
+      "UOM": "No,s",
+      "Current Balance": "100",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "12",
+      "IMIS Code": "310-0001-01-001013",
+      "BOQ #": "3.5",
+      "HVAC (Spares Inventory)": "Coliquable Plate (280c)",
+      "UOM": "No,s",
+      "Current Balance": "100",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "4",
+      "HVAC (Spares Inventory)": "Air Conditioner",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "4.1",
+      "HVAC (Spares Inventory)": "Blower Belts",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "13",
+      "IMIS Code": "310-0001-04-001014",
+      "BOQ #": "1",
+      "Part #": "SPA-1060",
+      "UOM": "No,s",
+      "Current Balance": "28",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "14",
+      "BOQ #": "2",
+      "Part #": "SPA-1900",
+      "UOM": "No,s",
+      "Current Balance": "32",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "4.2",
+      "HVAC (Spares Inventory)": "Filters",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "15",
+      "IMIS Code": "310-0001-04-001016",
+      "BOQ #": "1",
+      "Part #": "DN-25",
+      "UOM": "No,s",
+      "Current Balance": "256",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "16",
+      "IMIS Code": "310-0001-04-001015",
+      "BOQ #": "2",
+      "Part #": "DN-32",
+      "UOM": "No,s",
+      "Current Balance": "256",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "17",
+      "IMIS Code": "310-0001-04-001017",
+      "BOQ #": "4.3",
+      "HVAC (Spares Inventory)": "Differential Pressure Switch",
+      "Part #": "LF-32-05",
+      "UOM": "No,s",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "18",
+      "IMIS Code": "310-0001-03-001018",
+      "BOQ #": "4.4",
+      "HVAC (Spares Inventory)": "Air Exhausting Valve (2-Types)",
+      "Part #": "1.6 MPA",
+      "UOM": "No,s",
+      "Current Balance": "8",
       "Location": "C&C Warehouse, Depot"
     },
     {
       "Sr. #": "19",
-      "IMIS Code": "314-001-01-001019",
-      "BOQ #": "19",
-      "FES (Spares Inventory)": "Safety Valve (CO2)",
-      "Part #": "EAX 15",
+      "IMIS Code": "310-0001-04-001019",
+      "BOQ #": "4.5",
+      "HVAC (Spares Inventory)": "Drainage Valve",
+      "Part #": "DN-20",
+      "UOM": "No,s",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "20",
+      "IMIS Code": "310-0001-04-001020",
+      "BOQ #": "4.6",
+      "HVAC (Spares Inventory)": "Targeting Flow Controller",
+      "Part #": "LKB-01",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "21",
+      "IMIS Code": "310-0001-04-001021",
+      "BOQ #": "4.7",
+      "HVAC (Spares Inventory)": "Temprature Sensor",
+      "UOM": "No,s",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "22",
+      "IMIS Code": "310-0001-04-001022",
+      "BOQ #": "4.8",
+      "HVAC (Spares Inventory)": "Air Inlet Filter",
+      "Part #": "YW1ZEA003",
+      "UOM": "No,s",
+      "Current Balance": "16",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "23",
+      "IMIS Code": "310-0001-04-001023",
+      "BOQ #": "4.9",
+      "HVAC (Spares Inventory)": "Dry Filter",
+      "Part #": "XH-9",
+      "UOM": "No,s",
+      "Current Balance": "8",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "24",
+      "IMIS Code": "310-0001-04-001024",
+      "BOQ #": "4.10.",
+      "Part #": "11728006",
+      "UOM": "No,s",
+      "Current Balance": "16",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "25",
+      "IMIS Code": "310-0001-04-001025",
+      "BOQ #": "4.11",
+      "HVAC (Spares Inventory)": "Ac Contactor",
+      "Part #": "CJX9B-255/00",
+      "UOM": "No,s",
+      "Current Balance": "4",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "26",
+      "IMIS Code": "310-0001-04-001026",
+      "BOQ #": "4.12",
+      "HVAC (Spares Inventory)": "Refrigerant / Gas",
+      "Part #": "R-22",
+      "UOM": "Kgs",
+      "Current Balance": "172",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "27",
+      "IMIS Code": "310-0001-04-001027",
+      "BOQ #": "4.13",
+      "HVAC (Spares Inventory)": "Lubrication Oil",
+      "UOM": "Kan",
+      "Current Balance": "24",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "28",
+      "IMIS Code": "310-0001-04-001028 310-0001-04-001029",
+      "BOQ #": "4.14",
+      "HVAC (Spares Inventory)": "High -Low Pressure Switch",
+      "Part #": "YK-4.2/3.6",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "29",
+      "IMIS Code": "310-0001-04-001030",
+      "BOQ #": "4.15",
+      "HVAC (Spares Inventory)": "Multi Unit Compressor",
+      "Part #": "GMV-615WN/B-X",
+      "UOM": "No,s",
+      "Current Balance": "17",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "4.16",
+      "HVAC (Spares Inventory)": "Multi Unit Fan Motor (3-Types)",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "30",
+      "IMIS Code": "310-0001-04-001031",
+      "BOQ #": "1",
+      "Part #": "ZWS60-S",
       "UOM": "No,s",
       "Current Balance": "5",
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "20",
-      "IMIS Code": "314-001-01-001020",
-      "BOQ #": "20",
-      "FES (Spares Inventory)": "Weighing Device Co2",
+      "Sr. #": "31",
+      "IMIS Code": "310-0001-04-001032",
+      "BOQ #": "2",
+      "Part #": "FG150A-ZL",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "32",
+      "IMIS Code": "310-0001-00-001097",
+      "BOQ #": "3",
+      "Part #": "FG200A-ZL",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "33",
+      "IMIS Code": "310-0001-04-001033",
+      "BOQ #": "4",
+      "Part #": "ZWS350-B",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "34",
+      "IMIS Code": "310-0001-04-001034",
+      "BOQ #": "5",
+      "Part #": "ZWS750-C",
+      "UOM": "No,s",
+      "Current Balance": "13",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "35",
+      "IMIS Code": "310-0001-04-001035",
+      "BOQ #": "6",
+      "Part #": "FN60-C",
+      "UOM": "No,s",
+      "Current Balance": "13",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "36",
+      "IMIS Code": "310-0001-04-001036",
+      "BOQ #": "7",
+      "Part #": "FN35 B-ZL",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "37",
+      "IMIS Code": "310-0001-04-001037",
+      "BOQ #": "8",
+      "Part #": "ZWS250-A1",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "4.17",
+      "HVAC (Spares Inventory)": "Controle Panel of Multi Unit",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "38",
+      "IMIS Code": "310-0001-04-001038 310-0001-04-001039 310-0001-04-001040 310-0001-04-001041 310-0001-04-001042",
+      "BOQ #": "1",
+      "Part #": "Z6L35K",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "39",
+      "BOQ #": "2",
+      "Part #": "Z6L25L",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "40",
+      "IMIS Code": "310-0001-04-001043 310-0001-04-001044 310-0001-04-001045 310-0001-04-001046",
+      "BOQ #": "4.18",
+      "HVAC (Spares Inventory)": "Invertor Panel of Multi Unit",
+      "Part #": "WZCD3A",
+      "UOM": "No,s",
+      "Current Balance": "8",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "41",
+      "IMIS Code": "310-0001-04-001047",
+      "BOQ #": "4.19",
+      "HVAC (Spares Inventory)": "High / Low Pressure Sensor",
+      "Part #": "GMV615MN/B-X",
+      "UOM": "No,s",
+      "Current Balance": "15",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "42",
+      "IMIS Code": "310-0001-04-001048",
+      "BOQ #": "4.20,",
+      "HVAC (Spares Inventory)": "Four Opening Valve",
+      "Part #": "GMV615MN/B-X",
+      "UOM": "No,s",
+      "Current Balance": "15",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "5",
+      "HVAC (Spares Inventory)": "Pumps",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "43",
+      "IMIS Code": "310-0001-00-001049",
+      "BOQ #": "5.1",
+      "HVAC (Spares Inventory)": "Bearing Body for Pumps",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "5.2",
+      "HVAC (Spares Inventory)": "Bearing",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "44",
+      "IMIS Code": "310-0001-00-001050",
+      "BOQ #": "1",
+      "Part #": "ENSS 5 1802",
+      "UOM": "No,s",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "45",
+      "IMIS Code": "310-0001-00-001051",
+      "BOQ #": "2",
+      "Part #": "ENSS 703",
       "UOM": "No,s",
       "Current Balance": "10",
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "21",
-      "IMIS Code": "314-001-01-001021",
-      "BOQ #": "21",
-      "FES (Spares Inventory)": "Co2 Nozzle",
-      "Part #": "EPT xx/xx",
+      "Sr. #": "46",
+      "IMIS Code": "310-0001-00-001052",
+      "BOQ #": "3",
+      "Part #": "ENSS 801",
       "UOM": "No,s",
-      "Current Balance": "5",
+      "Current Balance": "8",
       "Location": "C&C Warehouse, Depot"
     },
     {
-      "Sr. #": "22",
-      "IMIS Code": "314-001-01-001022",
-      "BOQ #": "22",
-      "FES (Spares Inventory)": "Leakage Alarm Unit- Co2",
-      "Part #": "BXLQXX",
+      "BOQ #": "5.3",
+      "HVAC (Spares Inventory)": "Mechanical Seal",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "47",
+      "IMIS Code": "310-0001-00-001053",
+      "BOQ #": "1",
+      "HVAC (Spares Inventory)": "Seal",
+      "Part #": "KQFGL-18",
       "UOM": "No,s",
       "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "48",
+      "IMIS Code": "310-0001-00-001054",
+      "BOQ #": "2",
+      "HVAC (Spares Inventory)": "Seal",
+      "Part #": "KQFGL-14",
+      "UOM": "No,s",
+      "Current Balance": "16",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "49",
+      "IMIS Code": "310-0001-00-001055",
+      "BOQ #": "3",
+      "HVAC (Spares Inventory)": "Seal",
+      "Part #": "KQMG 1/35",
+      "UOM": "No,s",
+      "Current Balance": "8",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "6",
+      "HVAC (Spares Inventory)": "Cooling Tower",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "50",
+      "IMIS Code": "310-0001-03-001056",
+      "BOQ #": "6.1",
+      "HVAC (Spares Inventory)": "Motor and Bearing",
+      "Part #": "125 m3",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "51",
+      "IMIS Code": "310-0001-03-001057",
+      "BOQ #": "6.2",
+      "HVAC (Spares Inventory)": "Motor and Bearing",
+      "Part #": "300 m3",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "52",
+      "IMIS Code": "310-0001-03-001058",
+      "BOQ #": "6.3",
+      "HVAC (Spares Inventory)": "Decelator and Bearing",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "53",
+      "IMIS Code": "310-0001-03-001059",
+      "BOQ #": "6.4",
+      "HVAC (Spares Inventory)": "Fan",
+      "Part #": "300 m3",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "54",
+      "IMIS Code": "310-0001-03-001060",
+      "BOQ #": "6.5",
+      "HVAC (Spares Inventory)": "Fan",
+      "Part #": "125 m3",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "55",
+      "IMIS Code": "310-0001-03-001061",
+      "BOQ #": "6.6",
+      "HVAC (Spares Inventory)": "Filling (Green Sheet)",
+      "UOM": "MTR",
+      "Current Balance": "6",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "56",
+      "IMIS Code": "310-0001-03-001062",
+      "BOQ #": "6.7",
+      "HVAC (Spares Inventory)": "Ball Float",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "57",
+      "IMIS Code": "310-0001-03-001063",
+      "BOQ #": "6.8",
+      "HVAC (Spares Inventory)": "Nozzle",
+      "UOM": "No,s",
+      "Current Balance": "24",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "58",
+      "IMIS Code": "310-0001-03-001064",
+      "BOQ #": "6.9",
+      "HVAC (Spares Inventory)": "Belt (V-Belt)",
+      "UOM": "No,s",
+      "Current Balance": "8",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "59",
+      "IMIS Code": "310-0001-03-001065",
+      "BOQ #": "6.10,",
+      "HVAC (Spares Inventory)": "Binding Plate for Material Filling",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "7",
+      "HVAC (Spares Inventory)": "Special Tools (Air Conditioning)",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "60",
+      "IMIS Code": "310-0001-00-001066",
+      "BOQ #": "7.1",
+      "HVAC (Spares Inventory)": "Flourin Adding Machine",
+      "Part #": "HS-760",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "61",
+      "IMIS Code": "310-0001-00-001067",
+      "BOQ #": "7.2",
+      "HVAC (Spares Inventory)": "Flourin Collecting Bottle",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "62",
+      "IMIS Code": "310-0001-00-001068",
+      "BOQ #": "7.3",
+      "HVAC (Spares Inventory)": "Liquid ading Meter",
+      "Part #": "CH-2685",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "63",
+      "IMIS Code": "310-0001-00-001069",
+      "BOQ #": "7.4",
+      "HVAC (Spares Inventory)": "Machine Repair Kit",
+      "Part #": "12.5 mm",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "64",
+      "IMIS Code": "310-0001-00-001070",
+      "BOQ #": "7.5",
+      "HVAC (Spares Inventory)": "Pipe Wrench",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "65",
+      "IMIS Code": "310-0001-00-001071",
+      "BOQ #": "7.6",
+      "HVAC (Spares Inventory)": "Electronic Wind Speed Tester",
+      "Part #": "UT361",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "66",
+      "IMIS Code": "310-0001-00-001072",
+      "BOQ #": "7.7",
+      "HVAC (Spares Inventory)": "Electronic Noise Tester",
+      "Part #": "UT351",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "67",
+      "IMIS Code": "310-0001-00-001073",
+      "BOQ #": "7.8",
+      "HVAC (Spares Inventory)": "Electronic Micropressure Tester",
+      "Part #": "AR907",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "68",
+      "IMIS Code": "310-0001-00-001074",
+      "BOQ #": "7.9",
+      "HVAC (Spares Inventory)": "Digit Clip Style Ammeter (Clamp Meter)",
+      "Part #": "UT201",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "69",
+      "IMIS Code": "310-0001-00-001075",
+      "BOQ #": "7.10,",
+      "HVAC (Spares Inventory)": "Standard Pressure Guage",
+      "Part #": "Y100-16",
+      "UOM": "No,s",
+      "Current Balance": "4",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "70",
+      "IMIS Code": "310-0001-00-001076",
+      "BOQ #": "7.11",
+      "HVAC (Spares Inventory)": "Standard Pressure Guage",
+      "Part #": "Y100-16",
+      "UOM": "No,s",
+      "Current Balance": "4",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "71",
+      "IMIS Code": "310-0001-00-001077",
+      "BOQ #": "7.12",
+      "HVAC (Spares Inventory)": "Mercury Thermometer",
+      "Part #": ".10-50",
+      "UOM": "No,s",
+      "Current Balance": "12",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "72",
+      "IMIS Code": "310-0001-00-001078",
+      "BOQ #": "7.13",
+      "HVAC (Spares Inventory)": "Single Phase AC Welding Machine",
+      "Part #": "ZXT-2501",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "73",
+      "IMIS Code": "310-0001-00-001079",
+      "BOQ #": "7.14",
+      "HVAC (Spares Inventory)": "Bench Vice",
+      "Part #": "250 mm",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "BOQ #": "7.15",
+      "HVAC (Spares Inventory)": "Bench Vice",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "74",
+      "IMIS Code": "310-0001-00-001082",
+      "BOQ #": "1",
+      "HVAC (Spares Inventory)": "Bench Vice",
+      "Part #": "125 mm",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "75",
+      "IMIS Code": "310-0001-00-001081",
+      "BOQ #": "2",
+      "HVAC (Spares Inventory)": "Bench Vice",
+      "Part #": "150 mm",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "76",
+      "IMIS Code": "310-0001-00-001080",
+      "BOQ #": "3",
+      "HVAC (Spares Inventory)": "Bench Vice",
+      "Part #": "200 mm",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "77",
+      "IMIS Code": "310-0001-00-001083",
+      "BOQ #": "7.16",
+      "HVAC (Spares Inventory)": "Bench Drilling Machine",
+      "Part #": "ZQ4119",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "78",
+      "IMIS Code": "310-0001-00-001084",
+      "BOQ #": "7.17",
+      "HVAC (Spares Inventory)": "Hand Held Electric Drill",
+      "Part #": "JIZ-FF02-6A",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "79",
+      "IMIS Code": "310-0001-00-001085",
+      "BOQ #": "7.18",
+      "HVAC (Spares Inventory)": "Hand Held Electric Drill",
+      "Part #": "GBH2-26E",
+      "UOM": "No,s",
+      "Current Balance": "3",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "80",
+      "IMIS Code": "310-0001-00-001086",
+      "BOQ #": "7.19",
+      "HVAC (Spares Inventory)": "Electric Impact Drill",
+      "Part #": "TSB-5500",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "81",
+      "IMIS Code": "310-0001-00-001087",
+      "BOQ #": "7.20,",
+      "HVAC (Spares Inventory)": "Electric Impact Drill",
+      "Part #": "GSB20-2",
+      "UOM": "No,s",
+      "Current Balance": "2",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "82",
+      "IMIS Code": "310-0001-00-001088",
+      "BOQ #": "7.21",
+      "HVAC (Spares Inventory)": "Electric Grinder",
+      "Part #": "MQ3225",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "83",
+      "IMIS Code": "310-0001-00-001089",
+      "BOQ #": "7.22",
+      "HVAC (Spares Inventory)": "Electric Section Material Cutting Machine",
+      "Part #": "J1G-FM-355",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "84",
+      "IMIS Code": "310-0001-00-001090",
+      "BOQ #": "7.23",
+      "HVAC (Spares Inventory)": "Humiture Meter",
+      "Part #": "AR847",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "85",
+      "IMIS Code": "310-0001-00-001091",
+      "BOQ #": "7.24",
+      "HVAC (Spares Inventory)": "Special Tool for Demounting Tunnel Fans and Motors",
+      "Part #": "OX205D",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "86",
+      "IMIS Code": "310-0001-00-001092",
+      "BOQ #": "7.25",
+      "HVAC (Spares Inventory)": "Pipe Line Leak Tester",
+      "Part #": "XP-1A",
+      "UOM": "No,s",
+      "Current Balance": "1",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "87",
+      "IMIS Code": "310-0001-00-001093",
+      "BOQ #": "7.26",
+      "HVAC (Spares Inventory)": "Electric Air Valve Electric Controle Valve Portable Box",
+      "Part #": "JSDFD-2000",
+      "UOM": "No,s",
+      "Current Balance": "35",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "88",
+      "IMIS Code": "310-0001-00-001094",
+      "BOQ #": "7.27",
+      "HVAC (Spares Inventory)": "Electric Fireproof Valve Portable Box",
+      "Part #": "JSDFD-1000",
+      "UOM": "No,s",
+      "Current Balance": "30",
       "Location": "C&C Warehouse, Depot"
     }
   ]

@@ -1,0 +1,760 @@
+{
+  "LV": [
+    {
+      "Sr. #": "Sr. #",
+      "IMIS Code": "IMIS Code",
+      "BOQ #": "BOQ #",
+      "Item Detail": "Item Detail",
+      "UOM": "UOM",
+      "Current Balance": "Current Balance",
+      "Location": "Location"
+    },
+    {
+      "Sr. #": 1,
+      "IMIS Code": "303-0001-01-001001",
+      "BOQ #": "2.1.1",
+      "Item Detail": "Breaker",
+      "UOM": "No,s",
+      "Current Balance": 100,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 2,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Indicator Light white",
+      "UOM": "No,s",
+      "Current Balance": 82,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 3,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Push Button Red",
+      "UOM": "No,s",
+      "Current Balance": 52,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 4,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Inndicator Light Red",
+      "UOM": "No,s",
+      "Current Balance": 80,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 5,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Indicator Light Green",
+      "UOM": "No,s",
+      "Current Balance": 80,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 6,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Push Button Green",
+      "UOM": "No,s",
+      "Current Balance": 54,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 7,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Indicator Light Yellow",
+      "UOM": "No,s",
+      "Current Balance": 80,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 8,
+      "IMIS Code": "303-0001-01-001002",
+      "BOQ #": "2.1.2",
+      "Item Detail": "Slectors Switch (Knob)",
+      "UOM": "No,s",
+      "Current Balance": 80,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 9,
+      "IMIS Code": "303-0001-01-001003",
+      "BOQ #": "2.2.1",
+      "Item Detail": "Battery 38V",
+      "UOM": "No,s",
+      "Current Balance": 9,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 10,
+      "IMIS Code": "303-0001-01-001003",
+      "BOQ #": "2.2.1",
+      "Item Detail": "Battery 65V",
+      "UOM": "No,s",
+      "Current Balance": 15,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 11,
+      "IMIS Code": "303-0001-01-001003",
+      "BOQ #": "2.2.1",
+      "Item Detail": "Battery 100 V",
+      "UOM": "No,s",
+      "Current Balance": 19,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 12,
+      "IMIS Code": "303-0001-01-001003",
+      "BOQ #": "2.2.1",
+      "Item Detail": "Battery 120V",
+      "UOM": "No,s",
+      "Current Balance": 7,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 13,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Moisture Proof Lamp (Safety Light)",
+      "UOM": "No,s",
+      "Current Balance": 500,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 14,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "LED Lamp 8-Watt for Moisture Proof Lamp",
+      "UOM": "No,s",
+      "Current Balance": 500,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 15,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Anti Fog Down Light 8\" Screw Type",
+      "UOM": "No,s",
+      "Current Balance": 50,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 16,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Office Lights 36-Watt (Tube Light)",
+      "UOM": "No,s",
+      "Current Balance": 120,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 17,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Tube Rods 36-Watt for (Tube Light)",
+      "UOM": "No,s",
+      "Current Balance": 293,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 18,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Panel Light LED 40-Watt",
+      "UOM": "No,s",
+      "Current Balance": 1,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 19,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "LED Down Light (Honyar) HYTD-80 Watt",
+      "UOM": "No,s",
+      "Current Balance": 20,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 20,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "8\" Verticle Screw Type Down Light (HYTD 180 B)",
+      "UOM": "No,s",
+      "Current Balance": 50,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 21,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "LED Bath & Kitchen Light 18-Watt Type-1",
+      "UOM": "No,s",
+      "Current Balance": 10,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 22,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "LED Bath & Kitchen Light 18-Watt Type-2",
+      "UOM": "No,s",
+      "Current Balance": 20,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 23,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "LED 200-Watt (FBD-200)",
+      "UOM": "No,s",
+      "Current Balance": 20,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 24,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Mirror Front Lamp 7-W (Honyar) HYZJQD 107 DZ",
+      "UOM": "No,s",
+      "Current Balance": 10,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 25,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "T-8 Bracket Flouricent Lamp 40-Watt",
+      "UOM": "No,s",
+      "Current Balance": 42,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 26,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "International Lighting F/FE 18-Watt",
+      "UOM": "No,s",
+      "Current Balance": 150,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 27,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "18-Watt ( Spare Rods)",
+      "UOM": "No,s",
+      "Current Balance": 150,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 28,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Exit indicator (2-Way)",
+      "UOM": "No,s",
+      "Current Balance": 96,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 29,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Right Indicator",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 30,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Left Side Indicator",
+      "UOM": "No,s",
+      "Current Balance": "-",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 31,
+      "IMIS Code": "303-0001-02-001004",
+      "BOQ #": "2.3.1",
+      "Item Detail": "Alum. 6\" Ceiling LED Decoration Light (Honyar) 12-W",
+      "UOM": "No,s",
+      "Current Balance": 20,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 32,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "Switch 1 button",
+      "UOM": "No,s",
+      "Current Balance": 395,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 33,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "2 Bit Button",
+      "UOM": "No,s",
+      "Current Balance": 380,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 34,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "4 Bit Button",
+      "UOM": "No,s",
+      "Current Balance": 40,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 35,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "4 Bit Large Button",
+      "UOM": "No,s",
+      "Current Balance": 34,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 36,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "Routry Switch",
+      "UOM": "No,s",
+      "Current Balance": 17,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 37,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "Double Routry",
+      "UOM": "No,s",
+      "Current Balance": 17,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 38,
+      "IMIS Code": "303-0001-02-001005",
+      "BOQ #": "2.4.1",
+      "Item Detail": "3 Bit Button",
+      "UOM": "No,s",
+      "Current Balance": 117,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 39,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "5 Pole Socket 16 Am",
+      "UOM": "No,s",
+      "Current Balance": 280,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 40,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "5 Pole Socket with cover Lock",
+      "UOM": "No,s",
+      "Current Balance": 40,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 41,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "3 Pole socket with 1 button 13,Am",
+      "UOM": "No,s",
+      "Current Balance": 100,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 42,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "Socket 10 Am",
+      "UOM": "No,s",
+      "Current Balance": 70,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 43,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "4 Pole 25 Amp",
+      "UOM": "No,s",
+      "Current Balance": 50,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 44,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "Socket 32 Amp",
+      "UOM": "No,s",
+      "Current Balance": 100,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 45,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "3 Pole socket with 1 button",
+      "UOM": "No,s",
+      "Current Balance": 240,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 46,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "4 Pole SQ Socket",
+      "UOM": "No,s",
+      "Current Balance": 50,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 47,
+      "IMIS Code": "303-0001-02-001006",
+      "BOQ #": "2.4.2",
+      "Item Detail": "5 Pole SQ socket",
+      "UOM": "No,s",
+      "Current Balance": 50,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 48,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZB-YjY-23)3X25+1X16",
+      "UOM": "Meter",
+      "Current Balance": 400,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 49,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZB-YjY-1)3X25+2X16",
+      "UOM": "Meter",
+      "Current Balance": 155,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 50,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZB-YjY1 (5X16)",
+      "UOM": "Meter",
+      "Current Balance": 700,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 51,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZB-YjY-1(3X70+2X35)",
+      "UOM": "Meter",
+      "Current Balance": 500,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 52,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZB-YjY-1(3X120+2X70)",
+      "UOM": "Meter",
+      "Current Balance": 400,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 53,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZBN-KYjY(4X1.5)",
+      "UOM": "Meter",
+      "Current Balance": 2299,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 54,
+      "IMIS Code": "303-0001-03-001007",
+      "BOQ #": "2.5.1",
+      "Item Detail": "Cable Roll(WDZBN-KYJY)10X1.5",
+      "UOM": "Meter",
+      "Current Balance": 400,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 55,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue colour Phase Wire 10mm",
+      "UOM": "Meter",
+      "Current Balance": 1000,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 56,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Yellow Earth Wire 16mm",
+      "UOM": "Meter",
+      "Current Balance": 500,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 57,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Green colour Phase Wire 10mm",
+      "UOM": "Meter",
+      "Current Balance": 1000,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 58,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Yellow colour Phase wire 10mm",
+      "UOM": "Meter",
+      "Current Balance": 935,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 59,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Yellow colour Roll (1x150)-25mm (150 x 5 =750)",
+      "UOM": "Meter",
+      "Current Balance": 750,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 60,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue colour Roll(1x100)-16mm (100 x 2 = 200)",
+      "UOM": "Meter",
+      "Current Balance": 200,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 61,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Green colour Roll(1x100)-16mm (100 x 2 = 200)",
+      "UOM": "Meter",
+      "Current Balance": 200,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 62,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Red colour Roll(1x100)-16mm (100 x 2 = 200)",
+      "UOM": "Meter",
+      "Current Balance": 200,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 63,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Yellow Colour Roll(1X100)-16mm (100 x 3 = 300)",
+      "UOM": "Meter",
+      "Current Balance": 300,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 64,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "(Yellow+Green)Earth wire Roll(1x100)-16mm",
+      "UOM": "Meter",
+      "Current Balance": 100,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 65,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue Colour Wire Roll 25-mm (150 x 1)",
+      "UOM": "Meter",
+      "Current Balance": 150,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 66,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue Colour Wire 25-mm (150 x 1)",
+      "UOM": "Meter",
+      "Current Balance": 150,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 67,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Red Colour Phase Wire 10-mm",
+      "UOM": "Meter",
+      "Current Balance": 815,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 68,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Red Colour Wire 35-mm",
+      "UOM": "Meter",
+      "Current Balance": 250,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 69,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blure Colour Wire 16-mm",
+      "UOM": "Meter",
+      "Current Balance": 250,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 70,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Red Colour Wire 16-mm",
+      "UOM": "Meter",
+      "Current Balance": 500,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 71,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Red Colour Wire 25-mm",
+      "UOM": "Meter",
+      "Current Balance": 750,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 72,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Green Colour Wire 35-mm",
+      "UOM": "Meter",
+      "Current Balance": 250,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 73,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Green Colour Wire 16-mm",
+      "UOM": "Meter",
+      "Current Balance": 245,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 74,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue Colour Wire Roll 35-mm",
+      "UOM": "Meter",
+      "Current Balance": 244,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 75,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Yellow Colour Wire 35-mm",
+      "UOM": "Meter",
+      "Current Balance": 250,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 76,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Green Colour Wire 25-mm",
+      "UOM": "Meter",
+      "Current Balance": 550,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 77,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Blue Colour Wire 25-mm",
+      "UOM": "Meter",
+      "Current Balance": 80,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 78,
+      "IMIS Code": "303-0001-04-001008",
+      "BOQ #": "2.6.1",
+      "Item Detail": "Cable Roll(WDZBN-KJYJ)14X1.5",
+      "UOM": "Meter",
+      "Current Balance": 325,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 79,
+      "IMIS Code": "303-0001-03-001009",
+      "BOQ #": "2.7.1",
+      "Item Detail": "Shrinkable Cable Sleeve (70 x 120) 2-Boxes",
+      "UOM": "RFT",
+      "Current Balance": 100,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 80,
+      "IMIS Code": "303-0001-05-001010",
+      "BOQ #": "2.8.1",
+      "Item Detail": "FIRE Mud 1-Bag x 20-Kgs 10-Bags",
+      "UOM": "KG",
+      "Current Balance": 200,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 81,
+      "IMIS Code": 0,
+      "BOQ #": "2.3.1",
+      "Item Detail": "In lights section there are 946-Tubes & Shells are included (Hided)",
+      "UOM": "No,s",
+      "Current Balance": -943,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 82,
+      "IMIS Code": 1,
+      "BOQ #": "2.5.1",
+      "Item Detail": "Single Core Wires will be minus from IMIS stock",
+      "UOM": "MTR",
+      "Current Balance": -994,
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": 83,
+      "IMIS Code": 3,
+      "BOQ #": "2.1.2",
+      "Item Detail": "Push Buttons & Indicator lights will be minus from IMIS",
+      "UOM": "No,s",
+      "Current Balance": -8,
+      "Location": "C&C Warehouse, Depot"
+    }
+  ]
+}
