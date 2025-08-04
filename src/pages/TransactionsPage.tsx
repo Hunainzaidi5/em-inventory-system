@@ -852,8 +852,8 @@ const TransactionsPage = () => {
           </div>
         )}
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default TransactionsPage; 

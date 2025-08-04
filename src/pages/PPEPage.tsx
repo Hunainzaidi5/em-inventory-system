@@ -483,8 +483,8 @@ const PPEPage = () => {
           </div>
         )}
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default PPEPage; 

@@ -550,8 +550,8 @@ const ToolsPage = () => {
           </div>
         )}
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default ToolsPage; 
