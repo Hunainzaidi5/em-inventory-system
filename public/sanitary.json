@@ -3,7 +3,7 @@
     {
       "Sr. #": "1",
       "IMIS Codes": "327-0001-00-001001",
-      "Sanitary (Spares Inventory)": "Muslim Faucet (Shower)",
+      "Sanitary (Spares Inventory)": "Muslim Faucet/Shower",
       "UOM": "Pcs",
       "Quantity": "0",
       "Location": "C&C Warehouse, Depot"
@@ -11,7 +11,7 @@
     {
       "Sr. #": "2",
       "IMIS Codes": "327-0001-00-001002",
-      "Sanitary (Spares Inventory)": "Steel Pot / Ewer",
+      "Sanitary (Spares Inventory)": "Steel Pot/Ewer",
       "UOM": "Pcs",
       "Quantity": "27",
       "Location": "C&C Warehouse, Depot"
@@ -27,7 +27,7 @@
     {
       "Sr. #": "4",
       "IMIS Codes": "327-0001-00-001004",
-      "Sanitary (Spares Inventory)": "Faucet (Tap)",
+      "Sanitary (Spares Inventory)": "Faucet/Tap",
       "UOM": "Pcs",
       "Quantity": "567",
       "Location": "C&C Warehouse, Depot"
@@ -35,7 +35,7 @@
     {
       "Sr. #": "5",
       "IMIS Codes": "327-0001-00-001005",
-      "Sanitary (Spares Inventory)": "\"Tee\" Steel (3-way Valve)",
+      "Sanitary (Spares Inventory)": "Tee",
       "UOM": "Pcs",
       "Quantity": "443",
       "Location": "C&C Warehouse, Depot"
@@ -43,7 +43,7 @@
     {
       "Sr. #": "6",
       "IMIS Codes": "327-0001-00-001006",
-      "Sanitary (Spares Inventory)": "Raw Material Belt / Teflon Tape",
+      "Sanitary (Spares Inventory)": "Raw Material Belt/Teflon Tape",
       "UOM": "Pcs",
       "Quantity": "104",
       "Location": "C&C Warehouse, Depot"
@@ -51,7 +51,7 @@
     {
       "Sr. #": "7",
       "IMIS Codes": "327-0001-00-001007",
-      "Sanitary (Spares Inventory)": "Conector 1/2\" (Barrel Nipple)",
+      "Sanitary (Spares Inventory)": "Conector 1/2 Barrel Nipple",
       "UOM": "Pcs",
       "Quantity": "10",
       "Location": "C&C Warehouse, Depot"
