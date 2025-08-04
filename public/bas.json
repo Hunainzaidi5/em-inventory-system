@@ -4,8 +4,8 @@
     "Item Name": "Power Module (Schneider)",
     "IMIS CODE": "305-0001-01-001001",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -13,8 +13,8 @@
     "Item Name": "CPU Module (Schneider)",
     "IMIS CODE": "305-0001-01-001002",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -22,8 +22,8 @@
     "Item Name": "Ethernet Module (Schneider)",
     "IMIS CODE": "305-0001-01-001003",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -31,8 +31,8 @@
     "Item Name": "Communication Module (Schneider)",
     "IMIS CODE": "305-0001-01-001004",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -40,8 +40,8 @@
     "Item Name": "PLC Case (Schneider)",
     "IMIS CODE": "305-0001-01-001005",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 5,
-    "In-stock": 5,
+    "Stock Received from Warehouse (20-7/23)": "5",
+    "In-stock": "5",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -49,8 +49,8 @@
     "Item Name": "Hot Standby Optical Cable (Schneider)",
     "IMIS CODE": "305-0001-01-001006",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -58,8 +58,8 @@
     "Item Name": "Memory Card (Schneider)",
     "IMIS CODE": "305-0001-01-001007",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -67,8 +67,8 @@
     "Item Name": "Switch of PLC (Schneider)",
     "IMIS CODE": "305-0001-01-001008",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 12,
-    "In-stock": 12,
+    "Stock Received from Warehouse (20-7/23)": "12",
+    "In-stock": "12",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -76,8 +76,8 @@
     "Item Name": "Switcher of Station (Transcend Communication)",
     "IMIS CODE": "305-0001-01-001009",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 2,
-    "In-stock": 2,
+    "Stock Received from Warehouse (20-7/23)": "2",
+    "In-stock": "2",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -85,8 +85,8 @@
     "Item Name": "Power Module of RIO (Schnieder)",
     "IMIS CODE": "305-0001-01-001010",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -94,8 +94,8 @@
     "Item Name": "Adapter Module of RIO (Schneider)",
     "IMIS CODE": "305-0001-01-001011",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 9,
-    "In-stock": 9,
+    "Stock Received from Warehouse (20-7/23)": "9",
+    "In-stock": "9",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -103,8 +103,8 @@
     "Item Name": "RIO Case (Schneider)",
     "IMIS CODE": "305-0001-01-001012",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -112,8 +112,8 @@
     "Item Name": "16 Point DI Module (Schneider)",
     "IMIS CODE": "305-0001-01-001013",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 20,
-    "In-stock": 20,
+    "Stock Received from Warehouse (20-7/23)": "20",
+    "In-stock": "20",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -121,8 +121,8 @@
     "Item Name": "16 Point Do Module (Schneider)",
     "IMIS CODE": "305-0001-01-001014",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 20,
-    "In-stock": 20,
+    "Stock Received from Warehouse (20-7/23)": "20",
+    "In-stock": "20",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -130,8 +130,8 @@
     "Item Name": "16 Point Do Module (Schneider)",
     "IMIS CODE": "305-0001-01-001015",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 15,
-    "In-stock": 15,
+    "Stock Received from Warehouse (20-7/23)": "15",
+    "In-stock": "15",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -139,8 +139,8 @@
     "Item Name": "16 Point Do Module (Schneider)",
     "IMIS CODE": "305-0001-01-001016",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 15,
-    "In-stock": 15,
+    "Stock Received from Warehouse (20-7/23)": "15",
+    "In-stock": "15",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -148,8 +148,8 @@
     "Item Name": "Serial Communication interface (Schneider)",
     "IMIS CODE": "305-0001-01-001017",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 15,
-    "In-stock": 15,
+    "Stock Received from Warehouse (20-7/23)": "15",
+    "In-stock": "15",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -157,8 +157,8 @@
     "Item Name": "Temperature Sensor for for Air Kiosk",
     "IMIS CODE": "305-0001-01-001018",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -166,8 +166,8 @@
     "Item Name": "Temperature & Humidity Sensor for Air Kiosk",
     "IMIS CODE": "305-0001-01-001019",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -175,8 +175,8 @@
     "Item Name": "Temperature & Humidity Sensor for Room",
     "IMIS CODE": "305-0001-01-001020",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 10,
-    "In-stock": 10,
+    "Stock Received from Warehouse (20-7/23)": "10",
+    "In-stock": "10",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -184,8 +184,8 @@
     "Item Name": "CO2 Sensor",
     "IMIS CODE": "305-0001-01-001021",
     "U/M": "No,s",
-    "Stock Received from Warehouse (20-7/23)": 5,
-    "In-stock": 5,
+    "Stock Received from Warehouse (20-7/23)": "5",
+    "In-stock": "5",
     "Location": "C&C Warehouse, Depot"
   }
 ]
