@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface SparePart {
   id?: string;
@@ -7,57 +8,23 @@ interface SparePart {
   quantity: number;
   location: string;
   lastUpdated?: string;
+  itemCode?: string;
+  imisCode?: string;
+  uom?: string;
+  partNumber?: string;
+  boqNumber?: string;
 }
 
-const sampleSpareParts: SparePart[] = [
-  {
-    name: "Cable 1.5 mm / Single Core 450/750-Volt (Red)",
-    quantity: 805,
-    location: "Warehouse A",
-    lastUpdated: "2023-05-15"
-  },
-  {
-    name: "Cable 10 mm / Single Core 450/750-V (Red)",
-    quantity: 1000,
-    location: "Warehouse B",
-    lastUpdated: "2023-06-20"
-  },
-  {
-    name: "Cable 2.5 mm / Single Core 450/750-V (Green)",
-    quantity: 1000,
-    location: "Warehouse A",
-    lastUpdated: "2023-07-10"
-  },
-  {
-    name: "Cable 4.0 mm / Single Core (Yellow)",
-    quantity: 1000,
-    location: "Warehouse C",
-    lastUpdated: "2023-08-05"
-  },
-  {
-    name: "Alken CH Cool",
-    quantity: 120,
-    location: "Warehouse D",
-    lastUpdated: "2023-09-12"
-  },
-  {
-    name: "Descaler SP-100",
-    quantity: 450,
-    location: "Warehouse B",
-    lastUpdated: "2023-10-18"
-  },
-  {
-    name: "Rust Remover WD40 (Multi Use)",
-    quantity: 120,
-    location: "Warehouse A",
-    lastUpdated: "2023-11-22"
-  }
-];
+interface TabData {
+  name: string;
+  data: SparePart[];
+  loading: boolean;
+  error: string | null;
+}
 
 const InventoryPage = () => {
-  const [spareParts, setSpareParts] = useState<SparePart[]>(sampleSpareParts);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("spare-parts-OM");
+  const [tabData, setTabData] = useState<Record<string, TabData>>({});
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<Omit<SparePart, 'id'>>({ name: "", quantity: 0, location: "" });
@@ -65,34 +32,99 @@ const InventoryPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
 
-  // Load data from API/JSON
+  // Define the JSON files to load
+  const jsonFiles = [
+    { key: "spare-parts-OM", name: "O&M Spare Parts", file: "spare-parts-OM.json" },
+    { key: "BAS", name: "BAS", file: "BAS.json" },
+    { key: "FAS", name: "FAS", file: "FAS.json" },
+    { key: "ESCALATOR", name: "Escalator", file: "ESCALATOR.json" },
+    { key: "ELEVATOR", name: "Elevator", file: "ELEVATOR.json" },
+    { key: "FES", name: "FES", file: "FES.json" },
+    { key: "HVAC", name: "HVAC", file: "HVAC.json" },
+    { key: "ILLUMINATION", name: "Illumination", file: "ILLUMINATION.json" },
+    { key: "PSCADA", name: "PSCADA", file: "PSCADA.json" },
+    { key: "PSD", name: "PSD", file: "PSD.json" },
+    { key: "SANITARY", name: "Sanitary", file: "SANITARY.json" },
+    { key: "WSD", name: "WSD", file: "WSD.json" }
+  ];
+
+  // Load data from JSON files
   useEffect(() => {
-    const loadSpareParts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/spare-parts-OM.json');
-        if (!response.ok) throw new Error('Failed to load data');
-        const data = await response.json();
-        
-        const formattedParts = (data["O&M Spare Part"] || [])
-          .filter((item: any) => item?.Column2 && item.Column2 !== "Item Name")
-          .map((item: any) => ({
-            id: Math.random().toString(36).substr(2, 9),
-            name: item.Column2,
-            quantity: Number(item.Column9) || 0,
-            location: item.location || "Warehouse A",
-            lastUpdated: new Date().toISOString().split('T')[0]
-          }));
-        
-        if (formattedParts.length) setSpareParts(formattedParts);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error loading data:', err);
-        setError('Failed to load data. Using sample data.');
-        setLoading(false);
+    const loadAllData = async () => {
+      const newTabData: Record<string, TabData> = {};
+
+      for (const fileInfo of jsonFiles) {
+        newTabData[fileInfo.key] = {
+          name: fileInfo.name,
+          data: [],
+          loading: true,
+          error: null
+        };
+
+        try {
+          const response = await fetch(`/${fileInfo.file}`);
+          if (!response.ok) throw new Error(`Failed to load ${fileInfo.file}`);
+          const data = await response.json();
+          
+          let formattedParts: SparePart[] = [];
+
+          // Handle different JSON structures
+          if (fileInfo.key === "spare-parts-OM") {
+            // Handle the O&M spare parts structure
+            formattedParts = (data || [])
+              .filter((item: any) => item && item["Item Name"] && item["Item Name"] !== "Item Name")
+              .map((item: any) => ({
+                id: Math.random().toString(36).substr(2, 9),
+                name: item["Item Name"] || "",
+                quantity: Number(item["In-stock"]) || 0,
+                location: item["Location"] || "C&C Warehouse, Depot",
+                itemCode: item["Item Code (Brand)"] || "",
+                imisCode: item["IMIS CODE"] || "",
+                uom: item["U/M"] || "",
+                lastUpdated: new Date().toISOString().split('T')[0]
+              }));
+          } else {
+            // Handle other JSON structures (BAS, FAS, etc.)
+            const key = Object.keys(data)[0]; // Get the first key (e.g., "BAS", "Escalator")
+            const items = data[key] || [];
+            
+            formattedParts = items
+              .filter((item: any) => item && item[key + " (Spares Inventory)"])
+              .map((item: any) => ({
+                id: Math.random().toString(36).substr(2, 9),
+                name: item[key + " (Spares Inventory)"] || "",
+                quantity: Number(item["Current Balance"]) || 0,
+                location: item["Location"] || "C&C Warehouse, Depot",
+                itemCode: item["Sr. #"] || "",
+                imisCode: item["IMIS Codes"] || "",
+                uom: item["UOM"] || "",
+                partNumber: item["Part #"] || "",
+                boqNumber: item["BOQ #"] || "",
+                lastUpdated: new Date().toISOString().split('T')[0]
+              }));
+          }
+
+          newTabData[fileInfo.key] = {
+            name: fileInfo.name,
+            data: formattedParts,
+            loading: false,
+            error: null
+          };
+        } catch (err) {
+          console.error(`Error loading ${fileInfo.file}:`, err);
+          newTabData[fileInfo.key] = {
+            name: fileInfo.name,
+            data: [],
+            loading: false,
+            error: `Failed to load ${fileInfo.name} data`
+          };
+        }
       }
+
+      setTabData(newTabData);
     };
-    loadSpareParts();
+
+    loadAllData();
   }, []);
 
   // Handle sorting
@@ -105,13 +137,15 @@ const InventoryPage = () => {
   };
 
   // Apply sorting, filtering and searching
-  const getFilteredItems = () => {
-    let filtered = [...spareParts];
+  const getFilteredItems = (data: SparePart[]) => {
+    let filtered = [...data];
     
     // Apply search
     if (searchTerm) {
       filtered = filtered.filter(item => 
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.itemCode && item.itemCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.imisCode && item.imisCode.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     
@@ -136,10 +170,13 @@ const InventoryPage = () => {
     return filtered;
   };
 
-  const filteredItems = getFilteredItems();
+  const currentTabData = tabData[activeTab];
+  const filteredItems = currentTabData ? getFilteredItems(currentTabData.data) : [];
 
   // Get unique locations for filter dropdown
-  const locations = ["all", ...new Set(spareParts.map(item => item.location))];
+  const locations = currentTabData 
+    ? ["all", ...new Set(currentTabData.data.map(item => item.location))]
+    : ["all"];
 
   // Modal handlers
   const openAddModal = () => {
@@ -149,7 +186,7 @@ const InventoryPage = () => {
   };
 
   const openEditModal = (id: string) => {
-    const item = spareParts.find(item => item.id === id);
+    const item = currentTabData?.data.find(item => item.id === id);
     if (item) {
       setForm({
         name: item.name,
@@ -163,7 +200,13 @@ const InventoryPage = () => {
 
   const handleRemove = (id: string) => {
     if (window.confirm("Are you sure you want to remove this item?")) {
-      setSpareParts(prev => prev.filter(item => item.id !== id));
+      setTabData(prev => ({
+        ...prev,
+        [activeTab]: {
+          ...prev[activeTab],
+          data: prev[activeTab].data.filter(item => item.id !== id)
+        }
+      }));
     }
   };
 
@@ -177,11 +220,15 @@ const InventoryPage = () => {
       lastUpdated: new Date().toISOString().split('T')[0]
     };
 
-    setSpareParts(prev => 
-      editId 
-        ? prev.map(item => item.id === editId ? updatedItem : item)
-        : [...prev, updatedItem]
-    );
+    setTabData(prev => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        data: editId 
+          ? prev[activeTab].data.map(item => item.id === editId ? updatedItem : item)
+          : [...prev[activeTab].data, updatedItem]
+      }
+    }));
 
     setShowModal(false);
   };
@@ -199,7 +246,7 @@ const InventoryPage = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Inventory Management</h1>
-            <p className="text-gray-600">Track and manage your spare parts inventory</p>
+            <p className="text-gray-600">Track and manage your spare parts inventory across all systems</p>
           </div>
           <button
             onClick={openAddModal}
@@ -211,166 +258,197 @@ const InventoryPage = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total Items</h3>
-            <p className="text-2xl font-bold">{spareParts.length}</p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total Quantity</h3>
-            <p className="text-2xl font-bold">
-              {spareParts.reduce((sum, item) => sum + item.quantity, 0)}
-            </p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Warehouses</h3>
-            <p className="text-2xl font-bold">
-              {new Set(spareParts.map(item => item.location)).size}
-            </p>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-            <div className="relative flex-grow">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <FiX />
-                </button>
-              )}
+        {currentTabData && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Total Items</h3>
+              <p className="text-2xl font-bold">{currentTabData.data.length}</p>
             </div>
-            <div className="w-full md:w-48">
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Total Quantity</h3>
+              <p className="text-2xl font-bold">
+                {currentTabData.data.reduce((sum, item) => sum + item.quantity, 0)}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Warehouses</h3>
+              <p className="text-2xl font-bold">
+                {new Set(currentTabData.data.map(item => item.location)).size}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Low Stock Items</h3>
+              <p className="text-2xl font-bold text-red-600">
+                {currentTabData.data.filter(item => item.quantity < 100).length}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 mb-6">
+            {jsonFiles.map((fileInfo) => (
+              <TabsTrigger 
+                key={fileInfo.key} 
+                value={fileInfo.key}
+                className="text-xs px-2 py-1"
               >
-                {locations.map(loc => (
-                  <option key={loc} value={loc}>
-                    {loc === "all" ? "All Locations" : loc}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
+                {fileInfo.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {/* Loading/Error States */}
-        {loading && (
-          <div className="bg-white p-4 rounded-lg shadow mb-6 text-center">
-            <p>Loading inventory data...</p>
-          </div>
-        )}
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
-            <p>{error}</p>
-          </div>
-        )}
+          {jsonFiles.map((fileInfo) => (
+            <TabsContent key={fileInfo.key} value={fileInfo.key}>
+              {/* Filters */}
+              <div className="bg-white p-4 rounded-lg shadow mb-6">
+                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+                  <div className="relative flex-grow">
+                    <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search items..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm("")}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <FiX />
+                      </button>
+                    )}
+                  </div>
+                  <div className="w-full md:w-48">
+                    <select
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {locations.map(loc => (
+                        <option key={loc} value={loc}>
+                          {loc === "all" ? "All Locations" : loc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
 
-        {/* Inventory Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort('name')}
-                  >
-                    <div className="flex items-center">
-                      Item Name {getSortIndicator('name')}
-                    </div>
-                  </th>
-                  <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort('quantity')}
-                  >
-                    <div className="flex items-center">
-                      Quantity {getSortIndicator('quantity')}
-                    </div>
-                  </th>
-                  <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort('location')}
-                  >
-                    <div className="flex items-center">
-                      Location {getSortIndicator('location')}
-                    </div>
-                  </th>
-                  <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort('lastUpdated')}
-                  >
-                    <div className="flex items-center">
-                      Last Updated {getSortIndicator('lastUpdated')}
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
-                          {item.quantity}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.location}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.lastUpdated}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => openEditModal(item.id!)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
-                          title="Edit"
+              {/* Loading/Error States */}
+              {tabData[fileInfo.key]?.loading && (
+                <div className="bg-white p-4 rounded-lg shadow mb-6 text-center">
+                  <p>Loading {fileInfo.name} data...</p>
+                </div>
+              )}
+              {tabData[fileInfo.key]?.error && (
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+                  <p>{tabData[fileInfo.key].error}</p>
+                </div>
+              )}
+
+              {/* Inventory Table */}
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                          onClick={() => requestSort('name')}
                         >
-                          <FiEdit />
-                        </button>
-                        <button
-                          onClick={() => handleRemove(item.id!)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
+                          <div className="flex items-center">
+                            Item Name {getSortIndicator('name')}
+                          </div>
+                        </th>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                          onClick={() => requestSort('quantity')}
                         >
-                          <FiTrash2 />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                      {searchTerm || selectedLocation !== "all" 
-                        ? "No items match your filters" 
-                        : "No items in inventory"}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                          <div className="flex items-center">
+                            Quantity {getSortIndicator('quantity')}
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          UOM
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          IMIS Code
+                        </th>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                          onClick={() => requestSort('location')}
+                        >
+                          <div className="flex items-center">
+                            Location {getSortIndicator('location')}
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {filteredItems.length > 0 ? (
+                        filteredItems.map((item) => (
+                          <tr key={item.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                              {item.partNumber && (
+                                <div className="text-xs text-gray-500">Part #: {item.partNumber}</div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+                                {item.quantity}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500">{item.uom}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500">{item.imisCode}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500">{item.location}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button
+                                onClick={() => openEditModal(item.id!)}
+                                className="text-blue-600 hover:text-blue-900 mr-4"
+                                title="Edit"
+                              >
+                                <FiEdit />
+                              </button>
+                              <button
+                                onClick={() => handleRemove(item.id!)}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete"
+                              >
+                                <FiTrash2 />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                            {searchTerm || selectedLocation !== "all" 
+                              ? "No items match your filters" 
+                              : "No items in inventory"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
 
         {/* Add/Edit Modal */}
         {showModal && (
