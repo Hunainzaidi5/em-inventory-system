@@ -108,6 +108,9 @@ const InventoryPage = () => {
               .filter((item: any) => {
                 // Check for the inventory field with different possible names
                 const inventoryField = item[key + " (Spares Inventory)"] || 
+                                    item["(Sanitary Items Inventory)"] ||
+                                    item["PSCADA System - (Spares Inventory)"] ||
+                                    item["Item Detail"] ||
                                     item["Item_Description"] || 
                                     item["Item Description"] ||
                                     item["Item Name"];
@@ -116,6 +119,9 @@ const InventoryPage = () => {
               .map((item: any) => {
                 // Get the item name from various possible field names
                 const itemName = item[key + " (Spares Inventory)"] || 
+                               item["(Sanitary Items Inventory)"] ||
+                               item["PSCADA System - (Spares Inventory)"] ||
+                               item["Item Detail"] ||
                                item["Item_Description"] || 
                                item["Item Description"] ||
                                item["Item Name"] || "";
@@ -148,6 +154,7 @@ const InventoryPage = () => {
 
                 // Get serial number from various possible field names
                 const serialNumber = item["Sr. #"] || 
+                                   item[" Sr. #"] || // Note the leading space in BAS
                                    item["Sr_No"] || 
                                    item["Serial Number"] || "";
 
