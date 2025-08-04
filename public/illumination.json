@@ -1,14 +1,5 @@
 {
-  "LV": [
-    {
-      "Sr. #": "Sr. #",
-      "IMIS Code": "IMIS Code",
-      "BOQ #": "BOQ #",
-      "Item Detail": "Item Detail",
-      "UOM": "UOM",
-      "Current Balance": "Current Balance",
-      "Location": "Location"
-    },
+  "illumination": [
     {
       "Sr. #": 1,
       "IMIS Code": "303-0001-01-001001",
