@@ -4,8 +4,7 @@
     "IMIS CODE": "327-0001-00-001001",
     "Item_Description": "Muslim Faucet (Shower)",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "0",
-    "In-stock": "0",
+    "Quantity": "0",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -13,8 +12,7 @@
     "IMIS CODE": "327-0001-00-001002",
     "Item_Description": "Steel Pot / Ewer",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "27",
-    "In-stock": "27",
+    "Quantity": "27",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -22,8 +20,7 @@
     "IMIS CODE": "327-0001-00-001003",
     "Item_Description": "Chain",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "29",
-    "In-stock": "29",
+    "Quantity": "29",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -31,8 +28,7 @@
     "IMIS CODE": "327-0001-00-001004",
     "Item_Description": "Faucet (Tap)",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "567",
-    "In-stock": "567",
+    "Quantity": "567",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -40,8 +36,7 @@
     "IMIS CODE": "327-0001-00-001005",
     "Item_Description": "\"Tee\" Steel (3-way Valve)",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "443",
-    "In-stock": "443",
+    "Quantity": "443",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -49,8 +44,7 @@
     "IMIS CODE": "327-0001-00-001006",
     "Item_Description": "Raw Material Belt / Teflon Tape",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "104",
-    "In-stock": "104",
+    "Quantity": "104",
     "Location": "C&C Warehouse, Depot"
   },
   {
@@ -58,8 +52,7 @@
     "IMIS CODE": "327-0001-00-001007",
     "Item_Description": "Conector 1/2\" (Barrel Nipple)",
     "UOM": "Pcs",
-    "Stock Received from Warehouse (20-7/23)": "10",
-    "In-stock": "10",
+    "Quantity": "10",
     "Location": "C&C Warehouse, Depot"
   }
 ]
