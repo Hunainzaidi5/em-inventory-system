@@ -44,7 +44,7 @@ const InventoryPage = () => {
     { key: "ILLUMINATION", name: "Illumination", file: "illumination.json" },
     { key: "PSCADA", name: "PSCADA", file: "pscada.json" },
     { key: "PSD", name: "PSD", file: "psd.json" },
-    { key: "SANITARY", name: "Sanitary", file: "sanitry.json" },
+    { key: "SANITARY", name: "Sanitary", file: "sanitary.json" },
     { key: "WSD", name: "WSD", file: "wsd.json" }
   ];
 
