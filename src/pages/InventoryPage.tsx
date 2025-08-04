@@ -35,17 +35,17 @@ const InventoryPage = () => {
   // Define the JSON files to load
   const jsonFiles = [
     { key: "spare-parts-OM", name: "O&M Spare Parts", file: "spare-parts-OM.json" },
-    { key: "BAS", name: "BAS", file: "BAS.json" },
-    { key: "FAS", name: "FAS", file: "FAS.json" },
-    { key: "ESCALATOR", name: "Escalator", file: "ESCALATOR.json" },
-    { key: "ELEVATOR", name: "Elevator", file: "ELEVATOR.json" },
-    { key: "FES", name: "FES", file: "FES.json" },
-    { key: "HVAC", name: "HVAC", file: "HVAC.json" },
-    { key: "ILLUMINATION", name: "Illumination", file: "ILLUMINATION.json" },
-    { key: "PSCADA", name: "PSCADA", file: "PSCADA.json" },
-    { key: "PSD", name: "PSD", file: "PSD.json" },
-    { key: "SANITARY", name: "Sanitary", file: "SANITARY.json" },
-    { key: "WSD", name: "WSD", file: "WSD.json" }
+    { key: "BAS", name: "BAS", file: "bas.json" },
+    { key: "FAS", name: "FAS", file: "fas.json" },
+    { key: "ESCALATOR", name: "Escalator", file: "escalator.json" },
+    { key: "ELEVATOR", name: "Elevator", file: "elevator.json" },
+    { key: "FES", name: "FES", file: "fes.json" },
+    { key: "HVAC", name: "HVAC", file: "hvac.json" },
+    { key: "ILLUMINATION", name: "Illumination", file: "illumination.json" },
+    { key: "PSCADA", name: "PSCADA", file: "pscada.json" },
+    { key: "PSD", name: "PSD", file: "psd.json" },
+    { key: "SANITARY", name: "Sanitary", file: "sanitry.json" },
+    { key: "WSD", name: "WSD", file: "wsd.json" }
   ];
 
   // Load data from JSON files
@@ -83,25 +83,87 @@ const InventoryPage = () => {
                 uom: item["U/M"] || "",
                 lastUpdated: new Date().toISOString().split('T')[0]
               }));
+          } else if (fileInfo.key === "WSD") {
+            // Handle WSD structure (array format)
+            formattedParts = (data || [])
+              .filter((item: any) => item && item["Item_Description"])
+              .map((item: any) => ({
+                id: Math.random().toString(36).substr(2, 9),
+                name: item["Item_Description"] || "",
+                quantity: Number(item["Quantity"]) || 0,
+                location: item["Location"] || "C&C Warehouse, Depot",
+                itemCode: item["Sr_No"]?.toString() || "",
+                imisCode: item["IMIS_Code"] || "",
+                uom: item["UOM"] || "",
+                partNumber: item["Specification"] || "",
+                boqNumber: item["BOQ_No"]?.toString() || "",
+                lastUpdated: new Date().toISOString().split('T')[0]
+              }));
           } else {
-            // Handle other JSON structures (BAS, FAS, etc.)
-            const key = Object.keys(data)[0]; // Get the first key (e.g., "BAS", "Escalator")
+            // Handle other JSON structures (BAS, FAS, HVAC, etc.)
+            const key = Object.keys(data)[0]; // Get the first key (e.g., "BAS", "Escalator", "HVAC")
             const items = data[key] || [];
             
             formattedParts = items
-              .filter((item: any) => item && item[key + " (Spares Inventory)"])
-              .map((item: any) => ({
-                id: Math.random().toString(36).substr(2, 9),
-                name: item[key + " (Spares Inventory)"] || "",
-                quantity: Number(item["Current Balance"]) || 0,
-                location: item["Location"] || "C&C Warehouse, Depot",
-                itemCode: item["Sr. #"] || "",
-                imisCode: item["IMIS Codes"] || "",
-                uom: item["UOM"] || "",
-                partNumber: item["Part #"] || "",
-                boqNumber: item["BOQ #"] || "",
-                lastUpdated: new Date().toISOString().split('T')[0]
-              }));
+              .filter((item: any) => {
+                // Check for the inventory field with different possible names
+                const inventoryField = item[key + " (Spares Inventory)"] || 
+                                    item["Item_Description"] || 
+                                    item["Item Description"] ||
+                                    item["Item Name"];
+                return item && inventoryField && inventoryField !== "-";
+              })
+              .map((item: any) => {
+                // Get the item name from various possible field names
+                const itemName = item[key + " (Spares Inventory)"] || 
+                               item["Item_Description"] || 
+                               item["Item Description"] ||
+                               item["Item Name"] || "";
+
+                // Get quantity from various possible field names
+                const quantity = Number(item["Current Balance"]) || 
+                               Number(item["Quantity"]) || 
+                               Number(item["In-stock"]) || 0;
+
+                // Get IMIS code from various possible field names
+                const imisCode = item["IMIS Codes"] || 
+                               item["IMIS Code"] || 
+                               item["IMIS_Code"] || 
+                               item["IMIS CODE"] || "";
+
+                // Get UOM from various possible field names
+                const uom = item["UOM"] || 
+                           item["U/M"] || 
+                           item["UOM"] || "";
+
+                // Get part number from various possible field names
+                const partNumber = item["Part #"] || 
+                                 item["Part Number"] || 
+                                 item["Specification"] || "";
+
+                // Get BOQ number from various possible field names
+                const boqNumber = item["BOQ #"] || 
+                                item["BOQ_No"] || 
+                                item["BOQ Number"] || "";
+
+                // Get serial number from various possible field names
+                const serialNumber = item["Sr. #"] || 
+                                   item["Sr_No"] || 
+                                   item["Serial Number"] || "";
+
+                return {
+                  id: Math.random().toString(36).substr(2, 9),
+                  name: itemName,
+                  quantity: quantity,
+                  location: item["Location"] || "C&C Warehouse, Depot",
+                  itemCode: serialNumber?.toString() || "",
+                  imisCode: imisCode,
+                  uom: uom,
+                  partNumber: partNumber,
+                  boqNumber: boqNumber?.toString() || "",
+                  lastUpdated: new Date().toISOString().split('T')[0]
+                };
+              });
           }
 
           newTabData[fileInfo.key] = {
