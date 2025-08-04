@@ -3,6 +3,7 @@
     {
       "Sr. #": "1",
       "IMIS Codes": "305-0001-01-001001",
+      "BOQ #": "1",
       "BAS (Spares Inventory)": "Power Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -11,6 +12,7 @@
     {
       "Sr. #": "2",
       "IMIS Codes": "305-0001-01-001002",
+      "BOQ #": "1",
       "BAS (Spares Inventory)": "CPU Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -19,6 +21,7 @@
     {
       "Sr. #": "3",
       "IMIS Codes": "305-0001-01-001003",
+      "BOQ #": "1",
       "BAS (Spares Inventory)": "Ethernet Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -27,6 +30,7 @@
     {
       "Sr. #": "4",
       "IMIS Codes": "305-0001-01-001004",
+      "BOQ #": "1",
       "BAS (Spares Inventory)": "Communication Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -35,6 +39,7 @@
     {
       "Sr. #": "5",
       "IMIS Codes": "305-0001-01-001005",
+      "BOQ #": "2",
       "BAS (Spares Inventory)": "PLC Case (Schneider)",
       "UOM": "No,s",
       "Quantity": "5",
@@ -43,6 +48,7 @@
     {
       "Sr. #": "6",
       "IMIS Codes": "305-0001-01-001006",
+      "BOQ #": "2",
       "BAS (Spares Inventory)": "Hot Standby Optical Cable (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -51,6 +57,7 @@
     {
       "Sr. #": "7",
       "IMIS Codes": "305-0001-01-001007",
+      "BOQ #": "2",
       "BAS (Spares Inventory)": "Memory Card (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -59,6 +66,7 @@
     {
       "Sr. #": "8",
       "IMIS Codes": "305-0001-01-001008",
+      "BOQ #": "1.8",
       "BAS (Spares Inventory)": "Switch of PLC (Schneider)",
       "UOM": "No,s",
       "Quantity": "12",
@@ -67,6 +75,7 @@
     {
       "Sr. #": "9",
       "IMIS Codes": "305-0001-01-001009",
+      "BOQ #": "1.9",
       "BAS (Spares Inventory)": "Switcher of Station (Transcend Communication)",
       "UOM": "No,s",
       "Quantity": "2",
@@ -75,6 +84,7 @@
     {
       "Sr. #": "10",
       "IMIS Codes": "305-0001-01-001010",
+      "BOQ #": "1.1",
       "BAS (Spares Inventory)": "Power Module of RIO (Schnieder)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -83,6 +93,7 @@
     {
       "Sr. #": "11",
       "IMIS Codes": "305-0001-01-001011",
+      "BOQ #": "1.11",
       "BAS (Spares Inventory)": "Adapter Module of RIO (Schneider)",
       "UOM": "No,s",
       "Quantity": "9",
@@ -91,6 +102,7 @@
     {
       "Sr. #": "12",
       "IMIS Codes": "305-0001-01-001012",
+      "BOQ #": "1.12",
       "BAS (Spares Inventory)": "RIO Case (Schneider)",
       "UOM": "No,s",
       "Quantity": "10",
@@ -99,6 +111,7 @@
     {
       "Sr. #": "13",
       "IMIS Codes": "305-0001-01-001013",
+      "BOQ #": "1.13",
       "BAS (Spares Inventory)": "16 Point DI Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "20",
@@ -107,6 +120,7 @@
     {
       "Sr. #": "14",
       "IMIS Codes": "305-0001-01-001014",
+      "BOQ #": "1.14",
       "BAS (Spares Inventory)": "16 Point Do Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "20",
@@ -115,6 +129,7 @@
     {
       "Sr. #": "15",
       "IMIS Codes": "305-0001-01-001015",
+      "BOQ #": "1.15",
       "BAS (Spares Inventory)": "16 Point Do Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "15",
@@ -123,6 +138,7 @@
     {
       "Sr. #": "16",
       "IMIS Codes": "305-0001-01-001016",
+      "BOQ #": "1.16",
       "BAS (Spares Inventory)": "16 Point Do Module (Schneider)",
       "UOM": "No,s",
       "Quantity": "15",
@@ -131,6 +147,7 @@
     {
       "Sr. #": "17",
       "IMIS Codes": "305-0001-01-001017",
+      "BOQ #": "1.17",
       "BAS (Spares Inventory)": "Serial Communication interface (Schneider)",
       "UOM": "No,s",
       "Quantity": "15",
@@ -139,6 +156,7 @@
     {
       "Sr. #": "18",
       "IMIS Codes": "305-0001-01-001018",
+      "BOQ #": "1.18",
       "BAS (Spares Inventory)": "Temperature Sensor for for Air Kiosk",
       "UOM": "No,s",
       "Quantity": "10",
@@ -147,6 +165,7 @@
     {
       "Sr. #": "19",
       "IMIS Codes": "305-0001-01-001019",
+      "BOQ #": "1.19",
       "BAS (Spares Inventory)": "Temperature & Humidity Sensor for Air Kiosk",
       "UOM": "No,s",
       "Quantity": "10",
@@ -155,6 +174,7 @@
     {
       "Sr. #": "20",
       "IMIS Codes": "305-0001-01-001020",
+      "BOQ #": "1.2",
       "BAS (Spares Inventory)": "Temperature & Humidity Sensor for Room",
       "UOM": "No,s",
       "Quantity": "10",
@@ -163,6 +183,7 @@
     {
       "Sr. #": "21",
       "IMIS Codes": "305-0001-01-001021",
+      "BOQ #": "1.21",
       "BAS (Spares Inventory)": "CO2 Sensor",
       "UOM": "No,s",
       "Quantity": "5",

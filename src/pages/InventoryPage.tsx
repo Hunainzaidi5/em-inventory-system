@@ -27,7 +27,16 @@ const InventoryPage = () => {
   const [tabData, setTabData] = useState<Record<string, TabData>>({});
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<Omit<SparePart, 'id'>>({ name: "", quantity: 0, location: "" });
+  const [form, setForm] = useState<Omit<SparePart, 'id'>>({ 
+    name: "", 
+    quantity: 0, 
+    location: "", 
+    uom: "", 
+    imisCode: "", 
+    boqNumber: "",
+    itemCode: "",
+    partNumber: ""
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
@@ -101,13 +110,13 @@ const InventoryPage = () => {
               }));
           } else if (fileInfo.key === "SANITARY") {
             // Handle Sanitary structure (key is "sanitary" lowercase)
-            const items = data["sanitary"] || [];
+            const items = data["SANITARY"] || [];
             formattedParts = items
-              .filter((item: any) => item && item["(Sanitary Items Inventory)"])
+              .filter((item: any) => item && item["SANITARY (Spares Inventory)"])
               .map((item: any) => ({
                 id: Math.random().toString(36).substr(2, 9),
-                name: item["(Sanitary Items Inventory)"] || "",
-                quantity: Number(item["Current Balance"]) || 0,
+                name: item["SANITARY (Spares Inventory)"] || "",
+                quantity: Number(item["Quantity"]) || 0,
                 location: item["Location"] || "C&C Warehouse, Depot",
                 itemCode: item["Sr. #"]?.toString() || "",
                 imisCode: item["IMIS Codes"] || "",
@@ -144,8 +153,8 @@ const InventoryPage = () => {
                                item["Item Name"] || "";
 
                 // Get quantity from various possible field names
-                const quantity = Number(item["Current Balance"]) || 
-                               Number(item["Quantity"]) || 
+                const quantity = Number(item["Quantity"]) || 
+                               Number(item["Current Balance"]) || 
                                Number(item["In-stock"]) || 0;
 
                 // Get IMIS code from various possible field names (including with leading spaces)
@@ -269,7 +278,16 @@ const InventoryPage = () => {
 
   // Modal handlers
   const openAddModal = () => {
-    setForm({ name: "", quantity: 0, location: "" });
+    setForm({ 
+      name: "", 
+      quantity: 0, 
+      location: "", 
+      uom: "", 
+      imisCode: "", 
+      boqNumber: "",
+      itemCode: "",
+      partNumber: ""
+    });
     setEditId(null);
     setShowModal(true);
   };
@@ -280,7 +298,12 @@ const InventoryPage = () => {
       setForm({
         name: item.name,
         quantity: item.quantity,
-        location: item.location
+        location: item.location,
+        uom: item.uom || "",
+        imisCode: item.imisCode || "",
+        boqNumber: item.boqNumber || "",
+        itemCode: item.itemCode || "",
+        partNumber: item.partNumber || ""
       });
       setEditId(id);
       setShowModal(true);
@@ -453,6 +476,18 @@ const InventoryPage = () => {
                             Item Name {getSortIndicator('name')}
                           </div>
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          IMIS Code
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          BOQ Number
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Part Number
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          UOM
+                        </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                           onClick={() => requestSort('quantity')}
@@ -460,12 +495,6 @@ const InventoryPage = () => {
                           <div className="flex items-center">
                             Quantity {getSortIndicator('quantity')}
                           </div>
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          UOM
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          IMIS Code
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -486,20 +515,23 @@ const InventoryPage = () => {
                           <tr key={item.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                              {item.partNumber && (
-                                <div className="text-xs text-gray-500">Part #: {item.partNumber}</div>
-                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
-                                {item.quantity}
-                              </div>
+                              <div className="text-sm text-gray-500">{item.imisCode}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500">{item.boqNumber}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500">{item.partNumber}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-500">{item.uom}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.imisCode}</div>
+                              <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+                                {item.quantity}
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-500">{item.location}</div>
@@ -524,7 +556,7 @@ const InventoryPage = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                          <td colSpan={8} className="px-6 py-4 text-center text-sm text-gray-500">
                             {searchTerm || selectedLocation !== "all" 
                               ? "No items match your filters" 
                               : "No items in inventory"}
@@ -542,7 +574,7 @@ const InventoryPage = () => {
         {/* Add/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
               <div className="flex justify-between items-center border-b px-6 py-4">
                 <h2 className="text-lg font-semibold">
                   {editId ? "Edit Inventory Item" : "Add New Inventory Item"}
@@ -567,19 +599,85 @@ const InventoryPage = () => {
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity *
-                  </label>
-                  <input
-                    name="quantity"
-                    type="number"
-                    min="0"
-                    value={form.quantity}
-                    onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Quantity *
+                    </label>
+                    <input
+                      name="quantity"
+                      type="number"
+                      min="0"
+                      value={form.quantity}
+                      onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      UOM
+                    </label>
+                    <input
+                      name="uom"
+                      value={form.uom}
+                      onChange={(e) => setForm({ ...form, uom: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., PCS, KG, M"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      IMIS Code
+                    </label>
+                    <input
+                      name="imisCode"
+                      value={form.imisCode}
+                      onChange={(e) => setForm({ ...form, imisCode: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="IMIS Code"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      BOQ Number
+                    </label>
+                    <input
+                      name="boqNumber"
+                      value={form.boqNumber}
+                      onChange={(e) => setForm({ ...form, boqNumber: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="BOQ Number"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Item Code
+                    </label>
+                    <input
+                      name="itemCode"
+                      value={form.itemCode}
+                      onChange={(e) => setForm({ ...form, itemCode: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Item Code"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Part Number
+                    </label>
+                    <input
+                      name="partNumber"
+                      value={form.partNumber}
+                      onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Part Number"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
