@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package } from "lucide-react";
+import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
 
 type TransactionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'general' | 'faulty_return';
@@ -29,6 +29,24 @@ interface Filters {
   };
 }
 
+interface TransactionFormData {
+  transactionType: TransactionType;
+  itemType: ItemType;
+  itemName: string;
+  quantity: number;
+  issuedTo: string;
+  department: string;
+  status: 'completed' | 'pending' | 'overdue';
+  notes: string;
+}
+
+interface FormErrors {
+  itemName?: string;
+  quantity?: string;
+  issuedTo?: string;
+  department?: string;
+}
+
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,6 +56,10 @@ const TransactionsPage = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [isSaving, setIsSaving] = useState(false);
   
   const [filters, setFilters] = useState<Filters>({
     transactionType: 'all',
@@ -45,6 +67,17 @@ const TransactionsPage = () => {
     status: 'all',
     department: '',
     dateRange: { start: '', end: '' }
+  });
+
+  const [formData, setFormData] = useState<TransactionFormData>({
+    transactionType: 'issue',
+    itemType: 'inventory',
+    itemName: '',
+    quantity: 1,
+    issuedTo: '',
+    department: '',
+    status: 'pending',
+    notes: ''
   });
 
   // Generate mock data
@@ -140,7 +173,7 @@ const TransactionsPage = () => {
 
   // Get unique departments for filter dropdown
   const departments = useMemo(() => {
-    const depts = [...new Set(transactions.map(t => t.department))];
+    const depts = [...new Set(transactions.map(t => t.department))].filter(dept => dept);
     return depts.sort();
   }, [transactions]);
 
@@ -182,6 +215,138 @@ const TransactionsPage = () => {
       overdue: transactions.filter(t => t.status === 'overdue').length
     };
   }, [transactions]);
+
+  // Generate reference number
+  const generateReferenceNumber = () => {
+    const year = new Date().getFullYear();
+    const nextNumber = String(transactions.length + 1).padStart(3, '0');
+    return `TRX-${year}-${nextNumber}`;
+  };
+
+  // Validate form
+  const validateForm = (data: TransactionFormData): FormErrors => {
+    const errors: FormErrors = {};
+    
+    if (!data.itemName.trim()) {
+      errors.itemName = 'Item name is required';
+    }
+    
+    if (data.quantity <= 0) {
+      errors.quantity = 'Quantity must be greater than 0';
+    }
+    
+    if (!data.issuedTo.trim()) {
+      errors.issuedTo = 'Issued to field is required';
+    }
+    
+    if (!data.department.trim()) {
+      errors.department = 'Department is required';
+    }
+    
+    return errors;
+  };
+
+  // Handle form submission
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const errors = validateForm(formData);
+    setFormErrors(errors);
+    
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    if (isEditMode && selectedTransaction) {
+      // Update existing transaction
+      setTransactions(prev => prev.map(tx => 
+        tx.id === selectedTransaction.id 
+          ? {
+              ...tx,
+              ...formData
+            }
+          : tx
+      ));
+    } else {
+      // Create new transaction
+      const newTransaction: Transaction = {
+        id: Date.now().toString(),
+        ...formData,
+        referenceNumber: generateReferenceNumber(),
+        createdAt: new Date().toISOString()
+      };
+      setTransactions(prev => [newTransaction, ...prev]);
+    }
+    
+    setIsSaving(false);
+    handleCloseForm();
+  };
+
+  // Handle opening form for new transaction
+  const handleNewTransaction = () => {
+    setIsEditMode(false);
+    setSelectedTransaction(null);
+    setFormData({
+      transactionType: 'issue',
+      itemType: 'inventory',
+      itemName: '',
+      quantity: 1,
+      issuedTo: '',
+      department: '',
+      status: 'pending',
+      notes: ''
+    });
+    setFormErrors({});
+    setShowTransactionForm(true);
+  };
+
+  // Handle opening form for editing
+  const handleEditTransaction = (transaction: Transaction) => {
+    setIsEditMode(true);
+    setSelectedTransaction(transaction);
+    setFormData({
+      transactionType: transaction.transactionType,
+      itemType: transaction.itemType,
+      itemName: transaction.itemName,
+      quantity: transaction.quantity,
+      issuedTo: transaction.issuedTo,
+      department: transaction.department,
+      status: transaction.status,
+      notes: transaction.notes || ''
+    });
+    setFormErrors({});
+    setShowTransactionForm(true);
+  };
+
+  // Handle closing form
+  const handleCloseForm = () => {
+    setShowTransactionForm(false);
+    setIsEditMode(false);
+    setSelectedTransaction(null);
+    setFormErrors({});
+    setIsSaving(false);
+  };
+
+  // Handle form field changes
+  const handleFormChange = (field: keyof TransactionFormData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Clear error for this field when user starts typing
+    if (formErrors[field as keyof FormErrors]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [field]: undefined
+      }));
+    }
+  };
 
   const handleDeleteTransaction = (id: string) => {
     setTransactionToDelete(id);
@@ -286,7 +451,10 @@ const TransactionsPage = () => {
             View and manage all inventory transactions
           </p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors">
+        <button 
+          onClick={handleNewTransaction}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
+        >
           <Plus className="h-4 w-4" /> 
           New Transaction
         </button>
@@ -501,6 +669,7 @@ const TransactionsPage = () => {
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
+                          onClick={() => handleEditTransaction(txn)}
                           className="text-gray-600 hover:text-green-600 transition-colors p-1"
                           title="Edit"
                         >
@@ -522,6 +691,225 @@ const TransactionsPage = () => {
           </table>
         </div>
       </div>
+
+      {/* Transaction Form Modal */}
+      {showTransactionForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-bold text-gray-900">
+                {isEditMode ? 'Edit Transaction' : 'New Transaction'}
+              </h2>
+              <button
+                onClick={handleCloseForm}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={isSaving}
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleFormSubmit} className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Transaction Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Transaction Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.transactionType}
+                    onChange={(e) => handleFormChange('transactionType', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isSaving}
+                  >
+                    <option value="issue">Issue</option>
+                    <option value="return">Return</option>
+                    <option value="consume">Consume</option>
+                  </select>
+                </div>
+
+                {/* Item Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Item Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.itemType}
+                    onChange={(e) => handleFormChange('itemType', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isSaving}
+                  >
+                    <option value="inventory">Inventory</option>
+                    <option value="tool">Tool</option>
+                    <option value="ppe">PPE</option>
+                    <option value="general">General</option>
+                    <option value="faulty_return">Faulty Return</option>
+                  </select>
+                </div>
+
+                {/* Item Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Item Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.itemName}
+                    onChange={(e) => handleFormChange('itemName', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.itemName ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Enter item name"
+                    disabled={isSaving}
+                  />
+                  {formErrors.itemName && (
+                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4" />
+                      {formErrors.itemName}
+                    </div>
+                  )}
+                </div>
+
+                {/* Quantity */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Quantity <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={formData.quantity}
+                    onChange={(e) => handleFormChange('quantity', parseInt(e.target.value) || 0)}
+                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.quantity ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    disabled={isSaving}
+                  />
+                  {formErrors.quantity && (
+                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4" />
+                      {formErrors.quantity}
+                    </div>
+                  )}
+                </div>
+
+                {/* Issued To */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Issued To <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.issuedTo}
+                    onChange={(e) => handleFormChange('issuedTo', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.issuedTo ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Enter person name"
+                    disabled={isSaving}
+                  />
+                  {formErrors.issuedTo && (
+                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4" />
+                      {formErrors.issuedTo}
+                    </div>
+                  )}
+                </div>
+
+                {/* Department */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Department <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.department}
+                    onChange={(e) => handleFormChange('department', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.department ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Enter department"
+                    list="departments"
+                    disabled={isSaving}
+                  />
+                  <datalist id="departments">
+                    {departments.map(dept => (
+                      <option key={dept} value={dept} />
+                    ))}
+                  </datalist>
+                  {formErrors.department && (
+                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4" />
+                      {formErrors.department}
+                    </div>
+                  )}
+                </div>
+
+                {/* Status */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Status <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => handleFormChange('status', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isSaving}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+                </div>
+
+                {/* Notes */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => handleFormChange('notes', e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter any additional notes..."
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex justify-end gap-3 pt-6 border-t">
+                <button
+                  type="button"
+                  onClick={handleCloseForm}
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  disabled={isSaving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                      {isEditMode ? 'Updating...' : 'Creating...'}
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      {isEditMode ? 'Update Transaction' : 'Create Transaction'}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Transaction Details Modal */}
       {showDetails && selectedTransaction && (
@@ -597,7 +985,13 @@ const TransactionsPage = () => {
               >
                 Close
               </button>
-              <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => {
+                  setShowDetails(false);
+                  handleEditTransaction(selectedTransaction);
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              >
                 Edit Transaction
               </button>
             </div>
