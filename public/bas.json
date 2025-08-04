@@ -1,213 +1,191 @@
-{
-  "BAS": [
-    {
-      " Sr. #": "1",
-      " IMIS Codes": " 305-0001-01-001001",
-      " BOQ #": " 1 ",
-      " BAS (Spares Inventory)": " Power Module (Schneider)",
-      " Part #": " 140CPS11420",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "2",
-      " IMIS Codes": " 305-0001-01-001002",
-      " BOQ #": " 1 ",
-      " BAS (Spares Inventory)": " CPU Module (Schneider)",
-      " Part #": " 140CPU67160",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "3",
-      " IMIS Codes": " 305-0001-01-001003",
-      " BOQ #": " 1 ",
-      " BAS (Spares Inventory)": " Ethernet Module (Schneider)",
-      " Part #": " 140CRP31200",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "4",
-      " IMIS Codes": " 305-0001-01-001004",
-      " BOQ #": " 1 ",
-      " BAS (Spares Inventory)": " Communication Module (Schneider)",
-      " Part #": " 140NOC78000",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "5",
-      " IMIS Codes": " 305-0001-01-001005",
-      " BOQ #": " 2 ",
-      " BAS (Spares Inventory)": " PLC Case (Schneider)",
-      " Part #": " 140XBBP01000",
-      "UOM": "No,s",
-      "Current Balance": "5",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "6",
-      " IMIS Codes": " 305-0001-01-001006",
-      " BOQ #": " 2 ",
-      " BAS (Spares Inventory)": " Hot Standby Optical Cable (Schneider)",
-      " Part #": " 490N0R00003",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "7",
-      " IMIS Codes": " 305-0001-01-001007",
-      " BOQ #": " 2 ",
-      " BAS (Spares Inventory)": " Memory Card (Schneider)",
-      " Part #": " TSXMRPF004M",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "8",
-      " IMIS Codes": "305-0001-01-001008",
-      " BOQ #": "1.8",
-      " BAS (Spares Inventory)": "Switch of PLC (Schneider)",
-      " Part #": "TCSESM083F2CS0M",
-      "UOM": "No,s",
-      "Current Balance": "12",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "9",
-      " IMIS Codes": "305-0001-01-001009",
-      " BOQ #": "1.9",
-      " BAS (Spares Inventory)": "Switcher of Station (Transcend Communication)",
-      " Part #": "Carat55D-16TX-2FS20",
-      "UOM": "No,s",
-      "Current Balance": "2",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "10",
-      " IMIS Codes": "305-0001-01-001010",
-      " BOQ #": "1.1",
-      " BAS (Spares Inventory)": "Power Module of RIO (Schnieder)",
-      " Part #": "BMXCPS3500",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "11",
-      " IMIS Codes": "305-0001-01-001011",
-      " BOQ #": "1.11",
-      " BAS (Spares Inventory)": "Adapter Module of RIO (Schneider)",
-      " Part #": "BMXPRA0100",
-      "UOM": "No,s",
-      "Current Balance": "9",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "12",
-      " IMIS Codes": "305-0001-01-001012",
-      " BOQ #": "1.12",
-      " BAS (Spares Inventory)": "RIO Case (Schneider)",
-      " Part #": "BMXXBP1200",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "13",
-      " IMIS Codes": "305-0001-01-001013",
-      " BOQ #": "1.13",
-      " BAS (Spares Inventory)": "16 Point DI Module (Schneider)",
-      " Part #": "BMXXBP1200",
-      "UOM": "No,s",
-      "Current Balance": "20",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "14",
-      " IMIS Codes": "305-0001-01-001014",
-      " BOQ #": "1.14",
-      " Part #": "BMX DDO 1602",
-      "UOM": "No,s",
-      "Current Balance": "20",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "15",
-      " IMIS Codes": "305-0001-01-001015",
-      " BOQ #": "1.15",
-      " BAS (Spares Inventory)": "16 Point Do Module (Schneider)",
-      " Part #": "BMX AMI 0810",
-      "UOM": "No,s",
-      "Current Balance": "15",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "16",
-      " IMIS Codes": "305-0001-01-001016",
-      " BOQ #": "1.16",
-      " BAS (Spares Inventory)": "16 Point Do Module (Schneider)",
-      " Part #": "BMX AMO 0410",
-      "UOM": "No,s",
-      "Current Balance": "15",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "17",
-      " IMIS Codes": "305-0001-01-001017",
-      " BOQ #": "1.17",
-      " BAS (Spares Inventory)": "Serial Communication interface (Schneider)",
-      " Part #": "BMX NOM 0200",
-      "UOM": "No,s",
-      "Current Balance": "15",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "18",
-      " IMIS Codes": "305-0001-01-001018",
-      " BOQ #": "1.18",
-      " BAS (Spares Inventory)": "Temperature Sensor for for Air Kiosk",
-      " Part #": "EE451-T6xxPO/025M",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "19",
-      " IMIS Codes": "305-0001-01-001019",
-      " BOQ #": "1.19",
-      " BAS (Spares Inventory)": "Temperature & Humidity Sensor for Air Kiosk",
-      " Part #": "EE195-HT6BDTx025M",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "20",
-      " IMIS Codes": "305-0001-01-001020",
-      " BOQ #": "1.2",
-      " BAS (Spares Inventory)": "Temperature & Humidity Sensor for Room",
-      " Part #": "EE195-HT6ACTx025M",
-      "UOM": "No,s",
-      "Current Balance": "10",
-      "Location": "C&C Warehouse, Depot"
-    },
-    {
-      " Sr. #": "21",
-      " IMIS Codes": "305-0001-01-001021",
-      " BOQ #": "1.21",
-      " BAS (Spares Inventory)": "CO2 Sensor",
-      " Part #": "EE820-C6xPP002S",
-      "UOM": "No,s",
-      "Current Balance": "5",
-      "Location": "C&C Warehouse, Depot"
-    }
-  ]
-}
+[
+  {
+    "Item Code (Brand)": "1",
+    "Item Name": "Power Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001001",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "2",
+    "Item Name": "CPU Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001002",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "3",
+    "Item Name": "Ethernet Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001003",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "4",
+    "Item Name": "Communication Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001004",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "5",
+    "Item Name": "PLC Case (Schneider)",
+    "IMIS CODE": "305-0001-01-001005",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 5,
+    "In-stock": 5,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "6",
+    "Item Name": "Hot Standby Optical Cable (Schneider)",
+    "IMIS CODE": "305-0001-01-001006",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "7",
+    "Item Name": "Memory Card (Schneider)",
+    "IMIS CODE": "305-0001-01-001007",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "8",
+    "Item Name": "Switch of PLC (Schneider)",
+    "IMIS CODE": "305-0001-01-001008",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 12,
+    "In-stock": 12,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "9",
+    "Item Name": "Switcher of Station (Transcend Communication)",
+    "IMIS CODE": "305-0001-01-001009",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 2,
+    "In-stock": 2,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "10",
+    "Item Name": "Power Module of RIO (Schnieder)",
+    "IMIS CODE": "305-0001-01-001010",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "11",
+    "Item Name": "Adapter Module of RIO (Schneider)",
+    "IMIS CODE": "305-0001-01-001011",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 9,
+    "In-stock": 9,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "12",
+    "Item Name": "RIO Case (Schneider)",
+    "IMIS CODE": "305-0001-01-001012",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "13",
+    "Item Name": "16 Point DI Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001013",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 20,
+    "In-stock": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "14",
+    "Item Name": "16 Point Do Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001014",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 20,
+    "In-stock": 20,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "15",
+    "Item Name": "16 Point Do Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001015",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 15,
+    "In-stock": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "16",
+    "Item Name": "16 Point Do Module (Schneider)",
+    "IMIS CODE": "305-0001-01-001016",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 15,
+    "In-stock": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "17",
+    "Item Name": "Serial Communication interface (Schneider)",
+    "IMIS CODE": "305-0001-01-001017",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 15,
+    "In-stock": 15,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "18",
+    "Item Name": "Temperature Sensor for for Air Kiosk",
+    "IMIS CODE": "305-0001-01-001018",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "19",
+    "Item Name": "Temperature & Humidity Sensor for Air Kiosk",
+    "IMIS CODE": "305-0001-01-001019",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "20",
+    "Item Name": "Temperature & Humidity Sensor for Room",
+    "IMIS CODE": "305-0001-01-001020",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 10,
+    "In-stock": 10,
+    "Location": "C&C Warehouse, Depot"
+  },
+  {
+    "Item Code (Brand)": "21",
+    "Item Name": "CO2 Sensor",
+    "IMIS CODE": "305-0001-01-001021",
+    "U/M": "No,s",
+    "Stock Received from Warehouse (20-7/23)": 5,
+    "In-stock": 5,
+    "Location": "C&C Warehouse, Depot"
+  }
+]
