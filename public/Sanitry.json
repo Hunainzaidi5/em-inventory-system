@@ -1,58 +1,60 @@
-[
-  {
-    "Sr_No": "1",
-    "IMIS_Code": "327-0001-00-001001",
-    "Item_Description": "Muslim Faucet (Shower)",
-    "UOM": "Pcs",
-    "Quantity": "0",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "2",
-    "IMIS_Code": "327-0001-00-001002",
-    "Item_Description": "Steel Pot / Ewer",
-    "UOM": "Pcs",
-    "Quantity": "27",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "3",
-    "IMIS_Code": "327-0001-00-001003",
-    "Item_Description": "Chain",
-    "UOM": "Pcs",
-    "Quantity": "29",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "4",
-    "IMIS_Code": "327-0001-00-001004",
-    "Item_Description": "Faucet (Tap)",
-    "UOM": "Pcs",
-    "Quantity": "567",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "5",
-    "IMIS_Code": "327-0001-00-001005",
-    "Item_Description": "\"Tee\" Steel (3-way Valve)",
-    "UOM": "Pcs",
-    "Quantity": "443",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "6",
-    "IMIS_Code": "327-0001-00-001006",
-    "Item_Description": "Raw Material Belt / Teflon Tape",
-    "UOM": "Pcs",
-    "Quantity": "104",
-    "Location": "C&C Warehouse, Depot"
-  },
-  {
-    "Sr_No": "7",
-    "IMIS_Code": "327-0001-00-001007",
-    "Item_Description": "Conector 1/2\" (Barrel Nipple)",
-    "UOM": "Pcs",
-    "Quantity": "10",
-    "Location": "C&C Warehouse, Depot"
-  }
-]
+{
+  "Sanitry": [
+    {
+      "Sr. #": "1",
+      "IMIS Codes": "327-0001-00-001001",
+      "Sanitry (Spares Inventory)": "Muslim Faucet (Shower)",
+      "UOM": "Pcs",
+      "Quantity": "0",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "2",
+      "IMIS Codes": "327-0001-00-001002",
+      "Sanitry (Spares Inventory)": "Steel Pot / Ewer",
+      "UOM": "Pcs",
+      "Quantity": "27",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "3",
+      "IMIS Codes": "327-0001-00-001003",
+      "Sanitry (Spares Inventory)": "Chain",
+      "UOM": "Pcs",
+      "Quantity": "29",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "4",
+      "IMIS Codes": "327-0001-00-001004",
+      "Sanitry (Spares Inventory)": "Faucet (Tap)",
+      "UOM": "Pcs",
+      "Quantity": "567",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "5",
+      "IMIS Codes": "327-0001-00-001005",
+      "Sanitry (Spares Inventory)": "\"Tee\" Steel (3-way Valve)",
+      "UOM": "Pcs",
+      "Quantity": "443",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "6",
+      "IMIS Codes": "327-0001-00-001006",
+      "Sanitry (Spares Inventory)": "Raw Material Belt / Teflon Tape",
+      "UOM": "Pcs",
+      "Quantity": "104",
+      "Location": "C&C Warehouse, Depot"
+    },
+    {
+      "Sr. #": "7",
+      "IMIS Codes": "327-0001-00-001007",
+      "Sanitry (Spares Inventory)": "Conector 1/2\" (Barrel Nipple)",
+      "UOM": "Pcs",
+      "Quantity": "10",
+      "Location": "C&C Warehouse, Depot"
+    }
+  ]
+}
