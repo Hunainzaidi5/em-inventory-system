@@ -5,111 +5,118 @@
 
 /* Test to ensure CSS is loading */
 body {
-  background-color: #f5f5f5 !important;
+  background-color: #E7E7E7 !important;
 }
 
-/* E&M Inventory Management System Design System */
+/* E&M Inventory Management System Design System - Redesigned */
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --background: 0 0% 100%;
+    /* Core Brand Colors - Updated with new palette */
+    --background: 0 0% 91%; /* #E7E7E7 - Light gray background */
     --foreground: 222.2 84% 4.9%;
     
-    /* Professional Blue Palette for Industrial/Engineering Theme */
-    --primary: 214 84% 56%; /* Professional blue */
+    /* Primary Colors using the blue from palette */
+    --primary: 231 32% 53%; /* #485696 - Deep blue */
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 214 84% 46%;
-    --primary-muted: 214 50% 90%;
+    --primary-hover: 231 32% 43%;
+    --primary-muted: 231 20% 90%;
     
-    /* Secondary Colors */
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --secondary-hover: 220 14.3% 85.9%;
+    /* Secondary Colors using warm tones */
+    --secondary: 42 61% 75%; /* #F9C784 - Warm beige */
+    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary-hover: 42 61% 65%;
+    
+    /* Accent Colors from the orange spectrum */
+    --accent: 22 96% 56%; /* #FC7A1E - Bright orange */
+    --accent-foreground: 0 0% 98%;
+    --accent-hover: 22 96% 46%;
     
     /* Status Colors */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
-    --warning: 38 92% 50%;
+    --warning: 42 61% 75%; /* Using #F9C784 for warnings */
     --warning-foreground: 222.2 84% 4.9%;
-    --error: 0 84.2% 60.2%;
-    --error-foreground: 210 40% 98%;
-    --info: 199 89% 48%;
+    --error: 11 100% 47%; /* #F24C00 - Red-orange */
+    --error-foreground: 0 0% 98%;
+    --info: 231 32% 53%; /* Using primary blue for info */
     --info-foreground: 0 0% 98%;
     
     /* Neutral Colors */
-    --muted: 220 14.3% 95.9%;
+    --muted: 0 0% 91%; /* Matching background */
     --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
     
     /* UI Elements */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 214 84% 56%;
+    --border: 0 0% 85%;
+    --input: 0 0% 95%;
+    --ring: 231 32% 53%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    /* Sidebar */
-    --sidebar-background: 222.2 47.4% 11.2%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 214 84% 56%;
+    /* Sidebar - Using the deep blue with orange accents */
+    --sidebar-background: 231 32% 53%; /* #485696 - Deep blue */
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 22 96% 56%; /* #FC7A1E - Orange accent */
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 222.2 47.4% 16%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222.2 47.4% 16%;
-    --sidebar-ring: 214 84% 56%;
+    --sidebar-accent: 231 32% 43%; /* Darker blue for hover states */
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 231 32% 43%;
+    --sidebar-ring: 22 96% 56%;
     
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(214 84% 56%), hsl(214 84% 46%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 14.3% 95.9%), hsl(220 14.3% 85.9%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 26%));
+    /* Gradients - Updated with new colors */
+    --gradient-primary: linear-gradient(135deg, hsl(231 32% 53%), hsl(231 32% 43%));
+    --gradient-secondary: linear-gradient(135deg, hsl(42 61% 75%), hsl(42 61% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(22 96% 56%), hsl(11 100% 47%));
+    --gradient-warm: linear-gradient(135deg, hsl(42 61% 75%), hsl(22 96% 56%));
     
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-primary: 0 10px 25px -5px hsl(214 84% 56% / 0.25);
+    --shadow-primary: 0 10px 25px -5px hsl(231 32% 53% / 0.25);
+    --shadow-accent: 0 10px 25px -5px hsl(22 96% 56% / 0.25);
     
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 231 32% 8%; /* Very dark blue-gray */
+    --foreground: 0 0% 95%;
     
-    --primary: 214 84% 56%;
+    --primary: 22 96% 56%; /* Orange becomes primary in dark mode */
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 214 84% 66%;
-    --primary-muted: 214 50% 15%;
+    --primary-hover: 22 96% 66%;
+    --primary-muted: 22 50% 15%;
     
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --secondary-hover: 217.2 32.6% 27.5%;
+    --secondary: 231 32% 20%; /* Dark blue secondary */
+    --secondary-foreground: 0 0% 95%;
+    --secondary-hover: 231 32% 30%;
     
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 42 61% 65%; /* Muted beige accent */
+    --accent-foreground: 222.2 84% 4.9%;
+    --accent-hover: 42 61% 75%;
     
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 214 84% 56%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --muted: 231 32% 15%;
+    --muted-foreground: 0 0% 65%;
     
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 214 84% 56%;
+    --card: 231 32% 12%;
+    --card-foreground: 0 0% 95%;
+    --border: 231 32% 20%;
+    --input: 231 32% 15%;
+    --ring: 22 96% 56%;
+    --popover: 231 32% 12%;
+    --popover-foreground: 0 0% 95%;
+    
+    --sidebar-background: 231 32% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 22 96% 56%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 222.2 84% 4.9%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222.2 84% 4.9%;
-    --sidebar-ring: 214 84% 56%;
+    --sidebar-accent: 231 32% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 231 32% 15%;
+    --sidebar-ring: 22 96% 56%;
   }
 }
 
@@ -146,7 +153,7 @@ body {
   }
   
   .status-issued {
-    @apply bg-info/10 text-info border-info/20;
+    @apply bg-blue-500/10 text-blue-600 border-blue-500/20;
   }
   
   .status-consumed {
@@ -154,9 +161,10 @@ body {
   }
   
   .status-faulty {
-    @apply bg-error/10 text-error border-error/20;
+    @apply bg-red-500/10 text-red-600 border-red-500/20;
   }
   
+  /* Updated gradient classes */
   .gradient-primary {
     background: var(--gradient-primary);
   }
@@ -165,8 +173,29 @@ body {
     background: var(--gradient-secondary);
   }
   
-  .gradient-success {
-    background: var(--gradient-success);
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .gradient-warm {
+    background: var(--gradient-warm);
+  }
+  
+  /* New color utility classes */
+  .bg-sidebar {
+    background-color: hsl(var(--sidebar-background));
+  }
+  
+  .text-sidebar {
+    color: hsl(var(--sidebar-foreground));
+  }
+  
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+  
+  .text-accent {
+    color: hsl(var(--accent));
   }
   
   .animate-in {
@@ -190,5 +219,19 @@ body {
   
   .card-hover {
     @apply hover:shadow-lg transition-shadow duration-200;
+  }
+  
+  /* Sidebar specific styles */
+  .sidebar-item {
+    @apply px-3 py-2 rounded-md transition-colors duration-200;
+  }
+  
+  .sidebar-item:hover {
+    background-color: hsl(var(--sidebar-accent));
+  }
+  
+  .sidebar-item.active {
+    background-color: hsl(var(--sidebar-primary));
+    color: hsl(var(--sidebar-primary-foreground));
   }
 }
