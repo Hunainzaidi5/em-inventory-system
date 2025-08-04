@@ -1,7 +1,7 @@
 [
   {
     "Sr_No": "1",
-    "IMIS CODE": "327-0001-00-001001",
+    "IMIS_Code": "327-0001-00-001001",
     "Item_Description": "Muslim Faucet (Shower)",
     "UOM": "Pcs",
     "Quantity": "0",
@@ -9,7 +9,7 @@
   },
   {
     "Sr_No": "2",
-    "IMIS CODE": "327-0001-00-001002",
+    "IMIS_Code": "327-0001-00-001002",
     "Item_Description": "Steel Pot / Ewer",
     "UOM": "Pcs",
     "Quantity": "27",
@@ -17,7 +17,7 @@
   },
   {
     "Sr_No": "3",
-    "IMIS CODE": "327-0001-00-001003",
+    "IMIS_Code": "327-0001-00-001003",
     "Item_Description": "Chain",
     "UOM": "Pcs",
     "Quantity": "29",
@@ -25,7 +25,7 @@
   },
   {
     "Sr_No": "4",
-    "IMIS CODE": "327-0001-00-001004",
+    "IMIS_Code": "327-0001-00-001004",
     "Item_Description": "Faucet (Tap)",
     "UOM": "Pcs",
     "Quantity": "567",
@@ -33,7 +33,7 @@
   },
   {
     "Sr_No": "5",
-    "IMIS CODE": "327-0001-00-001005",
+    "IMIS_Code": "327-0001-00-001005",
     "Item_Description": "\"Tee\" Steel (3-way Valve)",
     "UOM": "Pcs",
     "Quantity": "443",
@@ -41,7 +41,7 @@
   },
   {
     "Sr_No": "6",
-    "IMIS CODE": "327-0001-00-001006",
+    "IMIS_Code": "327-0001-00-001006",
     "Item_Description": "Raw Material Belt / Teflon Tape",
     "UOM": "Pcs",
     "Quantity": "104",
@@ -49,7 +49,7 @@
   },
   {
     "Sr_No": "7",
-    "IMIS CODE": "327-0001-00-001007",
+    "IMIS_Code": "327-0001-00-001007",
     "Item_Description": "Conector 1/2\" (Barrel Nipple)",
     "UOM": "Pcs",
     "Quantity": "10",
