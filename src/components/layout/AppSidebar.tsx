@@ -17,6 +17,8 @@ import {
   Menu,
   ChevronDown,
   RotateCcw,
+  ListTodo,
+  User
 } from "lucide-react";
 
 import {
@@ -58,8 +60,10 @@ const inventoryMenuItems = [
 ];
 
 const documentsMenuItems = [
+  { title: "Transactions", url: "/transactions", icon: ListTodo },
   { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
   { title: "Issuance Form", url: "/issuance", icon: FileCheck },
+  { title: "Transactions", url: "/transactions", icon: ListTodo },
 ];
 
 const systemMenuItems = [
