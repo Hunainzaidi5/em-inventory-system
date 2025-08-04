@@ -99,6 +99,23 @@ const InventoryPage = () => {
                 boqNumber: item["BOQ_No"]?.toString() || "",
                 lastUpdated: new Date().toISOString().split('T')[0]
               }));
+          } else if (fileInfo.key === "SANITARY") {
+            // Handle Sanitary structure (key is "sanitary" lowercase)
+            const items = data["sanitary"] || [];
+            formattedParts = items
+              .filter((item: any) => item && item["(Sanitary Items Inventory)"])
+              .map((item: any) => ({
+                id: Math.random().toString(36).substr(2, 9),
+                name: item["(Sanitary Items Inventory)"] || "",
+                quantity: Number(item["Current Balance"]) || 0,
+                location: item["Location"] || "C&C Warehouse, Depot",
+                itemCode: item["Sr. #"]?.toString() || "",
+                imisCode: item["IMIS Codes"] || "",
+                uom: item["UOM"] || "",
+                partNumber: item["Part #"] || "",
+                boqNumber: item["BOQ #"]?.toString() || "",
+                lastUpdated: new Date().toISOString().split('T')[0]
+              }));
           } else {
             // Handle other JSON structures (BAS, FAS, HVAC, etc.)
             const key = Object.keys(data)[0]; // Get the first key (e.g., "BAS", "Escalator", "HVAC")
@@ -131,8 +148,9 @@ const InventoryPage = () => {
                                Number(item["Quantity"]) || 
                                Number(item["In-stock"]) || 0;
 
-                // Get IMIS code from various possible field names
+                // Get IMIS code from various possible field names (including with leading spaces)
                 const imisCode = item["IMIS Codes"] || 
+                               item[" IMIS Codes"] || // Note the leading space in BAS
                                item["IMIS Code"] || 
                                item["IMIS_Code"] || 
                                item["IMIS CODE"] || "";
@@ -142,17 +160,19 @@ const InventoryPage = () => {
                            item["U/M"] || 
                            item["UOM"] || "";
 
-                // Get part number from various possible field names
+                // Get part number from various possible field names (including with leading spaces)
                 const partNumber = item["Part #"] || 
+                                 item[" Part #"] || // Note the leading space in BAS
                                  item["Part Number"] || 
                                  item["Specification"] || "";
 
-                // Get BOQ number from various possible field names
+                // Get BOQ number from various possible field names (including with leading spaces)
                 const boqNumber = item["BOQ #"] || 
+                                item[" BOQ #"] || // Note the leading space in BAS
                                 item["BOQ_No"] || 
                                 item["BOQ Number"] || "";
 
-                // Get serial number from various possible field names
+                // Get serial number from various possible field names (including with leading spaces)
                 const serialNumber = item["Sr. #"] || 
                                    item[" Sr. #"] || // Note the leading space in BAS
                                    item["Sr_No"] || 
