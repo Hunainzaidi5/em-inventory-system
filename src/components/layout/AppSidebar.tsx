@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   ChevronDown,
+  RotateCcw,
 } from "lucide-react";
 
 import {
@@ -50,6 +51,7 @@ const mainMenuItems = [
 
 const inventoryMenuItems = [
   { title: "Inventory Items", url: "/inventory", icon: Package },
+  { title: "Faulty Returns", url: "/faulty-returns", icon: RotateCcw },
   { title: "Tools", url: "/tools", icon: Wrench },
   { title: "PPE Items", url: "/ppe", icon: Shield },
   { title: "General Items", url: "/general", icon: Gift },
