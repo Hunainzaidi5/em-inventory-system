@@ -28,7 +28,7 @@ const mockActivities: ActivityItem[] = [
     itemName: 'Safety Helmet Yellow',
     itemType: 'ppe',
     quantity: 5,
-    user: 'John Doe',
+    user: 'Syed Iqrar Haider',
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
     description: 'Issued for maintenance work at Station A',
   },

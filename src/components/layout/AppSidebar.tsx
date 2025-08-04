@@ -95,9 +95,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
   // Mock user data
   const currentUser = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Engineer",
+    name: "Syed Iqrar Haider",
+    email: "iqrar.haider@gmail.com",
+    role: "Technical Assistant",
     avatar: "",
   };
 

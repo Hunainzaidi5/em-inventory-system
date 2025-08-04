@@ -133,20 +133,19 @@ CREATE TABLE inventory_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Tools table
+-- Tools table (Updated to match React implementation)
 CREATE TABLE tools (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  tool_name TEXT NOT NULL,
-  tool_code TEXT UNIQUE,
-  description TEXT,
-  location_id UUID REFERENCES locations(id) ON DELETE RESTRICT NOT NULL,
+  item_name TEXT NOT NULL,
+  tool_description TEXT,
+  brand TEXT,
+  uom TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  available_quantity INTEGER NOT NULL DEFAULT 0 CHECK (available_quantity >= 0),
-  condition TEXT DEFAULT 'good',
-  last_maintenance_date DATE,
-  next_maintenance_date DATE,
-  purchase_date DATE,
-  warranty_expiry DATE,
+  -- Issued To fields
+  issued_to_name TEXT NOT NULL,
+  issued_to_olt TEXT,
+  issued_to_designation TEXT,
+  issued_to_group TEXT,
   status item_status DEFAULT 'available',
   notes TEXT,
   created_by UUID REFERENCES profiles(id),
@@ -154,18 +153,17 @@ CREATE TABLE tools (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- PPE items table
+-- PPE items table (Updated to match React implementation)
 CREATE TABLE ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  item_name ppe_type NOT NULL,
-  size_variant TEXT,
-  description TEXT,
-  location_id UUID REFERENCES locations(id) ON DELETE RESTRICT NOT NULL,
+  item_name TEXT NOT NULL,
+  item_description TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  available_quantity INTEGER NOT NULL DEFAULT 0 CHECK (available_quantity >= 0),
-  expiry_date DATE,
-  batch_number TEXT,
-  manufacturer TEXT,
+  -- Issued To fields
+  issued_to_name TEXT NOT NULL,
+  issued_to_olt TEXT,
+  issued_to_designation TEXT,
+  issued_to_group TEXT,
   status item_status DEFAULT 'available',
   notes TEXT,
   created_by UUID REFERENCES profiles(id),
@@ -173,19 +171,37 @@ CREATE TABLE ppe_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- General items table
+-- General items table (Updated to match React implementation)
 CREATE TABLE general_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
-  item_code TEXT UNIQUE,
-  description TEXT,
-  category TEXT, -- 'Tape', 'Stationery', 'Gifts', etc.
-  location_id UUID REFERENCES locations(id) ON DELETE RESTRICT NOT NULL,
+  item_description TEXT,
+  item_type TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  available_quantity INTEGER NOT NULL DEFAULT 0 CHECK (available_quantity >= 0),
-  unit_cost DECIMAL(10,2),
-  supplier TEXT,
+  -- Issued To fields
+  issued_to_name TEXT NOT NULL,
+  issued_to_olt TEXT,
+  issued_to_designation TEXT,
+  issued_to_group TEXT,
   status item_status DEFAULT 'available',
+  notes TEXT,
+  created_by UUID REFERENCES profiles(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Faulty Returns table (New table to match React implementation)
+CREATE TABLE faulty_returns (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  item_name TEXT NOT NULL,
+  boq_number TEXT,
+  part_number TEXT,
+  uom TEXT,
+  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+  used_against TEXT NOT NULL,
+  pick_up_location TEXT NOT NULL,
+  storage_location TEXT NOT NULL,
+  status TEXT DEFAULT 'pending', -- 'pending', 'resolved', 'disposed'
   notes TEXT,
   created_by UUID REFERENCES profiles(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -208,25 +224,6 @@ CREATE TABLE transactions (
   condition_on_return TEXT,
   notes TEXT,
   reference_number TEXT UNIQUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Faulty returns table
-CREATE TABLE faulty_returns (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  transaction_id UUID REFERENCES transactions(id) ON DELETE CASCADE,
-  item_type TEXT NOT NULL,
-  item_id UUID NOT NULL,
-  fault_description TEXT NOT NULL,
-  return_location TEXT NOT NULL, -- 'Warehouse' or 'C&C'
-  returned_by UUID REFERENCES profiles(id) NOT NULL,
-  return_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  expected_resolution TEXT,
-  resolution_status TEXT DEFAULT 'pending', -- 'pending', 'resolved', 'disposed'
-  replacement_provided BOOLEAN DEFAULT false,
-  replacement_item_id UUID,
-  notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -296,17 +293,29 @@ CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
 CREATE INDEX idx_inventory_items_status ON inventory_items(status);
 CREATE INDEX idx_inventory_items_part_number ON inventory_items(part_number);
 
+CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name);
+CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group);
+CREATE INDEX idx_tools_brand ON tools(brand);
+CREATE INDEX idx_tools_status ON tools(status);
+
+CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
+CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
+CREATE INDEX idx_ppe_items_status ON ppe_items(status);
+
+CREATE INDEX idx_general_items_issued_to_name ON general_items(issued_to_name);
+CREATE INDEX idx_general_items_issued_to_group ON general_items(issued_to_group);
+CREATE INDEX idx_general_items_item_type ON general_items(item_type);
+CREATE INDEX idx_general_items_status ON general_items(status);
+
+CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
+CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location);
+CREATE INDEX idx_faulty_returns_status ON faulty_returns(status);
+CREATE INDEX idx_faulty_returns_created_at ON faulty_returns(created_at);
+
 CREATE INDEX idx_transactions_item_type_id ON transactions(item_type, item_id);
 CREATE INDEX idx_transactions_issued_to ON transactions(issued_to);
 CREATE INDEX idx_transactions_created_at ON transactions(created_at);
 CREATE INDEX idx_transactions_type ON transactions(transaction_type);
-
-CREATE INDEX idx_tools_location ON tools(location_id);
-CREATE INDEX idx_tools_status ON tools(status);
-CREATE INDEX idx_ppe_items_location ON ppe_items(location_id);
-CREATE INDEX idx_ppe_items_type ON ppe_items(item_name);
-CREATE INDEX idx_general_items_location ON general_items(location_id);
-CREATE INDEX idx_general_items_category ON general_items(category);
 
 CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at);
 CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status);
@@ -334,48 +343,10 @@ CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_item
 CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_general_items_updated_at BEFORE UPDATE ON general_items FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Create a function to automatically update available quantities
-CREATE OR REPLACE FUNCTION update_available_quantity()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Update available quantity based on issued/returned items
-  IF TG_OP = 'INSERT' THEN
-    IF NEW.transaction_type = 'issue' THEN
-      -- Decrease available quantity
-      CASE NEW.item_type
-        WHEN 'tool' THEN
-          UPDATE tools SET available_quantity = available_quantity - NEW.quantity WHERE id = NEW.item_id;
-        WHEN 'ppe' THEN
-          UPDATE ppe_items SET available_quantity = available_quantity - NEW.quantity WHERE id = NEW.item_id;
-        WHEN 'general' THEN
-          UPDATE general_items SET available_quantity = available_quantity - NEW.quantity WHERE id = NEW.item_id;
-      END CASE;
-    ELSIF NEW.transaction_type = 'return' THEN
-      -- Increase available quantity
-      CASE NEW.item_type
-        WHEN 'tool' THEN
-          UPDATE tools SET available_quantity = available_quantity + NEW.quantity WHERE id = NEW.item_id;
-        WHEN 'ppe' THEN
-          UPDATE ppe_items SET available_quantity = available_quantity + NEW.quantity WHERE id = NEW.item_id;
-        WHEN 'general' THEN
-          UPDATE general_items SET available_quantity = available_quantity + NEW.quantity WHERE id = NEW.item_id;
-      END CASE;
-    END IF;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Create trigger for automatic quantity updates
-CREATE TRIGGER update_available_quantity_trigger
-  AFTER INSERT ON transactions
-  FOR EACH ROW
-  EXECUTE FUNCTION update_available_quantity();
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';
@@ -383,11 +354,11 @@ COMMENT ON TABLE locations IS 'Storage locations for inventory items';
 COMMENT ON TABLE categories IS 'Main categories: O&M and PMA';
 COMMENT ON TABLE systems IS 'System types: Elevator, Escalator, PSD, HVAC, WSD, LV, FAS, FES';
 COMMENT ON TABLE inventory_items IS 'Main inventory spare parts with full tracking';
-COMMENT ON TABLE tools IS 'Tools inventory with maintenance tracking';
-COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory';
-COMMENT ON TABLE general_items IS 'General items like tape, stationery, gifts';
+COMMENT ON TABLE tools IS 'Tools inventory with assignment tracking';
+COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory with assignment tracking';
+COMMENT ON TABLE general_items IS 'General items with assignment tracking';
+COMMENT ON TABLE faulty_returns IS 'Faulty returns tracking with location management';
 COMMENT ON TABLE transactions IS 'All issue/return/consume transactions across item types';
-COMMENT ON TABLE faulty_returns IS 'Items returned due to faults';
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';
 COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
