@@ -124,12 +124,6 @@ export function LoginPage() {
                 'Sign in'
               )}
             </Button>
-            <div className="text-center text-sm">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-medium text-blue-600 hover:underline">
-                Sign up
-              </Link>
-            </div>
           </CardFooter>
         </form>
       </Card>

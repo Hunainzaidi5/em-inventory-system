@@ -19,8 +19,10 @@ const userRoles = [
   'deputy_manager',
   'manager',
   'dev',
-  'admin',
 ] as const;
+
+// Only show non-privileged roles to regular users (now just filter out 'dev' if needed)
+const regularUserRoles = userRoles.filter((role) => role !== 'dev');
 
 const registerSchema = z
   .object({
@@ -75,7 +77,7 @@ export function RegisterPage() {
       });
 
       if (success) {
-        alert('Registration successful! Please check your email to confirm your account.');
+        // Show a generic registration success message
         navigate('/login', { state: { message: 'Registration successful! Please login.' } });
       } else if (error) {
         setFormError('root', { message: error });
@@ -132,7 +134,7 @@ export function RegisterPage() {
                 {...register('role')}
                 className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}
               >
-                {userRoles.map((role) => (
+                {regularUserRoles.map((role) => (
                   <option key={role} value={role}>
                     {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
                   </option>
