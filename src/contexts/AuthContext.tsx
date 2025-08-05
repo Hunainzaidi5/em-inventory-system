@@ -100,14 +100,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (data: RegisterData) => {
-    setIsLoading(true);
-    setError(null);
+  const register = async (userData: RegisterData) => {
     try {
-      const { user } = await authService.register(data);
-      setUser(user);
-      queryClient.clear();
-      return { success: true };
+      setIsLoading(true);
+      const response = await authService.register(userData);
+      if (response.success) {
+        setError(null);
+        return { success: true };
+      } else {
+        setError(response.message);
+        return { success: false, error: response.message };
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
       setError(message);

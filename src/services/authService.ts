@@ -67,6 +67,44 @@ const DEVELOPER_CREDENTIALS = {
   } as User
 };
 
+// Add the developer user to the database if not exists
+const ensureDeveloperUser = async () => {
+  try {
+    // Check if developer user exists in profiles
+    const { data: existingDev } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', DEVELOPER_CREDENTIALS.email)
+      .single();
+
+    if (!existingDev) {
+      // Create the developer profile in the database
+      const { error } = await supabase
+        .from('profiles')
+        .insert([{
+          id: DEVELOPER_CREDENTIALS.user.id,
+          full_name: DEVELOPER_CREDENTIALS.user.name,
+          email: DEVELOPER_CREDENTIALS.email,
+          role: 'dev',
+          department: DEVELOPER_CREDENTIALS.user.department,
+          employee_id: DEVELOPER_CREDENTIALS.user.employee_id,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }]);
+
+      if (error) {
+        console.error('Error creating developer profile:', error);
+      }
+    }
+  } catch (error) {
+    console.error('Error ensuring developer user:', error);
+  }
+};
+
+// Run this on import to ensure developer user exists
+ensureDeveloperUser();
+
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
     const { email, password } = credentials;
@@ -132,34 +170,50 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
       email_confirm: true, // Auto-confirm the email
       user_metadata: {
         name: userData.name,
-  const { email, password, name, role, department, employee_id } = userData;
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name,
-        full_name: name,
-        email,
-        role,
-        department,
-        employee_id,
       },
-    },
-  });
-  if (error) throw { message: error.message };
-  return {
-    user: {
-      id: data.user?.id || '',
-      name: data.user?.user_metadata?.name || '',
-      email: data.user?.email || '',
-      role: data.user?.user_metadata?.role || '',
-      avatar: data.user?.user_metadata?.avatar_url || '',
-      created_at: data.user?.created_at || '',
-      is_active: true, // default to true on registration
-    },
-    token: data.session?.access_token || '',
-  };
+    });
+
+    if (signUpError) {
+      console.error('Error creating auth user:', signUpError);
+      return { success: false, message: signUpError.message };
+    }
+
+    if (!authData.user) {
+      return { success: false, message: 'No user returned from registration' };
+    }
+
+    // Create the user's profile in the database
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert([
+        {
+          id: authData.user.id,
+          full_name: userData.name,
+          email: userData.email,
+          role: userData.role || 'technician',
+          department: userData.department || '',
+          employee_id: userData.employee_id || '',
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+
+    if (profileError) {
+      console.error('Error creating profile:', profileError);
+      // Clean up the auth user if profile creation fails
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      return { success: false, message: 'Failed to create user profile' };
+    }
+
+    return { success: true, message: 'User created successfully' };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An unknown error occurred' 
+    };
+  }
 };
 
 export const logout = async (): Promise<void> => {

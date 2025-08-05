@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserRole } from '@/types/auth';
 
 // Define the form values type
@@ -16,6 +21,24 @@ type FormValues = {
   employee_id: string;
 };
 
+// Define the form schema with Zod
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  role: z.enum([
+    'admin',
+    'manager',
+    'supervisor',
+    'technician',
+    'viewer'
+  ] as const, {
+    required_error: 'Please select a role',
+  }),
+  department: z.string().min(1, 'Department is required'),
+  employee_id: z.string().min(1, 'Employee ID is required'),
+});
+
 const userRoles: UserRole[] = [
   'admin',
   'dev',
@@ -27,7 +50,7 @@ const userRoles: UserRole[] = [
   'technician'
 ];
 
-const addUserSchema = z.object({
+const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -39,38 +62,36 @@ const addUserSchema = z.object({
   employee_id: z.string().min(1, 'Employee ID is required'),
 });
 
-type AddUserFormValues = z.infer<typeof addUserSchema>;
-
 const AddUserPage = () => {
-  const { register: registerUser, user: currentUser } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Only allow developers to access this page
-  if (!currentUser || currentUser.role !== 'dev') {
-    return <Navigate to="/" state={{ from: location }} replace />;
-  }
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError: setFormError,
-  } = useForm<AddUserFormValues, any, FormValues>({
-    resolver: zodResolver(addUserSchema),
+    reset: resetForm,
+  } = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: '',
       email: '',
       password: '',
-      role: 'admin',
+      role: 'technician' as UserRole,
       department: '',
       employee_id: '',
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
     try {
-      const { success, error } = await registerUser({
+      setIsLoading(true);
+      setError('');
+      
+      // Call the register function from AuthContext
+      const result = await registerUser({
         name: data.name,
         email: data.email,
         password: data.password,
@@ -78,15 +99,25 @@ const AddUserPage = () => {
         department: data.department,
         employee_id: data.employee_id,
       });
-      if (success) {
+
+      if (result.success) {
+        toast.success('User created successfully');
+        // Reset form
+        resetForm();
+        // Navigate back to users list
         navigate('/users');
-      } else if (error) {
-        setFormError('root', { message: error });
+      } else {
+        const errorMessage = result.error || 'Failed to create user';
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
-      setFormError('root', {
-        message: error instanceof Error ? error.message : 'An unexpected error occurred',
-      });
+      console.error('Error creating user:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the user';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
