@@ -156,24 +156,17 @@ export const createUserAsAdmin = async (userData: RegisterData): Promise<{ succe
   try {
     const { email, password, name, role, department, employee_id } = userData;
     
-    // Store current session to restore later
-    const { data: currentSession } = await supabase.auth.getSession();
+    console.log('[DEBUG] Creating user as admin:', { email, name, role });
     
-    // Create a temporary Supabase client for user creation
-    const tempClient = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-          detectSessionInUrl: false,
-        },
-      }
-    );
+    // Store current session info to restore later
+    const { data: currentSession } = await supabase.auth.getSession();
+    const currentUser = await getCurrentUser();
+    
+    console.log('[DEBUG] Current session stored:', !!currentSession?.session);
+    console.log('[DEBUG] Current user stored:', currentUser?.email);
 
-    // Create user with temporary client
-    const { data, error } = await tempClient.auth.signUp({
+    // Create user using the main client but handle session carefully
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -189,6 +182,7 @@ export const createUserAsAdmin = async (userData: RegisterData): Promise<{ succe
     });
 
     if (error) {
+      console.error('[DEBUG] SignUp error:', error);
       throw new Error(error.message);
     }
 
@@ -196,12 +190,21 @@ export const createUserAsAdmin = async (userData: RegisterData): Promise<{ succe
       throw new Error('Failed to create user');
     }
 
-    // Sign out from temporary client
-    await tempClient.auth.signOut();
+    console.log('[DEBUG] User created successfully:', data.user.id);
 
-    // Restore original session if it existed
-    if (currentSession?.session) {
+    // Immediately sign out the new user to prevent session switch
+    await supabase.auth.signOut();
+    
+    // Restore the original session if it was a dev user
+    if (currentUser?.role === 'dev') {
+      // For dev users, restore from localStorage
+      localStorage.setItem('devUser', 'true');
+      localStorage.setItem('devUserData', JSON.stringify(currentUser));
+      console.log('[DEBUG] Dev session restored from localStorage');
+    } else if (currentSession?.session) {
+      // For regular users, restore the session
       await supabase.auth.setSession(currentSession.session);
+      console.log('[DEBUG] Regular session restored');
     }
 
     return { success: true };

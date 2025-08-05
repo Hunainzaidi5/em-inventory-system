@@ -15,16 +15,21 @@ export interface UserListItem {
 
 export const getAllUsers = async (): Promise<UserListItem[]> => {
   try {
+    console.log('[DEBUG] Fetching all users from profiles table...');
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
+
+    console.log('[DEBUG] Raw response from getAllUsers:', { data, error });
 
     if (error) {
       console.error('Error fetching users:', error);
       throw new Error(error.message);
     }
 
+    console.log('[DEBUG] Successfully fetched users count:', data?.length || 0);
     return data || [];
   } catch (error) {
     console.error('Error in getAllUsers:', error);

@@ -132,7 +132,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const createUserAsAdmin = async (data: RegisterData) => {
     setError(null);
     try {
+      const currentUserBackup = user; // Backup current user
       const result = await authService.createUserAsAdmin(data);
+      
+      // Ensure current user is maintained after user creation
+      if (result.success && currentUserBackup) {
+        setUser(currentUserBackup);
+        // Don't clear the query client to maintain user list data
+      }
+      
       return result;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'User creation failed';

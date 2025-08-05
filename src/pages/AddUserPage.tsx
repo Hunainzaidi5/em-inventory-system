@@ -70,6 +70,14 @@ const AddUserPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      console.log('[DEBUG] Creating user with data:', { 
+        name: data.name, 
+        email: data.email, 
+        role: data.role,
+        department: data.department,
+        employee_id: data.employee_id 
+      });
+
       const { success, error } = await createUserAsAdmin({
         name: data.name,
         email: data.email,
@@ -78,12 +86,21 @@ const AddUserPage = () => {
         department: data.department,
         employee_id: data.employee_id,
       });
+
+      console.log('[DEBUG] User creation result:', { success, error });
+
       if (success) {
-        navigate('/users');
+        console.log('[DEBUG] User created successfully, navigating to users page');
+        // Add a small delay to ensure the user is created before navigating
+        setTimeout(() => {
+          navigate('/users');
+        }, 500);
       } else if (error) {
+        console.error('[DEBUG] User creation failed:', error);
         setFormError('root', { message: error });
       }
     } catch (error) {
+      console.error('[DEBUG] Exception during user creation:', error);
       setFormError('root', {
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
       });

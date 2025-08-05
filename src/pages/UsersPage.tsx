@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getAllUsers, updateUserStatus, deleteUser, UserListItem } from '@/services/userService';
-import { Trash2, UserCheck, UserX, Plus, Edit, Eye } from 'lucide-react';
+import { testDatabaseAccess } from '@/services/testService';
+import { Trash2, UserCheck, UserX, Plus, Edit, Eye, RefreshCw, Bug } from 'lucide-react';
 
 const UsersPage = () => {
   const { user, isLoading } = useAuth();
@@ -39,6 +40,48 @@ const UsersPage = () => {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  // Reload users when the page regains focus (user navigates back)
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('[DEBUG] Page regained focus, reloading users...');
+      loadUsers();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    
+    // Also reload when the component mounts or location changes
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('[DEBUG] Page became visible, reloading users...');
+        loadUsers();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Add debug logging for users state
+  useEffect(() => {
+    console.log('[DEBUG] Users state updated:', users.length, 'users');
+  }, [users]);
+
+  const handleTestDatabase = async () => {
+    console.log('[DEBUG] Testing database access...');
+    const result = await testDatabaseAccess();
+    console.log('[DEBUG] Test result:', result);
+    alert('Check console for test results');
+  };
+
+  const handleRefreshUsers = async () => {
+    console.log('[DEBUG] Manual refresh triggered');
+    await loadUsers();
+  };
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {
@@ -105,13 +148,31 @@ const UsersPage = () => {
           <h1 className="text-2xl font-bold mb-2">User Management (Developer Only)</h1>
           <p className="text-gray-600">Manage users, their roles, and permissions.</p>
         </div>
-        <button
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-          onClick={() => navigate('/add-user')}
-        >
-          <Plus size={16} />
-          Add User
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+            onClick={handleTestDatabase}
+            title="Test Database Access"
+          >
+            <Bug size={16} />
+            Test DB
+          </button>
+          <button
+            className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+            onClick={handleRefreshUsers}
+            title="Refresh User List"
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+          <button
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            onClick={() => navigate('/add-user')}
+          >
+            <Plus size={16} />
+            Add User
+          </button>
+        </div>
       </div>
 
       {error && (
