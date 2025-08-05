@@ -22,6 +22,8 @@ import LoginPage from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DevOnlyRoute } from './components/auth/ProtectedRoute';
 import AddUserPage from './pages/AddUserPage';
+import UsersPage from './pages/UsersPage';
+import ProfilePage from './pages/ProfilePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -117,9 +119,9 @@ const AppRoutes = () => {
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />
         <Route path="settings" element={<SystemSettingsPage />} />
-      </Route>
-      <Route element={<DevOnlyRoute />}>
-        <Route path="/add-user" element={<AddUserPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="add-user" element={<AddUserPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
