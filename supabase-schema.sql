@@ -58,6 +58,58 @@ CREATE TABLE profiles (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Enable RLS on profiles table
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for profiles
+CREATE POLICY "Public profiles are viewable by everyone." 
+  ON profiles FOR SELECT 
+  USING (true);
+
+CREATE POLICY "Users can update their own profile." 
+  ON profiles FOR UPDATE 
+  USING (auth.uid() = id);
+
+-- Function to handle new user signups
+CREATE OR REPLACE FUNCTION public.handle_new_user() 
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name)
+  VALUES (
+    NEW.id, 
+    NEW.email,
+    NEW.raw_user_meta_data->>'full_name' OR NEW.raw_user_meta_data->>'name' OR split_part(NEW.email, '@', 1)
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger the function every time a user is created
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Function to handle user updates
+CREATE OR REPLACE FUNCTION public.handle_user_updated() 
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE public.profiles
+  SET 
+    email = NEW.email,
+    updated_at = NOW()
+  WHERE id = NEW.id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger the function every time a user is updated
+CREATE OR REPLACE TRIGGER on_auth_user_updated
+  AFTER UPDATE ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_user_updated();
+
 -- Locations table
 CREATE TABLE locations (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -133,6 +185,22 @@ CREATE TABLE inventory_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Enable RLS on inventory_items table
+ALTER TABLE inventory_items ENABLE ROW LEVEL SECURITY;
+
+-- Example RLS policy for inventory_items (adjust as needed)
+CREATE POLICY "Users can view all inventory items" 
+  ON inventory_items FOR SELECT 
+  USING (true);
+
+CREATE POLICY "Users can insert their own inventory items" 
+  ON inventory_items FOR INSERT 
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Users can update their own inventory items" 
+  ON inventory_items FOR UPDATE 
+  USING (auth.uid() = created_by);
+
 -- Tools table (Updated to match React implementation)
 CREATE TABLE tools (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -153,6 +221,9 @@ CREATE TABLE tools (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Enable RLS on tools table
+ALTER TABLE tools ENABLE ROW LEVEL SECURITY;
+
 -- PPE items table (Updated to match React implementation)
 CREATE TABLE ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -170,6 +241,9 @@ CREATE TABLE ppe_items (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Enable RLS on ppe_items table
+ALTER TABLE ppe_items ENABLE ROW LEVEL SECURITY;
 
 -- General items table (Updated to match React implementation)
 CREATE TABLE general_items (
@@ -190,6 +264,9 @@ CREATE TABLE general_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Enable RLS on general_items table
+ALTER TABLE general_items ENABLE ROW LEVEL SECURITY;
+
 -- Faulty Returns table (New table to match React implementation)
 CREATE TABLE faulty_returns (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -207,6 +284,9 @@ CREATE TABLE faulty_returns (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Enable RLS on faulty_returns table
+ALTER TABLE faulty_returns ENABLE ROW LEVEL SECURITY;
 
 -- Transactions table (for all item types)
 CREATE TABLE transactions (
