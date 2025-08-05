@@ -56,9 +56,10 @@ export function LoginPage() {
       setIsLoading(true);
       // Hardcoded developer login
       if (data.email === DEV_EMAIL && data.password === DEV_PASSWORD) {
-        // Set developer user in context manually
+        // Set developer user in context manually and persist in localStorage
         const { setUser } = useAuth();
         setUser && setUser(DEV_USER);
+        localStorage.setItem('devUser', 'true');
         navigate(from, { replace: true });
         return;
       }

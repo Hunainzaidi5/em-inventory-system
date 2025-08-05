@@ -24,6 +24,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
+  const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
+  const DEV_USER = {
+    id: 'dev-hardcoded',
+    name: 'Syed Hunain Ali',
+    email: DEV_EMAIL,
+    role: 'dev',
+    department: 'E&M SYSTEMS',
+    employee_id: 'DEV001',
+    is_active: true,
+    created_at: new Date().toISOString(),
+    avatar: undefined,
+  };
+
   // Load user data on initial render
   const loadUser = useCallback(async () => {
     try {
@@ -40,6 +53,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Initial load
   useEffect(() => {
+    if (localStorage.getItem('devUser') === 'true') {
+      setUser(DEV_USER);
+      setIsLoading(false);
+      return;
+    }
     loadUser();
   }, [loadUser]);
 
