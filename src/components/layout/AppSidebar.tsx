@@ -253,11 +253,17 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate('/profile')}>
                 <UserCircle className="mr-2 h-4 w-4" />
-                Profile
+                <span>Profile</span>
               </DropdownMenuItem>
+              {user.role === 'dev' && (
+                <DropdownMenuItem onClick={() => navigate('/users')}>
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>User Management</span>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
