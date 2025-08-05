@@ -50,11 +50,36 @@ export const getCurrentUser = async (): Promise<User | null> => {
   };
 };
 
+// Hardcoded developer credentials
+const DEVELOPER_CREDENTIALS = {
+  email: 'syedhunainalizaidi@gmail.com',
+  password: 'APPLE_1414',
+  user: {
+    id: 'dev-hardcoded',
+    name: 'Syed Hunain Ali',
+    email: 'syedhunainalizaidi@gmail.com',
+    role: 'dev',
+    department: 'E&M SYSTEMS',
+    employee_id: 'DEV001',
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  } as User
+};
+
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
     const { email, password } = credentials;
     
-    // Sign in with Supabase Auth
+    // Check for hardcoded developer credentials
+    if (email === DEVELOPER_CREDENTIALS.email && password === DEVELOPER_CREDENTIALS.password) {
+      return {
+        user: DEVELOPER_CREDENTIALS.user,
+        token: 'dev-token-' + Math.random().toString(36).substring(2, 15)
+      };
+    }
+    
+    // Regular Supabase authentication for other users
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,

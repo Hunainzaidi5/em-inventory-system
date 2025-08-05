@@ -10,6 +10,8 @@ const UsersPage = () => {
   if (isLoading) {
     return <div className="p-8">Loading...</div>;
   }
+  
+  // Only allow developers to access this page
   if (!user || user.role !== 'dev') {
     return <Navigate to="/" state={{ from: location }} replace />;
   }

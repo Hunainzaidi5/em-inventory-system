@@ -3,22 +3,38 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { UserRole } from '@/types/auth';
 
-const userRoles = [
-  'technician',
-  'master_technician',
-  'assistant_engineer',
-  'engineer',
-  'deputy_manager',
+// Define the form values type
+type FormValues = {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  department: string;
+  employee_id: string;
+};
+
+const userRoles: UserRole[] = [
+  'admin',
+  'dev',
   'manager',
-] as const;
+  'deputy_manager',
+  'engineer',
+  'assistant_engineer',
+  'master_technician',
+  'technician'
+];
 
 const addUserSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: z.enum(userRoles, { required_error: 'Role is required' }),
+  role: z.string().refine(
+    (val) => userRoles.includes(val as UserRole),
+    { message: 'Invalid role' }
+  ),
   department: z.string().min(1, 'Department is required'),
   employee_id: z.string().min(1, 'Employee ID is required'),
 });
@@ -26,26 +42,33 @@ const addUserSchema = z.object({
 type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 const AddUserPage = () => {
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, user: currentUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Only allow developers to access this page
+  if (!currentUser || currentUser.role !== 'dev') {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError: setFormError,
-  } = useForm<AddUserFormValues>({
+  } = useForm<AddUserFormValues, any, FormValues>({
     resolver: zodResolver(addUserSchema),
     defaultValues: {
       name: '',
       email: '',
       password: '',
-      role: 'technician',
+      role: 'admin',
       department: '',
       employee_id: '',
     },
   });
 
-  const onSubmit = async (data: AddUserFormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       const { success, error } = await registerUser({
         name: data.name,
