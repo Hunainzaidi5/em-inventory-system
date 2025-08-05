@@ -69,7 +69,6 @@ const documentsMenuItems = [
 
 const systemMenuItems = [
   { title: "System Settings", url: "/settings", icon: Settings },
-  { title: "User Management", url: "/users", icon: Users, devOnly: true },
 ];
 
 interface AppSidebarProps {
@@ -210,21 +209,16 @@ export function AppSidebar({ className }: AppSidebarProps) {
             <CollapsibleContent>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {systemMenuItems.map((item) => {
-                    // Skip rendering dev-only items for non-dev users
-                    if (item.devOnly && user?.role !== 'dev') return null;
-                    
-                    return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <NavLink to={item.url} className={getNavClassName(item.url)}>
-                            <item.icon className="h-4 w-4" />
-                            {!collapsed && <span>{item.title}</span>}
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
+                  {systemMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClassName(item.url)}>
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>
