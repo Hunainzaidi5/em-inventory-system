@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Package,
   Wrench,
@@ -17,9 +17,12 @@ import {
   ChevronDown,
   RotateCcw,
   ListTodo,
-  User
+  User,
+  UserCircle,
+  LogIn,
+  UserPlus
 } from "lucide-react";
-
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
   SidebarContent,
@@ -76,9 +79,16 @@ export function AppSidebar({ className }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const isActive = (path: string, exact = false) => {
     if (exact) {
@@ -93,14 +103,6 @@ export function AppSidebar({ className }: AppSidebarProps) {
       return `${baseClasses} bg-sidebar-accent text-sidebar-accent-foreground font-medium`;
     }
     return `${baseClasses} hover:bg-sidebar-accent/50`;
-  };
-
-  // Mock user data
-  const currentUser = {
-    name: "Syed Iqrar Haider",
-    email: "iqrar.haider@gmail.com",
-    role: "Technical Assistant",
-    avatar: "",
   };
 
   return (
@@ -225,44 +227,67 @@ export function AppSidebar({ className }: AppSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start gap-3 h-auto p-2 hover:bg-sidebar-accent/50"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback className="text-xs">
+                    {user.name.split(' ').map(n => n[0]).join('')}
+                  </AvatarFallback>
+                </Avatar>
+                {!collapsed && (
+                  <div className="flex flex-1 flex-col items-start text-left">
+                    <span className="text-sm font-medium text-sidebar-foreground">{user.name}</span>
+                    <span className="text-xs text-sidebar-foreground/60">{user.role}</span>
+                  </div>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <UserCircle className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="space-y-2 w-full">
             <Button 
-              variant="ghost" 
-              className="w-full justify-start gap-3 h-auto p-2 hover:bg-sidebar-accent"
+              variant="outline" 
+              className="w-full" 
+              size="sm"
+              onClick={() => navigate('/login')}
             >
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={currentUser.avatar} />
-                <AvatarFallback className="text-xs">
-                  {currentUser.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              {!collapsed && (
-                <div className="flex flex-1 flex-col items-start text-left">
-                  <span className="text-sm font-medium text-sidebar-foreground">{currentUser.name}</span>
-                  <span className="text-xs text-sidebar-foreground/60">{currentUser.role}</span>
-                </div>
-              )}
+              <LogIn className="mr-2 h-4 w-4" />
+              {!collapsed && 'Sign In'}
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Users className="mr-2 h-4 w-4" />
-              Profile Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Preferences
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <Button 
+              variant="default" 
+              className="w-full" 
+              size="sm"
+              onClick={() => navigate('/register')}
+            >
+              <UserPlus className="mr-2 h-4 w-4" />
+              {!collapsed && 'Sign Up'}
+            </Button>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

@@ -1,67 +1,101 @@
-# Welcome to your Inventory Management System
+# EM Stock Hub - Inventory Management System
 
-## How can I edit this code?
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Deployed with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FHunainzaidi5%2Fem-inventory-system)
 
-There are several ways of editing your application.
+A modern inventory management system built with React, TypeScript, and Tailwind CSS. Streamline your inventory tracking, manage stock levels, and generate insightful reports all in one place.
 
-**Use the Application**
+🔗 **Live Demo**: [https://em-inventory-system.vercel.app/](https://em-inventory-system.vercel.app/)
 
-Simply visit the application URL and start managing your inventory.
+## 🚀 Features
 
-Changes made via the application will be committed automatically to this repo.
+- 🔐 **Authentication**
+  - User registration and login
+  - Protected routes
+  - JWT token-based authentication
+  - Role-based access control (coming soon)
 
-**Use your preferred IDE**
+- 📦 **Inventory Management**
+  - Track products and stock levels
+  - Manage categories and suppliers
+  - Low stock alerts and notifications
+  - Barcode/QR code support
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will be reflected in your deployment.
+- 📊 **Reporting**
+  - Sales and inventory reports
+  - Export to Excel/PDF
+  - Dashboard with key metrics
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🛠️ Tech Stack
 
-Follow these steps:
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui
+- **State Management**: React Query, Context API
+- **Form Handling**: React Hook Form, Zod
+- **Routing**: React Router v6
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+- **Deployment**: Vercel
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🚀 Getting Started
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Prerequisites
 
-# Step 3: Install the necessary dependencies.
-npm i
+- Node.js (v18 or later)
+- npm or yarn
+- Git
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Installation
 
-**Edit a file directly in GitHub**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Hunainzaidi5/em-inventory-system.git
+   cd em-inventory-system
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-**Use GitHub Codespaces**
+3. Create a `.env` file in the root directory and add your environment variables:
+   ```env
+   VITE_API_BASE_URL=http://localhost:3000/api
+   # Add other environment variables as needed
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+4. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-## What technologies are used for this project?
+5. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-This project is built with:
+## 🚀 Deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This project is configured for deployment on Vercel. To deploy your own instance:
 
-## How can I deploy this project?
+1. Fork this repository
+2. Connect your GitHub repository to Vercel
+3. Configure your environment variables in Vercel
+4. Deploy!
 
-Simply open the application and click on Share -> Publish.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FHunainzaidi5%2Fem-inventory-system)
 
-## Can I connect a custom domain to my project?
+## 📝 License
 
-Yes, you can!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🙏 Acknowledgments
+
+- Built with ❤️ by [Hunain Zaidi](https://github.com/Hunainzaidi5)
+- Inspired by modern inventory management solutions
+- Special thanks to all contributors
+
+---
+
+⭐ Star this repository if you found it useful! ⭐

@@ -3,8 +3,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import InventoryPage from "./pages/InventoryPage";
 import TransactionsPage from "./pages/TransactionsPage";
@@ -17,6 +19,8 @@ import FaultyReturnsPage from "./pages/FaultyReturnsPage";
 import GatePassPage from "./pages/GatePassPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
 import IssuancePage from "./pages/IssuancePage";
+import LoginPage from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,29 +72,40 @@ const App = () => {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppLayout>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/inventory" element={<InventoryPage />} />
-                <Route path="/transactions" element={<TransactionsPage />} />
-                <Route path="/transactions" element={<TransactionsPage />} />
-                <Route path="/availability" element={<AvailabilityOverview />} />
-                <Route path="/tools" element={<ToolsPage />} />
-                <Route path="/ppe" element={<PPEPage />} />
-                <Route path="/general" element={<GeneralItemsPage />} />
-                <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
-                <Route path="/issuance" element={<IssuancePage />} />
-                <Route path="/gate-pass" element={<GatePassPage />} />
-                <Route path="/settings" element={<SystemSettingsPage />} />
-                <Route path="*" element={<NotFound />} />
+                {/* Public routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route element={<AppLayout><Outlet /></AppLayout>}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/inventory" element={<InventoryPage />} />
+                    <Route path="/transactions" element={<TransactionsPage />} />
+                    <Route path="/availability" element={<AvailabilityOverview />} />
+                    <Route path="/tools" element={<ToolsPage />} />
+                    <Route path="/ppe" element={<PPEPage />} />
+                    <Route path="/general" element={<GeneralItemsPage />} />
+                    <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
+                    <Route path="/issuance" element={<IssuancePage />} />
+                    <Route path="/gate-pass" element={<GatePassPage />} />
+                    <Route path="/settings" element={<SystemSettingsPage />} />
+                  </Route>
+                </Route>
+                
+                {/* 404 - Not Found */}
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
-            </AppLayout>
-          </BrowserRouter>
-        </TooltipProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
