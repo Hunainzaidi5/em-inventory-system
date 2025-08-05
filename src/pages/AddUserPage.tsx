@@ -68,27 +68,25 @@ const AddUserPage = () => {
     },
   });
 
-  const onSubmit = async (data: AddUserFormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
-      // Create the user without logging in
-      await registerUser({
+      const { success, error } = await registerUser({
         name: data.name,
         email: data.email,
         password: data.password,
-        role: data.role as UserRole,
+        role: data.role,
         department: data.department,
         employee_id: data.employee_id,
-      }, false); // Pass false to prevent auto-login
-      
-      // Show success message
-      alert(`User ${data.email} created successfully!`);
-      
-      // Redirect to users page
-      navigate('/users');
+      });
+      if (success) {
+        navigate('/users');
+      } else if (error) {
+        setFormError('root', { message: error });
+      }
     } catch (error) {
-      console.error('Error creating user:', error);
-      // Show error message to user
-      alert(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setFormError('root', {
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+      });
     }
   };
 

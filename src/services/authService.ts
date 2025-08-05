@@ -112,7 +112,26 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   }
 };
 
-export const register = async (userData: RegisterData): Promise<AuthResponse> => {
+export const register = async (userData: RegisterData): Promise<{ success: boolean; message: string }> => {
+  try {
+    // First, check if user already exists
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', userData.email)
+      .single();
+
+    if (existingUser) {
+      return { success: false, message: 'A user with this email already exists' };
+    }
+
+    // Create the user with Supabase Auth
+    const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
+      email: userData.email,
+      password: userData.password,
+      email_confirm: true, // Auto-confirm the email
+      user_metadata: {
+        name: userData.name,
   const { email, password, name, role, department, employee_id } = userData;
   const { data, error } = await supabase.auth.signUp({
     email,
