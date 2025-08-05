@@ -26,13 +26,14 @@ type FormValues = {
 };
 
 // Define the form schema with a simpler approach
-const roleEnum = z.enum(assignableRoles as unknown as [string, string, string, string, string]);
-
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: roleEnum,
+  role: z.string().refine(
+    (val) => assignableRoles.includes(val as AssignableRole),
+    { message: 'Please select a valid role' }
+  ),
   department: z.string().min(1, 'Department is required'),
   employee_id: z.string().min(1, 'Employee ID is required'),
 });
@@ -60,19 +61,24 @@ const AddUserPage = () => {
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    // Cast the role to AssignableRole since we've already validated it
+    const formData = {
+      ...data,
+      role: data.role as AssignableRole
+    };
     try {
       setIsLoading(true);
       setError('');
       
-      // Call the register function from AuthContext
+      // Call the register function from AuthContext with the typed form data
       const result = await registerUser({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        department: data.department,
-        employee_id: data.employee_id,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        department: formData.department,
+        employee_id: formData.employee_id,
       });
 
       if (result.success) {
