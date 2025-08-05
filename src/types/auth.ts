@@ -18,7 +18,7 @@ export interface LoginCredentials {
   password: string;
 }
 
-import type { UserRole } from './auth'; // ensure UserRole is used
+// UserRole is defined below
 
 export interface RegisterData extends LoginCredentials {
   name: string;
