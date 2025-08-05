@@ -8,84 +8,84 @@
 @layer base {
   :root {
     /* Custom Color Palette */
-    --background: 60 67% 98%; /* #fefdfa - Off-white background */
-    --foreground: 210 100% 16%; /* #002c54 - Dark blue text */
+    --background: 0 0% 100%; /* #fefdfa - Off-white background */
+    --foreground: 210 100% 16%; /* #003865 - Dark blue text */
     
     /* Primary Colors - Dark blue */
-    --primary: 210 100% 16%; /* #002c54 - Dark blue */
-    --primary-foreground: 60 67% 98%; /* #fefdfa - Off-white text */
+    --primary: 210 100% 16%; /* #003865 - Dark blue */
+    --primary-foreground: 0 0% 100%; /* #fefdfa - Off-white text */
     --primary-hover: 210 100% 12%;
     --primary-muted: 210 45% 95%;
     --primary-subtle: 210 40% 92%;
     
     /* Secondary Colors - Orange */
-    --secondary: 25 100% 55%; /* #ff911a - Orange */
-    --secondary-foreground: 60 67% 98%;
-    --secondary-hover: 25 100% 50%;
+    --secondary: 25 99% 44%; /* #E55604 - Orange */
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 25 99% 40%;
     --secondary-muted: 25 80% 95%;
     
     /* Accent Colors - Lighter orange */
-    --accent: 25 100% 55%; /* #ff911a - Orange accent */
+    --accent: 25 99% 44%; /* #E55604 - Orange accent */
     --accent-foreground: 210 100% 16%;
-    --accent-hover: 25 100% 60%;
+    --accent-hover: 25 99% 60%;
     --accent-muted: 25 80% 94%;
     
     /* Status Colors - Using custom palette */
     --success: 142 76% 36%; /* #059669 - Success green */
-    --success-foreground: 60 67% 98%;
+    --success-foreground: 0 0% 100%;
     --success-muted: 142 50% 95%;
     
-    --warning: 25 100% 55%; /* #ff911a - Orange for warnings */
+    --warning: 25 99% 44%; /* #E55604 - Orange for warnings */
     --warning-foreground: 210 100% 16%;
     --warning-muted: 25 80% 95%;
     
     --error: 0 84% 60%; /* #EF4444 - Error red */
-    --error-foreground: 60 67% 98%;
+    --error-foreground: 0 0% 100%;
     --error-muted: 0 50% 96%;
     
-    --info: 210 100% 16%; /* #002c54 - Dark blue for info */
-    --info-foreground: 60 67% 98%;
+    --info: 210 100% 16%; /* #003865 - Dark blue for info */
+    --info-foreground: 0 0% 100%;
     --info-muted: 210 45% 95%;
     
     /* Neutral Colors - Based on off-white */
-    --muted: 60 30% 96%; /* Light muted background */
+    --muted: 0 0% 90%; /* Light muted background */
     --muted-foreground: 210 20% 47%; /* Readable muted text */
-    --muted-hover: 60 30% 92%;
+    --muted-hover: 0 0% 92%;
     
     /* UI Elements */
-    --card: 60 67% 98%; /* Off-white cards */
-    --card-foreground: 210 100% 16%;
-    --card-hover: 60 50% 97%;
+    --card: 0 0% 100%; /* Off-white cards */
+    --card-foreground: 210 100% 16%; /* #003865 */
+    --card-hover: 0 0% 98%;
     
-    --border: 60 20% 88%; /* Subtle borders */
-    --border-strong: 210 20% 80%; /* Stronger borders */
+    --border: 0 0% 90%; /* #B4B4B3 with higher lightness */
+    --border-strong: 0 0% 80%; /* #B4B4B3 with lower lightness */
     
-    --input: 60 67% 98%; /* Off-white input backgrounds */
-    --input-border: 60 20% 88%;
-    --input-focus: 210 100% 16%;
+    --input: 0 0% 98%; /* Off-white input backgrounds */
+    --input-border: 0 0% 90%; /* #B4B4B3 */
+    --input-focus: 210 100% 16%; /* #003865 */
     
-    --ring: 210 100% 16%;
-    --ring-offset: 60 67% 98%;
+    --ring: 25 99% 44%; /* #E55604 */
+    --ring-offset: 0 0% 98%;
     
-    --popover: 60 67% 98%;
-    --popover-foreground: 210 100% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 100% 16%; /* #003865 */
     
     /* Custom Sidebar Design */
-    --sidebar-background: 210 100% 16%; /* #002c54 - Dark blue background */
-    --sidebar-foreground: 60 67% 95%; /* Light text */
-    --sidebar-primary: 25 100% 55%; /* #ff911a - Orange accent */
-    --sidebar-primary-foreground: 210 100% 16%;
-    --sidebar-accent: 210 100% 20%; /* Lighter blue for hover */
-    --sidebar-accent-foreground: 60 67% 95%;
-    --sidebar-border: 210 100% 25%; /* Border color */
-    --sidebar-ring: 25 100% 55%;
-    --sidebar-muted: 210 30% 70%; /* Muted sidebar text */
+    --sidebar-background: 210 100% 20%; /* #003865 - Dark blue background */
+    --sidebar-foreground: 0 0% 95%; /* Light text */
+    --sidebar-primary: 25 99% 44%; /* #E55604 - Orange accent */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on orange */
+    --sidebar-accent: 210 100% 25%; /* Lighter blue for hover */
+    --sidebar-accent-foreground: 0 0% 95%; /* Light text on hover */
+    --sidebar-border: 210 100% 30%; /* Border color */
+    --sidebar-ring: 25 99% 44%; /* #E55604 */
+    --sidebar-muted: 210 30% 80%; /* Muted sidebar text - using blue tint */
     
     /* Content Bar Colors */
-    --content-bar-background: 60 67% 98%; /* Off-white background */
-    --content-bar-foreground: 210 100% 16%;
-    --content-bar-border: 60 20% 88%;
-    --content-bar-shadow: 210 100% 16% / 0.08;
+    --content-bar-background: 0 0% 98%; /* Off-white background */
+    --content-bar-foreground: 210 100% 16%; /* #003865 */
+    --content-bar-border: 0 0% 90%; /* #B4B4B3 */
+    --content-bar-shadow: 210 100% 16% / 0.08; /* #003865 with opacity */
     
     /* Professional Shadows */
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -117,30 +117,30 @@
 
   .dark {
     --background: 210 100% 8%; /* Very dark blue background */
-    --foreground: 60 67% 95%; /* Off-white text */
+    --foreground: 0 0% 95%; /* Off-white text */
     
-    --primary: 25 100% 55%; /* Orange becomes primary in dark */
+    --primary: 25 99% 44%; /* Orange becomes primary in dark */
     --primary-foreground: 210 100% 16%;
-    --primary-hover: 25 100% 60%;
+    --primary-hover: 25 99% 60%;
     --primary-muted: 25 80% 10%;
     --primary-subtle: 25 70% 8%;
     
     --secondary: 210 100% 20%; /* Lighter blue secondary */
-    --secondary-foreground: 60 67% 95%;
+    --secondary-foreground: 0 0% 95%;
     --secondary-hover: 210 100% 25%;
     --secondary-muted: 210 80% 10%;
     
-    --accent: 60 67% 95%; /* Off-white accent */
+    --accent: 0 0% 95%; /* Off-white accent */
     --accent-foreground: 210 100% 16%;
-    --accent-hover: 60 50% 90%;
-    --accent-muted: 60 30% 15%;
+    --accent-hover: 0 0% 90%;
+    --accent-muted: 0 0% 15%;
     
     --muted: 210 50% 12%; /* Dark muted */
-    --muted-foreground: 60 20% 65%; /* Muted text */
+    --muted-foreground: 0 0% 65%; /* Muted text */
     --muted-hover: 210 40% 15%;
     
     --card: 210 80% 10%; /* Dark cards */
-    --card-foreground: 60 67% 95%;
+    --card-foreground: 0 0% 95%;
     --card-hover: 210 70% 12%;
     
     --border: 210 50% 20%; /* Dark borders */
@@ -148,26 +148,26 @@
     
     --input: 210 80% 12%;
     --input-border: 210 50% 20%;
-    --input-focus: 25 100% 55%;
+    --input-focus: 25 99% 44%;
     
-    --ring: 25 100% 55%;
+    --ring: 25 99% 44%;
     --ring-offset: 210 100% 8%;
     
     --popover: 210 80% 10%;
-    --popover-foreground: 60 67% 95%;
+    --popover-foreground: 0 0% 95%;
     
     --sidebar-background: 210 100% 6%; /* Even darker sidebar */
-    --sidebar-foreground: 60 67% 90%;
-    --sidebar-primary: 25 100% 55%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 25 99% 44%;
     --sidebar-primary-foreground: 210 100% 16%;
     --sidebar-accent: 210 80% 12%;
-    --sidebar-accent-foreground: 60 60% 90%;
+    --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 210 70% 15%;
-    --sidebar-ring: 25 100% 55%;
-    --sidebar-muted: 60 20% 60%;
+    --sidebar-ring: 25 99% 44%;
+    --sidebar-muted: 0 0% 60%;
     
     --content-bar-background: 210 80% 10%;
-    --content-bar-foreground: 60 67% 95%;
+    --content-bar-foreground: 0 0% 95%;
     --content-bar-border: 210 50% 20%;
     --content-bar-shadow: 0 0 0 / 0.4;
   }
