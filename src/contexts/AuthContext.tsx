@@ -1,13 +1,12 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
 import * as authService from '@/services/authService';
 import { User, LoginCredentials, RegisterData } from '@/services/authService';
 
 interface AuthContextType {
   user: User | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
+  register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -21,8 +20,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   // Load user data on initial render
   const loadUser = useCallback(async () => {
@@ -35,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Failed to load user:', error);
       localStorage.removeItem('token');
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -51,14 +49,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { user, token } = await authService.login(credentials);
       localStorage.setItem('token', token);
       setUser(user);
-      
-      // Redirect to the intended page or home
-      const from = location.state?.from?.pathname || '/';
-      navigate(from, { replace: true });
+      queryClient.clear();
+      return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       setError(message);
-      throw error;
+      return { success: false, error: message };
     } finally {
       setIsLoading(false);
     }
@@ -68,14 +64,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user, token } = await authService.register(data);
-      localStorage.setItem('token', token);
-      setUser(user);
-      navigate('/');
+      await authService.register(data);
+      return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
       setError(message);
-      throw error;
+      return { success: false, error: message };
     } finally {
       setIsLoading(false);
     }
@@ -84,32 +78,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
     } finally {
-      // Clear all application state
-      setUser(null);
       localStorage.removeItem('token');
+      setUser(null);
       queryClient.clear();
-      navigate('/login');
     }
   };
 
-  // Refresh token logic could be added here if needed
+  const value = {
+    user,
+    login,
+    register,
+    logout,
+    isAuthenticated: !!user,
+    isLoading,
+    error,
+  };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!user,
-        isLoading,
-        error,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

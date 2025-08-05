@@ -11,43 +11,57 @@ import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
 });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export const RegisterPage = () => {
-  const { register: registerUser, error } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function RegisterPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
+    setError: setFormError,
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     try {
-      setIsSubmitting(true);
-      await registerUser({
+      setIsLoading(true);
+      const { success, error } = await registerUser({
         name: data.name,
         email: data.email,
-        password: data.password
+        password: data.password,
       });
-      navigate('/');
+      
+      if (success) {
+        navigate('/login', { state: { message: 'Registration successful! Please login.' } });
+      } else if (error) {
+        setFormError('root', { message: error });
+      }
     } catch (error) {
-      console.error('Registration failed:', error);
+      setFormError('root', { 
+        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
@@ -62,13 +76,18 @@ export const RegisterPage = () => {
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
+            {errors.root && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                {errors.root.message}
+              </div>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
                 placeholder="John Doe"
                 {...register('name')}
-                disabled={isSubmitting}
+                className={errors.name ? 'border-red-500' : ''}
               />
               {errors.name && (
                 <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -81,7 +100,7 @@ export const RegisterPage = () => {
                 type="email"
                 placeholder="name@example.com"
                 {...register('email')}
-                disabled={isSubmitting}
+                className={errors.email ? 'border-red-500' : ''}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -92,8 +111,9 @@ export const RegisterPage = () => {
               <Input
                 id="password"
                 type="password"
+                placeholder="••••••••"
                 {...register('password')}
-                disabled={isSubmitting}
+                className={errors.password ? 'border-red-500' : ''}
               />
               {errors.password && (
                 <p className="text-sm text-red-500">{errors.password.message}</p>
@@ -104,35 +124,29 @@ export const RegisterPage = () => {
               <Input
                 id="confirmPassword"
                 type="password"
+                placeholder="••••••••"
                 {...register('confirmPassword')}
-                disabled={isSubmitting}
+                className={errors.confirmPassword ? 'border-red-500' : ''}
               />
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
+                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
               )}
             </div>
-            {error && (
-              <div className="text-red-500 text-sm text-center">
-                {error}
-              </div>
-            )}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? (
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Creating account...
                 </>
               ) : (
-                'Create Account'
+                'Sign up'
               )}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline">
+              <Link to="/login" className="font-medium text-blue-600 hover:underline">
                 Sign in
               </Link>
             </div>
@@ -141,4 +155,6 @@ export const RegisterPage = () => {
       </Card>
     </div>
   );
-};
+}
+
+export default RegisterPage;

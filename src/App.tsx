@@ -3,10 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import InventoryPage from "./pages/InventoryPage";
 import TransactionsPage from "./pages/TransactionsPage";
@@ -34,15 +33,15 @@ const queryClient = new QueryClient({
 // Error boundary component
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
-  { hasError: boolean }
+  { hasError: boolean; error: Error | null }
 > {
   constructor(props: { children: React.ReactNode }) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -52,14 +51,15 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ 
-          padding: '20px', 
-          fontFamily: 'Arial, sans-serif',
-          backgroundColor: '#f5f5f5',
-          minHeight: '100vh'
-        }}>
-          <h1 style={{ color: '#333' }}>E&M Inventory Management System</h1>
-          <p>Something went wrong. Please refresh the page.</p>
+        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
+          <p className="text-gray-600 mb-4">{this.state.error?.message || 'An unexpected error occurred'}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Refresh Page
+          </button>
         </div>
       );
     }
@@ -68,47 +68,78 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-const App = () => {
+// Protected route wrapper
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// App routes component
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Outlet />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="inventory" element={<InventoryPage />} />
+        <Route path="transactions" element={<TransactionsPage />} />
+        <Route path="availability" element={<AvailabilityOverview />} />
+        <Route path="tools" element={<ToolsPage />} />
+        <Route path="ppe" element={<PPEPage />} />
+        <Route path="general-items" element={<GeneralItemsPage />} />
+        <Route path="faulty-returns" element={<FaultyReturnsPage />} />
+        <Route path="gate-pass" element={<GatePassPage />} />
+        <Route path="issuance" element={<IssuancePage />} />
+        <Route path="settings" element={<SystemSettingsPage />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
+function App() {
+  React.useEffect(() => {
+    console.log("[DEBUG] App component mounted");
+  }, []);
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                
-                {/* Protected routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route element={<AppLayout><Outlet /></AppLayout>}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/inventory" element={<InventoryPage />} />
-                    <Route path="/transactions" element={<TransactionsPage />} />
-                    <Route path="/availability" element={<AvailabilityOverview />} />
-                    <Route path="/tools" element={<ToolsPage />} />
-                    <Route path="/ppe" element={<PPEPage />} />
-                    <Route path="/general" element={<GeneralItemsPage />} />
-                    <Route path="/faulty-returns" element={<FaultyReturnsPage />} />
-                    <Route path="/issuance" element={<IssuancePage />} />
-                    <Route path="/gate-pass" element={<GatePassPage />} />
-                    <Route path="/settings" element={<SystemSettingsPage />} />
-                  </Route>
-                </Route>
-                
-                {/* 404 - Not Found */}
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+        <Router>
+          <AuthProvider>
+            <TooltipProvider>
+              <AppRoutes />
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </AuthProvider>
+        </Router>
       </QueryClientProvider>
     </ErrorBoundary>
   );
-};
+}
 
 export default App;

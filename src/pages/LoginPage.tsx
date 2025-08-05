@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,37 +11,48 @@ import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  password: z.string().min(1, 'Password is required'),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const LoginPage = () => {
-  const { login, error } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
+    setError: setFormError,
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormValues) => {
     try {
-      setIsSubmitting(true);
-      await login({
-        email: data.email,
-        password: data.password
-      });
-      navigate('/');
+      setIsLoading(true);
+      const { success, error } = await login(data);
+      
+      if (success) {
+        navigate(from, { replace: true });
+      } else if (error) {
+        setFormError('root', { message: error });
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      setFormError('root', { 
+        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
@@ -51,11 +62,16 @@ export const LoginPage = () => {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign in to your account</CardTitle>
           <CardDescription className="text-center">
-            Enter your email and password to sign in
+            Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
+            {errors.root && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                {errors.root.message}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -63,7 +79,7 @@ export const LoginPage = () => {
                 type="email"
                 placeholder="name@example.com"
                 {...register('email')}
-                disabled={isSubmitting}
+                className={errors.email ? 'border-red-500' : ''}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -72,29 +88,28 @@ export const LoginPage = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-blue-600 hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
               <Input
                 id="password"
                 type="password"
+                placeholder="••••••••"
                 {...register('password')}
-                disabled={isSubmitting}
+                className={errors.password ? 'border-red-500' : ''}
               />
               {errors.password && (
                 <p className="text-sm text-red-500">{errors.password.message}</p>
               )}
             </div>
-            {error && (
-              <div className="text-red-500 text-sm text-center">
-                {error}
-              </div>
-            )}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? (
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Signing in...
@@ -105,7 +120,7 @@ export const LoginPage = () => {
             </Button>
             <div className="text-center text-sm">
               Don't have an account?{' '}
-              <Link to="/register" className="text-primary hover:underline">
+              <Link to="/register" className="font-medium text-blue-600 hover:underline">
                 Sign up
               </Link>
             </div>
@@ -114,6 +129,6 @@ export const LoginPage = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default LoginPage;
