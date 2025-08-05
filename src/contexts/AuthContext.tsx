@@ -40,24 +40,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Load user data on initial render
   const loadUser = useCallback(async () => {
     try {
+      console.log('[DEBUG] Loading user...');
       setIsLoading(true);
       const userData = await authService.getCurrentUser();
+      console.log('[DEBUG] User loaded:', userData);
       setUser(userData);
     } catch (error) {
       console.error('Failed to load user:', error);
       setUser(null);
     } finally {
+      console.log('[DEBUG] Finished loading user, setting isLoading to false');
       setIsLoading(false);
     }
   }, []);
 
   // Initial load
   useEffect(() => {
+    console.log('[DEBUG] Initial auth load, checking dev user...');
     if (localStorage.getItem('devUser') === 'true') {
+      console.log('[DEBUG] Found dev user in localStorage');
       setUser(DEV_USER);
       setIsLoading(false);
       return;
     }
+    console.log('[DEBUG] No dev user found, loading user...');
     loadUser();
   }, [loadUser]);
 

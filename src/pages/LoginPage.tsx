@@ -18,8 +18,9 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
+  console.log('[DEBUG] LoginPage rendered');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -57,7 +58,6 @@ export function LoginPage() {
       // Hardcoded developer login
       if (data.email === DEV_EMAIL && data.password === DEV_PASSWORD) {
         // Set developer user in context manually and persist in localStorage
-        const { setUser } = useAuth();
         setUser && setUser(DEV_USER);
         localStorage.setItem('devUser', 'true');
         navigate(from, { replace: true });
