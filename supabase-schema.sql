@@ -5,6 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types/enums
+-- Note: 'dev' role is added here and should be the highest privilege level
 CREATE TYPE user_role AS ENUM (
   'admin',
   'dev', 
@@ -15,6 +16,9 @@ CREATE TYPE user_role AS ENUM (
   'master_technician',
   'technician'
 );
+
+-- If the enum already exists and doesn't have 'dev', run this:
+-- ALTER TYPE user_role ADD VALUE 'dev';
 
 CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
 
@@ -513,6 +517,7 @@ COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
 -- In practice, you would create this user via Supabase auth and then insert the profile
 
 -- Insert dev user profile (using a predictable UUID for the dev user)
+-- This will ensure the dev role exists and can be used
 INSERT INTO profiles (
   id, 
   email, 
@@ -527,7 +532,7 @@ INSERT INTO profiles (
   'dev-user-uuid-hardcoded-12345678',
   'syedhunainalizaidi@gmail.com',
   'Syed Hunain Ali',
-  'dev',
+  'dev'::user_role,  -- Explicitly cast to enum type
   'E&M SYSTEMS',
   'DEV001',
   true,
