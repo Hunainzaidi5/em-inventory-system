@@ -216,8 +216,9 @@
 @layer components {
   /* Professional Sidebar Styles */
   .sidebar {
-    @apply bg-sidebar text-sidebar border-r;
-    border-color: hsl(var(--sidebar-border));
+    background-color: hsl(var(--sidebar-background));
+    color: hsl(var(--sidebar-foreground));
+    border-right: 1px solid hsl(var(--sidebar-border));
     box-shadow: var(--shadow-sidebar);
     min-height: 100vh;
     width: 260px;
@@ -228,8 +229,8 @@
   }
   
   .sidebar-header {
-    @apply px-6 py-5 border-b;
-    border-color: hsl(var(--sidebar-border));
+    @apply px-6 py-5;
+    border-bottom: 1px solid hsl(var(--sidebar-border));
   }
   
   .sidebar-nav {
@@ -269,16 +270,15 @@
   
   /* Professional Content Bar Styles */
   .content-bar {
-    @apply flex items-center justify-between px-6 py-4 border-b;
-    background-color: hsl(var(--content-bar-background));
-    border-color: hsl(var(--content-bar-border));
+    @apply flex items-center justify-between px-6 py-4;
+    background-color: hsl(var(--content-bar-background) / 0.95);
+    border-bottom: 1px solid hsl(var(--content-bar-border));
     box-shadow: var(--shadow-content-bar);
     margin-left: 260px; /* Account for fixed sidebar */
     position: sticky;
     top: 0;
     z-index: 30;
     backdrop-filter: blur(8px);
-    background-color: hsl(var(--content-bar-background) / 0.95);
   }
   
   .content-bar-title {
@@ -298,7 +298,9 @@
   }
   
   .content-bar-search {
-    @apply flex items-center gap-2 bg-input border border-input-border rounded-lg px-3 py-2 min-w-[300px];
+    @apply flex items-center gap-2 rounded-lg px-3 py-2 min-w-[300px];
+    background-color: hsl(var(--input));
+    border: 1px solid hsl(var(--input-border));
     transition: all 0.2s ease;
   }
   
@@ -308,7 +310,12 @@
   }
   
   .content-bar-search input {
-    @apply bg-transparent border-0 outline-none flex-1 text-sm placeholder:text-muted-foreground;
+    @apply bg-transparent border-0 outline-none flex-1 text-sm;
+    color: hsl(var(--foreground));
+  }
+  
+  .content-bar-search input::placeholder {
+    color: hsl(var(--muted-foreground));
   }
   
   /* Professional Button Styles */
@@ -337,8 +344,8 @@
   }
   
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200;
-    border-color: hsl(var(--border-strong));
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
+    border: 1px solid hsl(var(--border-strong));
     color: hsl(var(--foreground));
     background-color: hsl(var(--card));
   }
@@ -352,9 +359,9 @@
   
   /* Professional Card Styles */
   .card {
-    @apply rounded-lg border p-6;
+    @apply rounded-lg p-6;
     background-color: hsl(var(--card));
-    border-color: hsl(var(--border));
+    border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-card);
     transition: all 0.2s ease;
   }
@@ -367,37 +374,37 @@
   
   /* Status Indicators */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full border;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full;
   }
   
   .status-available {
     background-color: hsl(var(--success-muted));
     color: hsl(var(--success));
-    border-color: hsl(var(--success) / 0.2);
+    border: 1px solid hsl(var(--success) / 0.2);
   }
   
   .status-issued {
     background-color: hsl(var(--info-muted));
     color: hsl(var(--info));
-    border-color: hsl(var(--info) / 0.2);
+    border: 1px solid hsl(var(--info) / 0.2);
   }
   
   .status-consumed {
     background-color: hsl(var(--muted));
     color: hsl(var(--muted-foreground));
-    border-color: hsl(var(--border));
+    border: 1px solid hsl(var(--border));
   }
   
   .status-faulty {
     background-color: hsl(var(--error-muted));
     color: hsl(var(--error));
-    border-color: hsl(var(--error) / 0.2);
+    border: 1px solid hsl(var(--error) / 0.2);
   }
   
   .status-warning {
     background-color: hsl(var(--warning-muted));
     color: hsl(var(--warning));
-    border-color: hsl(var(--warning) / 0.2);
+    border: 1px solid hsl(var(--warning) / 0.2);
   }
   
   /* Animation utilities */
@@ -449,8 +456,11 @@
   /* Focus styles for accessibility */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    focus:ring-color: hsl(var(--ring));
-    focus:ring-offset-color: hsl(var(--ring-offset));
+  }
+  
+  .focus-ring:focus {
+    --tw-ring-color: hsl(var(--ring));
+    --tw-ring-offset-color: hsl(var(--ring-offset));
   }
   
   /* Typography utilities */
