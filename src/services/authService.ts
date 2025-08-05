@@ -88,65 +88,34 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 };
 
 export const register = async (userData: RegisterData): Promise<AuthResponse> => {
-  try {
-    const { email, password, name } = userData;
-    
-    // Create the user in Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
-          full_name: name,
-          email,
-        },
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data.user) {
-      throw new Error('No user returned from registration');
-    }
-
-    // The profile is created by the trigger we set up in the database
-    // But we can also update it here if needed
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
+  const { email, password, name, role, department, employee_id } = userData;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
         full_name: name,
-        email: email,
-        role: 'technician', // Default role
-        is_active: true,
-      })
-      .eq('id', data.user.id);
-
-    if (profileError) {
-      console.error('Error updating profile:', profileError);
-      // Don't fail registration if profile update fails
-    }
-
-    // Get the full user data
-    const user = await getCurrentUser();
-    
-    if (!user) {
-      throw new Error('Failed to load user profile after registration');
-    }
-
-    return {
-      user,
-      token: data.session?.access_token || '',
-    };
-  } catch (error) {
-    console.error('Registration error:', error);
-    throw error instanceof Error 
-      ? error 
-      : new Error('An error occurred during registration');
-  }
+        email,
+        role,
+        department,
+        employee_id,
+      },
+    },
+  });
+  if (error) throw { message: error.message };
+  return {
+    user: {
+      id: data.user?.id || '',
+      name: data.user?.user_metadata?.name || '',
+      email: data.user?.email || '',
+      role: data.user?.user_metadata?.role || '',
+      avatar: data.user?.user_metadata?.avatar_url || '',
+      created_at: data.user?.created_at || '',
+      is_active: true, // default to true on registration
+    },
+    token: data.session?.access_token || '',
+  };
 };
 
 export const logout = async (): Promise<void> => {

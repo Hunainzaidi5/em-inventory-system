@@ -18,9 +18,13 @@ export interface LoginCredentials {
   password: string;
 }
 
+import type { UserRole } from './auth'; // ensure UserRole is used
+
 export interface RegisterData extends LoginCredentials {
   name: string;
-  // Add any additional registration fields here
+  role: UserRole;
+  department: string;
+  employee_id: string;
 }
 
 export interface AuthResponse {
