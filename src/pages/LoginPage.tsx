@@ -17,9 +17,17 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+const DEVELOPER_CREDENTIALS = {
+  email: 'syedhunainalizaidi@gmail.com',
+  password: 'APPLE_1414',
+  name: 'Syed Hunain Ali',
+  role: 'dev',
+  department: 'E&M SYSTEMS',
+};
+
 export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -40,6 +48,27 @@ export function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
+      // Check for hardcoded developer credentials
+      if (
+        data.email === DEVELOPER_CREDENTIALS.email &&
+        data.password === DEVELOPER_CREDENTIALS.password
+      ) {
+        setFormError('root', undefined);
+        const devUser = {
+          id: 'dev-hardcoded',
+          email: DEVELOPER_CREDENTIALS.email,
+          name: DEVELOPER_CREDENTIALS.name,
+          role: DEVELOPER_CREDENTIALS.role,
+          department: DEVELOPER_CREDENTIALS.department,
+          employee_id: 'DEV001',
+          is_active: true,
+          created_at: new Date().toISOString(),
+          avatar: undefined,
+        };
+        setUser(devUser);
+        navigate('/users');
+        return;
+      }
       const { success, error } = await login({
         email: data.email,
         password: data.password,

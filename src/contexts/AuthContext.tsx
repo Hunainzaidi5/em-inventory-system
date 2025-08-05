@@ -5,6 +5,7 @@ import { User, LoginCredentials, RegisterData } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
+  setUser: (user: User | null) => void;
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
@@ -135,6 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     user,
+    setUser,
     login,
     register,
     logout,
