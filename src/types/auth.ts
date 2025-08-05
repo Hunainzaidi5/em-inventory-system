@@ -34,11 +34,9 @@ export interface AuthResponse {
 
 // User role type
 export type UserRole = 
-  | 'admin'
-  | 'dev'
-  | 'manager'
-  | 'deputy_manager'
-  | 'engineer'
-  | 'assistant_engineer'
-  | 'master_technician'
-  | 'technician';
+  | 'admin'       // Full system access
+  | 'dev'         // Developer access (same as admin but with additional dev tools)
+  | 'manager'     // Department manager
+  | 'supervisor'  // Team supervisor
+  | 'technician'  // Regular technician
+  | 'viewer';     // Read-only access
