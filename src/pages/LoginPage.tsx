@@ -40,16 +40,22 @@ export function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
-      const { success, error } = await login(data);
-      
+      const { success, error } = await login({
+        email: data.email,
+        password: data.password,
+      });
+
       if (success) {
         navigate(from, { replace: true });
       } else if (error) {
+        if (error.toLowerCase().includes('email not confirmed')) {
+          alert('Your email is not confirmed. Please check your inbox and confirm your email before logging in.');
+        }
         setFormError('root', { message: error });
       }
     } catch (error) {
-      setFormError('root', { 
-        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      setFormError('root', {
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
       });
     } finally {
       setIsLoading(false);

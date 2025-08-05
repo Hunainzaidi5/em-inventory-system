@@ -60,6 +60,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       await authService.register(data);
+      // After registration, reload user profile (in case of auto-login)
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
@@ -69,6 +72,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     }
   };
+
+  // Listen for Supabase auth state changes (optional, for real-time sync)
+  useEffect(() => {
+    const { data: listener } = authService.supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
   const logout = async () => {
     try {

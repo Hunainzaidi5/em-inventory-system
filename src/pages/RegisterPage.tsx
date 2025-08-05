@@ -50,15 +50,17 @@ export function RegisterPage() {
         email: data.email,
         password: data.password,
       });
-      
+
       if (success) {
+        // Show a message if email confirmation is required
+        alert('Registration successful! Please check your email to confirm your account before logging in.');
         navigate('/login', { state: { message: 'Registration successful! Please login.' } });
       } else if (error) {
         setFormError('root', { message: error });
       }
     } catch (error) {
-      setFormError('root', { 
-        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      setFormError('root', {
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
       });
     } finally {
       setIsLoading(false);

@@ -50,7 +50,7 @@ export const register = async (userData: RegisterData): Promise<AuthResponse> =>
     email,
     password,
     options: {
-      data: { name },
+      data: { name, full_name: name, email },
     },
   });
   if (error) throw { message: error.message };
