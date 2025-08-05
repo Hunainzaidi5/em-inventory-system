@@ -42,7 +42,7 @@ const addUserSchema = z.object({
 type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 const AddUserPage = () => {
-  const { register: registerUser, user: currentUser } = useAuth();
+  const { createUserAsAdmin, user: currentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -70,7 +70,7 @@ const AddUserPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const { success, error } = await registerUser({
+      const { success, error } = await createUserAsAdmin({
         name: data.name,
         email: data.email,
         password: data.password,

@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
+  createUserAsAdmin: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -26,10 +27,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
   const DEV_USER = {
-    id: 'dev-hardcoded',
+    id: 'dev-user-uuid-hardcoded-12345678',
     name: 'Syed Hunain Ali',
     email: DEV_EMAIL,
-    role: 'dev',
+    role: 'dev' as const,
     department: 'E&M SYSTEMS',
     employee_id: 'DEV001',
     is_active: true,
@@ -59,7 +60,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log('[DEBUG] Initial auth load, checking dev user...');
     if (localStorage.getItem('devUser') === 'true') {
       console.log('[DEBUG] Found dev user in localStorage');
-      setUser(DEV_USER);
+      const storedDevUser = localStorage.getItem('devUserData');
+      if (storedDevUser) {
+        try {
+          const parsedUser = JSON.parse(storedDevUser);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error('Error parsing dev user data:', error);
+          setUser(DEV_USER);
+        }
+      } else {
+        setUser(DEV_USER);
+      }
       setIsLoading(false);
       return;
     }
@@ -117,6 +129,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const createUserAsAdmin = async (data: RegisterData) => {
+    setError(null);
+    try {
+      const result = await authService.createUserAsAdmin(data);
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'User creation failed';
+      setError(message);
+      return { success: false, error: message };
+    }
+  };
+
   const logout = async () => {
     try {
       setIsLoading(true);
@@ -162,6 +186,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     login,
     register,
+    createUserAsAdmin,
     logout,
     updateProfile,
     resetPassword,

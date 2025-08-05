@@ -475,3 +475,41 @@ COMMENT ON TABLE transactions IS 'All issue/return/consume transactions across i
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';
 COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
+
+-- Insert hardcoded dev user credentials
+-- Note: This requires admin privileges to insert into auth.users table
+-- For production, you should create this user through Supabase Dashboard
+
+-- Insert dev user into auth.users (this might need to be done via Supabase Dashboard)
+-- The following is a placeholder for the expected user ID
+-- In practice, you would create this user via Supabase auth and then insert the profile
+
+-- Insert dev user profile (using a predictable UUID for the dev user)
+INSERT INTO profiles (
+  id, 
+  email, 
+  full_name, 
+  role, 
+  department, 
+  employee_id, 
+  is_active, 
+  created_at, 
+  updated_at
+) VALUES (
+  'dev-user-uuid-hardcoded-12345678',
+  'syedhunainalizaidi@gmail.com',
+  'Syed Hunain Ali',
+  'dev',
+  'E&M SYSTEMS',
+  'DEV001',
+  true,
+  NOW(),
+  NOW()
+) ON CONFLICT (email) DO UPDATE SET
+  id = EXCLUDED.id,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  updated_at = NOW();

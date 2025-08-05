@@ -55,10 +55,10 @@ const DEVELOPER_CREDENTIALS = {
   email: 'syedhunainalizaidi@gmail.com',
   password: 'APPLE_1414',
   user: {
-    id: 'dev-hardcoded',
+    id: 'dev-user-uuid-hardcoded-12345678',
     name: 'Syed Hunain Ali',
     email: 'syedhunainalizaidi@gmail.com',
-    role: 'dev',
+    role: 'dev' as const,
     department: 'E&M SYSTEMS',
     employee_id: 'DEV001',
     is_active: true,
@@ -73,11 +73,19 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     
     // Check for hardcoded developer credentials
     if (email === DEVELOPER_CREDENTIALS.email && password === DEVELOPER_CREDENTIALS.password) {
+      // Store dev user flag in localStorage for persistence
+      localStorage.setItem('devUser', 'true');
+      localStorage.setItem('devUserData', JSON.stringify(DEVELOPER_CREDENTIALS.user));
+      
       return {
         user: DEVELOPER_CREDENTIALS.user,
         token: 'dev-token-' + Math.random().toString(36).substring(2, 15)
       };
     }
+    
+    // Clear dev user flag for regular users
+    localStorage.removeItem('devUser');
+    localStorage.removeItem('devUserData');
     
     // Regular Supabase authentication for other users
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -143,7 +151,74 @@ export const register = async (userData: RegisterData): Promise<AuthResponse> =>
   };
 };
 
+// Admin function to create users without switching sessions
+export const createUserAsAdmin = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const { email, password, name, role, department, employee_id } = userData;
+    
+    // Store current session to restore later
+    const { data: currentSession } = await supabase.auth.getSession();
+    
+    // Create a temporary Supabase client for user creation
+    const tempClient = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
+      }
+    );
+
+    // Create user with temporary client
+    const { data, error } = await tempClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          full_name: name,
+          email,
+          role,
+          department,
+          employee_id,
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data.user) {
+      throw new Error('Failed to create user');
+    }
+
+    // Sign out from temporary client
+    await tempClient.auth.signOut();
+
+    // Restore original session if it existed
+    if (currentSession?.session) {
+      await supabase.auth.setSession(currentSession.session);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Admin create user error:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to create user' 
+    };
+  }
+};
+
 export const logout = async (): Promise<void> => {
+  // Clear dev user flags
+  localStorage.removeItem('devUser');
+  localStorage.removeItem('devUserData');
+  
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error('Error during logout:', error);
