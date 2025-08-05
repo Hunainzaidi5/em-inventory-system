@@ -4,9 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 const userRoles = [
   'technician',
@@ -74,50 +71,44 @@ const AddUserPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md bg-white p-8 rounded shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Add New User</h2>
-        {errors.root && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">
-            {errors.root.message}
-          </div>
-        )}
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Full Name</Label>
-            <Input id="name" {...register('name')} className={errors.name ? 'border-red-500' : ''} />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register('email')} className={errors.email ? 'border-red-500' : ''} />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-          </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register('password')} className={errors.password ? 'border-red-500' : ''} />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-          </div>
-          <div>
-            <Label htmlFor="role">Role</Label>
-            <select id="role" {...register('role')} className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}>
-              {userRoles.map((role) => (
-                <option key={role} value={role}>
-                  {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
-          </div>
-          <div>
-            <Label htmlFor="department">Department</Label>
-            <Input id="department" {...register('department')} className={errors.department ? 'border-red-500' : ''} />
-            {errors.department && <p className="text-sm text-red-500">{errors.department.message}</p>}
-          </div>
-          <div>
-            <Label htmlFor="employee_id">Employee ID</Label>
-            <Input id="employee_id" {...register('employee_id')} className={errors.employee_id ? 'border-red-500' : ''} />
-            {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
-          </div>
+        {errors.root && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{errors.root.message}</div>}
+        <div className="mb-4">
+          <label htmlFor="name" className="block mb-1 font-medium">Full Name</label>
+          <input id="name" {...register('name')} className={`w-full px-3 py-2 border rounded-md ${errors.name ? 'border-red-500' : ''}`} />
+          {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
         </div>
-        <Button type="submit" className="w-full mt-6">Add User</Button>
+        <div className="mb-4">
+          <label htmlFor="email" className="block mb-1 font-medium">Email</label>
+          <input id="email" type="email" {...register('email')} className={`w-full px-3 py-2 border rounded-md ${errors.email ? 'border-red-500' : ''}`} />
+          {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="block mb-1 font-medium">Password</label>
+          <input id="password" type="password" {...register('password')} className={`w-full px-3 py-2 border rounded-md ${errors.password ? 'border-red-500' : ''}`} />
+          {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="role" className="block mb-1 font-medium">Role</label>
+          <select id="role" {...register('role')} className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}>
+            {userRoles.map((role) => (
+              <option key={role} value={role}>
+                {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
+              </option>
+            ))}
+          </select>
+          {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="department" className="block mb-1 font-medium">Department</label>
+          <input id="department" {...register('department')} className={`w-full px-3 py-2 border rounded-md ${errors.department ? 'border-red-500' : ''}`} />
+          {errors.department && <p className="text-sm text-red-500">{errors.department.message}</p>}
+        </div>
+        <div className="mb-6">
+          <label htmlFor="employee_id" className="block mb-1 font-medium">Employee ID</label>
+          <input id="employee_id" {...register('employee_id')} className={`w-full px-3 py-2 border rounded-md ${errors.employee_id ? 'border-red-500' : ''}`} />
+          {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
+        </div>
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold">Add User</button>
       </form>
     </div>
   );

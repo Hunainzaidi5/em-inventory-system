@@ -17,17 +17,9 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const DEVELOPER_CREDENTIALS = {
-  email: 'syedhunainalizaidi@gmail.com',
-  password: 'APPLE_1414',
-  name: 'Syed Hunain Ali',
-  role: 'dev',
-  department: 'E&M SYSTEMS',
-};
-
 export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const { login, setUser } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -45,35 +37,36 @@ export function LoginPage() {
     },
   });
 
+  const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
+  const DEV_PASSWORD = 'APPLE_1414';
+  const DEV_USER = {
+    id: 'dev-hardcoded',
+    name: 'Syed Hunain Ali',
+    email: DEV_EMAIL,
+    role: 'dev',
+    department: 'E&M SYSTEMS',
+    employee_id: 'DEV001',
+    is_active: true,
+    created_at: new Date().toISOString(),
+    avatar: undefined,
+  };
+
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
-      // Check for hardcoded developer credentials
-      if (
-        data.email === DEVELOPER_CREDENTIALS.email &&
-        data.password === DEVELOPER_CREDENTIALS.password
-      ) {
-        setFormError('root', undefined);
-        const devUser = {
-          id: 'dev-hardcoded',
-          email: DEVELOPER_CREDENTIALS.email,
-          name: DEVELOPER_CREDENTIALS.name,
-          role: DEVELOPER_CREDENTIALS.role,
-          department: DEVELOPER_CREDENTIALS.department,
-          employee_id: 'DEV001',
-          is_active: true,
-          created_at: new Date().toISOString(),
-          avatar: undefined,
-        };
-        setUser(devUser);
-        navigate('/users');
+      // Hardcoded developer login
+      if (data.email === DEV_EMAIL && data.password === DEV_PASSWORD) {
+        // Set developer user in context manually
+        const { setUser } = useAuth();
+        setUser && setUser(DEV_USER);
+        navigate(from, { replace: true });
         return;
       }
+      // Normal Supabase login
       const { success, error } = await login({
         email: data.email,
         password: data.password,
       });
-
       if (success) {
         navigate(from, { replace: true });
       } else if (error) {
