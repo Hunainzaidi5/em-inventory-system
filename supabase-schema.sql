@@ -61,14 +61,49 @@ CREATE TABLE profiles (
 -- Enable RLS on profiles table
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Create policies for profiles
-CREATE POLICY "Public profiles are viewable by everyone." 
+-- Create comprehensive policies for profiles
+-- Allow authenticated users to view all profiles (needed for user management)
+CREATE POLICY "Authenticated users can view all profiles" 
   ON profiles FOR SELECT 
-  USING (true);
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Users can update their own profile." 
+-- Allow users to update their own profile
+CREATE POLICY "Users can update their own profile" 
   ON profiles FOR UPDATE 
   USING (auth.uid() = id);
+
+-- Allow dev users to insert new profiles (for user creation)
+CREATE POLICY "Dev users can insert profiles" 
+  ON profiles FOR INSERT 
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() 
+      AND role = 'dev'
+    )
+  );
+
+-- Allow dev users to update any profile (for user management)
+CREATE POLICY "Dev users can update any profile" 
+  ON profiles FOR UPDATE 
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() 
+      AND role = 'dev'
+    )
+  );
+
+-- Allow dev users to delete profiles (for user management)
+CREATE POLICY "Dev users can delete profiles" 
+  ON profiles FOR DELETE 
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() 
+      AND role = 'dev'
+    )
+  );
 
 -- Function to handle new user signups
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
