@@ -75,21 +75,37 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER 
 LANGUAGE plpgsql 
 SECURITY DEFINER
-SET search_path = public
 AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, full_name, role, is_active, created_at, updated_at)
-  VALUES (
+  -- Set a secure search path
+  SET search_path = public, pg_temp;
+  
+  -- Insert new user profile with default values
+  INSERT INTO public.profiles (
+    id, 
+    email, 
+    full_name, 
+    role, 
+    is_active, 
+    created_at, 
+    updated_at
+  ) VALUES (
     NEW.id, 
-    NEW.email, 
-    NEW.raw_user_meta_data->>'name',
-    COALESCE(NEW.raw_user_meta_data->>'role', 'technician'),
+    COALESCE(NEW.email, ''), 
+    COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'technician')::user_role,
     TRUE,
     NOW(),
     NOW()
   )
   ON CONFLICT (id) DO NOTHING;
+  
   RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Log the error
+    RAISE WARNING 'Error creating user profile: %', SQLERRM;
+    RETURN NEW; -- Still return NEW to prevent signup failure
 END;
 $$;
 
@@ -411,16 +427,23 @@ CREATE INDEX idx_issuance_records_status ON issuance_records(status);
 CREATE INDEX idx_audit_logs_table_record ON audit_logs(table_name, record_id);
 CREATE INDEX idx_audit_logs_changed_at ON audit_logs(changed_at);
 
--- Create functions for updating timestamps
+-- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER 
 LANGUAGE plpgsql 
 SECURITY DEFINER
-SET search_path = public
 AS $$
 BEGIN
+  -- Set a secure search path
+  SET search_path = public, pg_temp;
+  
   NEW.updated_at = NOW();
   RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Log the error but allow the operation to continue
+    RAISE WARNING 'Error updating timestamp: %', SQLERRM;
+    RETURN NEW;
 END;
 $$;
 
