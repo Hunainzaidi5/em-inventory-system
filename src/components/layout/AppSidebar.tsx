@@ -255,10 +255,16 @@ export function AppSidebar({ className }: AppSidebarProps) {
                 <UserCircle className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <DropdownMenuItem onClick={() => navigate(user?.role === 'dev' ? '/add-user' : '/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </DropdownMenuItem>
+              {user?.role === 'dev' && (
+                <DropdownMenuItem onClick={() => navigate('/users')}>
+                  <Users className="mr-2 h-4 w-4" />
+                  User Management
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
