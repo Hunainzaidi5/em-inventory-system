@@ -1,4 +1,8 @@
-import api, { handleApiError } from '@/lib/api';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = (import.meta.env as any).VITE_SUPABASE_URL;
+const supabaseAnonKey = (import.meta.env as any).VITE_SUPABASE_ANON_KEY;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface User {
   id: string;
@@ -7,7 +11,6 @@ export interface User {
   role: string;
   avatar?: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface LoginCredentials {
@@ -25,49 +28,58 @@ export interface AuthResponse {
 }
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  try {
-    const response = await api.post<AuthResponse>('/auth/login', credentials);
-    return response.data;
-  } catch (error) {
-    throw handleApiError(error);
-  }
+  const { email, password } = credentials;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw { message: error.message };
+  return {
+    user: {
+      id: data.user.id,
+      name: data.user.user_metadata?.name || '',
+      email: data.user.email || '',
+      role: data.user.user_metadata?.role || '',
+      avatar: data.user.user_metadata?.avatar_url || '',
+      createdAt: data.user.created_at,
+    },
+    token: data.session?.access_token || '',
+  };
 };
 
 export const register = async (userData: RegisterData): Promise<AuthResponse> => {
-  try {
-    const response = await api.post<AuthResponse>('/auth/register', userData);
-    return response.data;
-  } catch (error) {
-    throw handleApiError(error);
-  }
+  const { email, password, name } = userData;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { name },
+    },
+  });
+  if (error) throw { message: error.message };
+  return {
+    user: {
+      id: data.user?.id || '',
+      name: data.user?.user_metadata?.name || '',
+      email: data.user?.email || '',
+      role: data.user?.user_metadata?.role || '',
+      avatar: data.user?.user_metadata?.avatar_url || '',
+      createdAt: data.user?.created_at || '',
+    },
+    token: data.session?.access_token || '',
+  };
 };
 
-export const getCurrentUser = async (): Promise<User> => {
-  try {
-    const response = await api.get<User>('/auth/me');
-    return response.data;
-  } catch (error) {
-    throw handleApiError(error);
-  }
+export const getCurrentUser = async (): Promise<User | null> => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return {
+    id: data.user.id,
+    name: data.user.user_metadata?.name || '',
+    email: data.user.email || '',
+    role: data.user.user_metadata?.role || '',
+    avatar: data.user.user_metadata?.avatar_url || '',
+    createdAt: data.user.created_at,
+  };
 };
 
 export const logout = async (): Promise<void> => {
-  try {
-    await api.post('/auth/logout');
-  } catch (error) {
-    // Even if the logout API call fails, we want to clear the token
-    console.error('Logout failed:', error);
-  } finally {
-    // Always clear the token from local storage
-    localStorage.removeItem('token');
-  }
-};
-
-export const refreshToken = async (): Promise<{ token: string }> => {
-  try {
-    const response = await api.post<{ token: string }>('/auth/refresh-token');
-    return response.data;
-  } catch (error) {
-    throw handleApiError(error);
-  }
+  await supabase.auth.signOut();
 };

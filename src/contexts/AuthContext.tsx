@@ -24,14 +24,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Load user data on initial render
   const loadUser = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const userData = await authService.getCurrentUser();
-        setUser(userData);
-      }
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
     } catch (error) {
       console.error('Failed to load user:', error);
-      localStorage.removeItem('token');
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -46,8 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user, token } = await authService.login(credentials);
-      localStorage.setItem('token', token);
+      const { user } = await authService.login(credentials);
       setUser(user);
       queryClient.clear();
       return { success: true };
@@ -81,7 +76,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('token');
       setUser(null);
       queryClient.clear();
     }
