@@ -47,7 +47,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
       is_active: profile.is_active ?? true,
       created_at: profile.created_at || new Date().toISOString(),
       updated_at: profile.updated_at,
-      avatar: authUser.user_metadata?.avatar_url
+      avatar: profile.avatar || authUser.user_metadata?.avatar || undefined,
     };
   } catch (error) {
     console.error('Error in getCurrentUser:', error);
@@ -155,7 +155,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       is_active: userProfile?.is_active ?? true,
       created_at: userProfile?.created_at || data.user.created_at || new Date().toISOString(),
       updated_at: userProfile?.updated_at,
-      avatar: data.user.user_metadata?.avatar_url
+      avatar: userProfile?.avatar || data.user.user_metadata?.avatar || undefined,
     };
 
     return {
