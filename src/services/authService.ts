@@ -37,24 +37,29 @@ export const getCurrentUser = async (): Promise<User | null> => {
       return null;
     }
 
-    // Get the avatar URL
-    let avatarUrl = profile.avatar || authUser.user_metadata?.avatar || undefined;
+    // Get the avatar URL from profile or user metadata
+    let avatarUrl = profile.avatar || authUser.user_metadata?.avatar || '';
     
-    // If avatar is a path (starts with /) and not already a full URL, prepend the Supabase storage URL
-    if (avatarUrl && typeof avatarUrl === 'string') {
-      if (avatarUrl.startsWith('/')) {
-        const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
-        const storagePath = '/storage/v1/object/public/avatars';
-        avatarUrl = `${baseUrl}${storagePath}${avatarUrl}`;
-      } else if (!avatarUrl.startsWith('http')) {
-        // If it's not a full URL and doesn't start with /, it might be just the filename
-        const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
+    // If we have an avatar value, construct the full URL
+    if (avatarUrl) {
+      const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
+      
+      // If it's already a full URL, use it as is
+      if (avatarUrl.startsWith('http')) {
+        // No changes needed, already a full URL
+      } 
+      // If it's a path (starts with /), it's a path in the storage bucket
+      else if (avatarUrl.startsWith('/')) {
+        avatarUrl = `${baseUrl}/storage/v1/object/public/avatars${avatarUrl}`;
+      }
+      // Otherwise, treat it as a filename in the avatars bucket
+      else {
         avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${avatarUrl}`;
       }
-      // If it's already a full URL, use it as is
     }
 
-    return {
+    // Create the user object with the constructed avatar URL
+    const userData = {
       id: authUser.id,
       email: authUser.email || '',
       name: profile.full_name || authUser.user_metadata?.name || '',
@@ -64,8 +69,11 @@ export const getCurrentUser = async (): Promise<User | null> => {
       is_active: profile.is_active ?? true,
       created_at: profile.created_at || new Date().toISOString(),
       updated_at: profile.updated_at,
-      avatar: avatarUrl,
+      avatar: avatarUrl || undefined, // Use undefined instead of empty string if no avatar
     };
+
+    console.log('User data with avatar URL:', userData);
+    return userData;
   } catch (error) {
     console.error('Error in getCurrentUser:', error);
     return null;

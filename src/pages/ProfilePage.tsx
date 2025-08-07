@@ -11,6 +11,9 @@ export default function ProfilePage() {
     return <div>Loading user data...</div>;
   }
 
+  // Log the user data for debugging
+  console.log('Profile page user data:', user);
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -21,6 +24,15 @@ export default function ProfilePage() {
           </p>
         </div>
       </div>
+      
+      {/* Debug information - only show in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-yellow-50 p-4 rounded-md text-sm text-yellow-800 mb-4">
+          <h3 className="font-bold mb-2">Debug Information:</h3>
+          <p>Avatar URL: {user.avatar || 'No avatar set'}</p>
+          <p>User ID: {user.id}</p>
+        </div>
+      )}
 
       <div className="grid gap-6">
         <Card>
@@ -34,10 +46,27 @@ export default function ProfilePage() {
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="text-lg">
-                    {user.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
+                  {user.avatar ? (
+                    <>
+                      <AvatarImage 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        onError={(e) => {
+                          console.error('Error loading avatar:', e);
+                          // Fallback to initials if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <AvatarFallback className="text-lg">
+                        {user.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </>
+                  ) : (
+                    <AvatarFallback className="text-lg bg-gray-200">
+                      {user.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <div>
                   <h3 className="text-lg font-medium">{user.name}</h3>
