@@ -74,19 +74,24 @@ const UsersPage = () => {
 
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
-    
     try {
+      // Delete from Supabase Auth (auth.users) using admin API
+      const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+      if (authError) {
+        console.error('Error deleting user from auth.users:', authError);
+        alert('Failed to delete user from authentication.');
+        return;
+      }
+      // Delete from profiles table
       const { error } = await supabase
         .from('profiles')
         .delete()
         .eq('id', userId);
-
       if (error) {
-        console.error('Error deleting user:', error);
-        alert('Failed to delete user');
+        console.error('Error deleting user from profiles:', error);
+        alert('Failed to delete user from profiles.');
         return;
       }
-
       // Refresh the users list
       fetchUsers();
       alert('User deleted successfully');

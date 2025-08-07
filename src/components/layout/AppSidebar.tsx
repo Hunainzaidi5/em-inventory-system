@@ -69,9 +69,7 @@ const documentsMenuItems = [
   { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
 ];
 
-const systemMenuItems = [
-  { title: "System Settings", url: "/dashboard/settings", icon: Settings },
-];
+const systemMenuItems = [];
 
 interface AppSidebarProps {
   className?: string;
@@ -185,33 +183,6 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {documentsMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavClassName(item.url)}>
-                          <item.icon className="h-4 w-4" />
-                          {!collapsed && <span>{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <Collapsible open={systemOpen} onOpenChange={setSystemOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                System Administration
-                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${systemOpen ? 'rotate-180' : ''}`} />}
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {systemMenuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClassName(item.url)}>
