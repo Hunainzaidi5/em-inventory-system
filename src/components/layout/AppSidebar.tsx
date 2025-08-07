@@ -4,21 +4,25 @@ import {
   Package,
   Wrench,
   Shield,
+  Gift,
+  AlertTriangle,
   FileCheck,
+  FileText,
   BarChart3,
   Users,
   Home,
   Settings,
   LogOut,
+  Menu,
   ChevronDown,
   RotateCcw,
   ListTodo,
+  User,
   UserCircle,
   LogIn,
   UserPlus,
   Box,
-  Key,
-  ArrowLeft
+  Key
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -81,6 +85,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
   const navigate = useNavigate();
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
+  const [systemOpen, setSystemOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -195,7 +200,32 @@ export function AppSidebar({ className }: AppSidebarProps) {
           </Collapsible>
         </SidebarGroup>
 
-
+        <SidebarGroup>
+          <Collapsible open={systemOpen} onOpenChange={setSystemOpen}>
+            <CollapsibleTrigger asChild>
+              <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                System Administration
+                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${systemOpen ? 'rotate-180' : ''}`} />}
+              </SidebarGroupLabel>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {systemMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClassName(item.url)}>
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-2">
