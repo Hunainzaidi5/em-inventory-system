@@ -167,12 +167,17 @@ const AddUserPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6">
-        {isEditing ? 'Edit User' : 'Add New User'}
-      </h1>
-      {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md bg-white p-8 rounded shadow">
+        <button
+          type="button"
+          className="mb-4 text-blue-600 hover:underline text-sm"
+          onClick={() => navigate('/dashboard/users')}
+        >
+          ← Back to User Management
+        </button>
+        <h2 className="text-2xl font-bold mb-6 text-center">Add New User</h2>
+        {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
         <div className="mb-4">
           <label htmlFor="name" className="block mb-1 font-medium">Full Name</label>
           <input 
