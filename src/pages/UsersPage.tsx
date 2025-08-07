@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getAllUsers, updateUserStatus, deleteUser, UserListItem } from '@/services/userService';
-import { testDatabaseAccess } from '@/services/testService';
-import { Trash2, UserCheck, UserX, Plus, Edit, Eye, RefreshCw, Bug } from 'lucide-react';
+import { testDatabaseAccess, testThreeRequirements } from '@/services/testService';
+import { Trash2, UserCheck, UserX, Plus, Edit, Eye, RefreshCw, Bug, CheckCircle } from 'lucide-react';
 
 const UsersPage = () => {
   const { user, isLoading } = useAuth();
@@ -78,6 +78,24 @@ const UsersPage = () => {
     alert('Check console for test results');
   };
 
+  const handleTestThreeRequirements = async () => {
+    console.log('[DEBUG] Testing three main requirements...');
+    const result = await testThreeRequirements();
+    console.log('[DEBUG] Requirements test result:', result);
+    
+    const summary = result.summary;
+    if (summary) {
+      alert(`Requirements Test Results:
+1. User List Sync: ${summary.userListSync ? '✅ PASS' : '❌ FAIL'}
+2. Session Management: ${summary.sessionManagement ? '✅ PASS' : '❌ FAIL'}  
+3. Dev Login Ready: ${summary.devLoginReady ? '✅ PASS' : '❌ FAIL'}
+
+Check console for detailed results.`);
+    } else {
+      alert('Check console for test results');
+    }
+  };
+
   const handleRefreshUsers = async () => {
     console.log('[DEBUG] Manual refresh triggered');
     await loadUsers();
@@ -149,6 +167,14 @@ const UsersPage = () => {
           <p className="text-gray-600">Manage users, their roles, and permissions.</p>
         </div>
         <div className="flex gap-2">
+          <button
+            className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+            onClick={handleTestThreeRequirements}
+            title="Test Three Requirements"
+          >
+            <CheckCircle size={16} />
+            Test Reqs
+          </button>
           <button
             className="flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
             onClick={handleTestDatabase}
