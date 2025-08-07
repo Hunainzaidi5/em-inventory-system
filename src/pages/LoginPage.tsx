@@ -92,7 +92,7 @@ export function LoginPage() {
             </div>
           </div>
           <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
-            Secure Access
+            E&M Inventory Management System
           </CardTitle>
           <CardDescription className="text-center text-blue-100 text-lg font-medium">
             Enter your credentials to continue
@@ -208,7 +208,7 @@ export function LoginPage() {
             <div className="mt-6 flex justify-center">
               <div className="flex items-center space-x-2 text-blue-200 text-xs font-medium">
                 <Lock className="w-3 h-3" />
-                <span>256-bit SSL Encrypted</span>
+                <span>SSL Encrypted</span>
               </div>
             </div>
           </CardFooter>
