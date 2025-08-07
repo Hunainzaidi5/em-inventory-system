@@ -103,9 +103,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (userData: RegisterData) => {
     try {
       setIsLoading(true);
+      setError(null);
+      
+      // This will sign out the current user and create a new one
       const response = await authService.register(userData);
+      
       if (response.success) {
-        setError(null);
+        // Don't log in the new user automatically
+        // Just clear any existing session
+        await authService.logout();
         return { success: true };
       } else {
         setError(response.message);
@@ -126,8 +132,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await authService.logout();
       setUser(null);
       queryClient.clear();
+      // Clear any stored session data
+      localStorage.removeItem('sb-auth-token');
+      localStorage.removeItem('sb-refresh-token');
+      // Redirect to sign-in page
+      window.location.href = '/signin';
     } catch (error) {
       console.error('Logout error:', error);
+      // Still redirect even if there was an error
+      window.location.href = '/signin';
       throw error;
     } finally {
       setIsLoading(false);

@@ -163,6 +163,9 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
       return { success: false, message: 'A user with this email already exists' };
     }
 
+    // Sign out the current session if any
+    await supabase.auth.signOut();
+
     // Create the user with Supabase Auth
     const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
       email: userData.email,
