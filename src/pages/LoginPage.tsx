@@ -63,40 +63,51 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Sign in to your account</CardTitle>
-          <CardDescription className="text-center">
-            Enter your email and password to access your account
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#003366' }}>
+      <Card className="w-full max-w-md border-0 shadow-2xl" style={{ backgroundColor: '#ffffff' }}>
+        <CardHeader className="space-y-1 pb-8">
+          <CardTitle className="text-3xl font-bold text-center" style={{ color: '#003366' }}>
+            Sign In
+          </CardTitle>
+          <CardDescription className="text-center text-gray-600">
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6 px-8">
             {errors.root && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm">
                 {errors.root.message}
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className="space-y-3">
+              <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#003366' }}>
+                Email Address
+              </Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="name@example.com"
                 {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
+                className={`h-12 border-2 focus:ring-2 transition-all duration-200 ${
+                  errors.email 
+                    ? 'border-red-400 focus:border-red-500 focus:ring-red-200' 
+                    : 'border-gray-200 focus:border-[#003366] focus:ring-[#003366] focus:ring-opacity-20'
+                }`}
               />
               {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
+                <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
               )}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm font-semibold" style={{ color: '#003366' }}>
+                  Password
+                </Label>
                 <Link
                   to="/forgot-password"
-                  className="text-sm font-medium text-blue-600 hover:underline"
+                  className="text-sm font-medium hover:underline transition-colors duration-200"
+                  style={{ color: '#003366' }}
                 >
                   Forgot password?
                 </Link>
@@ -106,22 +117,34 @@ export function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 {...register('password')}
-                className={errors.password ? 'border-red-500' : ''}
+                className={`h-12 border-2 focus:ring-2 transition-all duration-200 ${
+                  errors.password 
+                    ? 'border-red-400 focus:border-red-500 focus:ring-red-200' 
+                    : 'border-gray-200 focus:border-[#003366] focus:ring-[#003366] focus:ring-opacity-20'
+                }`}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
               )}
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+          <CardFooter className="px-8 pb-8 pt-6">
+            <Button 
+              type="submit" 
+              className="w-full h-12 text-white font-semibold text-base transition-all duration-200 hover:shadow-lg disabled:opacity-70"
+              disabled={isLoading}
+              style={{ 
+                backgroundColor: '#003366',
+                borderColor: '#003366'
+              }}
+            >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Signing in...
                 </>
               ) : (
-                'Sign in'
+                'Sign In'
               )}
             </Button>
           </CardFooter>
