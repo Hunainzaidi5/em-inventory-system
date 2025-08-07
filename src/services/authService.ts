@@ -150,73 +150,24 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   }
 };
 
-export const register = async (userData: RegisterData): Promise<{ success: boolean; message: string }> => {
-  try {
-    // First, check if user already exists
-    const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('email')
-      .eq('email', userData.email)
-      .single();
-
-    if (existingUser) {
-      return { success: false, message: 'A user with this email already exists' };
-    }
-
-    // Sign out the current session if any
-    await supabase.auth.signOut();
-
-    // Create the user with Supabase Auth
-    const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
-      email: userData.email,
-      password: userData.password,
-      email_confirm: true, // Auto-confirm the email
-      user_metadata: {
-        name: userData.name,
+export const register = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
+  const { email, password, name, role, department, employee_id } = userData;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+        full_name: name,
+        email,
+        role,
+        department,
+        employee_id,
       },
-    });
-
-    if (signUpError) {
-      console.error('Error creating auth user:', signUpError);
-      return { success: false, message: signUpError.message };
-    }
-
-    if (!authData.user) {
-      return { success: false, message: 'No user returned from registration' };
-    }
-
-    // Create the user's profile in the database
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([
-        {
-          id: authData.user.id,
-          full_name: userData.name,
-          email: userData.email,
-          role: userData.role || 'technician',
-          department: userData.department || '',
-          employee_id: userData.employee_id || '',
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]);
-
-    if (profileError) {
-      console.error('Error creating profile:', profileError);
-      // Clean up the auth user if profile creation fails
-      await supabase.auth.admin.deleteUser(authData.user.id);
-      return { success: false, message: 'Failed to create user profile' };
-    }
-
-    return { success: true, message: 'User created successfully' };
-  } catch (error) {
-    console.error('Registration error:', error);
-    return { 
-      success: false, 
-      message: error instanceof Error ? error.message : 'An unknown error occurred' 
-    };
-  }
+    },
+  });
+  if (error) return { success: false, error: error.message };
+  return { success: true };
 };
 
 export const logout = async (): Promise<void> => {

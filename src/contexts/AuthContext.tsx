@@ -100,22 +100,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (userData: RegisterData) => {
+  const register = async (data: RegisterData) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      setIsLoading(true);
-      setError(null);
-      
-      // This will sign out the current user and create a new one
-      const response = await authService.register(userData);
-      
-      if (response.success) {
-        // Don't log in the new user automatically
-        // Just clear any existing session
-        await authService.logout();
+      const result = await authService.register(data);
+      if (result.success) {
         return { success: true };
       } else {
-        setError(response.message);
-        return { success: false, error: response.message };
+        setError(result.error || 'Registration failed');
+        return { success: false, error: result.error };
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
@@ -132,15 +126,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await authService.logout();
       setUser(null);
       queryClient.clear();
-      // Clear any stored session data
-      localStorage.removeItem('sb-auth-token');
-      localStorage.removeItem('sb-refresh-token');
-      // Redirect to sign-in page
-      window.location.href = '/signin';
+      // Clear developer flag on logout
+      localStorage.removeItem('devUser');
     } catch (error) {
       console.error('Logout error:', error);
-      // Still redirect even if there was an error
-      window.location.href = '/signin';
       throw error;
     } finally {
       setIsLoading(false);
