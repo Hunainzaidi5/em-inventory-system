@@ -209,8 +209,10 @@ const AddUserPage = () => {
             {...register('role')} 
             className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
             disabled={isLoading}
+            defaultValue=""
           >
-            <option value="admin">Administrator</option>
+            <option value="" disabled>Select a role</option>
+            <option value="dev">Developer (Admin)</option>
             <option value="manager">Manager</option>
             <option value="deputy_manager">Deputy Manager</option>
             <option value="engineer">Engineer</option>

@@ -35,8 +35,7 @@ export interface AuthResponse {
 // User role type - must match the database enum
 // Note: These values must match exactly with the database enum 'user_role'
 export type UserRole = 
-  | 'admin'            // Full system access
-  | 'dev'              // Developer access (same as admin but with additional dev tools)
+  | 'dev'              // Developer/Administrator - Full system access with dev tools
   | 'manager'          // Department manager
   | 'deputy_manager'   // Deputy manager
   | 'engineer'         // Engineer

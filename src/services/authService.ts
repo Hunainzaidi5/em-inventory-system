@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { User, LoginCredentials, RegisterData, AuthResponse } from '@/types/auth';
+import { User, LoginCredentials, RegisterData, AuthResponse, UserRole } from '@/types/auth';
 
 // Initialize the Supabase client with environment variables
 export const supabase = createClient(
@@ -173,9 +173,12 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 export const register = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
   const { email, password, name, role, department, employee_id } = userData;
   
+  // Standardize on 'dev' for admin/developer access
+  const roleString = role as string;
+  const normalizedRole = (roleString === 'admin') ? 'dev' : role as UserRole;
+  
   // Validate the role against the database enum
   const validRoles = [
-    'admin',
     'dev',
     'manager',
     'deputy_manager',
@@ -185,7 +188,7 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
     'technician'
   ];
 
-  if (!validRoles.includes(role)) {
+  if (!validRoles.includes(normalizedRole)) {
     return { 
       success: false, 
       error: `Invalid role. Must be one of: ${validRoles.join(', ')}` 
@@ -201,7 +204,7 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
           name,
           full_name: name,
           email,
-          role,
+          role: normalizedRole,
           department,
           employee_id,
         },
@@ -247,10 +250,17 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     throw new Error('User not authenticated');
   }
 
-  // If updating role, validate it against the database enum
+  // If updating role, standardize 'admin' to 'dev' and validate against database enum
   if (updates.role) {
-    const validRoles = [
-      'admin',
+    // Convert role to string for comparison
+    const roleString = updates.role as string;
+    
+    // Standardize 'admin' to 'dev'
+    if (roleString === 'admin') {
+      updates.role = 'dev' as UserRole;
+    }
+    
+    const validRoles: UserRole[] = [
       'dev',
       'manager',
       'deputy_manager',
@@ -260,7 +270,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
       'technician'
     ];
 
-    if (!validRoles.includes(updates.role)) {
+    if (!validRoles.includes(updates.role as UserRole)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
     }
   }

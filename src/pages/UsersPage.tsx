@@ -5,10 +5,12 @@ import { supabase } from '@/services/authService';
 import { User, UserRole } from '@/types/auth';
 
 // Helper function to format role names for display
-const formatRoleName = (role: UserRole): string => {
-  const roleMap: Record<UserRole, string> = {
-    'admin': 'Administrator',
-    'dev': 'Developer',
+const formatRoleName = (role: string): string => {
+  // Map 'admin' to 'dev' since we're standardizing on 'dev' for administrator/developer role
+  const normalizedRole = role === 'admin' ? 'dev' : role;
+  
+  const roleMap: Record<string, string> = {
+    'dev': 'Developer (Admin)',
     'manager': 'Manager',
     'deputy_manager': 'Deputy Manager',
     'engineer': 'Engineer',
@@ -16,7 +18,8 @@ const formatRoleName = (role: UserRole): string => {
     'master_technician': 'Master Technician',
     'technician': 'Technician'
   };
-  return roleMap[role] || role;
+  
+  return roleMap[normalizedRole] || role;
 };
 
 const UsersPage = () => {
