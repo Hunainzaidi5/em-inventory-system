@@ -78,6 +78,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     checkAuth();
   }, []);
 
+  // Handle developer login state changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      if (localStorage.getItem('devUser') === 'true' && !user) {
+        setUser(DEV_USER);
+      } else if (localStorage.getItem('devUser') !== 'true' && user?.id === 'dev-hardcoded') {
+        setUser(null);
+      }
+    };
+
+    // Check on mount
+    handleStorageChange();
+
+    // Listen for storage changes
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [user]);
+
   // Set up auth state change listener (only for Supabase users)
   useEffect(() => {
     // Only set up listener if not using hardcoded developer
@@ -86,10 +104,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
-      setUser(user);
-      
-      // Clear queries when user logs out
-      if (!user) {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
         queryClient.clear();
       }
     });

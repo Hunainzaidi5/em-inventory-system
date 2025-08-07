@@ -114,15 +114,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   try {
     const { email, password } = credentials;
     
-    // Check for hardcoded developer credentials
-    if (email === DEVELOPER_CREDENTIALS.email && password === DEVELOPER_CREDENTIALS.password) {
-      return {
-        user: DEVELOPER_CREDENTIALS.user,
-        token: 'dev-token-' + Math.random().toString(36).substring(2, 15)
-      };
-    }
-    
-    // Regular Supabase authentication for other users
+    // Sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -136,12 +128,35 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       throw new Error('No user returned from authentication');
     }
 
-    // Get the user's profile
-    const user = await getCurrentUser();
-    
-    if (!user) {
-      throw new Error('Failed to load user profile');
+    // Try to get the user's profile, but handle case where it doesn't exist
+    let userProfile = null;
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+      
+      if (!profileError) {
+        userProfile = profile;
+      }
+    } catch (profileError) {
+      console.log('Profile not found, creating default profile');
     }
+
+    // Create user object with available data
+    const user = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name: userProfile?.full_name || data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+      role: userProfile?.role || data.user.user_metadata?.role || 'technician',
+      department: userProfile?.department || data.user.user_metadata?.department || '',
+      employee_id: userProfile?.employee_id || data.user.user_metadata?.employee_id || '',
+      is_active: userProfile?.is_active ?? true,
+      created_at: userProfile?.created_at || data.user.created_at || new Date().toISOString(),
+      updated_at: userProfile?.updated_at,
+      avatar: data.user.user_metadata?.avatar_url
+    };
 
     return {
       user,
