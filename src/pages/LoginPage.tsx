@@ -87,12 +87,16 @@ export function LoginPage() {
         
         <CardHeader className="space-y-2 pb-8 pt-12">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-white bg-opacity-20 flex items-center justify-center backdrop-blur-sm">
-              <Lock className="w-8 h-8 text-white" />
+            <div className="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center backdrop-blur-sm p-3">
+              <img 
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjgwMCIgdmlld0JveD0iMCAwIDgwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQwMCIgY3k9IjQwMCIgcj0iMzkwIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjIwIi8+CjxwYXRoIGQ9Ik0xMDAgNjBMMTcwIDEyMEwxODAgMTAwTDIwMCAxMjBMMjIwIDEwMEwyNDAgMTIwTDI2MCA4MEwyODAgMTAwTDMxMCA4MEwzNDAgMTAwTDM4MCA4MEw0MTAgMTAwTDQ1MCA4MEw0ODAgMTAwTDUyMCA2MEw1NTAgMTAwTDU5MCA4MEw2MjAgMTAwTDY1MCA2MEw2ODAgMTAwTDcwMCA1MEw3MjAgMTAwTDc1MCA2MEw3ODAgMTAwTDc1MCA0NDBMNzIwIDQ2MEw3MDAgNDIwTDY4MCA0NDBMNjUwIDQyMEw2MjAgNDQwTDU5MCA0MDBMNTUwIDQyMEw1MjAgMzgwTDQ4MCA0MDBMNDUwIDM2MEw0MTAgMzgwTDM4MCAzNDBMMzQwIDM2MEwzMTAgMzIwTDI4MCAzNDBMMjYwIDMwMEwyNDAgMzIwTDIyMCAyODBMMjAwIDMwMEwxODAgMjYwTDE3MCAyODBMMTAwIDIyMFoiIGZpbGw9IiMzMzQxNTUiLz4KPHJlY3QgeD0iMzIwIiB5PSIxNDAiIHdpZHRoPSIxNjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRkY4NTAwIiBzdHJva2U9IiMzMzQxNTUiIHN0cm9rZS13aWR0aD0iNCIvPgo8cmVjdCB4PSIzNDAiIHk9IjE2MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI4MCIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzMzNDE1NSIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjM1MCIgeT0iMTQ1IiB3aWR0aD0iMjAiIGhlaWdodD0iMTAiIGZpbGw9IiMzMzQxNTUiLz4KPHA+PC9wPgo8dGV4dCB4PSI0MDAiIHk9IjI0MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzMzNDE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+JDwvdGV4dD4KPHBhdGggZD0iTTE4MCAzMDBMMjAwIDMzMEwyMjAgMzEwTDI0MCAzNDBMMjgwIDM1MEwyNjAgMzcwTDMwMCAzODBMMzUwIDM1MEwzNzAgMzcwTDM1MCA0MDBMMzIwIDQyMEwyODAgNDAwTDI0MCA0MjBMMjAwIDQxMEwxNjAgNDMwTDE0MCA0MDBMMTIwIDQyMEwxMTAgMzgwTDEzMCAzNTBMMTUwIDMyMEwxODAgMzAwWiIgZmlsbD0iIzAwN0JCOCIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTYyMCAzMDBMNjAwIDMzMEw1ODAgMzEwTDU2MCAzNDBMNTIwIDM1MEw1NDAgMzcwTDUwMCAzODBMNDUwIDM1MEw0MzAgMzcwTDQ1MCA0MDBMNDgwIDQyMEw1MjAgNDAwTDU2MCA0MjBMNjAwIDQxMEw2NDAgNDMwTDY2MCA0MDBMNjgwIDQyMEw2OTAgMzgwTDY3MCAzNTBMNjUwIDMyMEw2MjAgMzAwWiIgZmlsbD0iIzAwN0JCOCIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMzgwIiB5PSIzMDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGRjI2MjYiIHN0cm9rZT0iIzMzNDE1NSIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM3MCIgeT0iMzMwIiB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIGZpbGw9IiNGRjI2MjYiIHN0cm9rZT0iIzMzNDE1NSIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM3NSIgeT0iNDgwIiB3aWR0aD0iNTAiIGhlaWdodD0iMjAiIGZpbGw9IiMzMzQxNTUiLz4KPHJlY3QgeD0iMzAwIiB5PSI1MDAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IndoaXRlIiBzdHJva2U9IiMwMDdCQjgiIHN0cm9rZS13aWR0aD0iMyIvPgo8Y2lyY2xlIGN4PSIzNDAiIGN5PSI1MTUiIHI9IjUiIGZpbGw9IiMwMDdCQjgiLz4KPGxpbmUgeDE9IjM1NSIgeTE9IjUyNSIgeDI9IjM3NSIgeTI9IjUyNSIgc3Ryb2tlPSIjMDA3QkI4IiBzdHJva2Utd2lkdGg9IjMiLz4KPGxpbmUgeDE9IjMxNSIgeTE9IjUzNSIgeDI9IjM3NSIgeTI9IjUzNSIgc3Ryb2tlPSIjMDA3QkI4IiBzdHJva2Utd2lkdGg9IjMiLz4KPGxpbmUgeDE9IjMxNSIgeTE9IjU0NSIgeDI9IjM0NSIgeTI9IjU0NSIgc3Ryb2tlPSIjMDA3QkI4IiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMzEwIiB5PSI1NzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyNSIgZmlsbD0iI0ZGODUwMCIvPgo8cGF0aCBkPSJNMzQwIDU5NUwzNTAgNTg1TDM2MCA1OTVaIiBmaWxsPSIjRkY4NTAwIi8+CjxjaXJjbGUgY3g9IjU1MCIgY3k9IjM5MCIgcj0iMzAiIGZpbGw9IndoaXRlIiBzdHJva2U9IiMwMDdCQjgiIHN0cm9rZS13aWR0aD0iNCIvPgo8L3N2Zz4K"
+                alt="Service Icon" 
+                className="w-full h-full object-contain filter brightness-0 invert"
+              />
             </div>
           </div>
           <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
-            E&M Inventory Management System
+            Secure Access
           </CardTitle>
           <CardDescription className="text-center text-blue-100 text-lg font-medium">
             Enter your credentials to continue
@@ -208,7 +212,7 @@ export function LoginPage() {
             <div className="mt-6 flex justify-center">
               <div className="flex items-center space-x-2 text-blue-200 text-xs font-medium">
                 <Lock className="w-3 h-3" />
-                <span>SSL Encrypted</span>
+                <span>256-bit SSL Encrypted</span>
               </div>
             </div>
           </CardFooter>
