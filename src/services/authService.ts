@@ -20,34 +20,39 @@ export const getCurrentUser = async (): Promise<User | null> => {
   const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !authUser) {
-    console.error('Error getting auth user:', authError);
+    console.log('No authenticated user in Supabase');
     return null;
   }
 
-  // Get the user's profile
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', authUser.id)
-    .single();
+  try {
+    // Get the user's profile
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authUser.id)
+      .single();
 
-  if (profileError) {
-    console.error('Error fetching user profile:', profileError);
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError);
+      return null;
+    }
+
+    return {
+      id: authUser.id,
+      email: authUser.email || '',
+      name: profile.full_name || authUser.user_metadata?.name || '',
+      role: profile.role || 'technician',
+      department: profile.department || '',
+      employee_id: profile.employee_id || '',
+      is_active: profile.is_active ?? true,
+      created_at: profile.created_at || new Date().toISOString(),
+      updated_at: profile.updated_at,
+      avatar: authUser.user_metadata?.avatar_url
+    };
+  } catch (error) {
+    console.error('Error in getCurrentUser:', error);
     return null;
   }
-
-  return {
-    id: authUser.id,
-    email: authUser.email || '',
-    name: profile.full_name || authUser.user_metadata?.name || '',
-    role: profile.role || 'technician',
-    department: profile.department || '',
-    employee_id: profile.employee_id || '',
-    is_active: profile.is_active ?? true,
-    created_at: profile.created_at || new Date().toISOString(),
-    updated_at: profile.updated_at,
-    avatar: authUser.user_metadata?.avatar_url
-  };
 };
 
 // Hardcoded developer credentials

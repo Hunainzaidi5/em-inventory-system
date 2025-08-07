@@ -15,6 +15,15 @@ const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true);
+      
+      // Check if we're using hardcoded developer
+      if (localStorage.getItem('devUser') === 'true') {
+        // For hardcoded developer, we can't fetch from Supabase due to RLS
+        // Show a message that user management requires proper authentication
+        setUsers([]);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -22,6 +31,8 @@ const UsersPage = () => {
 
       if (error) {
         console.error('Error fetching users:', error);
+        // If RLS error, show empty list
+        setUsers([]);
         return;
       }
 
@@ -42,6 +53,7 @@ const UsersPage = () => {
       setUsers(mappedUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
+      setUsers([]);
     } finally {
       setLoadingUsers(false);
     }
@@ -96,6 +108,23 @@ const UsersPage = () => {
       
       {loadingUsers ? (
         <div className="text-center py-8">Loading users...</div>
+      ) : users.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-gray-500 mb-4">
+            {localStorage.getItem('devUser') === 'true' 
+              ? 'User management is not available in developer mode due to Row Level Security restrictions. Please log in with a proper Supabase account to manage users.'
+              : 'No users found or you do not have permission to view users.'
+            }
+          </p>
+          {localStorage.getItem('devUser') === 'true' && (
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={() => navigate('/dashboard/add-user')}
+            >
+              Add User (Developer Mode)
+            </button>
+          )}
+        </div>
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
