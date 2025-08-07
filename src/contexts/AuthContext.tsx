@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
-import { User, LoginCredentials, RegisterData } from '@/types/auth';
+import { User, LoginCredentials, RegisterData, UserRole } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +10,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -25,34 +26,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
   const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
-  const DEV_USER = {
+  const DEV_USER: User = {
     id: 'dev-hardcoded',
     name: 'Syed Hunain Ali',
     email: DEV_EMAIL,
-    role: 'dev',
+    role: 'dev' as UserRole,
     department: 'E&M SYSTEMS',
     employee_id: 'DEV001',
     is_active: true,
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     avatar: undefined,
   };
 
-  // Load user data on initial render
+  // Load user data
   const loadUser = useCallback(async () => {
     try {
       console.log('[DEBUG] Loading user...');
       setIsLoading(true);
-        const userData = await authService.getCurrentUser();
+      const userData = await authService.getCurrentUser();
       console.log('[DEBUG] User loaded:', userData);
-        setUser(userData);
+      setUser(userData);
+      return userData;
     } catch (error) {
       console.error('Failed to load user:', error);
       setUser(null);
+      throw error;
     } finally {
       console.log('[DEBUG] Finished loading user, setting isLoading to false');
       setIsLoading(false);
     }
   }, []);
+
+  // Refresh user data
+  const refreshUser = useCallback(async () => {
+    try {
+      console.log('[DEBUG] Refreshing user data...');
+      await loadUser();
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+      throw error;
+    }
+  }, [loadUser]);
 
   // Initial load
   useEffect(() => {
@@ -204,13 +219,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     updateProfile,
     resetPassword,
+    refreshUser,
     isAuthenticated: !!user,
     isLoading,
     error,
     setUser,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

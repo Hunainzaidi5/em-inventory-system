@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Package,
@@ -77,7 +77,28 @@ export function AppSidebar({ className }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
+  
+  // Debug: Log user data when it changes
+  useEffect(() => {
+    console.log('User in AppSidebar:', user);
+    if (user?.avatar) {
+      console.log('Avatar URL:', user.avatar);
+      // Test if the avatar URL is accessible
+      fetch(user.avatar, { method: 'HEAD' })
+        .then(res => {
+          console.log('Avatar URL status:', res.status);
+          if (res.ok) {
+            console.log('Avatar is accessible');
+          } else {
+            console.error('Avatar URL not accessible:', res.status, res.statusText);
+          }
+        })
+        .catch(error => {
+          console.error('Error checking avatar URL:', error);
+        });
+    }
+  }, [user]);
   const navigate = useNavigate();
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
@@ -103,23 +124,38 @@ export function AppSidebar({ className }: AppSidebarProps) {
     return `${baseClasses} hover:bg-sidebar-accent/50`;
   };
 
+  // Function to handle avatar refresh
+  const handleRefreshAvatar = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      // Add a timestamp to the avatar URL to force a refresh
+      const avatarWithTimestamp = user?.avatar ? 
+        `${user.avatar}${user.avatar.includes('?') ? '&' : '?'}t=${Date.now()}` : 
+        '';
+      
+      // Update the avatar URL in the user object
+      if (user) {
+        setUser({
+          ...user,
+          avatar: avatarWithTimestamp
+        });
+      }
+    } catch (error) {
+      console.error('Error refreshing avatar:', error);
+    }
+  };
+
   return (
-    <Sidebar className={className} collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
-            <img 
-              src="/logo.png" 
-              alt="E&M Inventory Logo" 
-              className="h-full w-full object-contain"
-            />
+    <Sidebar className={className}>
+      <SidebarHeader className="px-4 py-3 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Package className="h-6 w-6 text-primary" />
+            {!collapsed && <span className="font-semibold">EM Inventory</span>}
           </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <h1 className="text-sm font-semibold text-sidebar-foreground">E&M Inventory</h1>
-              <p className="text-xs text-sidebar-foreground/60">Management System</p>
-            </div>
-          )}
+          <Button variant="ghost" size="icon" onClick={() => {}} className="h-8 w-8">
+            <Menu className="h-4 w-4" />
+          </Button>
         </div>
       </SidebarHeader>
 
@@ -197,26 +233,56 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-2">
+      <SidebarFooter className="p-2 border-t">
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start gap-3 h-auto p-2 hover:bg-sidebar-accent/50"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="text-xs">
-                    {user.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                {!collapsed && (
-                  <div className="flex flex-1 flex-col items-start text-left">
-                    <span className="text-sm font-medium text-sidebar-foreground">{user.name}</span>
-                    <span className="text-xs text-sidebar-foreground/60">{user.role}</span>
+              <Button variant="ghost" className="w-full justify-start h-12 px-3 group">
+                <div className="flex items-center space-x-2 w-full">
+                  <div className="relative">
+                    <Avatar className="h-8 w-8 group-hover:opacity-80 transition-opacity">
+                      {user.avatar ? (
+                        <>
+                          <AvatarImage 
+                            src={`${user.avatar}${user.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`} 
+                            alt={user.name}
+                            className="object-cover"
+                            onError={(e) => {
+                              console.error('Error loading avatar in sidebar:', e);
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                          <AvatarFallback className="text-xs bg-muted">
+                            {user.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </>
+                      ) : (
+                        <AvatarFallback className="text-xs bg-muted">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border shadow-sm p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={handleRefreshAvatar}
+                      title="Refresh avatar"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                    </Button>
                   </div>
-                )}
+                  {!collapsed && (
+                    <div className="text-left min-w-0 flex-1">
+                      <div className="text-sm font-medium truncate">{user.name}</div>
+                      <div className="text-xs text-muted-foreground truncate capitalize">
+                        {user.role.replace(/_/g, ' ')}
+                      </div>
+                    </div>
+                  )}
+                  {!collapsed && <ChevronDown className="ml-auto h-4 w-4 opacity-50 shrink-0" />}
+                </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

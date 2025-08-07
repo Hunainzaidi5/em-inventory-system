@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { User, LoginCredentials, RegisterData, AuthResponse, UserRole } from '@/types/auth';
+import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
 
 // Initialize the Supabase client with environment variables
 export const supabase = createClient(
@@ -38,25 +39,8 @@ export const getCurrentUser = async (): Promise<User | null> => {
     }
 
     // Get the avatar URL from profile or user metadata
-    let avatarUrl = profile.avatar || authUser.user_metadata?.avatar || '';
-    
-    // If we have an avatar value, construct the full URL
-    if (avatarUrl) {
-      const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
-      
-      // If it's already a full URL, use it as is
-      if (avatarUrl.startsWith('http')) {
-        // No changes needed, already a full URL
-      } 
-      // If it's a path (starts with /), it's a path in the storage bucket
-      else if (avatarUrl.startsWith('/')) {
-        avatarUrl = `${baseUrl}/storage/v1/object/public/avatars${avatarUrl}`;
-      }
-      // Otherwise, treat it as a filename in the avatars bucket
-      else {
-        avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${avatarUrl}`;
-      }
-    }
+    const avatarPath = profile.avatar || authUser.user_metadata?.avatar || '';
+    const avatarUrl = getAvatarUrl(authUser.id, avatarPath);
 
     // Create the user object with the constructed avatar URL
     const userData = {
@@ -132,8 +116,44 @@ const ensureDeveloperUser = async () => {
   }
 };
 
-// Run this on import to ensure developer user exists
-ensureDeveloperUser();
+// Initialize storage bucket for avatars
+const initStorage = async () => {
+  try {
+    // Check if the avatars bucket exists
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    
+    if (bucketsError) throw bucketsError;
+    
+    const bucketExists = buckets.some(bucket => bucket.name === 'avatars');
+    
+    if (!bucketExists) {
+      console.log('Creating avatars bucket...');
+      const { error: createError } = await supabase.storage.createBucket('avatars', {
+        public: true,
+        allowedMimeTypes: ['image/*'],
+        fileSizeLimit: 1024 * 1024 * 2, // 2MB limit
+      });
+      
+      if (createError) throw createError;
+      console.log('Avatars bucket created successfully');
+    }
+    
+    // Set bucket policies
+    const { error: policyError } = await supabase.rpc('set_avatar_policies');
+    if (policyError) {
+      console.warn('Failed to set bucket policies:', policyError.message);
+    }
+    
+  } catch (error) {
+    console.error('Error initializing storage:', error);
+  }
+};
+
+// Run initialization
+Promise.all([
+  ensureDeveloperUser(),
+  initStorage()
+]).catch(console.error);
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
@@ -268,11 +288,23 @@ export const resetPassword = async (email: string): Promise<void> => {
 };
 
 // Update user profile
-export const updateProfile = async (updates: Partial<User>): Promise<User> => {
+export const updateProfile = async (updates: Partial<User> & { avatarFile?: File }): Promise<User> => {
   const { data: { user: authUser } } = await supabase.auth.getUser();
   
   if (!authUser) {
     throw new Error('User not authenticated');
+  }
+
+  // Handle avatar file upload if provided
+  if (updates.avatarFile) {
+    try {
+      const publicUrl = await uploadAvatar(updates.avatarFile, authUser.id);
+      // Update the avatar URL in the updates object
+      updates.avatar = publicUrl;
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      throw new Error('Failed to upload avatar');
+    }
   }
 
   // If updating role, standardize 'admin' to 'dev' and validate against database enum
@@ -283,7 +315,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     // Standardize 'admin' to 'dev'
     if (roleString === 'admin') {
       updates.role = 'dev' as UserRole;
-  }
+    }
     
     const validRoles: UserRole[] = [
       'dev',
@@ -301,10 +333,13 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
   }
 
   try {
+    // Remove the avatarFile from updates before saving to the database
+    const { avatarFile, ...profileUpdates } = updates;
+    
     const { data, error } = await supabase
       .from('profiles')
       .update({
-        ...updates,
+        ...profileUpdates,
         updated_at: new Date().toISOString(),
       })
       .eq('id', authUser.id)
@@ -313,17 +348,13 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
 
     if (error) throw error;
 
-    return {
-      id: authUser.id,
-      email: authUser.email || '',
-      name: data.full_name || authUser.user_metadata?.name || '',
-      role: data.role || 'technician',
-      department: data.department || '',
-      employee_id: data.employee_id || '',
-      is_active: data.is_active ?? true,
-      created_at: data.created_at || new Date().toISOString(),
-      updated_at: data.updated_at,
-    };
+    // Get the updated user data
+    const updatedUser = await getCurrentUser();
+    if (!updatedUser) {
+      throw new Error('Failed to fetch updated user data');
+    }
+
+    return updatedUser;
   } catch (error: any) {
     console.error('Error updating profile:', error);
     throw new Error(error.message || 'Failed to update profile');
