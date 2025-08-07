@@ -85,18 +85,23 @@ export function LoginPage() {
         {/* Decorative Header */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-white to-blue-400"></div>
         
-        <img 
-          src="/eminventory.png" 
-          alt="Service Icon" 
-          className="w-full h-full object-contain filter brightness-0 invert"
-        />
-
-        <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
-          Secure Access
-        </CardTitle>
-        <CardDescription className="text-center text-blue-100 text-lg font-medium">
-          Enter your credentials to continue
-        </CardDescription>
+        <CardHeader className="space-y-2 pb-8 pt-12">
+          <div className="flex justify-center mb-4">
+            <div className="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center backdrop-blur-sm p-3">
+              <img 
+                src="/eminventory.png" 
+                alt="Service Icon" 
+                className="w-full h-full object-contain filter brightness-0 invert"
+              />
+            </div>
+          </div>
+          <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
+            Secure Access
+          </CardTitle>
+          <CardDescription className="text-center text-blue-100 text-lg font-medium">
+            Enter your credentials to continue
+          </CardDescription>
+        </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-8 px-8">
