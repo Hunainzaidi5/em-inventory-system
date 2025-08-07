@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/services/authService';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -33,6 +34,7 @@ const registerSchema = z
     role: z.enum(userRoles, { required_error: 'Role is required' }),
     department: z.string().min(1, 'Department is required'),
     employee_id: z.string().min(1, 'Employee ID is required'),
+    avatar: z.any().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -67,6 +69,29 @@ export function RegisterPage() {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       setIsLoading(true);
+      let avatarUrl = '';
+      
+      // Handle avatar upload if provided
+      if (data.avatar && data.avatar.length > 0) {
+        const file = data.avatar[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${data.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
+        
+        // Upload the file to Supabase storage
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file);
+          
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw new Error('Failed to upload avatar');
+        }
+        
+        // Store just the filename in the database
+        // The full URL will be constructed in getCurrentUser
+        avatarUrl = fileName;
+      }
+
       const { success, error } = await registerUser({
         name: data.name,
         email: data.email,
@@ -74,6 +99,7 @@ export function RegisterPage() {
         department: data.department,
         employee_id: data.employee_id,
         role: data.role,
+        avatar: avatarUrl,
       });
 
       if (success) {
@@ -151,6 +177,23 @@ export function RegisterPage() {
               <Label htmlFor="employee_id">Employee ID</Label>
               <Input id="employee_id" {...register('employee_id')} className={errors.employee_id ? 'border-red-500' : ''} />
               {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="avatar">Profile Picture (Optional)</Label>
+              <Input 
+                id="avatar" 
+                type="file" 
+                accept="image/*" 
+                {...register('avatar')} 
+                className={errors.avatar ? 'border-red-500' : ''} 
+              />
+              {errors.avatar && (
+                <p className="text-sm text-red-500">
+                  {typeof errors.avatar === 'object' && 'message' in errors.avatar 
+                    ? String(errors.avatar.message) 
+                    : 'Invalid avatar'}
+                </p>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">

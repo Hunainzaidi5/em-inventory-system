@@ -124,15 +124,21 @@ const AddUserPage = () => {
         const file = formData.avatar[0];
         const fileExt = file.name.split('.').pop();
         const fileName = `${formData.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        
+        // Upload the file to Supabase storage
+        const { error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(fileName, file);
+          
         if (uploadError) {
-          // setFormError('root', { message: 'Failed to upload avatar.' }); // This line was not in the edit_specification, so it's removed.
+          console.error('Upload error:', uploadError);
           toast.error('Failed to upload avatar.');
           return;
         }
-        avatarUrl = supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+        
+        // Store just the filename in the database
+        // The full URL will be constructed in getCurrentUser
+        avatarUrl = fileName;
       }
       // Ensure the role is a valid UserRole
       const userRole = formData.role as UserRole;
