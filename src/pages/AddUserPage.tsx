@@ -46,6 +46,7 @@ const formSchema = z.object({
   ),
   department: z.string().min(1, 'Department is required'),
   employee_id: z.string().min(1, 'Employee ID is required'),
+  avatar: z.any().optional(),
 });
 
 const AddUserPage = () => {
@@ -118,6 +119,21 @@ const AddUserPage = () => {
     setError('');
 
     try {
+      let avatarUrl = '';
+      if (formData.avatar && formData.avatar.length > 0) {
+        const file = formData.avatar[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${formData.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file);
+        if (uploadError) {
+          // setFormError('root', { message: 'Failed to upload avatar.' }); // This line was not in the edit_specification, so it's removed.
+          toast.error('Failed to upload avatar.');
+          return;
+        }
+        avatarUrl = supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+      }
       // Ensure the role is a valid UserRole
       const userRole = formData.role as UserRole;
       
@@ -151,6 +167,7 @@ const AddUserPage = () => {
           role: userRole,
           department: formData.department,
           employee_id: formData.employee_id,
+          avatar: avatarUrl,
         });
 
         if (registerError) throw registerError;
@@ -249,6 +266,10 @@ const AddUserPage = () => {
             disabled={isLoading}
           />
           {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="avatar" className="block mb-1 font-medium">Avatar (optional)</label>
+          <input id="avatar" type="file" accept="image/*" {...register('avatar')} className="w-full px-3 py-2 border rounded-md" />
         </div>
         <div className="flex space-x-4">
           <button

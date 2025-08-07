@@ -25,6 +25,7 @@ export interface RegisterData extends LoginCredentials {
   role: UserRole;
   department: string;
   employee_id: string;
+  avatar?: string;
 }
 
 export interface AuthResponse {
