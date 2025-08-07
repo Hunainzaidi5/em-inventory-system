@@ -1,7 +1,7 @@
-import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
-import { User, LoginCredentials, RegisterData } from '@/types/auth';
+import { User, LoginCredentials, RegisterData, UserRole } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -9,11 +9,11 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
+  updateUser: (user: User) => void;
   resetPassword: (email: string) => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  setUser?: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -25,11 +25,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
   const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
-  const DEV_USER = {
+  const DEV_USER: User = {
     id: 'dev-hardcoded',
     name: 'Syed Hunain Ali',
     email: DEV_EMAIL,
-    role: 'dev',
+    role: 'dev' as UserRole,
     department: 'E&M SYSTEMS',
     employee_id: 'DEV001',
     is_active: true,
@@ -95,6 +95,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [user]);
+
+  // Update user function
+  const updateUser = useCallback((updatedUser: User) => {
+    setUser(updatedUser);
+  }, []);
 
   // Set up auth state change listener (only for Supabase users)
   useEffect(() => {
@@ -197,18 +202,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     login,
     register,
     logout,
     updateProfile,
+    updateUser,
     resetPassword,
     isAuthenticated: !!user,
     isLoading,
     error,
-    setUser,
-  };
+  }), [user, isLoading, error, updateUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
