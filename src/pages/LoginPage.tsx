@@ -38,34 +38,9 @@ export function LoginPage() {
     },
   });
 
-  const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
-  const DEV_PASSWORD = 'APPLE_1414';
-  const DEV_USER = {
-    id: 'dev-hardcoded',
-    name: 'Syed Hunain Ali',
-    email: DEV_EMAIL,
-    role: 'dev',
-    department: 'E&M SYSTEMS',
-    employee_id: 'DEV001',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    avatar: undefined,
-  };
-
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
-      // Hardcoded developer login
-      if (data.email === DEV_EMAIL && data.password === DEV_PASSWORD) {
-        // Set developer user in context manually and persist in localStorage
-        localStorage.setItem('devUser', 'true');
-        // Use a timeout to ensure state updates properly
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true });
-        }, 100);
-        return;
-      }
-      // Normal Supabase login
       const { success, error } = await login({
         email: data.email,
         password: data.password,
