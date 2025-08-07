@@ -32,11 +32,14 @@ export interface AuthResponse {
   token: string;
 }
 
-// User role type
+// User role type - must match the database enum
+// Note: These values must match exactly with the database enum 'user_role'
 export type UserRole = 
-  | 'admin'       // Full system access
-  | 'dev'         // Developer access (same as admin but with additional dev tools)
-  | 'manager'     // Department manager
-  | 'supervisor'  // Team supervisor
-  | 'technician'  // Regular technician
-  | 'viewer';     // Read-only access
+  | 'admin'            // Full system access
+  | 'dev'              // Developer access (same as admin but with additional dev tools)
+  | 'manager'          // Department manager
+  | 'deputy_manager'   // Deputy manager
+  | 'engineer'         // Engineer
+  | 'assistant_engineer' // Assistant engineer
+  | 'master_technician' // Master technician
+  | 'technician';       // Regular technician

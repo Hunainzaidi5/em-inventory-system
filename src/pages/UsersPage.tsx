@@ -2,7 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/services/authService';
-import { User } from '@/types/auth';
+import { User, UserRole } from '@/types/auth';
+
+// Helper function to format role names for display
+const formatRoleName = (role: UserRole): string => {
+  const roleMap: Record<UserRole, string> = {
+    'admin': 'Administrator',
+    'dev': 'Developer',
+    'manager': 'Manager',
+    'deputy_manager': 'Deputy Manager',
+    'engineer': 'Engineer',
+    'assistant_engineer': 'Assistant Engineer',
+    'master_technician': 'Master Technician',
+    'technician': 'Technician'
+  };
+  return roleMap[role] || role;
+};
 
 const UsersPage = () => {
   const { user, isLoading } = useAuth();
@@ -132,7 +147,7 @@ const UsersPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {user.role}
+                      {formatRoleName(user.role as UserRole)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.department}</td>

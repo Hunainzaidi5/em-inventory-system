@@ -13,7 +13,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 
 // Define the roles that can be assigned to new users (excludes 'dev' role)
-const assignableRoles = ['admin', 'manager', 'supervisor', 'technician', 'viewer'] as const;
+// These must match the database enum 'user_role'
+const assignableRoles = [
+  'admin',
+  'manager',
+  'deputy_manager',
+  'engineer',
+  'assistant_engineer',
+  'master_technician',
+  'technician'
+] as const;
 type AssignableRole = typeof assignableRoles[number];
 
 // Define the form values type
@@ -201,11 +210,13 @@ const AddUserPage = () => {
             className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
             disabled={isLoading}
           >
-            {assignableRoles.map((role) => (
-              <option key={role} value={role}>
-                {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
-              </option>
-            ))}
+            <option value="admin">Administrator</option>
+            <option value="manager">Manager</option>
+            <option value="deputy_manager">Deputy Manager</option>
+            <option value="engineer">Engineer</option>
+            <option value="assistant_engineer">Assistant Engineer</option>
+            <option value="master_technician">Master Technician</option>
+            <option value="technician">Technician</option>
           </select>
           {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
         </div>

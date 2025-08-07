@@ -172,22 +172,51 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 
 export const register = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
   const { email, password, name, role, department, employee_id } = userData;
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name,
-        full_name: name,
-        email,
-        role,
-        department,
-        employee_id,
+  
+  // Validate the role against the database enum
+  const validRoles = [
+    'admin',
+    'dev',
+    'manager',
+    'deputy_manager',
+    'engineer',
+    'assistant_engineer',
+    'master_technician',
+    'technician'
+  ];
+
+  if (!validRoles.includes(role)) {
+    return { 
+      success: false, 
+      error: `Invalid role. Must be one of: ${validRoles.join(', ')}` 
+    };
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          full_name: name,
+          email,
+          role,
+          department,
+          employee_id,
+        },
       },
-    },
-  });
-  if (error) return { success: false, error: error.message };
-  return { success: true };
+    });
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error('Registration error:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to register user' 
+    };
+  }
 };
 
 export const logout = async (): Promise<void> => {
@@ -218,32 +247,52 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     throw new Error('User not authenticated');
   }
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', authUser.id)
-    .select()
-    .single();
+  // If updating role, validate it against the database enum
+  if (updates.role) {
+    const validRoles = [
+      'admin',
+      'dev',
+      'manager',
+      'deputy_manager',
+      'engineer',
+      'assistant_engineer',
+      'master_technician',
+      'technician'
+    ];
 
-  if (error) {
-    console.error('Error updating profile:', error);
-    throw error;
+    if (!validRoles.includes(updates.role)) {
+      throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+    }
   }
 
-  return {
-    id: authUser.id,
-    email: authUser.email || '',
-    name: data.full_name || authUser.user_metadata?.name || '',
-    role: data.role || 'technician',
-    department: data.department || '',
-    employee_id: data.employee_id || '',
-    is_active: data.is_active ?? true,
-    created_at: data.created_at || new Date().toISOString(),
-    updated_at: data.updated_at,
-  };
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', authUser.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: authUser.id,
+      email: authUser.email || '',
+      name: data.full_name || authUser.user_metadata?.name || '',
+      role: data.role || 'technician',
+      department: data.department || '',
+      employee_id: data.employee_id || '',
+      is_active: data.is_active ?? true,
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at,
+    };
+  } catch (error: any) {
+    console.error('Error updating profile:', error);
+    throw new Error(error.message || 'Failed to update profile');
+  }
 };
 
 // Subscribe to auth state changes
