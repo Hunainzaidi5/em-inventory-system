@@ -15,7 +15,7 @@ import { UserRole } from '@/types/auth';
 // Define the roles that can be assigned to new users (excludes 'dev' role)
 // These must match the database enum 'user_role'
 const assignableRoles = [
-  'admin',
+  'dev',
   'manager',
   'deputy_manager',
   'engineer',
@@ -111,22 +111,25 @@ const AddUserPage = () => {
     }
   }, [userId, setValue, navigate]);
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     if (isLoading) return;
     
     setIsLoading(true);
     setError('');
 
     try {
+      // Ensure the role is a valid UserRole
+      const userRole = formData.role as UserRole;
+      
       if (isEditing && userId) {
         // Update existing user
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
-            full_name: data.name,
-            role: data.role as UserRole,
-            department: data.department,
-            employee_id: data.employee_id,
+            full_name: formData.name,
+            role: userRole,
+            department: formData.department,
+            employee_id: formData.employee_id,
             updated_at: new Date().toISOString()
           })
           .eq('id', userId);
@@ -142,12 +145,12 @@ const AddUserPage = () => {
       } else {
         // Create new user
         const { error: registerError } = await registerUser({
-          email: data.email,
-          password: data.password,
-          name: data.name,
-          role: data.role as UserRole,
-          department: data.department,
-          employee_id: data.employee_id,
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          role: userRole,
+          department: formData.department,
+          employee_id: formData.employee_id,
         });
 
         if (registerError) throw registerError;
