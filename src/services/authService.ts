@@ -22,7 +22,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
   if (authError || !authUser) {
     console.log('No authenticated user in Supabase');
     return null;
-  }
+}
 
   try {
     // Get the user's profile
@@ -37,6 +37,23 @@ export const getCurrentUser = async (): Promise<User | null> => {
       return null;
     }
 
+    // Get the avatar URL
+    let avatarUrl = profile.avatar || authUser.user_metadata?.avatar || undefined;
+    
+    // If avatar is a path (starts with /) and not already a full URL, prepend the Supabase storage URL
+    if (avatarUrl && typeof avatarUrl === 'string') {
+      if (avatarUrl.startsWith('/')) {
+        const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
+        const storagePath = '/storage/v1/object/public/avatars';
+        avatarUrl = `${baseUrl}${storagePath}${avatarUrl}`;
+      } else if (!avatarUrl.startsWith('http')) {
+        // If it's not a full URL and doesn't start with /, it might be just the filename
+        const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
+        avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${avatarUrl}`;
+      }
+      // If it's already a full URL, use it as is
+    }
+
     return {
       id: authUser.id,
       email: authUser.email || '',
@@ -47,7 +64,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
       is_active: profile.is_active ?? true,
       created_at: profile.created_at || new Date().toISOString(),
       updated_at: profile.updated_at,
-      avatar: profile.avatar || authUser.user_metadata?.avatar || undefined,
+      avatar: avatarUrl,
     };
   } catch (error) {
     console.error('Error in getCurrentUser:', error);
@@ -258,7 +275,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     // Standardize 'admin' to 'dev'
     if (roleString === 'admin') {
       updates.role = 'dev' as UserRole;
-    }
+  }
     
     const validRoles: UserRole[] = [
       'dev',
