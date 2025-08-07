@@ -79,8 +79,8 @@ export function LoginPage() {
         setFormError('root', { message: error });
       }
     } catch (error) {
-      setFormError('root', {
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+      setFormError('root', { 
+        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
       });
     } finally {
       setIsLoading(false);

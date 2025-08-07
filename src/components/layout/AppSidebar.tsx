@@ -69,8 +69,6 @@ const documentsMenuItems = [
   { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
 ];
 
-const systemMenuItems = [];
-
 interface AppSidebarProps {
   className?: string;
 }

@@ -42,9 +42,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log('[DEBUG] Loading user...');
       setIsLoading(true);
-      const userData = await authService.getCurrentUser();
+        const userData = await authService.getCurrentUser();
       console.log('[DEBUG] User loaded:', userData);
-      setUser(userData);
+        setUser(userData);
     } catch (error) {
       console.error('Failed to load user:', error);
       setUser(null);
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const result = await authService.register(data);
       if (result.success) {
-        return { success: true };
+      return { success: true };
       } else {
         setError(result.error || 'Registration failed');
         return { success: false, error: result.error };
