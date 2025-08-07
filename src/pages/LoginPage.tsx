@@ -58,9 +58,10 @@ export function LoginPage() {
       // Hardcoded developer login
       if (data.email === DEV_EMAIL && data.password === DEV_PASSWORD) {
         // Set developer user in context manually and persist in localStorage
+        const { setUser } = useAuth();
         setUser && setUser(DEV_USER);
         localStorage.setItem('devUser', 'true');
-        navigate(from, { replace: true });
+        navigate('/dashboard', { replace: true });
         return;
       }
       // Normal Supabase login
@@ -69,7 +70,7 @@ export function LoginPage() {
         password: data.password,
       });
       if (success) {
-        navigate(from, { replace: true });
+        navigate('/dashboard', { replace: true });
       } else if (error) {
         if (error.toLowerCase().includes('email not confirmed')) {
           alert('Your email is not confirmed. Please check your inbox and confirm your email before logging in.');

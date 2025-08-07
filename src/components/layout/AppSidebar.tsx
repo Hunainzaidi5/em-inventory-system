@@ -20,7 +20,9 @@ import {
   User,
   UserCircle,
   LogIn,
-  UserPlus
+  UserPlus,
+  Box,
+  Key
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -49,26 +51,26 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const mainMenuItems = [
-  { title: "Dashboard", url: "/", icon: Home, exact: true },
-  { title: "Availability Overview", url: "/availability", icon: BarChart3 },
+  { title: "Dashboard", url: "/dashboard", icon: Home, exact: true },
+  { title: "Availability Overview", url: "/dashboard/availability", icon: BarChart3 },
 ];
 
 const inventoryMenuItems = [
-  { title: "Inventory Items", url: "/inventory", icon: Package },
-  { title: "Faulty Returns", url: "/faulty-returns", icon: RotateCcw },
-  { title: "Tools", url: "/tools", icon: Wrench },
-  { title: "PPE Items", url: "/ppe", icon: Shield },
-  { title: "General Items", url: "/general", icon: Gift },
+  { title: "Inventory Items", url: "/dashboard/inventory", icon: Package },
+  { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
+  { title: "Tools", url: "/dashboard/tools", icon: Wrench },
+  { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
+  { title: "General Items", url: "/dashboard/general-items", icon: Box },
 ];
 
 const documentsMenuItems = [
-  { title: "Transactions", url: "/transactions", icon: ListTodo },
-  { title: "Gate Pass", url: "/gate-pass", icon: FileCheck },
-  { title: "Issuance Form", url: "/issuance", icon: FileCheck },
+  { title: "Transactions", url: "/dashboard/transactions", icon: ListTodo },
+  { title: "Gate Pass", url: "/dashboard/gate-pass", icon: Key },
+  { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
 ];
 
 const systemMenuItems = [
-  { title: "System Settings", url: "/settings", icon: Settings },
+  { title: "System Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
 interface AppSidebarProps {
@@ -256,12 +258,12 @@ export function AppSidebar({ className }: AppSidebarProps) {
                 <span>Profile</span>
               </DropdownMenuItem>
               {user.role === 'dev' && (
-                <DropdownMenuItem onClick={() => navigate('/users')}>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/users')}>
                   <Users className="mr-2 h-4 w-4" />
                   <span>User Management</span>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <DropdownMenuItem onClick={() => navigate('/dashboard/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>

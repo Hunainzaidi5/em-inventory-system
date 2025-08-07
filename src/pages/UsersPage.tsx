@@ -25,7 +25,21 @@ const UsersPage = () => {
         return;
       }
 
-      setUsers(data || []);
+      // Map the database fields to User type
+      const mappedUsers = (data || []).map(profile => ({
+        id: profile.id,
+        name: profile.full_name || '',
+        email: profile.email || '',
+        role: profile.role || 'technician',
+        department: profile.department || '',
+        employee_id: profile.employee_id || '',
+        is_active: profile.is_active ?? true,
+        created_at: profile.created_at || new Date().toISOString(),
+        updated_at: profile.updated_at,
+        avatar: undefined,
+      }));
+
+      setUsers(mappedUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
@@ -74,7 +88,7 @@ const UsersPage = () => {
         <h1 className="text-2xl font-bold">User Management (Developer Only)</h1>
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          onClick={() => navigate('/add-user')}
+          onClick={() => navigate('/dashboard/add-user')}
         >
           Add User
         </button>
@@ -118,7 +132,7 @@ const UsersPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
                       className="text-indigo-600 hover:text-indigo-900 mr-3"
-                      onClick={() => navigate(`/edit-user/${user.id}`)}
+                      onClick={() => navigate(`/dashboard/edit-user/${user.id}`)}
                     >
                       Edit
                     </button>

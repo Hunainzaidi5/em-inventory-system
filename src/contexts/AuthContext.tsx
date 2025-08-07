@@ -56,19 +56,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Initial load
   useEffect(() => {
-    console.log('[DEBUG] Initial auth load, checking dev user...');
+    const checkAuth = async () => {
+      try {
+        setIsLoading(true);
+        // Check for hardcoded developer first
+        if (localStorage.getItem('devUser') === 'true') {
+          setUser(DEV_USER);
+          setIsLoading(false);
+          return;
+        }
+        // Then check Supabase session
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to load user:', error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  // Set up auth state change listener (only for Supabase users)
+  useEffect(() => {
+    // Only set up listener if not using hardcoded developer
     if (localStorage.getItem('devUser') === 'true') {
-      console.log('[DEBUG] Found dev user in localStorage');
-      setUser(DEV_USER);
-      setIsLoading(false);
       return;
     }
-    console.log('[DEBUG] No dev user found, loading user...');
-    loadUser();
-  }, [loadUser]);
-
-  // Set up auth state change listener
-  useEffect(() => {
+    
     const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
       setUser(user);
       

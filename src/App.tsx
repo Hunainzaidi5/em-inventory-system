@@ -98,8 +98,9 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <AppLayout>
@@ -118,20 +119,9 @@ const AppRoutes = () => {
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />
-        <Route path="settings" element={
-          <ProtectedRoute>
-            <SystemSettingsPage />
-          </ProtectedRoute>
-        } />
-        <Route path="profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        <Route element={<DevOnlyRoute />}>
-          <Route path="users" element={<UsersPage />} />
-          <Route path="add-user" element={<AddUserPage />} />
-        </Route>
+        <Route path="settings" element={<SystemSettingsPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="add-user" element={<AddUserPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
