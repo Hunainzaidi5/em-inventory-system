@@ -122,6 +122,8 @@ const AppRoutes = () => {
         <Route path="settings" element={<SystemSettingsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="add-user" element={<AddUserPage />} />
+        <Route path="edit-user/:userId" element={<AddUserPage />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

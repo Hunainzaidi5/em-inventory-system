@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { supabase } from '@/services/authService';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,74 +40,127 @@ const formSchema = z.object({
 });
 
 const AddUserPage = () => {
-  const { register: registerUser } = useAuth();
+  const { userId } = useParams<{ userId?: string }>();
+  const { register: registerUser, user: currentUser } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
 
   const {
     register,
     handleSubmit,
+    reset,
+    setValue,
     formState: { errors },
-    reset: resetForm,
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       email: '',
       password: '',
-      role: 'technician',
+      role: 'technician' as AssignableRole,
       department: '',
       employee_id: '',
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    // Cast the role to AssignableRole since we've already validated it
-    const formData = {
-      ...data,
-      role: data.role as AssignableRole
-    };
-    try {
-      setIsLoading(true);
-      setError('');
+  // Fetch user data when in edit mode
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userId) return;
       
-      // Call the register function from AuthContext with the typed form data
-      const result = await registerUser({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        department: formData.department,
-        employee_id: formData.employee_id,
-      });
+      setIsLoading(true);
+      try {
+        const { data: user, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
 
-      if (result.success) {
-        toast.success('User created successfully');
-        // Reset form
-        resetForm();
-        // Navigate back to users list
-        navigate('/users');
-      } else {
-        const errorMessage = result.error || 'Failed to create user';
-        setError(errorMessage);
-        toast.error(errorMessage);
+        if (error) throw error;
+        
+        // Set form values from the fetched user data
+        setValue('name', user.full_name || '');
+        setValue('email', user.email || '');
+        setValue('role', user.role || 'technician');
+        setValue('department', user.department || '');
+        setValue('employee_id', user.employee_id || '');
+        
+        setIsEditing(true);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        toast.error('Failed to load user data');
+        navigate('/dashboard/users');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error creating user:', error);
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the user';
-      setError(errorMessage);
-      toast.error(errorMessage);
+    };
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId, setValue, navigate]);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    setError('');
+
+    try {
+      if (isEditing && userId) {
+        // Update existing user
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            full_name: data.name,
+            role: data.role as UserRole,
+            department: data.department,
+            employee_id: data.employee_id,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', userId);
+
+        if (updateError) throw updateError;
+        
+        // If the current user is updating their own profile, update the auth context
+        if (currentUser?.id === userId) {
+          // You might want to refresh the auth context here
+        }
+        
+        toast.success('User updated successfully');
+      } else {
+        // Create new user
+        const { error: registerError } = await registerUser({
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          role: data.role as UserRole,
+          department: data.department,
+          employee_id: data.employee_id,
+        });
+
+        if (registerError) throw registerError;
+        toast.success('User created successfully');
+      }
+      
+      navigate('/dashboard/users');
+    } catch (err: any) {
+      console.error('Error saving user:', err);
+      setError(err.message || 'An error occurred while saving the user');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto p-6 max-w-4xl">
+      <h1 className="text-2xl font-bold mb-6">
+        {isEditing ? 'Edit User' : 'Add New User'}
+      </h1>
+      {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md bg-white p-8 rounded shadow">
-        <h2 className="text-2xl font-bold mb-6 text-center">Add New User</h2>
-        {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
         <div className="mb-4">
           <label htmlFor="name" className="block mb-1 font-medium">Full Name</label>
           <input 
@@ -175,16 +229,28 @@ const AddUserPage = () => {
           />
           {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
         </div>
-        <button 
-          type="submit" 
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Creating User...' : 'Add User'}
-        </button>
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
+          >
+            {isLoading 
+              ? (isEditing ? 'Updating...' : 'Creating...')
+              : (isEditing ? 'Update User' : 'Add User')}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard/users')}
+            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddUserPage; 
+export default AddUserPage;
