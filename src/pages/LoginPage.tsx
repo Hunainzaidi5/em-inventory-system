@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Lock, Mail, Eye, EyeOff, Train } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 
 // Gear SVG Component
 const Gear = ({ size = 80, teeth = 12, className = "" }) => {
@@ -133,7 +133,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
-      
       {/* Meshing Gear System */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gear Chain 1: Top-left meshing system */}
@@ -380,9 +379,9 @@ export default function LoginPage() {
 
             {/* Security Badge */}
             <div className="mt-6 flex justify-center">
-              <div className="flex items-center space-x-2 text-blue-200 text-xs font-small">
-                <Lock className="w-2 h-2" />
-                <span>SSL Encrypted</span>
+              <div className="flex items-center space-x-2 text-blue-200 text-xs font-medium">
+                <Lock className="w-3 h-3" />
+                <span>256-bit SSL Encrypted</span>
               </div>
             </div>
           </CardFooter>
