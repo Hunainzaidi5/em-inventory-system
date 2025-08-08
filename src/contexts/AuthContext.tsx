@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
-import { User, LoginCredentials, RegisterData, UserRole } from '@/types/auth';
+import { User, LoginCredentials, RegisterData, UserRole, AuthenticationError } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -140,12 +140,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log('[AUTH_CONTEXT] Calling authService.login');
       const response = await authService.login(credentials);
-      console.log('[AUTH_CONTEXT] authService.login response:', response);
+      console.log('[AUTH_CONTEXT] authService.login response:', {
+        hasUser: !!response?.user,
+        hasSession: !!response?.session,
+        userId: response?.user?.id
+      });
       
       if (response?.user) {
-        console.log('[AUTH_CONTEXT] Login successful, setting user:', response.user);
+        console.log('[AUTH_CONTEXT] Login successful, setting user');
         setUser(response.user);
+        
+        // Clear any cached queries
         queryClient.clear();
+        
+        // Store session info if available
+        if (response.session) {
+          console.log('[AUTH_CONTEXT] Storing session data');
+          localStorage.setItem('auth_session', JSON.stringify({
+            access_token: response.session.access_token,
+            refresh_token: response.session.refresh_token,
+            expires_at: response.session.expires_at
+          }));
+        }
+        
         return { success: true };
       } else {
         const errorMsg = 'Login failed: No user data received';
@@ -153,8 +170,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(errorMsg);
       }
     } catch (error) {
+      // Handle our custom AuthenticationError
+      if (error instanceof AuthenticationError) {
+        console.error('[AUTH_CONTEXT] Authentication error:', {
+          message: error.message,
+          code: error.code,
+          details: error.details
+        });
+        setError(error.message);
+        return { success: false, error: error.message };
+      }
+      
+      // Handle other errors
       const message = error instanceof Error ? error.message : 'Login failed';
-      console.error('[AUTH_CONTEXT] Login error:', { error, message });
+      console.error('[AUTH_CONTEXT] Unexpected login error:', { error, message });
       setError(message);
       return { success: false, error: message };
     } finally {

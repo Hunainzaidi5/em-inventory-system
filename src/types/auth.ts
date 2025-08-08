@@ -34,6 +34,22 @@ export interface AuthResponse {
   session?: any; // Session object from Supabase
 }
 
+// Custom error class for authentication errors
+export class AuthenticationError extends Error {
+  code: string | number;
+  details?: any;
+  
+  constructor(message: string, code: string | number = 'AUTH_ERROR', details?: any) {
+    super(message);
+    this.name = 'AuthenticationError';
+    this.code = code;
+    this.details = details;
+    
+    // Maintain proper prototype chain
+    Object.setPrototypeOf(this, AuthenticationError.prototype);
+  }
+}
+
 // User role type - must match the database enum
 // Note: These values must match exactly with the database enum 'user_role'
 export type UserRole = 

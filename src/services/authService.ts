@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { User, LoginCredentials, RegisterData, AuthResponse, UserRole } from '@/types/auth';
+import { User, LoginCredentials, RegisterData, AuthResponse, UserRole, AuthenticationError } from '@/types/auth';
 import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
 
 // Debug log environment variables
@@ -246,29 +246,58 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     });
 
     console.log('[AUTH] Login response:', { 
-      hasUser: !!data?.user, 
-      session: !!data?.session,
+      hasUser: !!data?.user,
+      userId: data?.user?.id,
+      hasSession: !!data?.session,
+      sessionExpiresAt: data?.session?.expires_at ? new Date(data.session.expires_at * 1000).toISOString() : 'none',
+      accessToken: data?.session?.access_token ? `${data.session.access_token.substring(0, 10)}...` : 'none',
+      refreshToken: data?.session?.refresh_token ? `${data.session.refresh_token.substring(0, 10)}...` : 'none',
       error: error?.message 
+    });
+    
+    // Debug: Log storage state
+    console.log('[AUTH] Storage state:', {
+      accessToken: localStorage.getItem('sb-tucphgomwmknvlleuiow-auth-token'),
+      refreshToken: localStorage.getItem('sb-tucphgomwmknvlleuiow-auth-token')
     });
 
     if (error) {
+      const errorCode = error.status || 'AUTH_ERROR';
       let errorMessage = error.message;
       
-      // Provide more user-friendly error messages
-      if (error.message.includes('Invalid login credentials')) {
-        errorMessage = 'Invalid email or password. Please try again.';
-      } else if (error.message.includes('Email not confirmed')) {
-        errorMessage = 'Please verify your email address before logging in.';
-      } else if (error.message.includes('Network request failed')) {
-        errorMessage = 'Unable to connect to the server. Please check your internet connection.';
-      }
+      // Map error messages to user-friendly versions
+      const errorMessages: Record<string, string> = {
+        'Invalid login credentials': 'Invalid email or password. Please try again.',
+        'Email not confirmed': 'Please verify your email address before logging in.',
+        'Network request failed': 'Unable to connect to the server. Please check your internet connection.',
+        '400': 'Invalid request. Please check your input and try again.',
+        '401': 'Authentication failed. Please check your credentials.',
+        '403': 'Access denied. You do not have permission to access this resource.',
+        '500': 'Server error. Please try again later.'
+      };
       
-      console.error('[AUTH] Login error:', { 
-        originalError: error.message,
-        friendlyMessage: errorMessage 
-      });
+      // Get the most specific error message
+      errorMessage = errorMessages[error.status] || 
+                    errorMessages[error.message] || 
+                    'An unexpected error occurred during login.';
       
-      throw new Error(errorMessage);
+      // Log detailed error information
+      const errorDetails = {
+        code: errorCode,
+        status: error.status,
+        message: error.message,
+        timestamp: new Date().toISOString(),
+        path: window.location.pathname
+      };
+      
+      console.error('[AUTH] Login error details:', errorDetails);
+      
+      // Throw our custom error
+      throw new AuthenticationError(
+        errorMessage,
+        errorCode,
+        errorDetails
+      );
     }
 
     if (!data?.user) {
