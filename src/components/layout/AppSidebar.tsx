@@ -22,7 +22,8 @@ import {
   LogIn,
   UserPlus,
   Box,
-  Key
+  Key,
+  Gauge
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -100,6 +101,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
   }, [user]);
   const navigate = useNavigate();
   const [inventoryOpen, setInventoryOpen] = useState(true);
+  const [assetOpen, setAssetOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(false);
 
@@ -195,6 +197,37 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {inventoryMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClassName(item.url)}>
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <Collapsible open={assetOpen} onOpenChange={setAssetOpen}>
+            <CollapsibleTrigger asChild>
+              <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                Asset Management
+                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${assetOpen ? 'rotate-180' : ''}`} />}
+              </SidebarGroupLabel>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {[
+                    { title: "Assets", url: "/dashboard/assets", icon: Package },
+                    { title: "Maintenance", url: "/dashboard/maintenance", icon: Wrench },
+                    { title: "Calibration", url: "/dashboard/calibration", icon: Gauge }
+                  ].map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClassName(item.url)}>
