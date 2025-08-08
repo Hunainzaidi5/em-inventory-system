@@ -52,17 +52,17 @@ const InventoryPage = () => {
   // Define system categories with separate O&M and PMA categories
   const systemCategories: SystemCategory[] = [
     // O&M Categories
-    { key: "BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "", type: 'om' },
-    { key: "BATTERIES", name: "BATTERIES", omFile: "om/batteries.json", pmaFile: "", type: 'om' },
-    { key: "ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "", type: 'om' },
-    { key: "ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "", type: 'om' },
-    { key: "FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "", type: 'om' },
-    { key: "FES", name: "FES", omFile: "om/fes.json", pmaFile: "", type: 'om' },
-    { key: "GENERAL_ITEMS", name: "GENERAL ITEMS", omFile: "om/general_items.json", pmaFile: "", type: 'om' },
-    { key: "HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "", type: 'om' },
-    { key: "ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "", type: 'om' },
-    { key: "PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "", type: 'om' },
-    { key: "WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "", type: 'om' },
+    { key: "om_BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "", type: 'om' },
+    { key: "om_BATTERIES", name: "BATTERIES", omFile: "om/batteries.json", pmaFile: "", type: 'om' },
+    { key: "om_ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "", type: 'om' },
+    { key: "om_ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "", type: 'om' },
+    { key: "om_FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "", type: 'om' },
+    { key: "om_FES", name: "FES", omFile: "om/fes.json", pmaFile: "", type: 'om' },
+    { key: "om_GENERAL_ITEMS", name: "GENERAL ITEMS", omFile: "om/general_items.json", pmaFile: "", type: 'om' },
+    { key: "om_HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "", type: 'om' },
+    { key: "om_ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "", type: 'om' },
+    { key: "om_PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "", type: 'om' },
+    { key: "om_WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "", type: 'om' },
     
     // PMA Categories (keeping the original ones)
     { key: "PMA_BAS", name: "BAS", omFile: "", pmaFile: "pma/bas.json", type: 'pma' },

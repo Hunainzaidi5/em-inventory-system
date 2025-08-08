@@ -1,20 +1,21 @@
-[
- null,
+{
+  "FES": [
  {
+  "Sr. #": "1",
   "Item Code (Brand)": "Size-3mm",
   "Item Name": "Emergency Stop Button Cover (Transparnt Acrylic)",
   "IMIS CODE": "011-0011-00-011001",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 165,
-  "In-stock": 165,
+  "UOM": "No.s",
+  "Quantity": "165",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "2",
   "Item Code (Brand)": "Ledger",
   "Item Name": "Cylinder Room Daily Inspection Checklist",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  }
 ]
+}

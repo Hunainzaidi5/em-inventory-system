@@ -1,42 +1,43 @@
-[
- null,
- {
+{
+  "ELEVATOR": [
+  {
+  "Sr. #": "1",
   "Item Code (Brand)": "100 X 150 MM",
   "Item Name": "Elevator Fireman Switch Sticker",
   "IMIS CODE": "003-0031-00-003105",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No.s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "2",
   "Item Code (Brand)": "Schneider",
   "Item Name": "Elevator Brake Contactor",
   "IMIS CODE": "011-0002-02-020002",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "3",
   "Item Name": "Half Month Maintenance Form Of Elevator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "4",
   "Item Name": "Quarterly Maintenance Form Of Elevator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "5",
   "Item Name": "Annual Maintenance Form Of Elevator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  }
 ]
+}

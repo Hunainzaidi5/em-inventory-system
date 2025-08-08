@@ -1,84 +1,85 @@
-[
- null,
+{
+ "BATTERIES": [
  {
+  "Sr. #": "1",
   "Item Code (Brand)": "100-Amp",
   "Item Name": "Dry Battery 12-V",
   "IMIS CODE": "002-2400-00-024006",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 46,
-  "In-stock": 46,
+  "UOM": "No,s",
+  "Quantity": "46",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "2",
   "Item Code (Brand)": "24-Amp",
   "Item Name": "Dry Battery 12-V",
   "IMIS CODE": "002-2400-00-024007",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 18,
-  "In-stock": 18,
+  "UOM": "No,s",
+  "Quantity": "18",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "3",
   "Item Code (Brand)": "12V-7.2AH",
   "Item Name": "Dry Battery 12V-7.2AH (Leoch)",
   "IMIS CODE": "002-2400-09-024001",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 16,
-  "In-stock": 16,
+  "UOM": "No,s",
+  "Quantity": "16",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "4",
   "Item Code (Brand)": "Duracell",
   "Item Name": "Battery 9V (Duracell)",
   "IMIS CODE": "003-0025-52-002518",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "5",
   "Item Code (Brand)": "Dura Cell - AAA",
   "Item Name": "Dura Cell 1.5V (Battery Cell) AAA",
   "IMIS CODE": "003-0025-52-002517",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No,s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "6",
   "Item Code (Brand)": "DJ-12-5",
   "Item Name": "Dry Battery 12V5A (DonJin)",
   "IMIS CODE": "002-2400-00-024003",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 140,
-  "In-stock": 140,
+  "UOM": "No,s",
+  "Quantity": "140",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "7",
   "Item Code (Brand)": "Dura Cell - AA",
   "Item Name": "Dura Cell 1.5V (Battery Cell) AA",
   "IMIS CODE": "003-0025-00-002505",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 600,
-  "In-stock": 600,
+  "UOM": "No.s",
+  "Quantity": "600",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "8",
   "Item Code (Brand)": "Camelion 1.5V",
   "Item Name": "Battery Cell AA-Size",
   "IMIS CODE": "003-0025-00-025008",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No.s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  },
  {
+  "Sr. #": "9",
   "Item Code (Brand)": "Energizer 1.5-V",
   "Item Name": "AA Battery Cell",
   "IMIS CODE": "003-0025-26-025011",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
+  "UOM": "No.s",
+  "Quantity": "0",
   "Location": "C&C Warehouse, Depot"
  }
 ]
+}

@@ -1,49 +1,50 @@
-[
- null,
- {
-  "Item Code (Brand)": "750ML",
-  "Item Name": "Stain Remover Esclator Cleaner Stainless steel Care",
-  "IMIS CODE": "003-0062-00-062003",
-  "U\/M": "Ltr",
-  "Stock Received from Warehouse (20-7\/23)": 33,
-  "In-stock": 33,
-  "Location": "C&C Warehouse, Depot"
+{
+  "ESCALATOR": [
+  {
+    "Sr. #": "1",
+    "Item Code (Brand)": "750ML",
+    "Item Name": "Stain Remover Esclator Cleaner Stainless steel Care",
+    "IMIS CODE": "003-0062-00-062003",
+    "UOM": "Ltr",
+    "Quantity": "33",
+    "Location": "C&C Warehouse, Depot"
  },
  {
-  "Item Name": "Half Month Maintenance Form Of Escalator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
+    "Sr. #": "2",
+    "Item Name": "Half Month Maintenance Form Of Escalator",
+    "UOM": "No,s",
+    "Quantity": "0",
+    "Location": "C&C Warehouse, Depot"
  },
  {
-  "Item Name": "Quarterly Maintenance Form Of Escalator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
+    "Sr. #": "3",
+    "Item Name": "Quarterly Maintenance Form Of Escalator",
+    "UOM": "No,s",
+    "Quantity": "0",
+    "Location": "C&C Warehouse, Depot"
  },
  {
-  "Item Name": "Semi- Annual Maintenance Form Of Escalator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
+    "Sr. #": "4",
+    "Item Name": "Semi- Annual Maintenance Form Of Escalator",
+    "UOM": "No,s",
+    "Quantity": "0",
+    "Location": "C&C Warehouse, Depot"
  },
  {
-  "Item Name": "Annual Maintenance Form Of Escalator",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
+    "Sr. #": "5",
+    "Item Name": "Annual Maintenance Form Of Escalator",
+    "UOM": "No,s",
+    "Quantity": "0",
+    "Location": "C&C Warehouse, Depot"
  },
  {
-  "Item Code (Brand)": "Zic Oil",
-  "Item Name": "Hydraulic Oil VEGA 68",
-  "IMIS CODE": "003-0011-00-011021",
-  "U\/M": "Ltr",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
+    "Sr. #": "6",
+    "Item Code (Brand)": "Zic Oil",
+    "Item Name": "Hydraulic Oil VEGA 68",
+    "IMIS CODE": "003-0011-00-011021",
+    "UOM": "Ltr",
+    "Quantity": "0",
+    "Location": "C&C Warehouse, Depot"
  }
 ]
+}

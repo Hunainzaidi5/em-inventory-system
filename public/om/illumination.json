@@ -1,668 +1,669 @@
-[
- null,
- {
-  "Item Code (Brand)": "1.5mm \/ S-C",
-  "Item Name": "Cable 1.5 mm \/ Single Core 450\/750-Volt (Red)",
-  "IMIS CODE": "003-0010-07-010006",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 805,
-  "In-stock": 805,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "10 mm \/ S-C",
-  "Item Name": "Cable 10 mm \/ Single Core 450\/750-V (Red)",
-  "IMIS CODE": "003-0010-07-010002",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 1000,
-  "In-stock": 1000,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "2.5 mm \/ S-C",
-  "Item Name": "Cable 2.5 mm \/ Single Core 450\/750-V (Green)",
-  "IMIS CODE": "003-0010-07-010005",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 1000,
-  "In-stock": 1000,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "4 mm \/ S-C",
-  "Item Name": "Cable 4.0 mm \/ Single Core (Yellow)",
-  "IMIS CODE": "003-0010-07-010004",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 1000,
-  "In-stock": 1000,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "6 mm + 4 mm",
-  "Item Name": "Mix Size Cable 6 mm \/ 3-Core + Cable 4 mm \/ 2-C",
-  "IMIS CODE": "003-0010-07-010001",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 500,
-  "In-stock": 500,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Yellow",
-  "Item Name": "Electrical Insulation Tape 10M",
-  "IMIS CODE": "003-0009-08-009003",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Green",
-  "Item Name": "Electrical Insulation Tape 10M",
-  "IMIS CODE": "003-0009-08-009004",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Black",
-  "Item Name": "Electrical Insulation Tape 10M",
-  "IMIS CODE": "003-0009-08-009006",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 30,
-  "In-stock": 30,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Red",
-  "Item Name": "Electrical Insulation Tape 10M",
-  "IMIS CODE": "003-0009-08-009007",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 30,
-  "In-stock": 30,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "10-Amp",
-  "Item Name": "Power Socket 10-A (85 X 85mm)",
-  "IMIS CODE": "011-0005-00-005001",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "16-Amp",
-  "Item Name": "Power Socket 16-A (85 X 85mm)",
-  "IMIS CODE": "011-0005-00-005002",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 100,
-  "In-stock": 100,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "12-Watt",
-  "Item Name": "Round Ceiling Light Public Area 6\" (12-W)",
-  "IMIS CODE": "011-0007-00-007002",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "24-Watt",
-  "Item Name": "Energy Saver \/ Bulb Light (24-W)",
-  "IMIS CODE": "011-0007-09-007001",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 122,
-  "In-stock": 122,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "LED Light Driver of Square Panel Light",
-  "IMIS CODE": "011-0008-00-008001",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 1400,
-  "In-stock": 1400,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "18\" x 2\" (7-24Watt)",
-  "Item Name": "Driver Of Washroom LED Light 18\" X 2\"",
-  "IMIS CODE": "011-0008-00-008003",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 255,
-  "In-stock": 255,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "36-Watt",
-  "Item Name": "Tube Light Driver Standard Size",
-  "IMIS CODE": "011-0008-00-008004",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 366,
-  "In-stock": 366,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "36-Watt",
-  "Item Name": "Ceiling Light Driver Double Fixture (36-W)",
-  "IMIS CODE": "011-0008-00-008006",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 246,
-  "In-stock": 246,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Philips",
-  "Item Name": "Ceiling Light Equipment Area (Single Rod) \/ Tube Light Rod 36-Watt",
-  "IMIS CODE": "011-0007-00-007012",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Size-2ft x 2ft",
-  "Item Name": "Square LED Panel Light With Driver",
-  "IMIS CODE": "011-0007-00-007013",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 27,
-  "In-stock": 27,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Size-1ft x 4ft",
-  "Item Name": "LED Panel Light With Driver 40watt \/ Ceiling Public Area",
-  "IMIS CODE": "011-0007-00-007004",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 62,
-  "In-stock": 62,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Pakistan Cable 2.5mm",
-  "Item Name": "Wire Single Core 2.5mm (Yellow \/ Green) (Black \/ Blue \/ Red)",
-  "IMIS CODE": "011-0001-08-001007",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 2340,
-  "In-stock": 2340,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Size-3\/4\" \/ 20mm",
-  "Item Name": "UPVC Conduct Pipe Tee 3\/4\" \/ 20mm",
-  "IMIS CODE": "003-0052-00-052011",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 200,
-  "In-stock": 200,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Left Side Arrow",
-  "Item Name": "Emergency Exit Sign Left Side Arrow 15-watt",
-  "IMIS CODE": "011-0007-00-007007",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 44,
-  "In-stock": 44,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Right Side Arrow",
-  "Item Name": "Emergency Exit Sign Right Side Arrow 15-watt",
-  "IMIS CODE": "011-0007-00-007008",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 8,
-  "In-stock": 8,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Both Side Arrow",
-  "Item Name": "Emergency Exit Sign Both Side Arrow (Right + Left) 15-watt",
-  "IMIS CODE": "011-0007-00-007009",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 65,
-  "In-stock": 65,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "2' X 3\"",
-  "Item Name": "Stair Case light \/Entrance Light 18- Watt",
-  "IMIS CODE": "011-0007-00-007006",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 183,
-  "In-stock": 183,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "2 Rods",
-  "Item Name": "Ceilling Light Double Fixture",
-  "IMIS CODE": "011-0007-00-007011",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 9,
-  "In-stock": 9,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "36-Watt",
-  "Item Name": "Equipment Area Light \/ Tube Light Standerd",
-  "IMIS CODE": "011-0007-00-007010",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 32,
-  "In-stock": 32,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "20-Kg \/ Bag",
-  "Item Name": "Fire Proof Mud",
-  "IMIS CODE": "003-0056-00-056001",
-  "U\/M": "Kgs",
-  "Stock Received from Warehouse (20-7\/23)": 275,
-  "In-stock": 275,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "18\" X 12\"",
-  "Item Name": "Wall Mounted Washroom Light 18watt M-3 MINI",
-  "IMIS CODE": "011-0007-00-007005",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 126,
-  "In-stock": 126,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "38mm X 25mm",
-  "Item Name": "PVC Casing Capping Duct 3\/4\"",
-  "IMIS CODE": "003-0057-00-005705",
-  "U\/M": "FT",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "Teflon Tape",
-  "IMIS CODE": "003-0000-00-000028",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 200,
-  "In-stock": 200,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "Water Proof Insulation Tape",
-  "IMIS CODE": "003-0009-04-009012",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 60,
-  "In-stock": 60,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "HL-3048W (Rosh)",
-  "Item Name": "Plateform LED Light Driver",
-  "IMIS CODE": "011-0008-00-008002",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "220V (1 X 150W)",
-  "Item Name": "Plateform LED Light",
-  "IMIS CODE": "011-0007-00-007023",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 250,
-  "In-stock": 250,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "7W-8W",
-  "Item Name": "Lamp Strip Panle Light",
-  "IMIS CODE": "011-0007-00-007024",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 40,
-  "In-stock": 40,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "3-Watt, AC-220 50Hz",
-  "Item Name": "Portable Beam Light\/ Automatic Emergency Light",
-  "IMIS CODE": "011-0007-00-007041",
-  "U\/M": "No.s",
-  "Stock Received from Warehouse (20-7\/23)": 14,
-  "In-stock": 14,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "1Ft X 1 Ft",
-  "Item Name": "Square LED Panel Light 24watt (Capital)",
-  "IMIS CODE": "011-0007-00-007033",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 65,
-  "In-stock": 65,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "3\" X 3\"",
-  "Item Name": "Power Socket Cover",
-  "IMIS CODE": "011-0017-00-017002",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 50,
-  "In-stock": 50,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "1.5mm",
-  "Item Name": "Black Heat Sleeve 1.5mm",
-  "IMIS CODE": "011-0019-00-019005",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 10,
-  "In-stock": 10,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "2.5mm",
-  "Item Name": "Black Heat Sleeve 2.5mm",
-  "IMIS CODE": "011-0019-00-019006",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 10,
-  "In-stock": 10,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "6mm",
-  "Item Name": "Black Heat Sleeve 6mm",
-  "IMIS CODE": "011-0019-00-019001",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 10,
-  "In-stock": 10,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "10mm",
-  "Item Name": "Black Heat Sleeve 10mm",
-  "IMIS CODE": "003-0000-00-000152",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 10,
-  "In-stock": 10,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "Glass Plate For Exit Sign",
-  "IMIS CODE": "003-0022-00-022008",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 60,
-  "In-stock": 60,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "6\" X 4\"",
-  "Item Name": "Power Socket Cover",
-  "IMIS CODE": "011-0017-00-017003",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 50,
-  "In-stock": 50,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "Exit Sign Cover",
-  "IMIS CODE": "003-0022-00-022009",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 252,
-  "In-stock": 252,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "250-W",
-  "Item Name": "Halogen Lamp 250 Watt",
-  "IMIS CODE": "011-0007-09-007035",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 31,
-  "In-stock": 31,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "250-W",
-  "Item Name": "Halogen Light Accessories 250 Watt",
-  "IMIS CODE": "011-0008-00-008011",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 31,
-  "In-stock": 31,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Name": "Lamp Strip Panle Light",
-  "IMIS CODE": "001-0007-00-007040",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 400,
-  "In-stock": 400,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "150-W",
-  "Item Name": "Halogen Lamp 150 Watt",
-  "IMIS CODE": "011-0007-00-007042",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 25,
-  "In-stock": 25,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "150-W",
-  "Item Name": "Halogen Light Accessories 150 Watt",
-  "IMIS CODE": "011-0008-00-008010",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 25,
-  "In-stock": 25,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Faisal-1\/2\"",
-  "Item Name": "Muslim Faucet\/Muslim shower with Barrel Nipple",
-  "IMIS CODE": "003-0037-00-003738",
-  "U\/M": "Set.s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "0.5-MM",
-  "Item Name": "Flexible Cable Single Core",
-  "IMIS CODE": "011-0001-00-001014",
-  "U\/M": "MTR",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "AC90-260V 50HZ",
-  "Item Name": "SMD Down Light 3-Watt CCT-65000K",
-  "IMIS CODE": "011-0007-16-007045",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 50,
-  "In-stock": 50,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "FP3C300-35",
-  "Item Name": "SMD Down Light Driver 265V AC 50\/60HZ",
-  "IMIS CODE": "011-0008-00-008012",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 150,
-  "In-stock": 150,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "24 V AC",
-  "Item Name": "LED Lamp For Pits 5-W",
-  "IMIS CODE": "011-0007-00-007044",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 160,
-  "In-stock": 160,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C10-Amp",
-  "Item Name": "Breaker 1-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004009",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C10-Amp",
-  "Item Name": "Breaker 2-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004010",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C16-Amp",
-  "Item Name": "Breaker 2-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004011",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C16-Amp",
-  "Item Name": "Breaker 3-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004012",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C20-Amp",
-  "Item Name": "Breaker 2-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004013",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C20-Amp",
-  "Item Name": "Breaker 3-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004014",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C32-Amp",
-  "Item Name": "Breaker 2-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004015",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "C32-Amp",
-  "Item Name": "Breaker 3-Pole (Schneider)",
-  "IMIS CODE": "011-0004-02-004016",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "6500 K",
-  "Item Name": "LED Tube Light 8-Watt 220V-240V 50Hz 2Ft",
-  "IMIS CODE": "011-0007-00-007046",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 100,
-  "In-stock": 100,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Reco",
-  "Item Name": "SMD Down Light",
-  "IMIS CODE": "011-0007-00-007025",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "220V",
-  "Item Name": "Ciramic Bulb Holder",
-  "IMIS CODE": "011-0021-00-021003",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 130,
-  "In-stock": 130,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "30-Amp",
-  "Item Name": "AC Plug 3-Pin Shoe With Fuse 3-Amp",
-  "IMIS CODE": "011-0005-00-005018",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 20,
-  "In-stock": 20,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "24V,12W",
-  "Item Name": "LED Light Kit",
-  "IMIS CODE": "011-0008-00-008013",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Ledger",
-  "Item Name": "EPS Weekly Patrol",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "Ledger",
-  "Item Name": "DB Of LV Weekly Patrol",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "25m2",
-  "Item Name": "Power cable 4-core",
-  "IMIS CODE": "011-0015-00-015004",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "200-500V",
-  "Item Name": "Line Tester",
-  "IMIS CODE": "001-0035-43-035071",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "100-Watt,IP66",
-  "Item Name": "LED Flood Light (SOGO)",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 0,
-  "In-stock": 0,
-  "Location": "C&C Warehouse, Depot"
- },
- {
-  "Item Code (Brand)": "10-Amp",
-  "Item Name": "Ceramic Fuse",
-  "U\/M": "No,s",
-  "Stock Received from Warehouse (20-7\/23)": 40,
-  "In-stock": 40,
-  "Location": "C&C Warehouse, Depot"
- }
-]
+{
+    "ILLUMINATION": [
+        {
+            "Sr. #": "1",
+            "Item Code (Brand)": "1.5mm \/ S-C",
+            "Item Name": "Cable 1.5 mm \/ Single Core 450\/750-Volt (Red)",
+            "IMIS CODE": "003-0010-07-010006",
+            "UOM": "MTR",
+            "Quantity": 805,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "2",
+            "Item Code (Brand)": "10 mm \/ S-C",
+            "Item Name": "Cable 10 mm \/ Single Core 450\/750-V (Red)",
+            "IMIS CODE": "003-0010-07-010002",
+            "UOM": "MTR",
+            "Quantity": 1000,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "3",
+            "Item Code (Brand)": "2.5 mm \/ S-C",
+            "Item Name": "Cable 2.5 mm \/ Single Core 450\/750-V (Green)",
+            "IMIS CODE": "003-0010-07-010005",
+            "UOM": "MTR",
+            "Quantity": 1000,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "4",
+            "Item Code (Brand)": "4 mm \/ S-C",
+            "Item Name": "Cable 4.0 mm \/ Single Core (Yellow)",
+            "IMIS CODE": "003-0010-07-010004",
+            "UOM": "MTR",
+            "Quantity": 1000,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "5",
+            "Item Code (Brand)": "6 mm + 4 mm",
+            "Item Name": "Mix Size Cable 6 mm \/ 3-Core + Cable 4 mm \/ 2-C",
+            "IMIS CODE": "003-0010-07-010001",
+            "UOM": "MTR",
+            "Quantity": 500,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "6",
+            "Item Code (Brand)": "Yellow",
+            "Item Name": "Electrical Insulation Tape 10M",
+            "IMIS CODE": "003-0009-08-009003",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "7",
+            "Item Code (Brand)": "Green",
+            "Item Name": "Electrical Insulation Tape 10M",
+            "IMIS CODE": "003-0009-08-009004",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "8",
+            "Item Code (Brand)": "Black",
+            "Item Name": "Electrical Insulation Tape 10M",
+            "IMIS CODE": "003-0009-08-009006",
+            "UOM": "No.s",
+            "Quantity": 30,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "9",
+            "Item Code (Brand)": "Red",
+            "Item Name": "Electrical Insulation Tape 10M",
+            "IMIS CODE": "003-0009-08-009007",
+            "UOM": "No.s",
+            "Quantity": 30,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "10",
+            "Item Code (Brand)": "10-Amp",
+            "Item Name": "Power Socket 10-A (85 X 85mm)",
+            "IMIS CODE": "011-0005-00-005001",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "11",
+            "Item Code (Brand)": "16-Amp",
+            "Item Name": "Power Socket 16-A (85 X 85mm)",
+            "IMIS CODE": "011-0005-00-005002",
+            "UOM": "No.s",
+            "Quantity": 100,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "12",
+            "Item Code (Brand)": "12-Watt",
+            "Item Name": "Round Ceiling Light Public Area 6\" (12-W)",
+            "IMIS CODE": "011-0007-00-007002",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "13",
+            "Item Code (Brand)": "24-Watt",
+            "Item Name": "Energy Saver \/ Bulb Light (24-W)",
+            "IMIS CODE": "011-0007-09-007001",
+            "UOM": "No.s",
+            "Quantity": 122,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "14",
+            "Item Name": "LED Light Driver of Square Panel Light",
+            "IMIS CODE": "011-0008-00-008001",
+            "UOM": "No.s",
+            "Quantity": 1400,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "15",
+            "Item Code (Brand)": "18\" x 2\" (7-24Watt)",
+            "Item Name": "Driver Of Washroom LED Light 18\" X 2\"",
+            "IMIS CODE": "011-0008-00-008003",
+            "UOM": "No.s",
+            "Quantity": 255,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "16",
+            "Item Code (Brand)": "36-Watt",
+            "Item Name": "Tube Light Driver Standard Size",
+            "IMIS CODE": "011-0008-00-008004",
+            "UOM": "No.s",
+            "Quantity": 366,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "17",
+            "Item Code (Brand)": "36-Watt",
+            "Item Name": "Ceiling Light Driver Double Fixture (36-W)",
+            "IMIS CODE": "011-0008-00-008006",
+            "UOM": "No.s",
+            "Quantity": 246,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "18",
+            "Item Code (Brand)": "Philips",
+            "Item Name": "Ceiling Light Equipment Area (Single Rod) \/ Tube Light Rod 36-Watt",
+            "IMIS CODE": "011-0007-00-007012",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "19",
+            "Item Code (Brand)": "Size-2ft x 2ft",
+            "Item Name": "Square LED Panel Light With Driver",
+            "IMIS CODE": "011-0007-00-007013",
+            "UOM": "No.s",
+            "Quantity": 27,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "20",
+            "Item Code (Brand)": "Size-1ft x 4ft",
+            "Item Name": "LED Panel Light With Driver 40watt \/ Ceiling Public Area",
+            "IMIS CODE": "011-0007-00-007004",
+            "UOM": "No.s",
+            "Quantity": 62,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "21",
+            "Item Code (Brand)": "Pakistan Cable 2.5mm",
+            "Item Name": "Wire Single Core 2.5mm (Yellow \/ Green) (Black \/ Blue \/ Red)",
+            "IMIS CODE": "011-0001-08-001007",
+            "UOM": "MTR",
+            "Quantity": 2340,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "22",
+            "Item Code (Brand)": "Size-3\/4\" \/ 20mm",
+            "Item Name": "UPVC Conduct Pipe Tee 3\/4\" \/ 20mm",
+            "IMIS CODE": "003-0052-00-052011",
+            "UOM": "No.s",
+            "Quantity": 200,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "23",
+            "Item Code (Brand)": "Left Side Arrow",
+            "Item Name": "Emergency Exit Sign Left Side Arrow 15-watt",
+            "IMIS CODE": "011-0007-00-007007",
+            "UOM": "No.s",
+            "Quantity": 44,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "24",
+            "Item Code (Brand)": "Right Side Arrow",
+            "Item Name": "Emergency Exit Sign Right Side Arrow 15-watt",
+            "IMIS CODE": "011-0007-00-007008",
+            "UOM": "No.s",
+            "Quantity": 8,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "25",
+            "Item Code (Brand)": "Both Side Arrow",
+            "Item Name": "Emergency Exit Sign Both Side Arrow (Right + Left) 15-watt",
+            "IMIS CODE": "011-0007-00-007009",
+            "UOM": "No.s",
+            "Quantity": 65,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "26",
+            "Item Code (Brand)": "2' X 3\"",
+            "Item Name": "Stair Case light \/Entrance Light 18- Watt",
+            "IMIS CODE": "011-0007-00-007006",
+            "UOM": "No.s",
+            "Quantity": 183,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "27",
+            "Item Code (Brand)": "2 Rods",
+            "Item Name": "Ceilling Light Double Fixture",
+            "IMIS CODE": "011-0007-00-007011",
+            "UOM": "No.s",
+            "Quantity": 9,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "28",
+            "Item Code (Brand)": "36-Watt",
+            "Item Name": "Equipment Area Light \/ Tube Light Standerd",
+            "IMIS CODE": "011-0007-00-007010",
+            "UOM": "No.s",
+            "Quantity": 32,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "29",
+            "Item Code (Brand)": "20-Kg \/ Bag",
+            "Item Name": "Fire Proof Mud",
+            "IMIS CODE": "003-0056-00-056001",
+            "UOM": "Kgs",
+            "Quantity": 275,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "30",
+            "Item Code (Brand)": "18\" X 12\"",
+            "Item Name": "Wall Mounted Washroom Light 18watt M-3 MINI",
+            "IMIS CODE": "011-0007-00-007005",
+            "UOM": "No,s",
+            "Quantity": 126,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "31",
+            "Item Code (Brand)": "38mm X 25mm",
+            "Item Name": "PVC Casing Capping Duct 3\/4\"",
+            "IMIS CODE": "003-0057-00-005705",
+            "UOM": "FT",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "32",
+            "Item Name": "Teflon Tape",
+            "IMIS CODE": "003-0000-00-000028",
+            "UOM": "No.s",
+            "Quantity": 200,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "33",
+            "Item Name": "Water Proof Insulation Tape",
+            "IMIS CODE": "003-0009-04-009012",
+            "UOM": "No.s",
+            "Quantity": 60,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "34",
+            "Item Code (Brand)": "HL-3048W (Rosh)",
+            "Item Name": "Plateform LED Light Driver",
+            "IMIS CODE": "011-0008-00-008002",
+            "UOM": "No.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "35",
+            "Item Code (Brand)": "220V (1 X 150W)",
+            "Item Name": "Plateform LED Light",
+            "IMIS CODE": "011-0007-00-007023",
+            "UOM": "No.s",
+            "Quantity": 250,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "36",
+            "Item Code (Brand)": "7W-8W",
+            "Item Name": "Lamp Strip Panle Light",
+            "IMIS CODE": "011-0007-00-007024",
+            "UOM": "No.s",
+            "Quantity": 40,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "37",
+            "Item Code (Brand)": "3-Watt, AC-220 50Hz",
+            "Item Name": "Portable Beam Light\/ Automatic Emergency Light",
+            "IMIS CODE": "011-0007-00-007041",
+            "UOM": "No.s",
+            "Quantity": 14,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "38",
+            "Item Code (Brand)": "1Ft X 1 Ft",
+            "Item Name": "Square LED Panel Light 24watt (Capital)",
+            "IMIS CODE": "011-0007-00-007033",
+            "UOM": "No,s",
+            "Quantity": 65,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "39",
+            "Item Code (Brand)": "3\" X 3\"",
+            "Item Name": "Power Socket Cover",
+            "IMIS CODE": "011-0017-00-017002",
+            "UOM": "No,s",
+            "Quantity": 50,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "40",
+            "Item Code (Brand)": "1.5mm",
+            "Item Name": "Black Heat Sleeve 1.5mm",
+            "IMIS CODE": "011-0019-00-019005",
+            "UOM": "MTR",
+            "Quantity": 10,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "41",
+            "Item Code (Brand)": "2.5mm",
+            "Item Name": "Black Heat Sleeve 2.5mm",
+            "IMIS CODE": "011-0019-00-019006",
+            "UOM": "MTR",
+            "Quantity": 10,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "42",
+            "Item Code (Brand)": "6mm",
+            "Item Name": "Black Heat Sleeve 6mm",
+            "IMIS CODE": "011-0019-00-019001",
+            "UOM": "MTR",
+            "Quantity": 10,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "43",
+            "Item Code (Brand)": "10mm",
+            "Item Name": "Black Heat Sleeve 10mm",
+            "IMIS CODE": "003-0000-00-000152",
+            "UOM": "MTR",
+            "Quantity": 10,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "44",
+            "Item Name": "Glass Plate For Exit Sign",
+            "IMIS CODE": "003-0022-00-022008",
+            "UOM": "No,s",
+            "Quantity": 60,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "45",
+            "Item Code (Brand)": "6\" X 4\"",
+            "Item Name": "Power Socket Cover",
+            "IMIS CODE": "011-0017-00-017003",
+            "UOM": "No,s",
+            "Quantity": 50,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "46",
+            "Item Name": "Exit Sign Cover",
+            "IMIS CODE": "003-0022-00-022009",
+            "UOM": "No,s",
+            "Quantity": 252,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "47",
+            "Item Code (Brand)": "250-W",
+            "Item Name": "Halogen Lamp 250 Watt",
+            "IMIS CODE": "011-0007-09-007035",
+            "UOM": "No,s",
+            "Quantity": 31,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "48",
+            "Item Code (Brand)": "250-W",
+            "Item Name": "Halogen Light Accessories 250 Watt",
+            "IMIS CODE": "011-0008-00-008011",
+            "UOM": "No,s",
+            "Quantity": 31,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "49",
+            "Item Name": "Lamp Strip Panle Light",
+            "IMIS CODE": "001-0007-00-007040",
+            "UOM": "No,s",
+            "Quantity": 400,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "50",
+            "Item Code (Brand)": "150-W",
+            "Item Name": "Halogen Lamp 150 Watt",
+            "IMIS CODE": "011-0007-00-007042",
+            "UOM": "No,s",
+            "Quantity": 25,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "51",
+            "Item Code (Brand)": "150-W",
+            "Item Name": "Halogen Light Accessories 150 Watt",
+            "IMIS CODE": "011-0008-00-008010",
+            "UOM": "No,s",
+            "Quantity": 25,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "52",
+            "Item Code (Brand)": "Faisal-1\/2\"",
+            "Item Name": "Muslim Faucet\/Muslim shower with Barrel Nipple",
+            "IMIS CODE": "003-0037-00-003738",
+            "UOM": "Set.s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "53",
+            "Item Code (Brand)": "0.5-MM",
+            "Item Name": "Flexible Cable Single Core",
+            "IMIS CODE": "011-0001-00-001014",
+            "UOM": "MTR",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "54",
+            "Item Code (Brand)": "AC90-260V 50HZ",
+            "Item Name": "SMD Down Light 3-Watt CCT-65000K",
+            "IMIS CODE": "011-0007-16-007045",
+            "UOM": "No,s",
+            "Quantity": 50,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "55",
+            "Item Code (Brand)": "FP3C300-35",
+            "Item Name": "SMD Down Light Driver 265V AC 50\/60HZ",
+            "IMIS CODE": "011-0008-00-008012",
+            "UOM": "No,s",
+            "Quantity": 150,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "56",
+            "Item Code (Brand)": "24 V AC",
+            "Item Name": "LED Lamp For Pits 5-W",
+            "IMIS CODE": "011-0007-00-007044",
+            "UOM": "No,s",
+            "Quantity": 160,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "57",
+            "Item Code (Brand)": "C10-Amp",
+            "Item Name": "Breaker 1-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004009",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "58",
+            "Item Code (Brand)": "C10-Amp",
+            "Item Name": "Breaker 2-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004010",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "59",
+            "Item Code (Brand)": "C16-Amp",
+            "Item Name": "Breaker 2-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004011",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "60",
+            "Item Code (Brand)": "C16-Amp",
+            "Item Name": "Breaker 3-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004012",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "61",
+            "Item Code (Brand)": "C20-Amp",
+            "Item Name": "Breaker 2-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004013",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "61",
+            "Item Code (Brand)": "C20-Amp",
+            "Item Name": "Breaker 3-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004014",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "62",
+            "Item Code (Brand)": "C32-Amp",
+            "Item Name": "Breaker 2-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004015",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "63",
+            "Item Code (Brand)": "C32-Amp",
+            "Item Name": "Breaker 3-Pole (Schneider)",
+            "IMIS CODE": "011-0004-02-004016",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "64",
+            "Item Code (Brand)": "6500 K",
+            "Item Name": "LED Tube Light 8-Watt 220V-240V 50Hz 2Ft",
+            "IMIS CODE": "011-0007-00-007046",
+            "UOM": "No,s",
+            "Quantity": 100,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "65",
+            "Item Code (Brand)": "Reco",
+            "Item Name": "SMD Down Light",
+            "IMIS CODE": "011-0007-00-007025",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "66",
+            "Item Code (Brand)": "220V",
+            "Item Name": "Ciramic Bulb Holder",
+            "IMIS CODE": "011-0021-00-021003",
+            "UOM": "No,s",
+            "Quantity": 130,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "67",
+            "Item Code (Brand)": "30-Amp",
+            "Item Name": "AC Plug 3-Pin Shoe With Fuse 3-Amp",
+            "IMIS CODE": "011-0005-00-005018",
+            "UOM": "No,s",
+            "Quantity": 20,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "68",
+            "Item Code (Brand)": "24V,12W",
+            "Item Name": "LED Light Kit",
+            "IMIS CODE": "011-0008-00-008013",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "69",
+            "Item Code (Brand)": "Ledger",
+            "Item Name": "EPS Weekly Patrol",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "70",
+            "Item Code (Brand)": "Ledger",
+            "Item Name": "DB Of LV Weekly Patrol",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "71",
+            "Item Code (Brand)": "25m2",
+            "Item Name": "Power cable 4-core",
+            "IMIS CODE": "011-0015-00-015004",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "72",
+            "Item Code (Brand)": "200-500V",
+            "Item Name": "Line Tester",
+            "IMIS CODE": "001-0035-43-035071",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "73",
+            "Item Code (Brand)": "100-Watt,IP66",
+            "Item Name": "LED Flood Light (SOGO)",
+            "UOM": "No,s",
+            "Quantity": 0,
+            "Location": "C&C Warehouse, Depot"
+        },
+        {
+            "Sr. #": "74",
+            "Item Code (Brand)": "10-Amp",
+            "Item Name": "Ceramic Fuse",
+            "UOM": "No,s",
+            "Quantity": 40,
+            "Location": "C&C Warehouse, Depot"
+        }
+    ]
+}
