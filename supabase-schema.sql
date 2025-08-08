@@ -161,7 +161,7 @@ CREATE TABLE categories (
 -- Insert default categories
 INSERT INTO categories (name, description) VALUES 
 ('O&M', 'Operations and Maintenance parts'),
-('PMA', 'Planned Maintenance Activities parts');
+('PMA', 'Punjab Mass Transit Authority parts');
 
 -- Systems table
 CREATE TABLE systems (

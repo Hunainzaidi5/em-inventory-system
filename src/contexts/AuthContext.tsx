@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
+import { supabase } from '@/services/authService';
 import { User, LoginCredentials, RegisterData, UserRole, AuthenticationError } from '@/types/auth';
 
 interface AuthContextType {
@@ -69,6 +70,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [loadUser]);
 
+  // Handle auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('[AUTH] Auth state changed:', event);
+        
+        if (event === 'SIGNED_IN' && session) {
+          try {
+            const userData = await authService.getCurrentUser();
+            setUser(userData);
+          } catch (error) {
+            console.error('Failed to get user after sign in:', error);
+            setUser(null);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          queryClient.clear();
+        }
+      }
+    );
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [queryClient]);
+
   // Initial load
   useEffect(() => {
     const checkAuth = async () => {
@@ -80,9 +107,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setIsLoading(false);
           return;
         }
-        // Then check Supabase session
-        const userData = await authService.getCurrentUser();
-        setUser(userData);
+        
+        // Check for existing session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          const userData = await authService.getCurrentUser();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
       } catch (error) {
         console.error('Failed to load user:', error);
         setUser(null);
@@ -90,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
       }
     };
+    
     checkAuth();
   }, []);
 

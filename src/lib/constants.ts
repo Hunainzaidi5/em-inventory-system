@@ -13,7 +13,7 @@ export const USER_ROLES: { value: UserRole; label: string }[] = [
 
 export const ITEM_CATEGORIES: { value: ItemCategory; label: string }[] = [
   { value: 'O&M', label: 'Operations & Maintenance' },
-  { value: 'PMA', label: 'Planned Maintenance Activities' },
+  { value: 'PMA', label: 'Punjab Mass Transit Authority' },
 ];
 
 export const SYSTEM_TYPES: { value: SystemType; label: string }[] = [

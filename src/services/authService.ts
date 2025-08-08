@@ -16,9 +16,27 @@ export const supabase = createClient(
       persistSession: true,
       detectSessionInUrl: true,
       storage: window.localStorage,
+      flowType: 'pkce',
+      debug: true,
+    },
+    global: {
+      headers: {
+        'x-application-name': 'em-inventory-system',
+      },
     },
   }
 );
+
+// Set the auth cookie options for production
+if (import.meta.env.PROD) {
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log('[AUTH] Auth state changed:', event);
+    if (event === 'SIGNED_IN' && session) {
+      // This ensures the session is properly set in the browser
+      document.cookie = `sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token=${session.access_token}; path=/; secure; samesite=lax`;
+    }
+  });
+}
 
 // Test Supabase connection
 supabase.auth.getSession().then(({ data: { session } }) => {
@@ -59,77 +77,78 @@ const createUserObject = (authUser: any, profile: ProfileData): User => {
 
 // Get the current user with profile data
 export const getCurrentUser = async (): Promise<User | null> => {
-  console.log('[AUTH] Getting current user from Supabase');
+  console.log('[AUTH] === getCurrentUser() started ===');
   
-  // First check if we have an active session
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  console.log('[AUTH] Session check:', { hasSession: !!session, error: sessionError });
-  
-  // Get the current authenticated user
-  const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-  console.log('[AUTH] Current user from auth:', { 
-    hasUser: !!authUser, 
-    userId: authUser?.id,
-    email: authUser?.email,
-    error: authError 
-  });
-  
-  if (authError || !authUser) {
-    console.error('[AUTH] No authenticated user in Supabase:', authError?.message || 'No user found');
-    return null;
-  }
-
   try {
-    console.log('[AUTH] Fetching user profile for ID:', authUser.id);
+    // 1. Get the current session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const session = sessionData?.session;
     
-    // Get the user's profile
+    console.log('[AUTH] Session state:', {
+      hasSession: !!session,
+      sessionUser: session?.user?.id || 'No user in session',
+      sessionError: sessionError?.message || 'No session error',
+      expiresAt: session?.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'No expiration'
+    });
+
+    // 2. Get the current user
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const authUser = userData?.user;
+    
+    console.log('[AUTH] Auth user state:', {
+      hasAuthUser: !!authUser,
+      authUserId: authUser?.id || 'No auth user',
+      authEmail: authUser?.email || 'No email',
+      authError: userError?.message || 'No auth error'
+    });
+
+    if (userError || !authUser) {
+      console.error('[AUTH] Error getting current user:', userError?.message || 'No user found');
+      return null;
+    }
+
+    // 3. Get user profile
+    console.log('[AUTH] Fetching profile for user:', authUser.id);
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', authUser.id)
       .single();
 
-    console.log('[AUTH] Profile fetch result:', { 
-      hasProfile: !!profile, 
-      error: profileError,
-      profile: profile ? { 
-        id: profile.id, 
-        email: profile.email, 
-        role: profile.role 
-      } : null
+    console.log('[AUTH] Profile data:', {
+      hasProfile: !!profile,
+      profileError: profileError?.message || 'No profile error'
     });
 
-    if (profileError) {
-      console.error('[AUTH] Error fetching user profile:', profileError);
-      // Don't return null here, create a minimal profile from auth data
+    // 4. Handle profile data
+    if (profileError || !profile) {
+      console.error('[AUTH] Error fetching user profile:', profileError?.message || 'No profile found');
+      // Create a minimal profile from auth data
       const minimalProfile = {
         id: authUser.id,
         email: authUser.email || '',
-        full_name: authUser.user_metadata?.name || '',
-        role: 'technician', // Default role
-        is_active: true,
+        full_name: authUser.user_metadata?.full_name || '',
+        role: 'user' as UserRole,
+        avatar_url: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
-      console.log('[AUTH] Created minimal profile from auth data');
-      return createUserObject(authUser, minimalProfile);
+      
+      console.log('[AUTH] Created minimal profile:', minimalProfile);
+      const user = createUserObject(authUser, minimalProfile);
+      return user;
     }
 
-    // Create the user object using the helper function
-    const userData = createUserObject(authUser, {
-      ...profile,
-      full_name: profile.full_name,
-      role: profile.role,
-      department: profile.department,
-      employee_id: profile.employee_id,
-      is_active: profile.is_active,
-      created_at: profile.created_at,
-      updated_at: profile.updated_at,
-      avatar: profile.avatar
+    // 5. Create user object with profile data
+    const user = createUserObject(authUser, profile);
+    console.log('[AUTH] Created user object:', {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      hasAvatar: !!user.avatar
     });
 
-    console.log('[AUTH] User data with avatar URL:', userData);
-    return userData;
+    return user;
   } catch (error) {
     console.error('Error in getCurrentUser:', error);
     return null;
@@ -228,6 +247,15 @@ Promise.all([
 ]).catch(console.error);
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  console.log('[AUTH] Attempting login for email:', credentials.email);
+  
+  // Log environment for debugging
+  console.log('[AUTH] Environment:', {
+    isProduction: import.meta.env.PROD,
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set',
+    domain: window.location.hostname
+  });
+  
   try {
     const { email, password } = credentials;
     console.log(`[AUTH] Attempting login for email: ${email}`);
@@ -238,11 +266,23 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       throw new Error(errorMsg);
     }
 
+    // Log storage state before authentication
+    console.log('[AUTH] Pre-authentication storage state:', {
+      accessToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token`),
+      refreshToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-refresh-token`)
+    });
+    
     // Sign in with Supabase Auth
     console.log('[AUTH] Calling supabase.auth.signInWithPassword');
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password.trim(),
+    });
+    
+    // Log storage state after authentication attempt
+    console.log('[AUTH] Post-authentication storage state:', {
+      accessToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token`),
+      refreshToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-refresh-token`)
     });
 
     console.log('[AUTH] Login response:', { 
