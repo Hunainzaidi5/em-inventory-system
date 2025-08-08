@@ -23,7 +23,8 @@ import {
   UserPlus,
   Box,
   Key,
-  Gauge
+  Gauge,
+  HammerIcon
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -57,7 +58,7 @@ const mainMenuItems = [
 ];
 
 const inventoryMenuItems = [
-  { title: "Spare Management", url: "/dashboard/inventory", icon: Package },
+  { title: "Spare Management", url: "/dashboard/spare-management", icon: HammerIcon },
   { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
   { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
   { title: "Stationery Items", url: "/dashboard/stationery", icon: Box },
@@ -189,7 +190,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
           <Collapsible open={inventoryOpen} onOpenChange={setInventoryOpen}>
             <CollapsibleTrigger asChild>
               <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Inventory Management
+                Spare Management
                 {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />}
               </SidebarGroupLabel>
             </CollapsibleTrigger>
@@ -224,9 +225,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {[
-                    { title: "Assets", url: "/dashboard/assets", icon: Package },
-                    { title: "Maintenance", url: "/dashboard/maintenance", icon: Wrench },
-                    { title: "Calibration", url: "/dashboard/calibration", icon: Gauge }
+                    { title: "Inventory", url: "/dashboard/inventory", icon: Package },
+                    { title: "Tools", url: "/dashboard/tools", icon: Wrench },
+                    { title: "General Tools", url: "/dashboard/general-tools", icon: Gauge }
                   ].map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
