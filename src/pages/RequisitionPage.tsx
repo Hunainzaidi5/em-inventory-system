@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
 
 type RequisitionType = 'issue' | 'return' | 'consume';
-type ItemType = 'inventory' | 'tool' | 'ppe' | 'general' | 'faulty_return';
+type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return';
 
 interface Requisition {
   id: string;
@@ -114,7 +114,7 @@ const RequisitionPage = () => {
           {
             id: '3',
             requisitionType: 'consume',
-            itemType: 'general',
+            itemType: 'stationery',
             itemName: 'Safety Gloves Nitrile',
             quantity: 10,
             issuedTo: 'Robert Johnson',
@@ -152,7 +152,7 @@ const RequisitionPage = () => {
           {
             id: '6',
             requisitionType: 'consume',
-            itemType: 'general',
+            itemType: 'stationery',
             itemName: 'Cleaning Supplies',
             quantity: 15,
             issuedTo: 'Lisa Brown',
@@ -416,7 +416,7 @@ const RequisitionPage = () => {
       inventory: 'bg-blue-100 text-blue-800',
       tool: 'bg-purple-100 text-purple-800',
       ppe: 'bg-orange-100 text-orange-800',
-      general: 'bg-gray-100 text-gray-800',
+      stationery: 'bg-gray-100 text-gray-800',
       faulty_return: 'bg-red-100 text-red-800'
     };
     
@@ -563,7 +563,7 @@ const RequisitionPage = () => {
                   <option value="inventory">Inventory</option>
                   <option value="tool">Tool</option>
                   <option value="ppe">PPE</option>
-                  <option value="general">General</option>
+                  <option value="stationery">Stationery</option>
                   <option value="faulty_return">Faulty Return</option>
                 </select>
               </div>
@@ -742,7 +742,7 @@ const RequisitionPage = () => {
                     <option value="inventory">Inventory</option>
                     <option value="tool">Tool</option>
                     <option value="ppe">PPE</option>
-                    <option value="general">General</option>
+                    <option value="stationery">Stationery</option>
                     <option value="faulty_return">Faulty Return</option>
                   </select>
                 </div>

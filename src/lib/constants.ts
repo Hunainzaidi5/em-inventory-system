@@ -58,7 +58,7 @@ export const REQUISITION_TYPES = [
   { value: 'consume', label: 'Consume' },
 ];
 
-export const GENERAL_ITEM_CATEGORIES = [
+export const STATIONERY_ITEM_CATEGORIES = [
   'Tape',
   'Stationery',
   'Gifts',

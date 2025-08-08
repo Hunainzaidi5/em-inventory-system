@@ -83,7 +83,7 @@ const NotFound = () => {
               className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors"
             >
               <FiPackage className="w-4 h-4" />
-              Inventory Management
+              Spare Management
             </button>
             <button
               onClick={handleGoToSettings}

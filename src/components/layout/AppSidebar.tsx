@@ -56,7 +56,7 @@ const mainMenuItems = [
 ];
 
 const inventoryMenuItems = [
-  { title: "Inventory Management", url: "/dashboard/inventory", icon: Package },
+  { title: "Spare Management", url: "/dashboard/inventory", icon: Package },
   { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
   { title: "Tools", url: "/dashboard/tools", icon: Wrench },
   { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
@@ -188,7 +188,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
           <Collapsible open={inventoryOpen} onOpenChange={setInventoryOpen}>
             <CollapsibleTrigger asChild>
               <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Inventory Management
+                Spare Management
                 {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />}
               </SidebarGroupLabel>
             </CollapsibleTrigger>
