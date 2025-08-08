@@ -187,7 +187,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
           <Collapsible open={inventoryOpen} onOpenChange={setInventoryOpen}>
             <CollapsibleTrigger asChild>
               <SidebarGroupLabel className="flex cursor-pointer items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Spare Management
+                Inventory Management
                 {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />}
               </SidebarGroupLabel>
             </CollapsibleTrigger>
