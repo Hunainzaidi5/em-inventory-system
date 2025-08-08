@@ -31,6 +31,7 @@ export interface RegisterData extends LoginCredentials {
 export interface AuthResponse {
   user: User;
   token: string;
+  session?: any; // Session object from Supabase
 }
 
 // User role type - must match the database enum

@@ -133,22 +133,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [queryClient]);
 
   const login = async (credentials: LoginCredentials) => {
+    console.log('[AUTH_CONTEXT] Login initiated for:', credentials.email);
     setIsLoading(true);
     setError(null);
+    
     try {
+      console.log('[AUTH_CONTEXT] Calling authService.login');
       const response = await authService.login(credentials);
+      console.log('[AUTH_CONTEXT] authService.login response:', response);
+      
       if (response?.user) {
+        console.log('[AUTH_CONTEXT] Login successful, setting user:', response.user);
         setUser(response.user);
         queryClient.clear();
         return { success: true };
       } else {
-        throw new Error('Login failed: No user data received');
+        const errorMsg = 'Login failed: No user data received';
+        console.error('[AUTH_CONTEXT]', errorMsg);
+        throw new Error(errorMsg);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
+      console.error('[AUTH_CONTEXT] Login error:', { error, message });
       setError(message);
       return { success: false, error: message };
     } finally {
+      console.log('[AUTH_CONTEXT] Login process completed');
       setIsLoading(false);
     }
   };
