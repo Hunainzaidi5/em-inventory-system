@@ -58,7 +58,6 @@ const mainMenuItems = [
 const inventoryMenuItems = [
   { title: "Spare Management", url: "/dashboard/inventory", icon: Package },
   { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
-  { title: "Tools", url: "/dashboard/tools", icon: Wrench },
   { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
   { title: "Stationery Items", url: "/dashboard/stationery", icon: Box },
 ];

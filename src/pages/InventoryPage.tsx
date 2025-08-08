@@ -12,6 +12,7 @@ interface SparePart {
   uom?: string;
   partNumber?: string;
   boqNumber?: string;
+  belongsto?: string;
 }
 
 interface TabData {
@@ -43,7 +44,8 @@ const InventoryPage = () => {
     imisCode: "", 
     boqNumber: "",
     itemCode: "",
-    partNumber: ""
+    partNumber: "",
+    belongsto: ""
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
@@ -154,6 +156,7 @@ const InventoryPage = () => {
                                 item["Item_Description"] || 
                                 item["Item Description"] ||
                                 item["Item Name"];
+            const belongsto = item["Item Belongs To"] || "";
             return item && inventoryField && inventoryField !== "-";
           })
           .map((item: any) => {
@@ -164,6 +167,7 @@ const InventoryPage = () => {
                            item["Item_Description"] || 
                            item["Item Description"] ||
                            item["Item Name"] || "";
+            const belongsto = item["Item Belongs To"] || "";
 
             const quantity = Number(item["Quantity"]) || 
                            Number(item["Current Balance"]) || 
@@ -196,6 +200,7 @@ const InventoryPage = () => {
             return {
               id: Math.random().toString(36).substr(2, 9),
               name: itemName,
+              belongsto: belongsto,
               quantity: quantity,
               location: item["Location"] || "C&C Warehouse, Depot",
               itemCode: serialNumber?.toString() || "",
@@ -557,6 +562,9 @@ const InventoryPage = () => {
                         </div>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Belongs To
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         IMIS Code
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -598,6 +606,9 @@ const InventoryPage = () => {
                             {item.itemCode && (
                               <div className="text-xs text-gray-500">Code: {item.itemCode}</div>
                             )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.belongsto || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
@@ -683,6 +694,18 @@ const InventoryPage = () => {
                     name="name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Item Belongs To *
+                  </label>
+                  <input
+                    name="belongsto"
+                    value={form.belongsto}
+                    onChange={(e) => setForm({ ...form, belongsto: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />

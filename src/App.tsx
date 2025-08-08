@@ -10,7 +10,6 @@ import Dashboard from "./pages/Dashboard";
 import InventoryPage from "./pages/InventoryPage";
 import NotFound from "./pages/NotFound";
 import AvailabilityOverview from "./pages/AvailabilityOverview";
-import ToolsPage from "./pages/ToolsPage";
 import PPEPage from "./pages/PPEPage";
 import StationeryItemsPage from "./pages/StationeryItemsPage";
 import FaultyReturnsPage from "./pages/FaultyReturnsPage";
@@ -113,7 +112,6 @@ const AppRoutes = () => {
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="requisition" element={<RequisitionPage />} />
         <Route path="availability" element={<AvailabilityOverview />} />
-        <Route path="tools" element={<ToolsPage />} />
         <Route path="ppe" element={<PPEPage />} />
         <Route path="stationery" element={<StationeryItemsPage />} />
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />

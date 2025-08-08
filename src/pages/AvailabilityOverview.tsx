@@ -5,14 +5,12 @@ const COLORS = ["#2563eb", "#22c55e", "#f59e42", "#ef4444", "#a21caf"];
 
 const inventoryData = [
   { name: "Inventory Items", value: 2156 },
-  { name: "Tools", value: 542 },
   { name: "PPE Items", value: 320 },
   { name: "Faulty Items", value: 60 },
 ];
 
 const barData = [
   { name: "Inventory", Available: 2156, Faulty: 20 },
-  { name: "Tools", Available: 542, Faulty: 15 },
   { name: "PPE", Available: 320, Faulty: 25 },
 ];
 
@@ -54,10 +52,6 @@ const AvailabilityOverview = () => (
         <li className="p-4 bg-blue-50 rounded">
           <span className="block text-2xl font-bold text-blue-700">2156</span>
           <span className="text-blue-700">Inventory Items</span>
-        </li>
-        <li className="p-4 bg-green-50 rounded">
-          <span className="block text-2xl font-bold text-green-700">542</span>
-          <span className="text-green-700">Tools</span>
         </li>
         <li className="p-4 bg-orange-50 rounded">
           <span className="block text-2xl font-bold text-orange-700">320</span>

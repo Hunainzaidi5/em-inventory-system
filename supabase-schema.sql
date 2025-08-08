@@ -223,29 +223,6 @@ CREATE POLICY "Users can update their own inventory items"
   ON inventory_items FOR UPDATE 
   USING (auth.uid() = created_by);
 
--- Tools table (Updated to match React implementation)
-CREATE TABLE tools (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  item_name TEXT NOT NULL,
-  tool_description TEXT,
-  brand TEXT,
-  uom TEXT,
-  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  -- Issued To fields
-  issued_to_name TEXT NOT NULL,
-  issued_to_olt TEXT,
-  issued_to_designation TEXT,
-  issued_to_group TEXT,
-  status item_status DEFAULT 'available',
-  notes TEXT,
-  created_by UUID REFERENCES profiles(id),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS on tools table
-ALTER TABLE tools ENABLE ROW LEVEL SECURITY;
-
 -- PPE items table (Updated to match React implementation)
 CREATE TABLE ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,

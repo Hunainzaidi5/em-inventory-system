@@ -30,11 +30,6 @@ export default function Dashboard() {
           <p className="text-3xl font-bold">2,156</p>
           <p className="text-sm text-muted-foreground">Ready for use</p>
         </button>
-        <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/tools") }>
-          <h3 className="text-lg font-semibold">Issued Items</h3>
-          <p className="text-3xl font-bold">542</p>
-          <p className="text-sm text-muted-foreground">Currently in use</p>
-        </button>
         <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/faulty-returns") }>
           <h3 className="text-lg font-semibold">Faulty Items</h3>
           <p className="text-3xl font-bold">60</p>
