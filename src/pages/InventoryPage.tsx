@@ -26,6 +26,7 @@ interface SystemCategory {
   name: string;
   omFile: string;  // O&M JSON file
   pmaFile: string; // PMA JSON file
+  type: 'om' | 'pma' | 'both'; // Indicates which tabs this category appears in
 }
 
 const InventoryPage = () => {
@@ -48,19 +49,48 @@ const InventoryPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
 
-  // Define system categories with separate O&M and PMA JSON files
+  // Define system categories with separate O&M and PMA categories
   const systemCategories: SystemCategory[] = [
-    { key: "BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "pma/bas.json" },
-    { key: "FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "pma/fas.json" },
-    { key: "FES", name: "FES", omFile: "om/fes.json", pmaFile: "pma/fes.json" },
-    { key: "PSCADA", name: "PSCADA", omFile: "om/pscada.json", pmaFile: "pma/pscada.json" },
-    { key: "ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "pma/elevator.json" },
-    { key: "ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "pma/escalator.json" },
-    { key: "PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "pma/psd.json" },
-    { key: "HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "pma/hvac.json" },
-    { key: "WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "pma/wsd.json" },
-    { key: "ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "pma/illumination.json" }
+    // O&M Categories
+    { key: "BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "", type: 'om' },
+    { key: "BATTERIES", name: "BATTERIES", omFile: "om/batteries.json", pmaFile: "", type: 'om' },
+    { key: "ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "", type: 'om' },
+    { key: "ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "", type: 'om' },
+    { key: "FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "", type: 'om' },
+    { key: "FES", name: "FES", omFile: "om/fes.json", pmaFile: "", type: 'om' },
+    { key: "GENERAL_ITEMS", name: "GENERAL ITEMS", omFile: "om/general_items.json", pmaFile: "", type: 'om' },
+    { key: "HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "", type: 'om' },
+    { key: "ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "", type: 'om' },
+    { key: "PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "", type: 'om' },
+    { key: "WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "", type: 'om' },
+    
+    // PMA Categories (keeping the original ones)
+    { key: "PMA_BAS", name: "BAS", omFile: "", pmaFile: "pma/bas.json", type: 'pma' },
+    { key: "PMA_FAS", name: "FAS", omFile: "", pmaFile: "pma/fas.json", type: 'pma' },
+    { key: "PMA_FES", name: "FES", omFile: "", pmaFile: "pma/fes.json", type: 'pma' },
+    { key: "PMA_PSCADA", name: "PSCADA", omFile: "", pmaFile: "pma/pscada.json", type: 'pma' },
+    { key: "PMA_ELEVATOR", name: "ELEVATOR", omFile: "", pmaFile: "pma/elevator.json", type: 'pma' },
+    { key: "PMA_ESCALATOR", name: "ESCALATOR", omFile: "", pmaFile: "pma/escalator.json", type: 'pma' },
+    { key: "PMA_PSD", name: "PSD", omFile: "", pmaFile: "pma/psd.json", type: 'pma' },
+    { key: "PMA_HVAC", name: "HVAC", omFile: "", pmaFile: "pma/hvac.json", type: 'pma' },
+    { key: "PMA_WSD", name: "WSD", omFile: "", pmaFile: "pma/wsd.json", type: 'pma' },
+    { key: "PMA_ILLUMINATION", name: "ILLUMINATION", omFile: "", pmaFile: "pma/illumination.json", type: 'pma' }
   ];
+
+  // Get categories for current main tab
+  const getCurrentTabCategories = () => {
+    return systemCategories.filter(cat => 
+      activeMainTab === "O&M" ? cat.type === 'om' : cat.type === 'pma'
+    );
+  };
+
+  // Update active sub tab when main tab changes
+  useEffect(() => {
+    const currentCategories = getCurrentTabCategories();
+    if (currentCategories.length > 0 && !currentCategories.find(cat => cat.key === activeSubTab)) {
+      setActiveSubTab(currentCategories[0].key);
+    }
+  }, [activeMainTab]);
 
   // Load data for a specific tab
   const loadTabData = async (tabKey: string, mainTab: string) => {
@@ -81,6 +111,10 @@ const InventoryPage = () => {
 
     try {
       const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
+      if (!fileName) {
+        throw new Error(`No data file configured for ${mainTab} ${category.name}`);
+      }
+      
       const response = await fetch(`/${fileName}`);
       
       if (!response.ok) {
@@ -90,7 +124,7 @@ const InventoryPage = () => {
       const data = await response.json();
       let formattedParts: SparePart[] = [];
 
-      if (category.key === "WSD") {
+      if (category.key === "WSD" || category.key === "PMA_WSD") {
         // Handle WSD structure (array format)
         formattedParts = (data || [])
           .filter((item: any) => item && item["Item_Description"])
@@ -419,12 +453,12 @@ const InventoryPage = () => {
 
           {/* Sub Tabs */}
           <div className="p-4">
-            <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
-              {systemCategories.map((category) => (
+            <div className="flex flex-wrap gap-2">
+              {getCurrentTabCategories().map((category) => (
                 <button
                   key={category.key}
                   onClick={() => setActiveSubTab(category.key)}
-                  className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                  className={`px-3 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                     activeSubTab === category.key
                       ? "bg-blue-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
