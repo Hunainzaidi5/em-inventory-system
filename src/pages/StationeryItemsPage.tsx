@@ -8,7 +8,7 @@ interface IssuedTo {
   group: string;
 }
 
-interface GeneralItem {
+interface StationeryItem {
   id?: string;
   itemName: string;
   itemDescription: string;
@@ -18,11 +18,11 @@ interface GeneralItem {
   lastUpdated?: string;
 }
 
-const GeneralItemsPage = () => {
-  const [generalItems, setGeneralItems] = useState<GeneralItem[]>([]);
+const StationeryItemsPage = () => {
+  const [stationeryItems, setStationeryItems] = useState<StationeryItem[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<Omit<GeneralItem, 'id'>>({ 
+  const [form, setForm] = useState<Omit<StationeryItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
     itemType: "", 
@@ -37,27 +37,27 @@ const GeneralItemsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItemType, setSelectedItemType] = useState("all");
   const [selectedGroup, setSelectedGroup] = useState("all");
-  const [sortConfig, setSortConfig] = useState<{ key: keyof GeneralItem; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof StationeryItem; direction: 'asc' | 'desc' } | null>(null);
 
   // Load data from localStorage on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem('generalItems');
+    const savedData = localStorage.getItem('stationeryItems');
     if (savedData) {
       try {
-        setGeneralItems(JSON.parse(savedData));
+        setStationeryItems(JSON.parse(savedData));
       } catch (error) {
-        console.error('Error loading general items data:', error);
+        console.error('Error loading stationery items data:', error);
       }
     }
   }, []);
 
   // Save data to localStorage whenever data changes
   useEffect(() => {
-    localStorage.setItem('generalItems', JSON.stringify(generalItems));
-  }, [generalItems]);
+    localStorage.setItem('stationeryItems', JSON.stringify(stationeryItems));
+  }, [stationeryItems]);
 
   // Handle sorting
-  const requestSort = (key: keyof GeneralItem) => {
+  const requestSort = (key: keyof StationeryItem) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig?.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -66,7 +66,7 @@ const GeneralItemsPage = () => {
   };
 
   // Apply sorting, filtering and searching
-  const getFilteredItems = (data: GeneralItem[]) => {
+  const getFilteredItems = (data: StationeryItem[]) => {
     let filtered = [...data];
     
     // Apply search
@@ -108,11 +108,11 @@ const GeneralItemsPage = () => {
     return filtered;
   };
 
-  const filteredItems = getFilteredItems(generalItems);
+  const filteredItems = getFilteredItems(stationeryItems);
 
   // Get unique item types and groups for filter dropdowns
-  const itemTypes = ["all", ...new Set(generalItems.map(item => item.itemType))];
-  const groups = ["all", ...new Set(generalItems.map(item => item.issuedTo.group))];
+  const itemTypes = ["all", ...new Set(stationeryItems.map(item => item.itemType))];
+  const groups = ["all", ...new Set(stationeryItems.map(item => item.issuedTo.group))];
 
   // Modal handlers
   const openAddModal = () => {
@@ -133,7 +133,7 @@ const GeneralItemsPage = () => {
   };
 
   const openEditModal = (id: string) => {
-    const item = generalItems.find(item => item.id === id);
+    const item = stationeryItems.find(item => item.id === id);
     if (item) {
       setForm({
         itemName: item.itemName,
@@ -148,8 +148,8 @@ const GeneralItemsPage = () => {
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm("Are you sure you want to remove this general item?")) {
-      setGeneralItems(prev => prev.filter(item => item.id !== id));
+    if (window.confirm("Are you sure you want to remove this stationery item?")) {
+      setStationeryItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
@@ -164,16 +164,16 @@ const GeneralItemsPage = () => {
     };
 
     if (editId) {
-      setGeneralItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
+      setStationeryItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
     } else {
-      setGeneralItems(prev => [...prev, updatedItem]);
+      setStationeryItems(prev => [...prev, updatedItem]);
     }
 
     setShowModal(false);
   };
 
   // Get sort indicator
-  const getSortIndicator = (key: keyof GeneralItem) => {
+  const getSortIndicator = (key: keyof StationeryItem) => {
     if (sortConfig?.key !== key) return null;
     return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
@@ -184,40 +184,40 @@ const GeneralItemsPage = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">General Items Management</h1>
-            <p className="text-gray-600">Track and manage general items and their assignments</p>
+            <h1 className="text-2xl font-bold text-gray-800">Stationery Items Management</h1>
+            <p className="text-gray-600">Track and manage stationery items and their assignments</p>
           </div>
           <button
             onClick={openAddModal}
             className="mt-4 md:mt-0 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <FiPlus className="mr-2" />
-            Add New General Item
+            Add New Stationery Item
           </button>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total General Items</h3>
-            <p className="text-2xl font-bold">{generalItems.length}</p>
+            <h3 className="text-gray-500 font-medium">Total Stationery Items</h3>
+            <p className="text-2xl font-bold">{stationeryItems.length}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Total Quantity</h3>
             <p className="text-2xl font-bold">
-              {generalItems.reduce((sum, item) => sum + item.quantity, 0)}
+              {stationeryItems.reduce((sum, item) => sum + item.quantity, 0)}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Item Types</h3>
             <p className="text-2xl font-bold">
-              {new Set(generalItems.map(item => item.itemType)).size}
+              {new Set(stationeryItems.map(item => item.itemType)).size}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Groups</h3>
             <p className="text-2xl font-bold">
-              {new Set(generalItems.map(item => item.issuedTo.group)).size}
+              {new Set(stationeryItems.map(item => item.issuedTo.group)).size}
             </p>
           </div>
         </div>
@@ -229,7 +229,7 @@ const GeneralItemsPage = () => {
               <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search general items, descriptions, types, or assigned personnel..."
+                placeholder="Search stationery items, descriptions, types, or assigned personnel..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -272,7 +272,7 @@ const GeneralItemsPage = () => {
           </div>
         </div>
 
-        {/* General Items Table */}
+        {/* Stationery Items Table */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -358,8 +358,8 @@ const GeneralItemsPage = () => {
                   <tr>
                     <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
                       {searchTerm || selectedItemType !== "all" || selectedGroup !== "all"
-                        ? "No general items match your filters" 
-                        : "No general items recorded"}
+                        ? "No stationery items match your filters" 
+                        : "No stationery items recorded"}
                     </td>
                   </tr>
                 )}
@@ -374,7 +374,7 @@ const GeneralItemsPage = () => {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center border-b px-6 py-4">
                 <h2 className="text-lg font-semibold">
-                  {editId ? "Edit General Item" : "Add New General Item"}
+                  {editId ? "Edit Stationery Item" : "Add New Stationery Item"}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
@@ -406,7 +406,7 @@ const GeneralItemsPage = () => {
                     onChange={(e) => setForm({ ...form, itemDescription: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
-                    placeholder="Describe the general item and its specifications..."
+                    placeholder="Describe the stationery item and its specifications..."
                   />
                 </div>
                 <div>
@@ -518,7 +518,7 @@ const GeneralItemsPage = () => {
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {editId ? "Save Changes" : "Add General Item"}
+                    {editId ? "Save Changes" : "Add Stationery Item"}
                   </button>
                 </div>
               </form>
@@ -530,4 +530,4 @@ const GeneralItemsPage = () => {
   );
 };
 
-export default GeneralItemsPage;
+export default StationeryItemsPage;

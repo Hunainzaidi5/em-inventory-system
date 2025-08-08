@@ -14,7 +14,7 @@ interface ActivityItem {
   id: string;
   type: 'issue' | 'return' | 'consume' | 'fault';
   itemName: string;
-  itemType: 'inventory' | 'tool' | 'ppe' | 'general';
+  itemType: 'inventory' | 'tool' | 'ppe' | 'stationery';
   quantity: number;
   user: string;
   timestamp: string;
@@ -56,7 +56,7 @@ const mockActivities: ActivityItem[] = [
     id: '4',
     type: 'consume',
     itemName: 'Electrical Tape',
-    itemType: 'general',
+    itemType: 'stationery',
     quantity: 10,
     user: 'David Brown',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6 hours ago

@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound";
 import AvailabilityOverview from "./pages/AvailabilityOverview";
 import ToolsPage from "./pages/ToolsPage";
 import PPEPage from "./pages/PPEPage";
-import GeneralItemsPage from "./pages/GeneralItemsPage";
+import StationeryItemsPage from "./pages/StationeryItemsPage";
 import FaultyReturnsPage from "./pages/FaultyReturnsPage";
 import GatePassPage from "./pages/GatePassPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
@@ -115,7 +115,7 @@ const AppRoutes = () => {
         <Route path="availability" element={<AvailabilityOverview />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="ppe" element={<PPEPage />} />
-        <Route path="general-items" element={<GeneralItemsPage />} />
+        <Route path="stationery-items" element={<StationeryItemsPage />} />
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />

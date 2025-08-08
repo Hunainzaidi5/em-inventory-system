@@ -56,11 +56,11 @@ const mainMenuItems = [
 ];
 
 const inventoryMenuItems = [
-  { title: "Inventory Items", url: "/dashboard/inventory", icon: Package },
+  { title: "Inventory Management", url: "/dashboard/inventory", icon: Package },
   { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
   { title: "Tools", url: "/dashboard/tools", icon: Wrench },
   { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
-  { title: "General Items", url: "/dashboard/general-items", icon: Box },
+  { title: "Stationery Items", url: "/dashboard/stationery", icon: Box },
 ];
 
 const documentsMenuItems = [

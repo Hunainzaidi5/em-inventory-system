@@ -415,16 +415,6 @@ const InventoryPage = () => {
             >
               PMA (Punjab Mass Transit Authority)
             </button>
-            <button
-              onClick={() => setActiveMainTab("ASSET")}
-              className={`px-6 py-4 font-medium text-sm ${
-                activeMainTab === "ASSET" 
-                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              ASSET
-            </button>
           </div>
 
           {/* Sub Tabs */}

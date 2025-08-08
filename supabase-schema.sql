@@ -267,8 +267,8 @@ CREATE TABLE ppe_items (
 -- Enable RLS on ppe_items table
 ALTER TABLE ppe_items ENABLE ROW LEVEL SECURITY;
 
--- General items table (Updated to match React implementation)
-CREATE TABLE general_items (
+-- Stationery items table (Updated to match React implementation)
+CREATE TABLE stationery_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -286,8 +286,8 @@ CREATE TABLE general_items (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS on general_items table
-ALTER TABLE general_items ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on stationery_items table
+ALTER TABLE stationery_items ENABLE ROW LEVEL SECURITY;
 
 -- Faulty Returns table (New table to match React implementation)
 CREATE TABLE faulty_returns (
@@ -314,7 +314,7 @@ ALTER TABLE faulty_returns ENABLE ROW LEVEL SECURITY;
 CREATE TABLE requisition (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   requisition_type requisition_type NOT NULL,
-  item_type TEXT NOT NULL, -- 'inventory', 'tool', 'ppe', 'general'
+  item_type TEXT NOT NULL, -- 'inventory', 'tool', 'ppe', 'stationery'
   item_id UUID NOT NULL, -- references the specific item table
   quantity INTEGER NOT NULL CHECK (quantity > 0),
   issued_to UUID REFERENCES profiles(id),
@@ -404,10 +404,10 @@ CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
 CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
 CREATE INDEX idx_ppe_items_status ON ppe_items(status);
 
-CREATE INDEX idx_general_items_issued_to_name ON general_items(issued_to_name);
-CREATE INDEX idx_general_items_issued_to_group ON general_items(issued_to_group);
-CREATE INDEX idx_general_items_item_type ON general_items(item_type);
-CREATE INDEX idx_general_items_status ON general_items(status);
+CREATE INDEX idx_stationery_items_issued_to_name ON stationery_items(issued_to_name);
+CREATE INDEX idx_stationery_items_issued_to_group ON stationery_items(issued_to_group);
+CREATE INDEX idx_stationery_items_item_type ON stationery_items(item_type);
+CREATE INDEX idx_stationery_items_status ON stationery_items(status);
 
 CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
 CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location);
@@ -455,7 +455,7 @@ CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW E
 CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_general_items_updated_at BEFORE UPDATE ON general_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
@@ -469,7 +469,7 @@ COMMENT ON TABLE systems IS 'System types: Elevator, Escalator, PSD, HVAC, WSD, 
 COMMENT ON TABLE inventory_items IS 'Main inventory spare parts with full tracking';
 COMMENT ON TABLE tools IS 'Tools inventory with assignment tracking';
 COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory with assignment tracking';
-COMMENT ON TABLE general_items IS 'General items with assignment tracking';
+COMMENT ON TABLE stationery_items IS 'Stationery items with assignment tracking';
 COMMENT ON TABLE faulty_returns IS 'Faulty returns tracking with location management';
 COMMENT ON TABLE requisition IS 'All issue/return/consume requisition across item types';
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';

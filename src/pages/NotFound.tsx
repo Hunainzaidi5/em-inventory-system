@@ -112,10 +112,10 @@ const NotFound = () => {
               PPE Items
             </button>
             <button
-              onClick={() => navigate('/general')}
+              onClick={() => navigate('/stationery')}
               className="text-blue-600 hover:text-blue-800 hover:underline"
             >
-              General Items
+              Stationery Items
             </button>
             <button
               onClick={() => navigate('/faulty-returns')}

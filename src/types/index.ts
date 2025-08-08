@@ -140,7 +140,7 @@ export interface PPEItem {
   updatedAt: string;
 }
 
-export interface GeneralItem {
+export interface StationeryItem {
   id: string;
   itemName: string;
   itemCode?: string;
@@ -162,7 +162,7 @@ export interface GeneralItem {
 export interface Requisition {
   id: string;
   requisitionType: RequisitionType;
-  itemType: 'inventory' | 'tool' | 'ppe' | 'general';
+  itemType: 'inventory' | 'tool' | 'ppe' | 'stationery';
   itemId: string;
   quantity: number;
   issuedTo?: string;
@@ -181,7 +181,7 @@ export interface Requisition {
 export interface FaultyReturn {
   id: string;
   requisitionId?: string;
-  itemType: 'inventory' | 'tool' | 'ppe' | 'general';
+  itemType: 'inventory' | 'tool' | 'ppe' | 'stationery';
   itemId: string;
   faultDescription: string;
   returnLocation: 'Warehouse' | 'C&C';
@@ -228,7 +228,7 @@ export interface issuanceRecord {
   startDate: string;
   endDate: string;
   renewalDate?: string;
-  linkedItemType?: 'inventory' | 'tool' | 'ppe' | 'general';
+  linkedItemType?: 'inventory' | 'tool' | 'ppe' | 'stationery';
   linkedItemId?: string;
   status: 'active' | 'expired' | 'cancelled';
   renewalReminderSent: boolean;
