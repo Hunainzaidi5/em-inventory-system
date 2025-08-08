@@ -580,13 +580,13 @@ export const updateProfile = async (updates: Partial<User> & { avatarFile?: File
 };
 
 // Subscribe to auth state changes
-export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  return supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-      const user = await getCurrentUser();
-      callback(user);
-    } else if (event === 'SIGNED_OUT') {
-      callback(null);
+export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
+  return supabase.auth.onAuthStateChange((event, session) => {
+    try {
+      console.log(`[AUTH] Auth state changed: ${event}`);
+      callback(event, session);
+    } catch (error) {
+      console.error('[AUTH] Error in auth state change callback:', error);
     }
   });
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface SparePart {
@@ -22,8 +22,16 @@ interface TabData {
   error: string | null;
 }
 
+interface SystemCategory {
+  key: string;
+  name: string;
+  file: string;
+}
+
 const InventoryPage = () => {
-  const [activeTab, setActiveTab] = useState("spare-parts-OM");
+  const [activeMainTab, setActiveMainTab] = useState("OM");
+  const [activeSubTab, setActiveSubTab] = useState("BAS");
+  const [expandedTab, setExpandedTab] = useState("OM");
   const [tabData, setTabData] = useState<Record<string, TabData>>({});
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -41,20 +49,18 @@ const InventoryPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
 
-  // Define the JSON files to load
-  const jsonFiles = [
-    { key: "spare-parts-OM", name: "O&M Spare Parts", file: "spare-parts-OM.json" },
+  // Define system categories for both O&M and PMA
+  const systemCategories: SystemCategory[] = [
     { key: "BAS", name: "BAS", file: "bas.json" },
     { key: "FAS", name: "FAS", file: "fas.json" },
-    { key: "ESCALATOR", name: "Escalator", file: "escalator.json" },
-    { key: "ELEVATOR", name: "Elevator", file: "elevator.json" },
     { key: "FES", name: "FES", file: "fes.json" },
-    { key: "HVAC", name: "HVAC", file: "hvac.json" },
-    { key: "ILLUMINATION", name: "Illumination", file: "illumination.json" },
     { key: "PSCADA", name: "PSCADA", file: "pscada.json" },
+    { key: "ELEVATOR", name: "ELEVATOR", file: "elevator.json" },
+    { key: "ESCALATOR", name: "ESCALATOR", file: "escalator.json" },
     { key: "PSD", name: "PSD", file: "psd.json" },
-    { key: "SANITARY", name: "Sanitary", file: "sanitary.json" },
-    { key: "WSD", name: "WSD", file: "wsd.json" }
+    { key: "HVAC", name: "HVAC", file: "hvac.json" },
+    { key: "WSD", name: "WSD", file: "wsd.json" },
+    { key: "ILLUMINATION", name: "ILLUMINATION", file: "illumination.json" }
   ];
 
   // Load data from JSON files
@@ -62,37 +68,22 @@ const InventoryPage = () => {
     const loadAllData = async () => {
       const newTabData: Record<string, TabData> = {};
 
-      for (const fileInfo of jsonFiles) {
-        newTabData[fileInfo.key] = {
-          name: fileInfo.name,
+      for (const category of systemCategories) {
+        newTabData[category.key] = {
+          name: category.name,
           data: [],
           loading: true,
           error: null
         };
 
         try {
-          const response = await fetch(`/${fileInfo.file}`);
-          if (!response.ok) throw new Error(`Failed to load ${fileInfo.file}`);
+          const response = await fetch(`/${category.file}`);
+          if (!response.ok) throw new Error(`Failed to load ${category.file}`);
           const data = await response.json();
           
           let formattedParts: SparePart[] = [];
 
-          // Handle different JSON structures
-          if (fileInfo.key === "spare-parts-OM") {
-            // Handle the O&M spare parts structure
-            formattedParts = (data || [])
-              .filter((item: any) => item && item["Item Name"] && item["Item Name"] !== "Item Name")
-              .map((item: any) => ({
-                id: Math.random().toString(36).substr(2, 9),
-                name: item["Item Name"] || "",
-                quantity: Number(item["In-stock"]) || 0,
-                location: item["Location"] || "C&C Warehouse, Depot",
-                itemCode: item["Item Code (Brand)"] || "",
-                imisCode: item["IMIS CODE"] || "",
-                uom: item["U/M"] || "",
-                lastUpdated: new Date().toISOString().split('T')[0]
-              }));
-          } else if (fileInfo.key === "WSD") {
+          if (category.key === "WSD") {
             // Handle WSD structure (array format)
             formattedParts = (data || [])
               .filter((item: any) => item && item["Item_Description"])
@@ -106,23 +97,6 @@ const InventoryPage = () => {
                 uom: item["UOM"] || "",
                 partNumber: item["Specification"] || "",
                 boqNumber: item["BOQ_No"]?.toString() || "",
-                lastUpdated: new Date().toISOString().split('T')[0]
-              }));
-          } else if (fileInfo.key === "SANITARY") {
-            // Handle Sanitary structure (key is "sanitary" lowercase)
-            const items = data["SANITARY"] || [];
-            formattedParts = items
-              .filter((item: any) => item && item["SANITARY (Spares Inventory)"])
-              .map((item: any) => ({
-                id: Math.random().toString(36).substr(2, 9),
-                name: item["SANITARY (Spares Inventory)"] || "",
-                quantity: Number(item["Quantity"]) || 0,
-                location: item["Location"] || "C&C Warehouse, Depot",
-                itemCode: item["Sr. #"]?.toString() || "",
-                imisCode: item["IMIS Codes"] || "",
-                uom: item["UOM"] || "",
-                partNumber: item["Part #"] || "",
-                boqNumber: item["BOQ #"]?.toString() || "",
                 lastUpdated: new Date().toISOString().split('T')[0]
               }));
           } else {
@@ -202,19 +176,19 @@ const InventoryPage = () => {
               });
           }
 
-          newTabData[fileInfo.key] = {
-            name: fileInfo.name,
+          newTabData[category.key] = {
+            name: category.name,
             data: formattedParts,
             loading: false,
             error: null
           };
         } catch (err) {
-          console.error(`Error loading ${fileInfo.file}:`, err);
-          newTabData[fileInfo.key] = {
-            name: fileInfo.name,
+          console.error(`Error loading ${category.file}:`, err);
+          newTabData[category.key] = {
+            name: category.name,
             data: [],
             loading: false,
-            error: `Failed to load ${fileInfo.name} data`
+            error: `Failed to load ${category.name} data`
           };
         }
       }
@@ -268,7 +242,7 @@ const InventoryPage = () => {
     return filtered;
   };
 
-  const currentTabData = tabData[activeTab];
+  const currentTabData = tabData[activeSubTab];
   const filteredItems = currentTabData ? getFilteredItems(currentTabData.data) : [];
 
   // Get unique locations for filter dropdown
@@ -314,9 +288,9 @@ const InventoryPage = () => {
     if (window.confirm("Are you sure you want to remove this item?")) {
       setTabData(prev => ({
         ...prev,
-        [activeTab]: {
-          ...prev[activeTab],
-          data: prev[activeTab].data.filter(item => item.id !== id)
+        [activeSubTab]: {
+          ...prev[activeSubTab],
+          data: prev[activeSubTab].data.filter(item => item.id !== id)
         }
       }));
     }
@@ -334,11 +308,11 @@ const InventoryPage = () => {
 
     setTabData(prev => ({
       ...prev,
-      [activeTab]: {
-        ...prev[activeTab],
+      [activeSubTab]: {
+        ...prev[activeSubTab],
         data: editId 
-          ? prev[activeTab].data.map(item => item.id === editId ? updatedItem : item)
-          : [...prev[activeTab].data, updatedItem]
+          ? prev[activeSubTab].data.map(item => item.id === editId ? updatedItem : item)
+          : [...prev[activeSubTab].data, updatedItem]
       }
     }));
 
@@ -349,6 +323,21 @@ const InventoryPage = () => {
   const getSortIndicator = (key: keyof SparePart) => {
     if (sortConfig?.key !== key) return null;
     return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
+
+  // Handle main tab click
+  const handleMainTabClick = (tab: string) => {
+    if (expandedTab === tab) {
+      setExpandedTab("");
+    } else {
+      setExpandedTab(tab);
+      setActiveMainTab(tab);
+    }
+  };
+
+  // Handle sub tab click
+  const handleSubTabClick = (subTab: string) => {
+    setActiveSubTab(subTab);
   };
 
   return (
@@ -397,179 +386,225 @@ const InventoryPage = () => {
           </div>
         )}
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 mb-6">
-            {jsonFiles.map((fileInfo) => (
-              <TabsTrigger 
-                key={fileInfo.key} 
-                value={fileInfo.key}
-                className="text-xs px-2 py-1"
+        {/* Main Navigation */}
+        <div className="bg-white rounded-lg shadow mb-6">
+          <div className="border-b">
+            {/* Main Tabs */}
+            <div className="flex">
+              {/* O&M Tab */}
+              <button
+                onClick={() => handleMainTabClick("OM")}
+                className={`flex items-center px-6 py-4 font-medium text-sm border-r ${
+                  activeMainTab === "OM" 
+                    ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                }`}
               >
-                {fileInfo.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+                {expandedTab === "OM" ? <FiChevronDown className="mr-2" /> : <FiChevronRight className="mr-2" />}
+                O&M
+              </button>
 
-          {jsonFiles.map((fileInfo) => (
-            <TabsContent key={fileInfo.key} value={fileInfo.key}>
-              {/* Filters */}
-              <div className="bg-white p-4 rounded-lg shadow mb-6">
-                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-                  <div className="relative flex-grow">
-                    <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search items..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {searchTerm && (
-                      <button
-                        onClick={() => setSearchTerm("")}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        <FiX />
-                      </button>
-                    )}
-                  </div>
-                  <div className="w-full md:w-48">
-                    <select
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              {/* PMA Tab */}
+              <button
+                onClick={() => handleMainTabClick("PMA")}
+                className={`flex items-center px-6 py-4 font-medium text-sm ${
+                  activeMainTab === "PMA" 
+                    ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                {expandedTab === "PMA" ? <FiChevronDown className="mr-2" /> : <FiChevronRight className="mr-2" />}
+                PMA
+              </button>
+            </div>
+          </div>
+
+          {/* Sub Tabs */}
+          {expandedTab && (
+            <div className="p-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
+                {systemCategories.map((category) => (
+                  <button
+                    key={category.key}
+                    onClick={() => handleSubTabClick(category.key)}
+                    className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                      activeSubTab === category.key
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Content Area */}
+        <div>
+          {/* Filters */}
+          <div className="bg-white p-4 rounded-lg shadow mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+              <div className="flex-shrink-0">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {expandedTab} - {currentTabData?.name || activeSubTab}
+                </h3>
+              </div>
+              <div className="relative flex-grow">
+                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <FiX />
+                  </button>
+                )}
+              </div>
+              <div className="w-full md:w-48">
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {locations.map(loc => (
+                    <option key={loc} value={loc}>
+                      {loc === "all" ? "All Locations" : loc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Loading/Error States */}
+          {currentTabData?.loading && (
+            <div className="bg-white p-4 rounded-lg shadow mb-6 text-center">
+              <p>Loading {currentTabData.name} data...</p>
+            </div>
+          )}
+          {currentTabData?.error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+              <p>{currentTabData.error}</p>
+            </div>
+          )}
+
+          {/* Inventory Table */}
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort('name')}
                     >
-                      {locations.map(loc => (
-                        <option key={loc} value={loc}>
-                          {loc === "all" ? "All Locations" : loc}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Loading/Error States */}
-              {tabData[fileInfo.key]?.loading && (
-                <div className="bg-white p-4 rounded-lg shadow mb-6 text-center">
-                  <p>Loading {fileInfo.name} data...</p>
-                </div>
-              )}
-              {tabData[fileInfo.key]?.error && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
-                  <p>{tabData[fileInfo.key].error}</p>
-                </div>
-              )}
-
-              {/* Inventory Table */}
-              <div className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                          onClick={() => requestSort('name')}
-                        >
-                          <div className="flex items-center">
-                            Item Name {getSortIndicator('name')}
+                      <div className="flex items-center">
+                        Item Name {getSortIndicator('name')}
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      IMIS Code
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      BOQ Number
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Part Number
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      UOM
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort('quantity')}
+                    >
+                      <div className="flex items-center">
+                        Quantity {getSortIndicator('quantity')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort('location')}
+                    >
+                      <div className="flex items-center">
+                        Location {getSortIndicator('location')}
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredItems.length > 0 ? (
+                    filteredItems.map((item) => (
+                      <tr key={item.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">{item.imisCode}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">{item.boqNumber}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">{item.partNumber}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">{item.uom}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+                            {item.quantity}
                           </div>
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          IMIS Code
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          BOQ Number
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Part Number
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          UOM
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                          onClick={() => requestSort('quantity')}
-                        >
-                          <div className="flex items-center">
-                            Quantity {getSortIndicator('quantity')}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                          onClick={() => requestSort('location')}
-                        >
-                          <div className="flex items-center">
-                            Location {getSortIndicator('location')}
-                          </div>
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">{item.location}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => openEditModal(item.id!)}
+                            className="text-blue-600 hover:text-blue-900 mr-4"
+                            title="Edit"
+                          >
+                            <FiEdit />
+                          </button>
+                          <button
+                            onClick={() => handleRemove(item.id!)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {filteredItems.length > 0 ? (
-                        filteredItems.map((item) => (
-                          <tr key={item.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.imisCode}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.boqNumber}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.partNumber}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.uom}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className={`text-sm ${item.quantity < 100 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
-                                {item.quantity}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">{item.location}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <button
-                                onClick={() => openEditModal(item.id!)}
-                                className="text-blue-600 hover:text-blue-900 mr-4"
-                                title="Edit"
-                              >
-                                <FiEdit />
-                              </button>
-                              <button
-                                onClick={() => handleRemove(item.id!)}
-                                className="text-red-600 hover:text-red-900"
-                                title="Delete"
-                              >
-                                <FiTrash2 />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={8} className="px-6 py-4 text-center text-sm text-gray-500">
-                            {searchTerm || selectedLocation !== "all" 
-                              ? "No items match your filters" 
-                              : "No items in inventory"}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-4 text-center text-sm text-gray-500">
+                        {!expandedTab 
+                          ? "Please select a tab to view inventory" 
+                          : searchTerm || selectedLocation !== "all" 
+                            ? "No items match your filters" 
+                            : "No items in inventory"}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
         {/* Add/Edit Modal */}
         {showModal && (

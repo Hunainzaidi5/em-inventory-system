@@ -11,7 +11,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -40,132 +40,120 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     avatar: undefined,
   };
 
-  // Load user data
+  // Single source of truth for loading user data
   const loadUser = useCallback(async () => {
     try {
-      console.log('[DEBUG] Loading user...');
+      console.log('[AUTH] Loading user data...');
       setIsLoading(true);
-      const userData = await authService.getCurrentUser();
-      console.log('[DEBUG] User loaded:', userData);
-      setUser(userData);
-      return userData;
-    } catch (error) {
-      console.error('Failed to load user:', error);
+      
+      // Check for hardcoded developer first
+      if (localStorage.getItem('devUser') === 'true') {
+        console.log('[AUTH] Using hardcoded developer user');
+        setUser(DEV_USER);
+        return DEV_USER;
+      }
+      
+      // Check for existing session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        console.log('[AUTH] Session found, fetching user data');
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+        return userData;
+      }
+      
+      console.log('[AUTH] No active session found');
       setUser(null);
-      throw error;
+      return null;
+    } catch (error) {
+      console.error('[AUTH] Failed to load user:', error);
+      setUser(null);
+      return null;
     } finally {
-      console.log('[DEBUG] Finished loading user, setting isLoading to false');
       setIsLoading(false);
     }
   }, []);
 
   // Refresh user data
   const refreshUser = useCallback(async () => {
-    try {
-      console.log('[DEBUG] Refreshing user data...');
-      await loadUser();
-    } catch (error) {
-      console.error('Failed to refresh user:', error);
-      throw error;
-    }
+    console.log('[AUTH] Refreshing user data...');
+    return loadUser();
   }, [loadUser]);
 
-  // Handle auth state changes
+  // Initial load and auth state changes
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('[AUTH] Auth state changed:', event);
+    let mounted = true;
+    let unsubscribe: (() => void) | null = null;
+
+    const initializeAuth = async () => {
+      // Initial load
+      await loadUser();
+
+      // Only set up auth state listener if not using hardcoded developer
+      if (localStorage.getItem('devUser') !== 'true') {
+        console.log('[AUTH] Setting up auth state listener');
         
-        if (event === 'SIGNED_IN' && session) {
-          try {
-            const userData = await authService.getCurrentUser();
-            setUser(userData);
-          } catch (error) {
-            console.error('Failed to get user after sign in:', error);
+        const handleAuthChange = async (event: string, session: any) => {
+          console.log(`[AUTH] Auth state changed: ${event}`);
+          
+          if (!mounted) return;
+          
+          if (event === 'SIGNED_IN' && session) {
+            try {
+              const userData = await authService.getCurrentUser();
+              console.log('[AUTH] User signed in:', userData?.email);
+              setUser(userData);
+              queryClient.clear();
+            } catch (error) {
+              console.error('[AUTH] Failed to get user after sign in:', error);
+              setUser(null);
+            }
+          } else if (event === 'SIGNED_OUT') {
+            console.log('[AUTH] User signed out');
             setUser(null);
+            queryClient.clear();
+          } else if (event === 'USER_UPDATED') {
+            try {
+              const userData = await authService.getCurrentUser();
+              console.log('[AUTH] User updated:', userData?.email);
+              setUser(userData);
+            } catch (error) {
+              console.error('[AUTH] Failed to get updated user:', error);
+            }
           }
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          queryClient.clear();
-        }
+        };
+
+        // Set up auth state change listener using authService
+        const subscription = authService.onAuthStateChange(handleAuthChange);
+        unsubscribe = () => {
+          console.log('[AUTH] Unsubscribing from auth state changes');
+          subscription.data.subscription.unsubscribe();
+        };
       }
-    );
+    };
+
+    initializeAuth();
 
     return () => {
-      subscription?.unsubscribe();
-    };
-  }, [queryClient]);
-
-  // Initial load
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        setIsLoading(true);
-        // Check for hardcoded developer first
-        if (localStorage.getItem('devUser') === 'true') {
-          setUser(DEV_USER);
-          setIsLoading(false);
-          return;
-        }
-        
-        // Check for existing session
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session) {
-          const userData = await authService.getCurrentUser();
-          setUser(userData);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Failed to load user:', error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
+      mounted = false;
+      if (unsubscribe) {
+        console.log('[AUTH] Cleaning up auth state listener');
+        unsubscribe();
       }
     };
-    
-    checkAuth();
-  }, []);
+  }, [loadUser, queryClient]);
 
   // Handle developer login state changes
   useEffect(() => {
-    const handleStorageChange = () => {
-      if (localStorage.getItem('devUser') === 'true' && !user) {
-        setUser(DEV_USER);
-      } else if (localStorage.getItem('devUser') !== 'true' && user?.id === 'dev-hardcoded') {
-        setUser(null);
-      }
-    };
-
-    // Check on mount
-    handleStorageChange();
-
-    // Listen for storage changes
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, [user]);
-
-  // Set up auth state change listener (only for Supabase users)
-  useEffect(() => {
-    // Only set up listener if not using hardcoded developer
-    if (localStorage.getItem('devUser') === 'true') {
-      return;
+    if (localStorage.getItem('devUser') === 'true' && !user) {
+      console.log('[AUTH] Developer mode enabled');
+      setUser(DEV_USER);
+    } else if (localStorage.getItem('devUser') !== 'true' && user?.id === 'dev-hardcoded') {
+      console.log('[AUTH] Developer mode disabled');
+      setUser(null);
     }
-    
-    const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-        queryClient.clear();
-      }
-    });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [queryClient]);
+  }, [user]);
 
   const login = async (credentials: LoginCredentials) => {
     console.log('[AUTH_CONTEXT] Login initiated for:', credentials.email);
