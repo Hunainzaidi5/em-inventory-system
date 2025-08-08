@@ -136,10 +136,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user } = await authService.login(credentials);
-      setUser(user);
-      queryClient.clear();
-      return { success: true };
+      const response = await authService.login(credentials);
+      if (response?.user) {
+        setUser(response.user);
+        queryClient.clear();
+        return { success: true };
+      } else {
+        throw new Error('Login failed: No user data received');
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       setError(message);

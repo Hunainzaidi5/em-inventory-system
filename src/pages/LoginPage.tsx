@@ -41,23 +41,41 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
+      console.log('Attempting login with email:', data.email);
       setIsLoading(true);
+      
       const { success, error } = await login({
         email: data.email,
         password: data.password,
       });
+      
+      console.log('Login response - success:', success, 'error:', error);
+      
       if (success) {
+        console.log('Login successful, navigating to dashboard');
         navigate('/dashboard', { replace: true });
-      } else if (error) {
-        if (error.toLowerCase().includes('email not confirmed')) {
-          alert('Your email is not confirmed. Please check your inbox and confirm your email before logging in.');
-        }
-        setFormError('root', { message: error });
+      } else {
+        // Handle case where login didn't return a user but didn't throw an error
+        setFormError('root', { 
+          message: 'Login failed. Please check your credentials and try again.' 
+        });
       }
     } catch (error) {
-      setFormError('root', { 
-        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
-      });
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      
+      if (errorMessage.toLowerCase().includes('email not confirmed')) {
+        alert('Your email is not confirmed. Please check your inbox and confirm your email before logging in.');
+      } else if (errorMessage.toLowerCase().includes('invalid login credentials')) {
+        setFormError('root', { 
+          message: 'Invalid email or password. Please try again.' 
+        });
+      } else {
+        setFormError('root', { 
+          message: errorMessage 
+        });
+      }
+      
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }

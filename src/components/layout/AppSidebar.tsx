@@ -146,16 +146,22 @@ export function AppSidebar({ className }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar className={className}>
-      <SidebarHeader className="px-4 py-3 border-b">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Package className="h-6 w-6 text-primary" />
-            {!collapsed && <span className="font-semibold">EM Inventory</span>}
+    <Sidebar className={className} collapsible="icon">
+      <SidebarHeader className="border-b border-sidebar-border p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
+            <img 
+              src="/logo.png" 
+              alt="E&M Inventory Logo" 
+              className="h-full w-full object-contain"
+            />
           </div>
-          <Button variant="ghost" size="icon" onClick={() => {}} className="h-8 w-8">
-            <Menu className="h-4 w-4" />
-          </Button>
+          {!collapsed && (
+            <div className="flex flex-col">
+              <h1 className="text-sm font-semibold text-sidebar-foreground">E&M Inventory</h1>
+              <p className="text-xs text-sidebar-foreground/60">Management System</p>
+            </div>
+          )}
         </div>
       </SidebarHeader>
 
