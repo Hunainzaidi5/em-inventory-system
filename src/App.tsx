@@ -8,7 +8,6 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import InventoryPage from "./pages/InventoryPage";
-import RequisitionPage from "./pages/RequisitionPage";
 import NotFound from "./pages/NotFound";
 import AvailabilityOverview from "./pages/AvailabilityOverview";
 import ToolsPage from "./pages/ToolsPage";
@@ -24,6 +23,7 @@ import { DevOnlyRoute } from './components/auth/ProtectedRoute';
 import AddUserPage from './pages/AddUserPage';
 import UsersPage from './pages/UsersPage';
 import ProfilePage from './pages/ProfilePage';
+import RequisitionPage from "./pages/RequisitionPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
