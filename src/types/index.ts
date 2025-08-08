@@ -22,7 +22,7 @@ export type SystemType =
   | 'FAS'
   | 'FES';
 
-export type TransactionType = 'issue' | 'return' | 'consume';
+export type RequisitionType = 'issue' | 'return' | 'consume';
 
 export type ItemStatus = 'available' | 'issued' | 'consumed' | 'faulty';
 
@@ -159,9 +159,9 @@ export interface GeneralItem {
   updatedAt: string;
 }
 
-export interface Transaction {
+export interface Requisition {
   id: string;
-  transactionType: TransactionType;
+  requisitionType: RequisitionType;
   itemType: 'inventory' | 'tool' | 'ppe' | 'general';
   itemId: string;
   quantity: number;
@@ -180,7 +180,7 @@ export interface Transaction {
 
 export interface FaultyReturn {
   id: string;
-  transactionId?: string;
+  requisitionId?: string;
   itemType: 'inventory' | 'tool' | 'ppe' | 'general';
   itemId: string;
   faultDescription: string;
@@ -247,7 +247,7 @@ export interface DashboardStats {
   faultyItems: number;
   lowStockItems: number;
   pendingReturns: number;
-  recentTransactions: number;
+  recentRequisitions: number;
 }
 
 export interface FilterOptions {

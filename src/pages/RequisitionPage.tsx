@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
 
-type TransactionType = 'issue' | 'return' | 'consume';
+type RequisitionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'general' | 'faulty_return';
 
-interface Transaction {
+interface Requisition {
   id: string;
-  transactionType: TransactionType;
+  requisitionType: RequisitionType;
   itemType: ItemType;
   itemName: string;
   quantity: number;
@@ -19,7 +19,7 @@ interface Transaction {
 }
 
 interface Filters {
-  transactionType: TransactionType | 'all';
+  requisitionType: RequisitionType | 'all';
   itemType: ItemType | 'all';
   status: 'completed' | 'pending' | 'overdue' | 'all';
   department: string;
@@ -29,8 +29,8 @@ interface Filters {
   };
 }
 
-interface TransactionFormData {
-  transactionType: TransactionType;
+interface RequisitionFormData {
+  requisitionType: RequisitionType;
   itemType: ItemType;
   itemName: string;
   quantity: number;
@@ -47,30 +47,30 @@ interface FormErrors {
   department?: string;
 }
 
-const TransactionsPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+const RequisitionPage = () => {
+  const [requisition, setRequisition] = useState<Requisition[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedRequisition, setSelectedRequisition] = useState<Requisition | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
-  const [showTransactionForm, setShowTransactionForm] = useState(false);
+  const [requisitionToDelete, setRequisitionToDelete] = useState<string | null>(null);
+  const [showRequisitionForm, setShowRequisitionForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
   
   const [filters, setFilters] = useState<Filters>({
-    transactionType: 'all',
+    requisitionType: 'all',
     itemType: 'all',
     status: 'all',
     department: '',
     dateRange: { start: '', end: '' }
   });
 
-  const [formData, setFormData] = useState<TransactionFormData>({
-    transactionType: 'issue',
+  const [formData, setFormData] = useState<RequisitionFormData>({
+    requisitionType: 'issue',
     itemType: 'inventory',
     itemName: '',
     quantity: 1,
@@ -82,12 +82,12 @@ const TransactionsPage = () => {
 
   // Generate mock data
   useEffect(() => {
-    const fetchTransactions = () => {
+    const fetchRequisition = () => {
       setTimeout(() => {
-        const mockTransactions: Transaction[] = [
+        const mockRequisition: Requisition[] = [
           {
             id: '1',
-            transactionType: 'issue',
+            requisitionType: 'issue',
             itemType: 'inventory',
             itemName: 'Safety Helmet Yellow',
             quantity: 5,
@@ -100,7 +100,7 @@ const TransactionsPage = () => {
           },
           {
             id: '2',
-            transactionType: 'return',
+            requisitionType: 'return',
             itemType: 'tool',
             itemName: 'Power Drill Makita XFD131',
             quantity: 2,
@@ -113,7 +113,7 @@ const TransactionsPage = () => {
           },
           {
             id: '3',
-            transactionType: 'consume',
+            requisitionType: 'consume',
             itemType: 'general',
             itemName: 'Safety Gloves Nitrile',
             quantity: 10,
@@ -126,7 +126,7 @@ const TransactionsPage = () => {
           },
           {
             id: '4',
-            transactionType: 'issue',
+            requisitionType: 'issue',
             itemType: 'ppe',
             itemName: 'Hard Hat White',
             quantity: 3,
@@ -138,7 +138,7 @@ const TransactionsPage = () => {
           },
           {
             id: '5',
-            transactionType: 'return',
+            requisitionType: 'return',
             itemType: 'faulty_return',
             itemName: 'Angle Grinder',
             quantity: 1,
@@ -151,7 +151,7 @@ const TransactionsPage = () => {
           },
           {
             id: '6',
-            transactionType: 'consume',
+            requisitionType: 'consume',
             itemType: 'general',
             itemName: 'Cleaning Supplies',
             quantity: 15,
@@ -163,30 +163,30 @@ const TransactionsPage = () => {
           }
         ];
         
-        setTransactions(mockTransactions);
+        setRequisition(mockRequisition);
         setIsLoading(false);
       }, 500);
     };
 
-    fetchTransactions();
+    fetchRequisition();
   }, []);
 
   // Get unique departments for filter dropdown
   const departments = useMemo(() => {
-    const depts = [...new Set(transactions.map(t => t.department))].filter(dept => dept);
+    const depts = [...new Set(requisition.map(t => t.department))].filter(dept => dept);
     return depts.sort();
-  }, [transactions]);
+  }, [requisition]);
 
-  // Filter transactions based on search and filters
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter(tx => {
+  // Filter requisition based on search and filters
+  const filteredRequisition = useMemo(() => {
+    return requisition.filter(tx => {
       const matchesSearch = 
         tx.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.issuedTo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.referenceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.department.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesType = filters.transactionType === 'all' || tx.transactionType === filters.transactionType;
+      const matchesType = filters.requisitionType === 'all' || tx.requisitionType === filters.requisitionType;
       const matchesItemType = filters.itemType === 'all' || tx.itemType === filters.itemType;
       const matchesStatus = filters.status === 'all' || tx.status === filters.status;
       const matchesDepartment = !filters.department || tx.department === filters.department;
@@ -204,27 +204,27 @@ const TransactionsPage = () => {
 
       return matchesSearch && matchesType && matchesItemType && matchesStatus && matchesDepartment && matchesDateRange;
     });
-  }, [transactions, searchTerm, filters]);
+  }, [requisition, searchTerm, filters]);
 
   // Statistics
   const stats = useMemo(() => {
     return {
-      total: transactions.length,
-      completed: transactions.filter(t => t.status === 'completed').length,
-      pending: transactions.filter(t => t.status === 'pending').length,
-      overdue: transactions.filter(t => t.status === 'overdue').length
+      total: requisition.length,
+      completed: requisition.filter(t => t.status === 'completed').length,
+      pending: requisition.filter(t => t.status === 'pending').length,
+      overdue: requisition.filter(t => t.status === 'overdue').length
     };
-  }, [transactions]);
+  }, [requisition]);
 
   // Generate reference number
   const generateReferenceNumber = () => {
     const year = new Date().getFullYear();
-    const nextNumber = String(transactions.length + 1).padStart(3, '0');
+    const nextNumber = String(requisition.length + 1).padStart(3, '0');
     return `TRX-${year}-${nextNumber}`;
   };
 
   // Validate form
-  const validateForm = (data: TransactionFormData): FormErrors => {
+  const validateForm = (data: RequisitionFormData): FormErrors => {
     const errors: FormErrors = {};
     
     if (!data.itemName.trim()) {
@@ -262,10 +262,10 @@ const TransactionsPage = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    if (isEditMode && selectedTransaction) {
-      // Update existing transaction
-      setTransactions(prev => prev.map(tx => 
-        tx.id === selectedTransaction.id 
+    if (isEditMode && selectedRequisition) {
+      // Update existing requisition
+      setRequisition(prev => prev.map(tx => 
+        tx.id === selectedRequisition.id 
           ? {
               ...tx,
               ...formData
@@ -273,26 +273,26 @@ const TransactionsPage = () => {
           : tx
       ));
     } else {
-      // Create new transaction
-      const newTransaction: Transaction = {
+      // Create new requisition
+      const newRequisition: Requisition = {
         id: Date.now().toString(),
         ...formData,
         referenceNumber: generateReferenceNumber(),
         createdAt: new Date().toISOString()
       };
-      setTransactions(prev => [newTransaction, ...prev]);
+      setRequisition(prev => [newRequisition, ...prev]);
     }
     
     setIsSaving(false);
     handleCloseForm();
   };
 
-  // Handle opening form for new transaction
-  const handleNewTransaction = () => {
+  // Handle opening form for new requisition
+  const handleNewRequisition = () => {
     setIsEditMode(false);
-    setSelectedTransaction(null);
+    setSelectedRequisition(null);
     setFormData({
-      transactionType: 'issue',
+      requisitionType: 'issue',
       itemType: 'inventory',
       itemName: '',
       quantity: 1,
@@ -302,38 +302,38 @@ const TransactionsPage = () => {
       notes: ''
     });
     setFormErrors({});
-    setShowTransactionForm(true);
+    setShowRequisitionForm(true);
   };
 
   // Handle opening form for editing
-  const handleEditTransaction = (transaction: Transaction) => {
+  const handleEditRequisition = (requisition: Requisition) => {
     setIsEditMode(true);
-    setSelectedTransaction(transaction);
+    setSelectedRequisition(requisition);
     setFormData({
-      transactionType: transaction.transactionType,
-      itemType: transaction.itemType,
-      itemName: transaction.itemName,
-      quantity: transaction.quantity,
-      issuedTo: transaction.issuedTo,
-      department: transaction.department,
-      status: transaction.status,
-      notes: transaction.notes || ''
+      requisitionType: requisition.requisitionType,
+      itemType: requisition.itemType,
+      itemName: requisition.itemName,
+      quantity: requisition.quantity,
+      issuedTo: requisition.issuedTo,
+      department: requisition.department,
+      status: requisition.status,
+      notes: requisition.notes || ''
     });
     setFormErrors({});
-    setShowTransactionForm(true);
+    setShowRequisitionForm(true);
   };
 
   // Handle closing form
   const handleCloseForm = () => {
-    setShowTransactionForm(false);
+    setShowRequisitionForm(false);
     setIsEditMode(false);
-    setSelectedTransaction(null);
+    setSelectedRequisition(null);
     setFormErrors({});
     setIsSaving(false);
   };
 
   // Handle form field changes
-  const handleFormChange = (field: keyof TransactionFormData, value: any) => {
+  const handleFormChange = (field: keyof RequisitionFormData, value: any) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -348,15 +348,15 @@ const TransactionsPage = () => {
     }
   };
 
-  const handleDeleteTransaction = (id: string) => {
-    setTransactionToDelete(id);
+  const handleDeleteRequisition = (id: string) => {
+    setRequisitionToDelete(id);
     setShowDeleteDialog(true);
   };
 
   const confirmDelete = () => {
-    if (transactionToDelete) {
-      setTransactions(prev => prev.filter(t => t.id !== transactionToDelete));
-      setTransactionToDelete(null);
+    if (requisitionToDelete) {
+      setRequisition(prev => prev.filter(t => t.id !== requisitionToDelete));
+      setRequisitionToDelete(null);
       setShowDeleteDialog(false);
     }
   };
@@ -365,7 +365,7 @@ const TransactionsPage = () => {
     const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Department', 'Date', 'Status', 'Notes'];
     const csvContent = [
       headers.join(','),
-      ...filteredTransactions.map(tx => [
+      ...filteredRequisition.map(tx => [
         tx.referenceNumber,
         `"${tx.itemName}"`,
         tx.itemType,
@@ -382,14 +382,14 @@ const TransactionsPage = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `requisition-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
   const clearFilters = () => {
     setFilters({
-      transactionType: 'all',
+      requisitionType: 'all',
       itemType: 'all',
       status: 'all',
       department: '',
@@ -427,7 +427,7 @@ const TransactionsPage = () => {
     );
   };
 
-  const getTransactionTypeBadge = (type: TransactionType) => {
+  const getRequisitionTypeBadge = (type: RequisitionType) => {
     const colors = {
       issue: 'bg-green-100 text-green-800',
       return: 'bg-blue-100 text-blue-800',
@@ -446,17 +446,17 @@ const TransactionsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Requisition</h1>
           <p className="text-sm text-gray-600 mt-1">
-            View and manage all inventory transactions
+            View and manage all inventory requisition
           </p>
         </div>
         <button 
-          onClick={handleNewTransaction}
+          onClick={handleNewRequisition}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
         >
           <Plus className="h-4 w-4" /> 
-          New Transaction
+          New Requisition
         </button>
       </div>
 
@@ -513,7 +513,7 @@ const TransactionsPage = () => {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="search"
-              placeholder="Search transactions..."
+              placeholder="Search requisition..."
               className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -540,10 +540,10 @@ const TransactionsPage = () => {
           <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Requisition Type</label>
                 <select
-                  value={filters.transactionType}
-                  onChange={(e) => setFilters(prev => ({...prev, transactionType: e.target.value as any}))}
+                  value={filters.requisitionType}
+                  onChange={(e) => setFilters(prev => ({...prev, requisitionType: e.target.value as any}))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Types</option>
@@ -606,7 +606,7 @@ const TransactionsPage = () => {
         )}
       </div>
 
-      {/* Transactions Table */}
+      {/* Requisition Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -614,7 +614,7 @@ const TransactionsPage = () => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference #</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requisition</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issued To</th>
@@ -629,21 +629,21 @@ const TransactionsPage = () => {
                 <tr>
                   <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
                     <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
-                    Loading transactions...
+                    Loading requisition...
                   </td>
                 </tr>
-              ) : filteredTransactions.length === 0 ? (
+              ) : filteredRequisition.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
-                    No transactions found.
+                    No requisition found.
                   </td>
                 </tr>
               ) : (
-                filteredTransactions.map((txn) => (
+                filteredRequisition.map((txn) => (
                   <tr key={txn.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{txn.referenceNumber}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.itemName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{getTransactionTypeBadge(txn.transactionType)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{getRequisitionTypeBadge(txn.requisitionType)}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{getTypeBadge(txn.itemType)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.quantity}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.issuedTo}</td>
@@ -660,7 +660,7 @@ const TransactionsPage = () => {
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => {
-                            setSelectedTransaction(txn);
+                            setSelectedRequisition(txn);
                             setShowDetails(true);
                           }}
                           className="text-gray-600 hover:text-blue-600 transition-colors p-1"
@@ -669,14 +669,14 @@ const TransactionsPage = () => {
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => handleEditTransaction(txn)}
+                          onClick={() => handleEditRequisition(txn)}
                           className="text-gray-600 hover:text-green-600 transition-colors p-1"
                           title="Edit"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteTransaction(txn.id)}
+                          onClick={() => handleDeleteRequisition(txn.id)}
                           className="text-gray-600 hover:text-red-600 transition-colors p-1"
                           title="Delete"
                         >
@@ -692,13 +692,13 @@ const TransactionsPage = () => {
         </div>
       </div>
 
-      {/* Transaction Form Modal */}
-      {showTransactionForm && (
+      {/* Requisition Form Modal */}
+      {showRequisitionForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-xl font-bold text-gray-900">
-                {isEditMode ? 'Edit Transaction' : 'New Transaction'}
+                {isEditMode ? 'Edit Requisition' : 'New Requisition'}
               </h2>
               <button
                 onClick={handleCloseForm}
@@ -711,14 +711,14 @@ const TransactionsPage = () => {
             
             <form onSubmit={handleFormSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Transaction Type */}
+                {/* Requisition Type */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction Type <span className="text-red-500">*</span>
+                    Requisition Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.transactionType}
-                    onChange={(e) => handleFormChange('transactionType', e.target.value)}
+                    value={formData.requisitionType}
+                    onChange={(e) => handleFormChange('requisitionType', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
                   >
@@ -901,7 +901,7 @@ const TransactionsPage = () => {
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      {isEditMode ? 'Update Transaction' : 'Create Transaction'}
+                      {isEditMode ? 'Update Requisition' : 'Create Requisition'}
                     </>
                   )}
                 </button>
@@ -911,12 +911,12 @@ const TransactionsPage = () => {
         </div>
       )}
 
-      {/* Transaction Details Modal */}
-      {showDetails && selectedTransaction && (
+      {/* Requisition Details Modal */}
+      {showDetails && selectedRequisition && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">Transaction Details</h2>
+              <h2 className="text-xl font-bold text-gray-900">Requisition Details</h2>
               <button
                 onClick={() => setShowDetails(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -928,40 +928,40 @@ const TransactionsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Reference Number</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedTransaction.referenceNumber}</p>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.referenceNumber}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Status</label>
-                  <div className="mt-1">{getStatusBadge(selectedTransaction.status)}</div>
+                  <div className="mt-1">{getStatusBadge(selectedRequisition.status)}</div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Transaction Type</label>
-                  <div className="mt-1">{getTransactionTypeBadge(selectedTransaction.transactionType)}</div>
+                  <label className="block text-sm font-medium text-gray-700">Requisition Type</label>
+                  <div className="mt-1">{getRequisitionTypeBadge(selectedRequisition.requisitionType)}</div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Item Type</label>
-                  <div className="mt-1">{getTypeBadge(selectedTransaction.itemType)}</div>
+                  <div className="mt-1">{getTypeBadge(selectedRequisition.itemType)}</div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Item Name</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedTransaction.itemName}</p>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.itemName}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Quantity</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedTransaction.quantity}</p>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.quantity}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Issued To</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedTransaction.issuedTo}</p>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.issuedTo}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Department</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedTransaction.department}</p>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.department}</p>
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700">Date Created</label>
                   <p className="mt-1 text-sm text-gray-900">
-                    {new Date(selectedTransaction.createdAt).toLocaleDateString('en-US', { 
+                    {new Date(selectedRequisition.createdAt).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric',
@@ -970,10 +970,10 @@ const TransactionsPage = () => {
                     })}
                   </p>
                 </div>
-                {selectedTransaction.notes && (
+                {selectedRequisition.notes && (
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Notes</label>
-                    <p className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-md">{selectedTransaction.notes}</p>
+                    <p className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-md">{selectedRequisition.notes}</p>
                   </div>
                 )}
               </div>
@@ -988,11 +988,11 @@ const TransactionsPage = () => {
               <button 
                 onClick={() => {
                   setShowDetails(false);
-                  handleEditTransaction(selectedTransaction);
+                  handleEditRequisition(selectedRequisition);
                 }}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
               >
-                Edit Transaction
+                Edit Requisition
               </button>
             </div>
           </div>
@@ -1004,9 +1004,9 @@ const TransactionsPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Delete Transaction</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Delete Requisition</h3>
               <p className="text-sm text-gray-600 mb-6">
-                Are you sure you want to delete this transaction? This action cannot be undone.
+                Are you sure you want to delete this requisition? This action cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -1030,4 +1030,4 @@ const TransactionsPage = () => {
   );
 };
 
-export default TransactionsPage;
+export default RequisitionPage;

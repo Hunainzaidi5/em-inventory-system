@@ -29,7 +29,7 @@ CREATE TYPE system_type AS ENUM (
   'FES'
 );
 
-CREATE TYPE transaction_type AS ENUM ('issue', 'return', 'consume');
+CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
 
 CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
 
@@ -310,10 +310,10 @@ CREATE TABLE faulty_returns (
 -- Enable RLS on faulty_returns table
 ALTER TABLE faulty_returns ENABLE ROW LEVEL SECURITY;
 
--- Transactions table (for all item types)
-CREATE TABLE transactions (
+-- Requisition table (for all item types)
+CREATE TABLE requisition (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  transaction_type transaction_type NOT NULL,
+  requisition_type requisition_type NOT NULL,
   item_type TEXT NOT NULL, -- 'inventory', 'tool', 'ppe', 'general'
   item_id UUID NOT NULL, -- references the specific item table
   quantity INTEGER NOT NULL CHECK (quantity > 0),
@@ -414,10 +414,10 @@ CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_locat
 CREATE INDEX idx_faulty_returns_status ON faulty_returns(status);
 CREATE INDEX idx_faulty_returns_created_at ON faulty_returns(created_at);
 
-CREATE INDEX idx_transactions_item_type_id ON transactions(item_type, item_id);
-CREATE INDEX idx_transactions_issued_to ON transactions(issued_to);
-CREATE INDEX idx_transactions_created_at ON transactions(created_at);
-CREATE INDEX idx_transactions_type ON transactions(transaction_type);
+CREATE INDEX idx_requisition_item_type_id ON requisition(item_type, item_id);
+CREATE INDEX idx_requisition_issued_to ON requisition(issued_to);
+CREATE INDEX idx_requisition_created_at ON requisition(created_at);
+CREATE INDEX idx_requisition_type ON requisition(requisition_type);
 
 CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at);
 CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status);
@@ -457,7 +457,7 @@ CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECU
 CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_general_items_updated_at BEFORE UPDATE ON general_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -471,7 +471,7 @@ COMMENT ON TABLE tools IS 'Tools inventory with assignment tracking';
 COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory with assignment tracking';
 COMMENT ON TABLE general_items IS 'General items with assignment tracking';
 COMMENT ON TABLE faulty_returns IS 'Faulty returns tracking with location management';
-COMMENT ON TABLE transactions IS 'All issue/return/consume transactions across item types';
+COMMENT ON TABLE requisition IS 'All issue/return/consume requisition across item types';
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';
 COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';

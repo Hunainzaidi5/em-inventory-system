@@ -8,7 +8,7 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import InventoryPage from "./pages/InventoryPage";
-import TransactionsPage from "./pages/TransactionsPage";
+import RequisitionPage from "./pages/RequisitionPage";
 import NotFound from "./pages/NotFound";
 import AvailabilityOverview from "./pages/AvailabilityOverview";
 import ToolsPage from "./pages/ToolsPage";
@@ -111,7 +111,7 @@ const AppRoutes = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path="inventory" element={<InventoryPage />} />
-        <Route path="transactions" element={<TransactionsPage />} />
+        <Route path="requisition" element={<RequisitionPage />} />
         <Route path="availability" element={<AvailabilityOverview />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="ppe" element={<PPEPage />} />

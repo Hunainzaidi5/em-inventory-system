@@ -52,7 +52,7 @@ export const ITEM_STATUSES = [
   { value: 'faulty', label: 'Faulty', color: 'error' },
 ];
 
-export const TRANSACTION_TYPES = [
+export const REQUISITION_TYPES = [
   { value: 'issue', label: 'Issue' },
   { value: 'return', label: 'Return' },
   { value: 'consume', label: 'Consume' },

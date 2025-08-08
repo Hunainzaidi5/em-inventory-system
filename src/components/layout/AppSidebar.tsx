@@ -64,7 +64,7 @@ const inventoryMenuItems = [
 ];
 
 const documentsMenuItems = [
-  { title: "Transactions", url: "/dashboard/transactions", icon: ListTodo },
+  { title: "Requisition", url: "/dashboard/requisition", icon: ListTodo },
   { title: "Gate Pass", url: "/dashboard/gate-pass", icon: Key },
   { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
 ];
