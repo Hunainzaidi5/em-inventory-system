@@ -115,7 +115,7 @@ const AppRoutes = () => {
         <Route path="availability" element={<AvailabilityOverview />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="ppe" element={<PPEPage />} />
-        <Route path="stationery-items" element={<StationeryItemsPage />} />
+        <Route path="stationery" element={<StationeryItemsPage />} />
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />
