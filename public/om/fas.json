@@ -1,0 +1,27 @@
+[
+ null,
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "FAS Weekly Inspection Checklist",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "HI720-CN",
+  "Item Name": "Heat Dettector (Siemens)",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "OP120-CN",
+  "Item Name": "Smoke Dettector (Siemens)",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ }
+]

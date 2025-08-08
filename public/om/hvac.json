@@ -1,0 +1,182 @@
+[
+ null,
+ {
+  "Item Code (Brand)": "CH",
+  "Item Name": "Alken CH Cool",
+  "IMIS CODE": "003-0011-00-011019",
+  "U\/M": "Ltr",
+  "Stock Received from Warehouse (20-7\/23)": 120,
+  "In-stock": 120,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "SP-100",
+  "Item Name": "Descaler SP-100",
+  "IMIS CODE": "003-0011-00-011020",
+  "U\/M": "Ltr",
+  "Stock Received from Warehouse (20-7\/23)": 450,
+  "In-stock": 450,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Name": "Refrigrant Gas R-410 (Honey Well)",
+  "IMIS CODE": "003-0000-33-000141",
+  "U\/M": "Kgs",
+  "Stock Received from Warehouse (20-7\/23)": 114,
+  "In-stock": 114,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "EMKARATE RL-100H",
+  "Item Name": "Refrigrant Compressor Oil",
+  "IMIS CODE": "010-1100-09-011001",
+  "U\/M": "Ltr",
+  "Stock Received from Warehouse (20-7\/23)": 21,
+  "In-stock": 21,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "None",
+  "Item Name": "Manifold Gauge (Air conditioning refrigerant manifold Gauge set)",
+  "IMIS CODE": "001-0020-00-020039",
+  "U\/M": "Set.s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "25 mm",
+  "Item Name": "HVAC Duct Insulation Glass Wool",
+  "IMIS CODE": "003-0055-00-055005",
+  "U\/M": "Sft",
+  "Stock Received from Warehouse (20-7\/23)": 80,
+  "In-stock": 80,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "20 mm",
+  "Item Name": "HVAC Duct Insulation Arma Flex",
+  "IMIS CODE": "003-0055-00-055006",
+  "U\/M": "Sft",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "R-22",
+  "Item Name": "Refrigrant Gas R-22 (Honeywell)",
+  "IMIS CODE": "003-0070-00-070004",
+  "U\/M": "Kgs",
+  "Stock Received from Warehouse (20-7\/23)": 27,
+  "In-stock": 27,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Name": "Chiller Cleaning Brush",
+  "IMIS CODE": "003-0072-00-072001",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "25-Kg, 2000PSi",
+  "Item Name": "Nitrogen Gas Cylinder",
+  "IMIS CODE": "003-0070-00-070005",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "160-Psi",
+  "Item Name": "Nitrogen Gas Regulator",
+  "IMIS CODE": "001-0010-00-010020",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "20-MM",
+  "Item Name": "HVAC Duct Insulation (Arma Flex)",
+  "IMIS CODE": "003-0055-00-055006",
+  "U\/M": "Ft",
+  "Stock Received from Warehouse (20-7\/23)": 80,
+  "In-stock": 80,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Name": "Copper Welding Rod",
+  "IMIS CODE": "003-0003-00-003009",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "(595X959X300MM)",
+  "Item Name": "AHU Bag Filter With GI Frame,F7",
+  "IMIS CODE": "002-3000-00-003017",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 4,
+  "In-stock": 4,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "AHU Daily Patrol Book",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "Chiller Routing Inspection Book",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "HVAC Cooling Tower Routing Inspection Book AC Season",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "HVAC Pump Routing Inspection Book",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "Filter Cleaning Log",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Name": "Nitrogen Gas Cylinder Refilling",
+  "IMIS CODE": "003-0070-00-070006",
+  "U\/M": "Kg,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "VA-7010-8003",
+  "Item Name": "Motorized Valve",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 14,
+  "In-stock": 14,
+  "Location": "C&C Warehouse, Depot"
+ }
+]

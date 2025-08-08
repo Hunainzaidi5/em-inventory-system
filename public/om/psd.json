@@ -1,0 +1,25 @@
+[
+ null,
+ {
+  "Item Name": "Belt for PSD",
+  "U\/M": "Mtr",
+  "Stock Received from Warehouse (20-7\/23)": 120,
+  "In-stock": 120,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Code (Brand)": "Ledger",
+  "Item Name": "PSD Daily Patrol",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ },
+ {
+  "Item Name": "Maintenance Form Of PSD's (Monthly & Annual)",
+  "U\/M": "No,s",
+  "Stock Received from Warehouse (20-7\/23)": 0,
+  "In-stock": 0,
+  "Location": "C&C Warehouse, Depot"
+ }
+]

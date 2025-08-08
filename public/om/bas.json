@@ -1,0 +1,27 @@
+    [
+        {
+        "Item Code (Brand)": "RJ-11",
+        "Item Name": "Cable Connector 6 Pin",
+        "IMIS CODE": "003-0002-00-002016",
+        "U/M": "No,s",
+        "Stock Received from Warehouse (20-7/23)": 0,
+        "In-stock": 0,
+        "Location": "C&C Warehouse, Depot"
+        },
+        {
+        "Item Code (Brand)": "Ledger",
+        "Item Name": "BAS Weekly Inspection Checklist",
+        "U/M": "No,s",
+        "Stock Received from Warehouse (20-7/23)": 0,
+        "In-stock": 0,
+        "Location": "C&C Warehouse, Depot"
+        },
+        {
+        "Item Code (Brand)": "CAT-6",
+        "Item Name": "Ethernet Cable",
+        "U/M": "Mtr",
+        "Stock Received from Warehouse (20-7/23)": 305,
+        "In-stock": 305,
+        "Location": "C&C Warehouse, Depot"
+        }
+    ]
