@@ -1,5 +1,6 @@
+// src/services/spareService.ts
 import { supabase } from '../lib/supabase';
-import { SparePart } from '../pages/SpareManagement';
+import { SparePart } from '../types/spareTypes';
 
 const TABLE_NAME = 'spare_parts';
 

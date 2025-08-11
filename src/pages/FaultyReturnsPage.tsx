@@ -4,7 +4,7 @@ import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi
 interface FaultyReturn {
   id?: string;
   itemName: string;
-  boqNumber: string;
+  boq_number: string;
   partNumber: string;
   uom: string;
   quantity: number;
@@ -20,7 +20,7 @@ const FaultyReturnsPage = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<Omit<FaultyReturn, 'id'>>({ 
     itemName: "", 
-    boqNumber: "", 
+    boq_number: "", 
     partNumber: "", 
     uom: "", 
     quantity: 0, 
@@ -67,7 +67,7 @@ const FaultyReturnsPage = () => {
     if (searchTerm) {
       filtered = filtered.filter(item => 
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.boqNumber && item.boqNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.boq_number && item.boq_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (item.partNumber && item.partNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (item.usedAgainst && item.usedAgainst.toLowerCase().includes(searchTerm.toLowerCase()))
       );
@@ -109,7 +109,7 @@ const FaultyReturnsPage = () => {
   const openAddModal = () => {
     setForm({ 
       itemName: "", 
-      boqNumber: "", 
+      boq_number: "", 
       partNumber: "", 
       uom: "", 
       quantity: 0, 
@@ -126,7 +126,7 @@ const FaultyReturnsPage = () => {
     if (item) {
       setForm({
         itemName: item.itemName,
-        boqNumber: item.boqNumber,
+        boq_number: item.boq_number,
         partNumber: item.partNumber,
         uom: item.uom,
         quantity: item.quantity,
@@ -317,7 +317,7 @@ const FaultyReturnsPage = () => {
                         <div className="text-sm font-medium text-gray-900">{item.itemName}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.boqNumber}</div>
+                        <div className="text-sm text-gray-500">{item.boq_number}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">{item.partNumber}</div>
@@ -407,9 +407,9 @@ const FaultyReturnsPage = () => {
                       BOQ Number
                     </label>
                     <input
-                      name="boqNumber"
-                      value={form.boqNumber}
-                      onChange={(e) => setForm({ ...form, boqNumber: e.target.value })}
+                      name="boq_number"
+                      value={form.boq_number}
+                      onChange={(e) => setForm({ ...form, boq_number: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="BOQ Number"
                     />
@@ -419,9 +419,9 @@ const FaultyReturnsPage = () => {
                       Part Number
                     </label>
                     <input
-                      name="partNumber"
-                      value={form.partNumber}
-                      onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
+                      name="part_number"
+                      value={form.part_number}
+                      onChange={(e) => setForm({ ...form, part_number: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Part Number"
                     />

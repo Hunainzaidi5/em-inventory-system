@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
 import { getSpareParts, addSparePart, updateSparePart, deleteSparePart, subscribeToSpareParts } from "../services/spareService";
 import { toast } from "../components/ui/use-toast";
+import { SparePart, TabData, SystemCategory } from "../types/spareTypes";
+
+const SpareManagement: React.FC = () => {
 
 interface SparePart {
   id?: string;
@@ -13,7 +16,7 @@ interface SparePart {
   imisCode?: string;
   uom?: string;
   partNumber?: string;
-  boqNumber?: string;
+  boq_number?: string;
   belongsto?: string;
   category?: string;
 }
@@ -45,7 +48,7 @@ const SpareManagement = () => {
     location: "", 
     uom: "", 
     imisCode: "", 
-    boqNumber: "",
+    boq_number: "",
     itemCode: "",
     partNumber: "",
     belongsto: "",
@@ -160,7 +163,7 @@ const SpareManagement = () => {
             imisCode: item["IMIS_Code"] || "",
             uom: item["UOM"] || "",
             partNumber: item["Specification"] || "",
-            boqNumber: item["BOQ_No"]?.toString() || "",
+            boq_number: item["BOQ_No"]?.toString() || "",
             lastUpdated: new Date().toISOString().split('T')[0]
           }));
       } else {
@@ -202,7 +205,7 @@ const SpareManagement = () => {
             const uom = item["UOM"] || item["U/M"] || "";
             const partNumber = item["Part #"] || item[" Part #"] || item["Part Number"] || item["Specification"] || "";
             const category = item["Category"] || item["category"] || item["Catagory"] || "";
-            const boqNumber = item["BOQ #"] || item[" BOQ #"] || item["BOQ_No"] || item["BOQ Number"] || "";
+            const boq_number = item["BOQ #"] || item[" BOQ #"] || item["BOQ_No"] || item["BOQ Number"] || "";
             const serialNumber = item["Sr. #"] || item[" Sr. #"] || item["Sr_No"] || item["Serial Number"] || "";
 
             return {
@@ -216,7 +219,7 @@ const SpareManagement = () => {
               uom: uom,
               partNumber: partNumber,
               category: category || category.name,
-              boqNumber: boqNumber,
+              boq_number: boq_number,
               lastUpdated: new Date().toISOString().split('T')[0]
             };
           });
@@ -359,7 +362,7 @@ const SpareManagement = () => {
       location: "", 
       uom: "", 
       imisCode: "", 
-      boqNumber: "",
+      boq_number: "",
       itemCode: "",
       partNumber: ""
     });
@@ -376,7 +379,7 @@ const SpareManagement = () => {
         location: item.location,
         uom: item.uom || "",
         imisCode: item.imisCode || "",
-        boqNumber: item.boqNumber || "",
+        boq_number: item.boq_number || "",
         itemCode: item.itemCode || "",
         partNumber: item.partNumber || ""
       });
@@ -443,7 +446,7 @@ const SpareManagement = () => {
           location: '',
           uom: '',
           imisCode: '',
-          boqNumber: '',
+          boq_number: '',
           itemCode: '',
           partNumber: '',
           category: '',
@@ -718,7 +721,7 @@ const SpareManagement = () => {
                             <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.boqNumber || '-'}</div>
+                            <div className="text-sm text-gray-500">{item.boq_number || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500">{item.partNumber || '-'}</div>
@@ -863,9 +866,9 @@ const SpareManagement = () => {
                       BOQ Number
                     </label>
                     <input
-                      name="boqNumber"
-                      value={form.boqNumber}
-                      onChange={(e) => setForm({ ...form, boqNumber: e.target.value })}
+                      name="boq_number"
+                      value={form.boq_number}
+                      onChange={(e) => setForm({ ...form, boq_number: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="BOQ Number"
                     />
@@ -944,5 +947,4 @@ const SpareManagement = () => {
     </div>
   );
 };
-
 export default SpareManagement;  
