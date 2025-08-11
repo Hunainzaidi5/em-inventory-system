@@ -5,38 +5,6 @@ import { toast } from "../components/ui/use-toast";
 import { SparePart, TabData, SystemCategory } from "../types/spareTypes";
 
 const SpareManagement: React.FC = () => {
-
-interface SparePart {
-  id?: string;
-  name: string;
-  quantity: number;
-  location: string;
-  lastUpdated?: string;
-  itemCode?: string;
-  imisCode?: string;
-  uom?: string;
-  partNumber?: string;
-  boq_number?: string;
-  belongsto?: string;
-  category?: string;
-}
-
-interface TabData {
-  name: string;
-  data: SparePart[];
-  loading: boolean;
-  error: string | null;
-}
-
-interface SystemCategory {
-  key: string;
-  name: string;
-  omFile: string;  // O&M JSON file
-  pmaFile: string; // PMA JSON file
-  type: 'om' | 'pma' | 'both'; // Indicates which tabs this category appears in
-}
-
-const SpareManagement = () => {
   const [activeMainTab, setActiveMainTab] = useState("O&M");
   const [activeSubTab, setActiveSubTab] = useState("BAS");
   const [tabData, setTabData] = useState<Record<string, TabData>>({});
