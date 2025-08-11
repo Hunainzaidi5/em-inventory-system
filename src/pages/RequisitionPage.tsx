@@ -560,11 +560,13 @@ const RequisitionPage = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Items</option>
-                  <option value="inventory">Inventory</option>
-                  <option value="tool">Tool</option>
+                  <option value="spare_management">Spare Parts</option>
                   <option value="ppe">PPE</option>
                   <option value="stationery">Stationery</option>
                   <option value="faulty_return">Faulty Return</option>
+                  <option value="inventory">Inventory</option>
+                  <option value="tools">Tools</option>
+                  <option value="general_tools">General Tools</option>
                 </select>
               </div>
               <div>
@@ -578,6 +580,7 @@ const RequisitionPage = () => {
                   <option value="completed">Completed</option>
                   <option value="pending">Pending</option>
                   <option value="overdue">Overdue</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
               </div>
               <div>
@@ -739,11 +742,13 @@ const RequisitionPage = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
                   >
-                    <option value="inventory">Inventory</option>
-                    <option value="tool">Tool</option>
+                    <option value="spare_management">Spare Parts</option>
                     <option value="ppe">PPE</option>
                     <option value="stationery">Stationery</option>
                     <option value="faulty_return">Faulty Return</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="tools">Tools</option>
+                    <option value="general_tools">General Tools</option>
                   </select>
                 </div>
 
@@ -832,6 +837,13 @@ const RequisitionPage = () => {
                     list="departments"
                     disabled={isSaving}
                   />
+                  <option value="em_systems">E&M Systems</option>
+                  <option value="em_track">E&M Track</option>
+                  <option value="em_power">E&M Power</option>
+                  <option value="em_signalling">E&M Signalling</option>
+                  <option value="em_communication">E&M Communication</option>
+                  <option value="em_third_rail">E&M Third Rail</option>
+                  <option value="em_safety_quality">E&M Safety & Quality</option>
                   <datalist id="departments">
                     {departments.map(dept => (
                       <option key={dept} value={dept} />
@@ -859,6 +871,7 @@ const RequisitionPage = () => {
                     <option value="pending">Pending</option>
                     <option value="completed">Completed</option>
                     <option value="overdue">Overdue</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
 
