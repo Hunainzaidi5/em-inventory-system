@@ -26,6 +26,7 @@ import RequisitionPage from "./pages/RequisitionPage";
 import SpareManagement from "./pages/SpareManagement";
 import ToolsPage from "./pages/ToolsPage";
 import GeneralToolsPage from "./pages/GeneralToolsPage";
+import ReseedDataPage from './pages/ReseedDataPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -128,6 +129,9 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="general-tools" element={<GeneralToolsPage />} />
+        <Route element={<DevOnlyRoute />}>
+          <Route path="reseed" element={<ReseedDataPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

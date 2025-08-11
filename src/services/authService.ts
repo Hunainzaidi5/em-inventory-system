@@ -541,7 +541,7 @@ export const updateProfile = async (updates: Partial<User> & { avatarFile?: File
 
     if (!validRoles.includes(updates.role as UserRole)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
-    }
+  }
   }
 
   try {
@@ -579,8 +579,8 @@ export const onAuthStateChange = (callback: (event: string, session: any) => voi
     try {
       console.log(`[AUTH] Auth state changed: ${event}`);
       callback(event, session);
-    } catch (error) {
+  } catch (error) {
       console.error('[AUTH] Error in auth state change callback:', error);
-    }
+  }
   });
 };
