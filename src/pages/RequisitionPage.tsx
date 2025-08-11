@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
+import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions } from "@/services/requisitionService";
+import { useToast } from "@/components/ui/use-toast";
 
 type RequisitionType = 'issue' | 'return' | 'consume';
-type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return';
+type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
+type StatusType = 'completed' | 'pending' | 'overdue';
 
 interface Requisition {
   id: string;
@@ -14,7 +17,7 @@ interface Requisition {
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   referenceNumber: string;
   createdAt: string;
-  status: 'completed' | 'pending' | 'overdue';
+  status: StatusType;
   notes?: string;
 }
 
@@ -48,6 +51,7 @@ interface FormErrors {
 }
 
 const RequisitionPage = () => {
+  const { toast } = useToast();
   const [requisition, setRequisition] = useState<Requisition[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -90,97 +94,6 @@ const RequisitionPage = () => {
     status: 'pending',
     notes: ''
   } as RequisitionFormData);
-
-  // Generate mock data
-  useEffect(() => {
-    const fetchRequisition = () => {
-      setTimeout(() => {
-        const mockRequisition: Requisition[] = [
-          {
-            id: '1',
-            requisitionType: 'issue',
-            itemType: 'inventory',
-            itemName: 'Safety Helmet Yellow',
-            quantity: 5,
-            issuedTo: 'John Doe',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-001',
-            createdAt: '2024-08-01T10:30:00Z',
-            status: 'completed',
-            notes: 'Standard safety equipment for new maintenance crew'
-          },
-          {
-            id: '2',
-            requisitionType: 'return',
-            itemType: 'tool',
-            itemName: 'Power Drill Makita XFD131',
-            quantity: 2,
-            issuedTo: 'Jane Smith',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-002',
-            createdAt: '2024-08-02T14:15:00Z',
-            status: 'pending',
-            notes: 'Returned after project completion'
-          },
-          {
-            id: '3',
-            requisitionType: 'consume',
-            itemType: 'stationery',
-            itemName: 'Safety Gloves Nitrile',
-            quantity: 10,
-            issuedTo: 'Robert Johnson',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-003',
-            createdAt: '2024-08-03T09:45:00Z',
-            status: 'overdue',
-            notes: 'Monthly consumables for operations team'
-          },
-          {
-            id: '4',
-            requisitionType: 'issue',
-            itemType: 'ppe',
-            itemName: 'Hard Hat White',
-            quantity: 3,
-            issuedTo: 'Sarah Wilson',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-004',
-            createdAt: '2024-08-04T11:20:00Z',
-            status: 'completed'
-          },
-          {
-            id: '5',
-            requisitionType: 'return',
-            itemType: 'faulty_return',
-            itemName: 'Angle Grinder',
-            quantity: 1,
-            issuedTo: 'Mike Davis',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-005',
-            createdAt: '2024-07-30T16:30:00Z',
-            status: 'completed',
-            notes: 'Returned due to motor failure'
-          },
-          {
-            id: '6',
-            requisitionType: 'consume',
-            itemType: 'stationery',
-            itemName: 'Cleaning Supplies',
-            quantity: 15,
-            issuedTo: 'Lisa Brown',
-            department: 'em_systems' as const,
-            referenceNumber: 'TRX-2024-006',
-            createdAt: '2024-08-01T08:00:00Z',
-            status: 'pending'
-          }
-        ];
-        
-        setRequisition(mockRequisition);
-        setIsLoading(false);
-      }, 500);
-    };
-
-    fetchRequisition();
-  }, []);
 
   // Filter requisition based on search and filters
   const filteredRequisition = useMemo(() => {
@@ -358,13 +271,67 @@ const RequisitionPage = () => {
     setShowDeleteDialog(true);
   };
 
-  const confirmDelete = () => {
-    if (requisitionToDelete) {
-      setRequisition(prev => prev.filter(t => t.id !== requisitionToDelete));
-      setRequisitionToDelete(null);
+  // Handle delete confirmation
+  const handleDeleteConfirm = async () => {
+    if (!requisitionToDelete) return;
+    
+    try {
+      await deleteRequisition(requisitionToDelete);
+      
+      // Refresh the data
+      await fetchRequisitions();
+      
       setShowDeleteDialog(false);
+      setRequisitionToDelete(null);
+      
+      toast({
+        title: "Success",
+        description: "Requisition deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting requisition:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete requisition",
+        variant: "destructive",
+      });
     }
   };
+  
+  // Fetch requisitions from Supabase
+  const fetchRequisitions = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await getRequisitions();
+      setRequisition(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch requisitions",
+        variant: "destructive",
+      });
+      console.error("Error fetching requisitions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+  
+  // Initial fetch
+  useEffect(() => {
+    fetchRequisitions();
+  }, [fetchRequisitions]);
+  
+  // Subscribe to real-time updates
+  useEffect(() => {
+    const subscription = subscribeToRequisitions((payload) => {
+      console.log('Requisition change:', payload);
+      fetchRequisitions();
+    });
+
+    return () => {
+      subscription();
+    };
+  }, [fetchRequisitions]);
 
   const exportToCSV = () => {
     const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Department', 'Date', 'Status', 'Notes'];
@@ -610,9 +577,9 @@ const RequisitionPage = () => {
                   <option value="em_systems">E&M Systems</option>
                   <option value="em_track">E&M Track</option>
                   <option value="em_power">E&M Power</option>
-                  <option value="em_thrird_rail">E&M Third Rail</option>
+                  <option value="em_signalling">E&M Signalling</option>
                   <option value="em_communication">E&M Communication</option>
-                  <option value="em_signaling">E&M Signaling</option>
+                  <option value="em_third_rail">E&M Third Rail</option>
                   <option value="em_safety_quality">E&M Safety & Quality</option>
                 </select>
               </div>
@@ -1051,7 +1018,7 @@ const RequisitionPage = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={confirmDelete}
+                  onClick={handleDeleteConfirm}
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
                 >
                   Delete
