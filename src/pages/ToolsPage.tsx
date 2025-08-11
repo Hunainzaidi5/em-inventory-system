@@ -173,15 +173,15 @@ const ToolsPage = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">PPE Items Management</h1>
-            <p className="text-gray-600">Track and manage Personal Protective Equipment and their assignments</p>
+            <h1 className="text-2xl font-bold text-gray-800">Tools Items Management</h1>
+            <p className="text-gray-600">Track and manage Tools and their assignments</p>
           </div>
           <button
             onClick={openAddModal}
             className="mt-4 md:mt-0 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <FiPlus className="mr-2" />
-            Add New PPE Item
+            Add New Tools Item
           </button>
         </div>
 
@@ -218,7 +218,7 @@ const ToolsPage = () => {
               <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search PPE items, descriptions, or assigned personnel..."
+                placeholder="Search Tools items, descriptions, or assigned personnel..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -248,7 +248,7 @@ const ToolsPage = () => {
           </div>
         </div>
 
-        {/* PPE Items Table */}
+        {/* Tools Items Table */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -328,8 +328,8 @@ const ToolsPage = () => {
                   <tr>
                     <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
                       {searchTerm || selectedGroup !== "all"
-                        ? "No PPE items match your filters" 
-                        : "No PPE items recorded"}
+                        ? "No Tools items match your filters" 
+                        : "No Tools items recorded"}
                     </td>
                   </tr>
                 )}
@@ -344,7 +344,7 @@ const ToolsPage = () => {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center border-b px-6 py-4">
                 <h2 className="text-lg font-semibold">
-                  {editId ? "Edit PPE Item" : "Add New PPE Item"}
+                  {editId ? "Edit Tools Item" : "Add New Tools Item"}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
@@ -376,7 +376,7 @@ const ToolsPage = () => {
                     onChange={(e) => setForm({ ...form, itemDescription: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
-                    placeholder="Describe the PPE item and its specifications..."
+                    placeholder="Describe the Tools item and its specifications..."
                   />
                 </div>
                 <div>
@@ -476,7 +476,7 @@ const ToolsPage = () => {
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {editId ? "Save Changes" : "Add PPE Item"}
+                    {editId ? "Save Changes" : "Add Tools Item"}
                   </button>
                 </div>
               </form>
