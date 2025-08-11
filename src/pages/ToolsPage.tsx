@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi";
+import InventoryPage from "./InventoryPage";
 
 interface IssuedTo {
   name: string;
