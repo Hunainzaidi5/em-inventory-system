@@ -126,6 +126,8 @@ const AppRoutes = () => {
         <Route path="add-user" element={<AddUserPage />} />
         <Route path="edit-user/:userId" element={<AddUserPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="tools" element={<ToolsPage />} />
+        <Route path="general-tools" element={<GeneralToolsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
