@@ -13,6 +13,7 @@ interface SparePart {
   partNumber?: string;
   boqNumber?: string;
   belongsto?: string;
+  category?: string;
 }
 
 interface TabData {
@@ -45,7 +46,8 @@ const SpareManagement = () => {
     boqNumber: "",
     itemCode: "",
     partNumber: "",
-    belongsto: ""
+    belongsto: "",
+    category: ""
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
@@ -186,6 +188,10 @@ const SpareManagement = () => {
                              item[" Part #"] ||
                              item["Part Number"] || 
                              item["Specification"] || "";
+                             
+            const category = item["Category"] || 
+                             item["category"] || 
+                             item["Catagory"] || "";
 
             const boqNumber = item["BOQ #"] || 
                             item[" BOQ #"] ||
@@ -207,6 +213,7 @@ const SpareManagement = () => {
               imisCode: imisCode,
               uom: uom,
               partNumber: partNumber,
+              category: category,
               boqNumber: boqNumber?.toString() || "",
               lastUpdated: new Date().toISOString().split('T')[0]
             };
@@ -574,6 +581,9 @@ const SpareManagement = () => {
                         Part Number
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Category
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         UOM
                       </th>
                       <th 
@@ -618,6 +628,9 @@ const SpareManagement = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500">{item.partNumber || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.category || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500">{item.uom || '-'}</div>
@@ -787,6 +800,18 @@ const SpareManagement = () => {
                       onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Part Number"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Category
+                    </label>
+                    <input
+                      name="category"
+                      value={form.category}
+                      onChange={(e) => setForm({ ...form, category: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Category"
                     />
                   </div>
                 </div>
