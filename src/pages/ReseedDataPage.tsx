@@ -16,6 +16,7 @@ const FILE_CATEGORIES = {
     'WSD': 'pma/wsd.json',
     'ILLUMINATION': 'pma/illumination.json',
     'SANITARY': 'pma/sanitary.json',
+    'SPARE PARTS OM': 'pma/spare-parts-OM.json',
   },
   'O&M (Operations & Maintenance)': {
     'BAS': 'om/bas.json',
@@ -74,34 +75,39 @@ function coerceDate(value: any): string | null {
 }
 
 function mapToSparePart(row: any, category: string, system: string): SparePartRow {
+  // Common resolver for BOQ-like fields
+  const resolveBoq = () => coerceString(
+    row['BOQ #'] ?? row['BOQ'] ?? row['BOQ No'] ?? row['BOQ no'] ?? row['BOQ Number'] ?? row['BOQ number'] ?? row['boq_number'] ?? row['boqNumber'] ?? ''
+  );
+
   // Handle different JSON structures based on file type
   if (system === 'BAS') {
     return {
       name: coerceString(row['BAS (Spares Inventory)'] ?? row['Item Name'] ?? ''),
-      belongsto: coerceString(row['BOQ #'] ?? ''),
+      belongsto: category,
       quantity: coerceNumber(row['Quantity'] ?? 0),
       location: coerceString(row['Location'] ?? ''),
-      itemCode: coerceString(row['IMIS Codes'] ?? ''),
-      imis_code: coerceString(row['IMIS Codes'] ?? ''),
+      itemCode: coerceString(row['Item Code (Brand)'] ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
+      imis_code: coerceString(row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
       uom: coerceString(row['UOM'] ?? ''),
       partNumber: coerceString(row['Sr. #'] ?? ''),
-      category: `${category} - ${system}`,
-      boq_number: coerceString(row['BOQ #'] ?? ''),
+      category: system,
+      boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
     };
   } else if (system === 'SPARE PARTS OM') {
     return {
       name: coerceString(row['Item Name'] ?? ''),
-      belongsto: coerceString(row['Item Code (Brand)'] ?? ''),
+      belongsto: category,
       quantity: coerceNumber(row['In-stock'] ?? row['Stock Received from Warehouse (20-7/23)'] ?? 0),
       location: coerceString(row['Location'] ?? ''),
-      itemCode: coerceString(row['Item Code (Brand)'] ?? ''),
+      itemCode: coerceString(row['Item Code (Brand)'] ?? row['IMIS CODE'] ?? ''),
       imis_code: coerceString(row['IMIS CODE'] ?? ''),
       uom: coerceString(row['U/M'] ?? ''),
       partNumber: coerceString(row['Item Code (Brand)'] ?? ''),
-      category: `${category} - ${system}`,
-      boq_number: '',
+      category: system,
+      boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
     };
@@ -109,15 +115,15 @@ function mapToSparePart(row: any, category: string, system: string): SparePartRo
     // Generic mapping for other systems
     return {
       name: coerceString(row.name ?? row['Item Name'] ?? row['BAS (Spares Inventory)'] ?? row['Item'] ?? ''),
-      belongsto: coerceString(row.belongsto ?? row['BOQ #'] ?? row['Item Code (Brand)'] ?? ''),
+      belongsto: category,
       quantity: coerceNumber(row.quantity ?? row['Quantity'] ?? row['In-stock'] ?? row['Stock Received from Warehouse (20-7/23)'] ?? 0),
       location: coerceString(row.location ?? row['Location'] ?? ''),
-      itemCode: coerceString(row.itemCode ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? row['Item Code (Brand)'] ?? ''),
+      itemCode: coerceString(row['Item Code (Brand)'] ?? row.itemCode ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
       imis_code: coerceString(row.imis_code ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
       uom: coerceString(row.uom ?? row['UOM'] ?? row['U/M'] ?? ''),
       partNumber: coerceString(row.partNumber ?? row['Sr. #'] ?? row['Item Code (Brand)'] ?? ''),
-      category: `${category} - ${system}`,
-      boq_number: coerceString(row.boq_number ?? row['BOQ #'] ?? ''),
+      category: system,
+      boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
     };
@@ -251,6 +257,7 @@ export default function ReseedDataPage() {
 
   const getSystemFromFile = (filePath: string): string => {
     const fileName = filePath.split('/').pop() || '';
+    if (fileName === 'spare-parts-OM.json') return 'SPARE PARTS OM';
     if (fileName === 'bas.json') return 'BAS';
     if (fileName === 'fas.json') return 'FAS';
     if (fileName === 'fes.json') return 'FES';
@@ -342,7 +349,9 @@ export default function ReseedDataPage() {
                   <th className="text-left p-2">Category</th>
                   <th className="text-left p-2">Quantity</th>
                   <th className="text-left p-2">Location</th>
+                  <th className="text-left p-2">Item Code</th>
                   <th className="text-left p-2">IMIS Code</th>
+                  <th className="text-left p-2">BOQ #</th>
                   <th className="text-left p-2">UOM</th>
                 </tr>
               </thead>
@@ -353,7 +362,9 @@ export default function ReseedDataPage() {
                     <td className="p-2">{row.category}</td>
                     <td className="p-2">{row.quantity}</td>
                     <td className="p-2">{row.location}</td>
+                    <td className="p-2">{row.itemCode}</td>
                     <td className="p-2">{row.imis_code}</td>
+                    <td className="p-2">{row.boq_number}</td>
                     <td className="p-2">{row.uom}</td>
                   </tr>
                 ))}
