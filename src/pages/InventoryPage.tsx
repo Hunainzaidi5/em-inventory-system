@@ -8,7 +8,7 @@ interface IssuedTo {
   group: string;
 }
 
-interface PPEItem {
+interface InventoryItem {
   id?: string;
   itemName: string;
   itemDescription: string;
@@ -18,10 +18,10 @@ interface PPEItem {
 }
 
 const InventoryPage = () => {
-  const [ppeItems, setPpeItems] = useState<PPEItem[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<Omit<PPEItem, 'id'>>({ 
+  const [form, setForm] = useState<Omit<InventoryItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
     quantity: 0, 
@@ -34,27 +34,27 @@ const InventoryPage = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("all");
-  const [sortConfig, setSortConfig] = useState<{ key: keyof PPEItem; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' } | null>(null);
 
   // Load data from localStorage on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem('ppeItems');
+    const savedData = localStorage.getItem('inventoryItems');
     if (savedData) {
       try {
-        setPpeItems(JSON.parse(savedData));
+        setInventoryItems(JSON.parse(savedData));
       } catch (error) {
-        console.error('Error loading PPE data:', error);
+        console.error('Error loading Inventory data:', error);
       }
     }
   }, []);
 
   // Save data to localStorage whenever data changes
   useEffect(() => {
-    localStorage.setItem('ppeItems', JSON.stringify(ppeItems));
-  }, [ppeItems]);
+    localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));
+  }, [inventoryItems]);
 
   // Handle sorting
-  const requestSort = (key: keyof PPEItem) => {
+  const requestSort = (key: keyof InventoryItem) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig?.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -63,7 +63,7 @@ const InventoryPage = () => {
   };
 
   // Apply sorting, filtering and searching
-  const getFilteredItems = (data: PPEItem[]) => {
+  const getFilteredItems = (data: InventoryItem[]) => {
     let filtered = [...data];
     
     // Apply search
@@ -99,10 +99,10 @@ const InventoryPage = () => {
     return filtered;
   };
 
-  const filteredItems = getFilteredItems(ppeItems);
+  const filteredItems = getFilteredItems(inventoryItems);
 
   // Get unique groups for filter dropdown
-  const groups = ["all", ...new Set(ppeItems.map(item => item.issuedTo.group))];
+  const groups = ["all", ...new Set(inventoryItems.map(item => item.issuedTo.group))];
 
   // Modal handlers
   const openAddModal = () => {
@@ -122,7 +122,7 @@ const InventoryPage = () => {
   };
 
   const openEditModal = (id: string) => {
-    const item = ppeItems.find(item => item.id === id);
+    const item = inventoryItems.find(item => item.id === id);
     if (item) {
       setForm({
         itemName: item.itemName,
@@ -136,8 +136,8 @@ const InventoryPage = () => {
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm("Are you sure you want to remove this PPE item?")) {
-      setPpeItems(prev => prev.filter(item => item.id !== id));
+    if (window.confirm("Are you sure you want to remove this Inventory item?")) {
+      setInventoryItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
@@ -152,16 +152,16 @@ const InventoryPage = () => {
     };
 
     if (editId) {
-      setPpeItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
+      setInventoryItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
     } else {
-      setPpeItems(prev => [...prev, updatedItem]);
+      setInventoryItems(prev => [...prev, updatedItem]);
     }
 
     setShowModal(false);
   };
 
   // Get sort indicator
-  const getSortIndicator = (key: keyof PPEItem) => {
+  const getSortIndicator = (key: keyof InventoryItem) => {
     if (sortConfig?.key !== key) return null;
     return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
@@ -187,25 +187,25 @@ const InventoryPage = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total PPE Items</h3>
-            <p className="text-2xl font-bold">{ppeItems.length}</p>
+            <h3 className="text-gray-500 font-medium">Total Inventory Items</h3>
+            <p className="text-2xl font-bold">{inventoryItems.length}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Total Quantity</h3>
             <p className="text-2xl font-bold">
-              {ppeItems.reduce((sum, item) => sum + item.quantity, 0)}
+              {inventoryItems.reduce((sum, item) => sum + item.quantity, 0)}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Assigned Personnel</h3>
             <p className="text-2xl font-bold">
-              {new Set(ppeItems.map(item => item.issuedTo.name)).size}
+              {new Set(inventoryItems.map(item => item.issuedTo.name)).size}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Groups</h3>
             <p className="text-2xl font-bold">
-              {new Set(ppeItems.map(item => item.issuedTo.group)).size}
+              {new Set(inventoryItems.map(item => item.issuedTo.group)).size}
             </p>
           </div>
         </div>
@@ -475,7 +475,7 @@ const InventoryPage = () => {
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {editId ? "Save Changes" : "Add PPE Item"}
+                    {editId ? "Save Changes" : "Add Inventory Item"}
                   </button>
                 </div>
               </form>

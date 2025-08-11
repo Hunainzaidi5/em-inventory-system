@@ -9,7 +9,7 @@ interface IssuedTo {
   group: string;
 }
 
-interface PPEItem {
+interface GeneralToolsItem {
   id?: string;
   itemName: string;
   itemDescription: string;
@@ -19,10 +19,10 @@ interface PPEItem {
 }
 
 const GeneralToolsPage = () => {
-  const [ppeItems, setPpeItems] = useState<PPEItem[]>([]);
+  const [generalToolsItems, setGeneralToolsItems] = useState<GeneralToolsItem[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<Omit<PPEItem, 'id'>>({ 
+  const [form, setForm] = useState<Omit<GeneralToolsItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
     quantity: 0, 
@@ -35,27 +35,27 @@ const GeneralToolsPage = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("all");
-  const [sortConfig, setSortConfig] = useState<{ key: keyof PPEItem; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof GeneralToolsItem; direction: 'asc' | 'desc' } | null>(null);
 
   // Load data from localStorage on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem('ppeItems');
+    const savedData = localStorage.getItem('generalToolsItems');
     if (savedData) {
       try {
-        setPpeItems(JSON.parse(savedData));
+        setGeneralToolsItems(JSON.parse(savedData));
       } catch (error) {
-        console.error('Error loading PPE data:', error);
+        console.error('Error loading General Tools data:', error);
       }
     }
   }, []);
 
   // Save data to localStorage whenever data changes
   useEffect(() => {
-    localStorage.setItem('ppeItems', JSON.stringify(ppeItems));
-  }, [ppeItems]);
+    localStorage.setItem('generalToolsItems', JSON.stringify(generalToolsItems));
+  }, [generalToolsItems]);
 
   // Handle sorting
-  const requestSort = (key: keyof PPEItem) => {
+  const requestSort = (key: keyof GeneralToolsItem) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig?.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -64,7 +64,7 @@ const GeneralToolsPage = () => {
   };
 
   // Apply sorting, filtering and searching
-  const getFilteredItems = (data: PPEItem[]) => {
+  const getFilteredItems = (data: GeneralToolsItem[]) => {
     let filtered = [...data];
     
     // Apply search
@@ -100,10 +100,10 @@ const GeneralToolsPage = () => {
     return filtered;
   };
 
-  const filteredItems = getFilteredItems(ppeItems);
+  const filteredItems = getFilteredItems(generalToolsItems);
 
   // Get unique groups for filter dropdown
-  const groups = ["all", ...new Set(ppeItems.map(item => item.issuedTo.group))];
+  const groups = ["all", ...new Set(generalToolsItems.map(item => item.issuedTo.group))];
 
   // Modal handlers
   const openAddModal = () => {
@@ -123,7 +123,7 @@ const GeneralToolsPage = () => {
   };
 
   const openEditModal = (id: string) => {
-    const item = ppeItems.find(item => item.id === id);
+    const item = generalToolsItems.find(item => item.id === id);
     if (item) {
       setForm({
         itemName: item.itemName,
@@ -137,8 +137,8 @@ const GeneralToolsPage = () => {
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm("Are you sure you want to remove this PPE item?")) {
-      setPpeItems(prev => prev.filter(item => item.id !== id));
+    if (window.confirm("Are you sure you want to remove this General Tools item?")) {
+      setGeneralToolsItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
@@ -153,16 +153,16 @@ const GeneralToolsPage = () => {
     };
 
     if (editId) {
-      setPpeItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
+      setGeneralToolsItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
     } else {
-      setPpeItems(prev => [...prev, updatedItem]);
+      setGeneralToolsItems(prev => [...prev, updatedItem]);
     }
 
     setShowModal(false);
   };
 
   // Get sort indicator
-  const getSortIndicator = (key: keyof PPEItem) => {
+  const getSortIndicator = (key: keyof GeneralToolsItem) => {
     if (sortConfig?.key !== key) return null;
     return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
@@ -189,24 +189,24 @@ const GeneralToolsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Total PPE Items</h3>
-            <p className="text-2xl font-bold">{ppeItems.length}</p>
+            <p className="text-2xl font-bold">{generalToolsItems.length}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Total Quantity</h3>
             <p className="text-2xl font-bold">
-              {ppeItems.reduce((sum, item) => sum + item.quantity, 0)}
+              {generalToolsItems.reduce((sum, item) => sum + item.quantity, 0)}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Assigned Personnel</h3>
             <p className="text-2xl font-bold">
-              {new Set(ppeItems.map(item => item.issuedTo.name)).size}
+              {new Set(generalToolsItems.map(item => item.issuedTo.name)).size}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-gray-500 font-medium">Groups</h3>
             <p className="text-2xl font-bold">
-              {new Set(ppeItems.map(item => item.issuedTo.group)).size}
+              {new Set(generalToolsItems.map(item => item.issuedTo.group)).size}
             </p>
           </div>
         </div>
