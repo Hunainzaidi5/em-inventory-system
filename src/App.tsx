@@ -23,6 +23,9 @@ import AddUserPage from './pages/AddUserPage';
 import UsersPage from './pages/UsersPage';
 import ProfilePage from './pages/ProfilePage';
 import RequisitionPage from "./pages/RequisitionPage";
+import SpareManagement from "./pages/SpareManagement";
+import ToolsPage from "./pages/ToolsPage";
+import GeneralToolsPage from "./pages/GeneralToolsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -110,6 +113,7 @@ const AppRoutes = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path="inventory" element={<InventoryPage />} />
+        <Route path="spare-management" element={<SpareManagement />} />
         <Route path="requisition" element={<RequisitionPage />} />
         <Route path="availability" element={<AvailabilityOverview />} />
         <Route path="ppe" element={<PPEPage />} />
