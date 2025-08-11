@@ -187,7 +187,7 @@ INSERT INTO systems (name, description) VALUES
 CREATE TABLE inventory_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   part_name TEXT NOT NULL,
-  part_number TEXT UNIQUE,
+  partNumber TEXT UNIQUE,
   description TEXT,
   category_id UUID REFERENCES categories(id) ON DELETE RESTRICT NOT NULL,
   system_id UUID REFERENCES systems(id) ON DELETE RESTRICT NOT NULL,
@@ -271,7 +271,7 @@ CREATE TABLE faulty_returns (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   boq_number TEXT,
-  part_number TEXT,
+  partNumber TEXT,
   uom TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
   used_against TEXT NOT NULL,
@@ -370,7 +370,7 @@ CREATE INDEX idx_inventory_items_category ON inventory_items(category_id);
 CREATE INDEX idx_inventory_items_system ON inventory_items(system_id);
 CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
 CREATE INDEX idx_inventory_items_status ON inventory_items(status);
-CREATE INDEX idx_inventory_items_part_number ON inventory_items(part_number);
+CREATE INDEX idx_inventory_items_partNumber ON inventory_items(partNumber);
 
 CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name);
 CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group);

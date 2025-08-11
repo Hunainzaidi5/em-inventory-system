@@ -31,7 +31,7 @@ export const addSparePart = async (part: Omit<SparePart, 'id' | 'lastUpdated'>) 
       .from(TABLE_NAME)
       .insert([{
         ...part,
-        lastUpdated: new Date().toISOString()
+        last_updated: new Date().toISOString()
       }])
       .select();
 
@@ -43,13 +43,13 @@ export const addSparePart = async (part: Omit<SparePart, 'id' | 'lastUpdated'>) 
   }
 };
 
-export const updateSparePart = async (id: string, updates: Partial<SparePart>) => {
+export const updateSparePart = async (id: string, updates: Partial<Omit<SparePart, 'id'>>) => {
   try {
     const { data, error } = await supabase
       .from(TABLE_NAME)
       .update({
         ...updates,
-        lastUpdated: new Date().toISOString()
+        last_updated: new Date().toISOString()
       })
       .eq('id', id)
       .select();

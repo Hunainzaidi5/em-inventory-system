@@ -34,7 +34,7 @@ export const getLowStockItems = async (): Promise<LowStockItem[]> => {
       currentStock: item.current_stock,
       minStock: item.min_stock || item.reorder_point || 0,
       location: item.location || 'Unknown',
-      partNumber: item.part_number,
+      partNumber: item.partNumber,
       lastUpdated: item.updated_at,
       averageDailyUsage: item.average_daily_usage,
     }));
