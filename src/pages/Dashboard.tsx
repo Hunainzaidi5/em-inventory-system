@@ -1,54 +1,335 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Package, Wrench, Shield, AlertTriangle, TrendingUp, Clock, Users, BarChart3, Bell, Search, Filter, Download, RefreshCw, ArrowUpRight, Activity, Zap, Eye } from "lucide-react";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    // Animate stats on load
+    const targets = [1250, 347, 1250, 60];
+    targets.forEach((target, index) => {
+      let current = 0;
+      const increment = target / 50;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        setAnimatedStats(prev => {
+          const newStats = [...prev];
+          newStats[index] = Math.floor(current);
+          return newStats;
+        });
+      }, 20);
+    });
+  }, []);
+
+  const handleNavigation = (route) => {
+    console.log(`Navigating to: ${route}`);
+    // Replace with your navigation logic
+  };
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 1500);
+  };
+
+  const statsCards = [
+    {
+      title: "Spare Parts",
+      value: animatedStats[0].toLocaleString(),
+      subtitle: "Across all systems",
+      icon: Package,
+      route: "/dashboard/spare-management",
+      color: "bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 border-blue-200",
+      trend: "+12%",
+      trendUp: true,
+      bgGradient: "from-blue-500/10 to-blue-600/10"
+    },
+    {
+      title: "Tools",
+      value: animatedStats[1].toLocaleString(),
+      subtitle: "Available for checkout",
+      icon: Wrench,
+      route: "/dashboard/inventory",
+      color: "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 border-emerald-200",
+      trend: "+5%",
+      trendUp: true,
+      bgGradient: "from-emerald-500/10 to-emerald-600/10"
+    },
+    {
+      title: "PPE Items",
+      value: animatedStats[2].toLocaleString(),
+      subtitle: "In stock",
+      icon: Shield,
+      route: "/dashboard/ppe",
+      color: "bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 border-purple-200",
+      trend: "+8%",
+      trendUp: true,
+      bgGradient: "from-purple-500/10 to-purple-600/10"
+    },
+    {
+      title: "Faulty Items",
+      value: animatedStats[3].toLocaleString(),
+      subtitle: "Needing attention",
+      icon: AlertTriangle,
+      route: "/dashboard/faulty-returns",
+      color: "bg-gradient-to-br from-red-50 to-red-100 text-red-600 border-red-200",
+      trend: "-3%",
+      trendUp: false,
+      bgGradient: "from-red-500/10 to-red-600/10"
+    }
+  ];
+
+  const quickActions = [
+    { title: "Add New Item", description: "Register new inventory item", icon: Package, color: "from-blue-500 to-blue-600" },
+    { title: "Check Out Tool", description: "Assign tool to employee", icon: Users, color: "from-emerald-500 to-emerald-600" },
+    { title: "Generate Report", description: "Create inventory report", icon: BarChart3, color: "from-purple-500 to-purple-600" },
+    { title: "View Analytics", description: "Access detailed insights", icon: TrendingUp, color: "from-orange-500 to-orange-600" }
+  ];
+
+  const recentActivity = [
+    { action: "Tool checkout", item: "Drill Set #D-001", user: "John Smith", time: "2 minutes ago", type: "checkout", color: "bg-blue-500" },
+    { action: "PPE restocked", item: "Safety Helmets", quantity: "50 units", time: "15 minutes ago", type: "restock", color: "bg-green-500" },
+    { action: "Spare part used", item: "Motor Bearing #MB-205", location: "Facility A", time: "1 hour ago", type: "usage", color: "bg-orange-500" },
+    { action: "Faulty item reported", item: "Multimeter #MM-003", user: "Sarah Johnson", time: "2 hours ago", type: "report", color: "bg-red-500" }
+  ];
+
+  const systemMetrics = [
+    { label: "System Health", value: "98.5%", icon: Activity, color: "text-green-500" },
+    { label: "Active Users", value: "24", icon: Users, color: "text-blue-500" },
+    { label: "Alerts", value: "3", icon: Bell, color: "text-orange-500" }
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Overview of your inventory management system
-          </p>
+    <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
+      <div className="space-y-6">
+        {/* Premium Welcome Section with Advanced Gradient */}
+        <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full animate-pulse"></div>
+            <div className="absolute bottom-10 right-20 w-24 h-24 bg-white/5 rounded-full animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 right-10 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500"></div>
+          </div>
+          
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl">
+                  <BarChart3 size={32} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">E&M Inventory Management System</h2>
+                  <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-blue-100 text-xl font-medium leading-relaxed max-w-2xl">
+                  Your comprehensive solution for managing inventory, tools, PPE, and maintenance items 
+                  with real-time insights and intelligent automation.
+                </p>
+                
+                {/* System Health Metrics */}
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                    <Activity size={18} className="text-green-400" />
+                    <span className="text-blue-50 font-medium">System Health: <span className="font-bold">98.5%</span></span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                    <Users size={18} className="text-blue-300" />
+                    <span className="text-blue-50 font-medium">Active Users: <span className="font-bold">24</span></span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                    <Bell size={18} className="text-yellow-400" />
+                    <span className="text-blue-50 font-medium">Alerts: <span className="font-bold">3</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="hidden lg:block relative">
+              <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl">
+                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center">
+                  <BarChart3 size={48} className="text-white/90" />
+                </div>
+              </div>
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center animate-bounce">
+                <Bell size={16} className="text-white" />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          Last updated: {new Date().toLocaleTimeString()}
+
+        {/* Refresh Button */}
+        <div className="flex justify-end">
+          <button 
+            onClick={handleRefresh}
+            className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white transition-colors rounded-xl border border-gray-200 text-gray-700 hover:text-gray-900 font-medium shadow-sm"
+          >
+            <RefreshCw size={16} className={`${isRefreshing ? 'animate-spin' : ''}`} />
+            <Clock size={16} />
+            <span className="font-medium">
+              {currentTime.toLocaleTimeString()}
+            </span>
+          </button>
         </div>
       </div>
-
-      {/* Simple Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/dashboard/spare-management")}>
-          <h3 className="text-lg font-semibold">Spare Parts</h3>
-          <p className="text-3xl font-bold">1,250</p>
-          <p className="text-sm text-muted-foreground">Across all systems</p>
-        </button>
-        <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/dashboard/inventory")}>
-          <h3 className="text-lg font-semibold">Tools</h3>
-          <p className="text-3xl font-bold">347</p>
-          <p className="text-sm text-muted-foreground">Available for checkout</p>
-        </button>
-        <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/dashboard/ppe")}>
-          <h3 className="text-lg font-semibold">PPE Items</h3>
-          <p className="text-3xl font-bold">1,250</p>
-          <p className="text-sm text-muted-foreground">In stock</p>
-        </button>
-        <button className="p-6 bg-card rounded-lg border text-left hover:shadow-lg transition" onClick={() => navigate("/dashboard/faulty-returns")}>
-          <h3 className="text-lg font-semibold">Faulty Items</h3>
-          <p className="text-3xl font-bold">60</p>
-          <p className="text-sm text-muted-foreground">Needing attention</p>
-        </button>
+      
+      {/* Premium Stats Cards with Advanced Effects */}
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {statsCards.map((card, index) => {
+          const IconComponent = card.icon;
+          return (
+            <button
+              key={index}
+              className="group relative bg-white/80 backdrop-blur-xl rounded-2xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 p-8 text-left transform hover:scale-105 hover:-translate-y-2 overflow-hidden"
+              onClick={() => handleNavigation(card.route)}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-100 transition-all duration-500`}></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className={`p-4 rounded-2xl ${card.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
+                    <IconComponent size={28} />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp size={14} className={card.trendUp ? 'text-emerald-500' : 'text-red-500'} />
+                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                      card.trendUp 
+                        ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' 
+                        : 'text-red-600 bg-red-50 border border-red-200'
+                    }`}>
+                      {card.trend}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-gray-600 group-hover:text-gray-700 transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-3xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors">
+                    {card.value}
+                  </p>
+                  <p className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors">
+                    {card.subtitle}
+                  </p>
+                </div>
+                
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <ArrowUpRight size={20} className="text-gray-400" />
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Welcome Message */}
-      <div className="p-6 bg-card rounded-lg border">
-        <h2 className="text-xl font-semibold mb-4">Welcome to E&M Inventory Management System</h2>
-        <p className="text-muted-foreground">
-          This is your central dashboard for managing inventory, tools, PPE, and all related items.
-          Use the sidebar navigation to access different sections of the system.
-        </p>
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Enhanced Quick Actions */}
+        <div className="lg:col-span-1">
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-8 h-full">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+              <Zap size={20} className="text-yellow-500" />
+            </div>
+            <div className="space-y-4">
+              {quickActions.map((action, index) => {
+                const IconComponent = action.icon;
+                return (
+                  <button
+                    key={index}
+                    className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-2 border-transparent hover:border-gray-100 hover:shadow-lg"
+                  >
+                    <div className={`p-3 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                      <IconComponent size={20} />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="font-semibold text-gray-900 group-hover:text-gray-800 transition-colors">
+                        {action.title}
+                      </p>
+                      <p className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors">
+                        {action.description}
+                      </p>
+                    </div>
+                    <ArrowUpRight size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Recent Activity */}
+        <div className="lg:col-span-2">
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-8 h-full">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-gray-500 font-medium">LIVE</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Filter size={16} className="text-gray-400" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Search size={16} className="text-gray-400" />
+                </button>
+                <button className="text-sm text-blue-600 hover:text-blue-700 font-semibold px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300">
+                  View all
+                </button>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              {recentActivity.map((activity, index) => (
+                <div key={index} className="group flex items-start gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-l-4 border-transparent hover:border-blue-300 hover:shadow-md">
+                  <div className={`w-3 h-3 ${activity.color} rounded-full mt-2 shadow-lg`}></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-semibold text-gray-900 group-hover:text-gray-800 transition-colors">
+                        <span className="capitalize bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          {activity.action}
+                        </span>
+                        : {activity.item}
+                      </p>
+                      <span className="text-xs text-gray-500 whitespace-nowrap ml-2 font-medium">
+                        {activity.time}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
+                      {activity.user && (
+                        <span className="inline-flex items-center gap-1">
+                          <Users size={12} />
+                          By {activity.user}
+                        </span>
+                      )}
+                      {activity.quantity && `Quantity: ${activity.quantity}`}
+                      {activity.location && `Location: ${activity.location}`}
+                    </p>
+                  </div>
+                  <Eye size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

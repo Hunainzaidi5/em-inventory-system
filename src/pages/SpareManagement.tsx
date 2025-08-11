@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
+import { getSpareParts, addSparePart, updateSparePart, deleteSparePart, subscribeToSpareParts } from "../services/spareService";
+import { toast } from "../components/ui/use-toast";
 
 interface SparePart {
   id?: string;
@@ -97,7 +99,7 @@ const SpareManagement = () => {
   }, [activeMainTab]);
 
   // Load data for a specific tab
-  const loadTabData = async (tabKey: string, mainTab: string) => {
+  const loadTabData = useCallback(async (tabKey: string, mainTab: string) => {
     const category = systemCategories.find(cat => cat.key === tabKey);
     if (!category) return;
 
@@ -114,6 +116,23 @@ const SpareManagement = () => {
     }));
 
     try {
+      // First try to load from Supabase
+      const spareParts = await getSpareParts(category.name);
+      
+      if (spareParts && spareParts.length > 0) {
+        setTabData(prev => ({
+          ...prev,
+          [tabId]: {
+            name: category.name,
+            data: spareParts,
+            loading: false,
+            error: null
+          }
+        }));
+        return;
+      }
+
+      // Fallback to local JSON files if no data in Supabase
       const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
       if (!fileName) {
         throw new Error(`No data file configured for ${mainTab} ${category.name}`);
@@ -158,7 +177,6 @@ const SpareManagement = () => {
                                 item["Item_Description"] || 
                                 item["Item Description"] ||
                                 item["Item Name"];
-            const belongsto = item["Item Belongs To"] || "";
             return item && inventoryField && inventoryField !== "-";
           })
           .map((item: any) => {
@@ -181,43 +199,36 @@ const SpareManagement = () => {
                            item["IMIS_Code"] || 
                            item["IMIS CODE"] || "";
 
-            const uom = item["UOM"] || 
-                       item["U/M"] || "";
-
-            const partNumber = item["Part #"] || 
-                             item[" Part #"] ||
-                             item["Part Number"] || 
-                             item["Specification"] || "";
-                             
-            const category = item["Category"] || 
-                             item["category"] || 
-                             item["Catagory"] || "";
-
-            const boqNumber = item["BOQ #"] || 
-                            item[" BOQ #"] ||
-                            item["BOQ_No"] || 
-                            item["BOQ Number"] || "";
-
-            const serialNumber = item["Sr. #"] || 
-                               item[" Sr. #"] ||
-                               item["Sr_No"] || 
-                               item["Serial Number"] || "";
+            const uom = item["UOM"] || item["U/M"] || "";
+            const partNumber = item["Part #"] || item[" Part #"] || item["Part Number"] || item["Specification"] || "";
+            const category = item["Category"] || item["category"] || item["Catagory"] || "";
+            const boqNumber = item["BOQ #"] || item[" BOQ #"] || item["BOQ_No"] || item["BOQ Number"] || "";
+            const serialNumber = item["Sr. #"] || item[" Sr. #"] || item["Sr_No"] || item["Serial Number"] || "";
 
             return {
               id: Math.random().toString(36).substr(2, 9),
               name: itemName,
-              belongsto: belongsto,
+              belongsto: belongsto || mainTab,
               quantity: quantity,
               location: item["Location"] || "C&C Warehouse, Depot",
               itemCode: serialNumber?.toString() || "",
               imisCode: imisCode,
               uom: uom,
               partNumber: partNumber,
-              category: category,
-              boqNumber: boqNumber?.toString() || "",
+              category: category || category.name,
+              boqNumber: boqNumber,
               lastUpdated: new Date().toISOString().split('T')[0]
             };
           });
+
+        // Save to Supabase if we loaded from JSON
+        if (formattedParts.length > 0) {
+          try {
+            await Promise.all(formattedParts.map(part => addSparePart(part)));
+          } catch (err) {
+            console.error('Error saving initial data to Supabase:', err);
+          }
+        }
       }
 
       setTabData(prev => ({
@@ -241,7 +252,7 @@ const SpareManagement = () => {
         }
       }));
     }
-  };
+  }, []);
 
   // Load data when main tab or sub tab changes
   useEffect(() => {
@@ -249,6 +260,48 @@ const SpareManagement = () => {
       loadTabData(activeSubTab, activeMainTab);
     }
   }, [activeMainTab, activeSubTab]);
+
+  const currentTabId = `${activeMainTab}_${activeSubTab}`;
+
+  // Set up real-time subscription
+  useEffect(() => {
+    const subscription = subscribeToSpareParts((payload) => {
+      const tabId = currentTabId;
+      
+      setTabData(prev => {
+        const currentTab = prev[tabId];
+        if (!currentTab) return prev;
+        
+        let newData = [...currentTab.data];
+        
+        switch (payload.eventType) {
+          case 'INSERT':
+            newData = [...currentTab.data, payload.new];
+            break;
+          case 'UPDATE':
+            newData = currentTab.data.map(item => 
+              item.id === payload.new.id ? payload.new : item
+            );
+            break;
+          case 'DELETE':
+            newData = currentTab.data.filter(item => item.id !== payload.old.id);
+            break;
+        }
+        
+        return {
+          ...prev,
+          [tabId]: {
+            ...currentTab,
+            data: newData
+          }
+        };
+      });
+    });
+
+    return () => {
+      subscription(); // Cleanup subscription
+    };
+  }, [currentTabId]);
 
   // Handle sorting
   const requestSort = (key: keyof SparePart) => {
@@ -290,7 +343,6 @@ const SpareManagement = () => {
     return filtered;
   };
 
-  const currentTabId = `${activeMainTab}_${activeSubTab}`;
   const currentTabData = tabData[currentTabId];
   const filteredItems = currentTabData ? getFilteredItems(currentTabData.data) : [];
 
@@ -333,59 +385,81 @@ const SpareManagement = () => {
     }
   };
 
-  const handleRemove = (id: string) => {
+  const handleRemove = async (id: string) => {
     if (window.confirm("Are you sure you want to remove this item?")) {
-      setTabData(prev => ({
-        ...prev,
-        [currentTabId]: {
-          ...prev[currentTabId],
-          data: prev[currentTabId].data.filter(item => item.id !== id)
-        }
-      }));
+      try {
+        await deleteSparePart(id);
+        // The real-time subscription will handle the UI update
+        toast({
+          title: "Success",
+          description: "Item removed successfully",
+        });
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete item. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || form.quantity < 0 || !form.location.trim()) return;
 
     const currentCategory = systemCategories.find(cat => cat.key === activeSubTab);
-    const updatedItem = {
+    const itemData = {
       ...form,
-      id: editId || Math.random().toString(36).substr(2, 9),
-      lastUpdated: new Date().toISOString().split('T')[0],
       // Add category and belongsto based on current tab if not set
       category: form.category || currentCategory?.name || '',
-      belongsto: form.belongsto || activeMainTab
+      belongsto: form.belongsto || activeMainTab,
+      lastUpdated: new Date().toISOString().split('T')[0]
     };
 
-    setTabData(prev => ({
-      ...prev,
-      [currentTabId]: {
-        ...prev[currentTabId],
-        data: editId 
-          ? prev[currentTabId].data.map(item => item.id === editId ? updatedItem : item)
-          : [...prev[currentTabId].data, updatedItem]
+    try {
+      if (editId) {
+        // Update existing item
+        await updateSparePart(editId, itemData);
+        toast({
+          title: "Success",
+          description: "Item updated successfully",
+        });
+      } else {
+        // Add new item
+        await addSparePart(itemData);
+        toast({
+          title: "Success",
+          description: "Item added successfully",
+        });
       }
-    }));
 
-    // Reset form with default values
-    if (!editId) {
-      setForm({
-        name: '',
-        quantity: 0,
-        location: '',
-        uom: '',
-        imisCode: '',
-        boqNumber: '',
-        itemCode: '',
-        partNumber: '',
-        category: '',
-        belongsto: ''
+      // Reset form with default values
+      if (!editId) {
+        setForm({
+          name: '',
+          quantity: 0,
+          location: '',
+          uom: '',
+          imisCode: '',
+          boqNumber: '',
+          itemCode: '',
+          partNumber: '',
+          category: '',
+          belongsto: ''
+        });
+      }
+
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error saving item:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save item. Please try again.",
+        variant: "destructive",
       });
     }
-
-    setShowModal(false);
   };
 
   // Get sort indicator
