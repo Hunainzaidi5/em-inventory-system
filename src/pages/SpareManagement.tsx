@@ -349,10 +349,14 @@ const SpareManagement = () => {
     e.preventDefault();
     if (!form.name.trim() || form.quantity < 0 || !form.location.trim()) return;
 
+    const currentCategory = systemCategories.find(cat => cat.key === activeSubTab);
     const updatedItem = {
       ...form,
       id: editId || Math.random().toString(36).substr(2, 9),
-      lastUpdated: new Date().toISOString().split('T')[0]
+      lastUpdated: new Date().toISOString().split('T')[0],
+      // Add category and belongsto based on current tab if not set
+      category: form.category || currentCategory?.name || '',
+      belongsto: form.belongsto || activeMainTab
     };
 
     setTabData(prev => ({
@@ -364,6 +368,22 @@ const SpareManagement = () => {
           : [...prev[currentTabId].data, updatedItem]
       }
     }));
+
+    // Reset form with default values
+    if (!editId) {
+      setForm({
+        name: '',
+        quantity: 0,
+        location: '',
+        uom: '',
+        imisCode: '',
+        boqNumber: '',
+        itemCode: '',
+        partNumber: '',
+        category: '',
+        belongsto: ''
+      });
+    }
 
     setShowModal(false);
   };
