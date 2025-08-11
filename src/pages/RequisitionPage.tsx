@@ -11,7 +11,7 @@ interface Requisition {
   itemName: string;
   quantity: number;
   issuedTo: string;
-  department: string;
+  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   referenceNumber: string;
   createdAt: string;
   status: 'completed' | 'pending' | 'overdue';
@@ -22,7 +22,7 @@ interface Filters {
   requisitionType: RequisitionType | 'all';
   itemType: ItemType | 'all';
   status: 'completed' | 'pending' | 'overdue' | 'all';
-  department: string;
+  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   dateRange: {
     start: string;
     end: string;
@@ -35,7 +35,7 @@ interface RequisitionFormData {
   itemName: string;
   quantity: number;
   issuedTo: string;
-  department: string;
+  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   status: 'completed' | 'pending' | 'overdue';
   notes: string;
 }
@@ -61,13 +61,24 @@ const RequisitionPage = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
   
+  // Department options with display names
+  const departmentOptions = [
+    { value: 'em_systems' as const, label: 'E&M Systems' },
+    { value: 'em_track' as const, label: 'E&M Track' },
+    { value: 'em_power' as const, label: 'E&M Power' },
+    { value: 'em_signalling' as const, label: 'E&M Signalling' },
+    { value: 'em_communication' as const, label: 'E&M Communication' },
+    { value: 'em_third_rail' as const, label: 'E&M Third Rail' },
+    { value: 'em_safety_quality' as const, label: 'E&M Safety & Quality' }
+  ] as const;
+  
   const [filters, setFilters] = useState<Filters>({
     requisitionType: 'all',
     itemType: 'all',
     status: 'all',
-    department: '',
+    department: 'all',
     dateRange: { start: '', end: '' }
-  });
+  } as Filters);
 
   const [formData, setFormData] = useState<RequisitionFormData>({
     requisitionType: 'issue',
@@ -75,10 +86,10 @@ const RequisitionPage = () => {
     itemName: '',
     quantity: 1,
     issuedTo: '',
-    department: '',
+    department: 'all',
     status: 'pending',
     notes: ''
-  });
+  } as RequisitionFormData);
 
   // Generate mock data
   useEffect(() => {
@@ -92,7 +103,7 @@ const RequisitionPage = () => {
             itemName: 'Safety Helmet Yellow',
             quantity: 5,
             issuedTo: 'John Doe',
-            department: 'Maintenance',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-001',
             createdAt: '2024-08-01T10:30:00Z',
             status: 'completed',
@@ -105,7 +116,7 @@ const RequisitionPage = () => {
             itemName: 'Power Drill Makita XFD131',
             quantity: 2,
             issuedTo: 'Jane Smith',
-            department: 'Engineering',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-002',
             createdAt: '2024-08-02T14:15:00Z',
             status: 'pending',
@@ -118,7 +129,7 @@ const RequisitionPage = () => {
             itemName: 'Safety Gloves Nitrile',
             quantity: 10,
             issuedTo: 'Robert Johnson',
-            department: 'Operations',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-003',
             createdAt: '2024-08-03T09:45:00Z',
             status: 'overdue',
@@ -131,7 +142,7 @@ const RequisitionPage = () => {
             itemName: 'Hard Hat White',
             quantity: 3,
             issuedTo: 'Sarah Wilson',
-            department: 'Construction',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-004',
             createdAt: '2024-08-04T11:20:00Z',
             status: 'completed'
@@ -143,7 +154,7 @@ const RequisitionPage = () => {
             itemName: 'Angle Grinder',
             quantity: 1,
             issuedTo: 'Mike Davis',
-            department: 'Maintenance',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-005',
             createdAt: '2024-07-30T16:30:00Z',
             status: 'completed',
@@ -156,7 +167,7 @@ const RequisitionPage = () => {
             itemName: 'Cleaning Supplies',
             quantity: 15,
             issuedTo: 'Lisa Brown',
-            department: 'Facilities',
+            department: 'em_systems' as const,
             referenceNumber: 'TRX-2024-006',
             createdAt: '2024-08-01T08:00:00Z',
             status: 'pending'
@@ -170,12 +181,6 @@ const RequisitionPage = () => {
 
     fetchRequisition();
   }, []);
-
-  // Get unique departments for filter dropdown
-  const departments = useMemo(() => {
-    const depts = [...new Set(requisition.map(t => t.department))].filter(dept => dept);
-    return depts.sort();
-  }, [requisition]);
 
   // Filter requisition based on search and filters
   const filteredRequisition = useMemo(() => {
@@ -297,10 +302,10 @@ const RequisitionPage = () => {
       itemName: '',
       quantity: 1,
       issuedTo: '',
-      department: '',
+      department: 'all',
       status: 'pending',
       notes: ''
-    });
+    } as RequisitionFormData);
     setFormErrors({});
     setShowRequisitionForm(true);
   };
@@ -392,9 +397,9 @@ const RequisitionPage = () => {
       requisitionType: 'all',
       itemType: 'all',
       status: 'all',
-      department: '',
+      department: 'all',
       dateRange: { start: '', end: '' }
-    });
+    } as Filters);
   };
 
   const getStatusBadge = (status: string) => {
@@ -519,20 +524,45 @@ const RequisitionPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-          </button>
-          <button
-            onClick={exportToCSV}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-          >
-            <Download className="h-4 w-4" />
-            Export
-          </button>
+          
+          {/* Department Dropdown */}
+          <div className="w-full md:w-48">
+            <select
+              value={filters.department}
+              onChange={(e) => {
+                const value = e.target.value as Requisition['department'];
+                setFilters(prev => ({
+                  ...prev,
+                  department: value || 'all'
+                }));
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Departments</option>
+              {departmentOptions.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm"
+            >
+              <Filter className="h-4 w-4" />
+              <span className="hidden sm:inline">Filters</span>
+            </button>
+            <button
+              onClick={exportToCSV}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm"
+            >
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Export</span>
+            </button>
+          </div>
         </div>
 
         {/* Filters Panel */}
@@ -570,6 +600,23 @@ const RequisitionPage = () => {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <select
+                  value={filters.department}
+                  onChange={(e) => setFilters(prev => ({...prev, department: e.target.value as any}))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Departments</option>
+                  <option value="em_systems">E&M Systems</option>
+                  <option value="em_track">E&M Track</option>
+                  <option value="em_power">E&M Power</option>
+                  <option value="em_thrird_rail">E&M Third Rail</option>
+                  <option value="em_communication">E&M Communication</option>
+                  <option value="em_signaling">E&M Signaling</option>
+                  <option value="em_safety_quality">E&M Safety & Quality</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
                   value={filters.status}
@@ -583,19 +630,7 @@ const RequisitionPage = () => {
                   <option value="cancelled">Cancelled</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                <select
-                  value={filters.department}
-                  onChange={(e) => setFilters(prev => ({...prev, department: e.target.value}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">All Departments</option>
-                  {departments.map(dept => (
-                    <option key={dept} value={dept}>{dept}</option>
-                  ))}
-                </select>
-              </div>
+              
               <div className="flex items-end">
                 <button
                   onClick={clearFilters}
@@ -650,7 +685,9 @@ const RequisitionPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">{getTypeBadge(txn.itemType)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.quantity}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.issuedTo}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.department}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {departmentOptions.find(d => d.value === txn.department)?.label || txn.department}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {new Date(txn.createdAt).toLocaleDateString('en-US', { 
                         year: 'numeric', 
@@ -826,35 +863,20 @@ const RequisitionPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Department <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.department}
                     onChange={(e) => handleFormChange('department', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.department ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="Enter department"
-                    list="departments"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
-                  />
-                  <option value="em_systems">E&M Systems</option>
-                  <option value="em_track">E&M Track</option>
-                  <option value="em_power">E&M Power</option>
-                  <option value="em_signalling">E&M Signalling</option>
-                  <option value="em_communication">E&M Communication</option>
-                  <option value="em_third_rail">E&M Third Rail</option>
-                  <option value="em_safety_quality">E&M Safety & Quality</option>
-                  <datalist id="departments">
-                    {departments.map(dept => (
-                      <option key={dept} value={dept} />
-                    ))}
-                  </datalist>
-                  {formErrors.department && (
-                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
-                      <AlertCircle className="h-4 w-4" />
-                      {formErrors.department}
-                    </div>
-                  )}
+                  >
+                    <option value="em_systems">E&M Systems</option>
+                    <option value="em_track">E&M Track</option>
+                    <option value="em_power">E&M Power</option>
+                    <option value="em_signalling">E&M Signalling</option>
+                    <option value="em_communication">E&M Communication</option>
+                    <option value="em_third_rail">E&M Third Rail</option>
+                    <option value="em_safety_quality">E&M Safety & Quality</option>
+                  </select>
                 </div>
 
                 {/* Status */}
