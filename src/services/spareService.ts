@@ -31,7 +31,7 @@ export const addSparePart = async (part: Omit<SparePart, 'id' | 'lastUpdated'>) 
       .from(TABLE_NAME)
       .insert([{
         ...part,
-        last_updated: new Date().toISOString()
+        lastUpdated: new Date().toISOString()
       }])
       .select();
 
@@ -49,7 +49,7 @@ export const updateSparePart = async (id: string, updates: Partial<Omit<SparePar
       .from(TABLE_NAME)
       .update({
         ...updates,
-        last_updated: new Date().toISOString()
+        lastUpdated: new Date().toISOString()
       })
       .eq('id', id)
       .select();

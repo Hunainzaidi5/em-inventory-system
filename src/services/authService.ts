@@ -208,43 +208,37 @@ const ensureDeveloperUser = async () => {
 };
 
 // Initialize storage bucket for avatars
-const initStorage = async () => {
-  try {
-    // Check if the avatars bucket exists
-    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-    
-    if (bucketsError) throw bucketsError;
-    
-    const bucketExists = buckets.some(bucket => bucket.name === 'avatars');
-    
-    if (!bucketExists) {
-      console.log('Creating avatars bucket...');
-      const { error: createError } = await supabase.storage.createBucket('avatars', {
-        public: true,
-        allowedMimeTypes: ['image/*'],
-        fileSizeLimit: 1024 * 1024 * 2, // 2MB limit
-      });
-      
-      if (createError) throw createError;
-      console.log('Avatars bucket created successfully');
-    }
-    
-    // Set bucket policies
-    const { error: policyError } = await supabase.rpc('set_avatar_policies');
-    if (policyError) {
-      console.warn('Failed to set bucket policies:', policyError.message);
-    }
-    
-  } catch (error) {
-    console.error('Error initializing storage:', error);
-  }
-};
+// const initStorage = async () => {
+//   try {
+//     // Check if the avatars bucket exists
+//     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+//     if (bucketsError) throw bucketsError;
+//     const bucketExists = buckets.some(bucket => bucket.name === 'avatars');
+//     if (!bucketExists) {
+//       console.log('Creating avatars bucket...');
+//       const { error: createError } = await supabase.storage.createBucket('avatars', {
+//         public: true,
+//         allowedMimeTypes: ['image/*'],
+//         fileSizeLimit: 1024 * 1024 * 2,
+//       });
+//       if (createError) throw createError;
+//       console.log('Avatars bucket created successfully');
+//     }
+//     // Set bucket policies via RPC (requires service role)
+//     const { error: policyError } = await supabase.rpc('set_avatar_policies');
+//     if (policyError) {
+//       console.warn('Failed to set bucket policies:', policyError.message);
+//     }
+//   } catch (error) {
+//     console.error('Error initializing storage:', error);
+//   }
+// };
 
-// Run initialization
-Promise.all([
-  ensureDeveloperUser(),
-  initStorage()
-]).catch(console.error);
+// Run initialization (disabled in client - requires service role)
+// Promise.all([
+//   ensureDeveloperUser(),
+//   initStorage()
+// ]).catch(console.error);
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   console.log('[AUTH] Attempting login for email:', credentials.email);
