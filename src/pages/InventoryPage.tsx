@@ -1,250 +1,60 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi";
 
-interface SparePart {
+interface IssuedTo {
+  name: string;
+  olt: string;
+  designation: string;
+  group: string;
+}
+
+interface PPEItem {
   id?: string;
-  name: string;
+  itemName: string;
+  itemDescription: string;
   quantity: number;
-  location: string;
+  issuedTo: IssuedTo;
   lastUpdated?: string;
-  itemCode?: string;
-  imisCode?: string;
-  uom?: string;
-  partNumber?: string;
-  boqNumber?: string;
-  belongsto?: string;
-}
-
-interface TabData {
-  name: string;
-  data: SparePart[];
-  loading: boolean;
-  error: string | null;
-}
-
-interface SystemCategory {
-  key: string;
-  name: string;
-  omFile: string;  // O&M JSON file
-  pmaFile: string; // PMA JSON file
-  type: 'om' | 'pma' | 'both'; // Indicates which tabs this category appears in
 }
 
 const InventoryPage = () => {
-  const [activeMainTab, setActiveMainTab] = useState("O&M");
-  const [activeSubTab, setActiveSubTab] = useState("BAS");
-  const [tabData, setTabData] = useState<Record<string, TabData>>({});
+  const [ppeItems, setPpeItems] = useState<PPEItem[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<Omit<SparePart, 'id'>>({ 
-    name: "", 
+  const [form, setForm] = useState<Omit<PPEItem, 'id'>>({ 
+    itemName: "", 
+    itemDescription: "", 
     quantity: 0, 
-    location: "", 
-    uom: "", 
-    imisCode: "", 
-    boqNumber: "",
-    itemCode: "",
-    partNumber: "",
-    belongsto: ""
+    issuedTo: {
+      name: "",
+      olt: "",
+      designation: "",
+      group: ""
+    }
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("all");
-  const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState("all");
+  const [sortConfig, setSortConfig] = useState<{ key: keyof PPEItem; direction: 'asc' | 'desc' } | null>(null);
 
-  // Define system categories with separate O&M and PMA categories
-  const systemCategories: SystemCategory[] = [
-    // O&M Categories
-    { key: "om_BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "", type: 'om' },
-    { key: "om_BATTERIES", name: "BATTERIES", omFile: "om/batteries.json", pmaFile: "", type: 'om' },
-    { key: "om_ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "", type: 'om' },
-    { key: "om_ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "", type: 'om' },
-    { key: "om_FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "", type: 'om' },
-    { key: "om_FES", name: "FES", omFile: "om/fes.json", pmaFile: "", type: 'om' },
-    { key: "om_GENERAL_ITEMS", name: "GENERAL ITEMS", omFile: "om/general_items.json", pmaFile: "", type: 'om' },
-    { key: "om_HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "", type: 'om' },
-    { key: "om_ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "", type: 'om' },
-    { key: "om_PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "", type: 'om' },
-    { key: "om_WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "", type: 'om' },
-    
-    // PMA Categories (keeping the original ones)
-    { key: "PMA_BAS", name: "BAS", omFile: "", pmaFile: "pma/bas.json", type: 'pma' },
-    { key: "PMA_FAS", name: "FAS", omFile: "", pmaFile: "pma/fas.json", type: 'pma' },
-    { key: "PMA_FES", name: "FES", omFile: "", pmaFile: "pma/fes.json", type: 'pma' },
-    { key: "PMA_PSCADA", name: "PSCADA", omFile: "", pmaFile: "pma/pscada.json", type: 'pma' },
-    { key: "PMA_ELEVATOR", name: "ELEVATOR", omFile: "", pmaFile: "pma/elevator.json", type: 'pma' },
-    { key: "PMA_ESCALATOR", name: "ESCALATOR", omFile: "", pmaFile: "pma/escalator.json", type: 'pma' },
-    { key: "PMA_PSD", name: "PSD", omFile: "", pmaFile: "pma/psd.json", type: 'pma' },
-    { key: "PMA_HVAC", name: "HVAC", omFile: "", pmaFile: "pma/hvac.json", type: 'pma' },
-    { key: "PMA_WSD", name: "WSD", omFile: "", pmaFile: "pma/wsd.json", type: 'pma' },
-    { key: "PMA_ILLUMINATION", name: "ILLUMINATION", omFile: "", pmaFile: "pma/illumination.json", type: 'pma' }
-  ];
-
-  // Get categories for current main tab
-  const getCurrentTabCategories = () => {
-    return systemCategories.filter(cat => 
-      activeMainTab === "O&M" ? cat.type === 'om' : cat.type === 'pma'
-    );
-  };
-
-  // Update active sub tab when main tab changes
+  // Load data from localStorage on component mount
   useEffect(() => {
-    const currentCategories = getCurrentTabCategories();
-    if (currentCategories.length > 0 && !currentCategories.find(cat => cat.key === activeSubTab)) {
-      setActiveSubTab(currentCategories[0].key);
+    const savedData = localStorage.getItem('ppeItems');
+    if (savedData) {
+      try {
+        setPpeItems(JSON.parse(savedData));
+      } catch (error) {
+        console.error('Error loading PPE data:', error);
+      }
     }
-  }, [activeMainTab]);
+  }, []);
 
-  // Load data for a specific tab
-  const loadTabData = async (tabKey: string, mainTab: string) => {
-    const category = systemCategories.find(cat => cat.key === tabKey);
-    if (!category) return;
-
-    const tabId = `${mainTab}_${tabKey}`;
-    
-    setTabData(prev => ({
-      ...prev,
-      [tabId]: {
-        name: category.name,
-        data: [],
-        loading: true,
-        error: null
-      }
-    }));
-
-    try {
-      const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
-      if (!fileName) {
-        throw new Error(`No data file configured for ${mainTab} ${category.name}`);
-      }
-      
-      const response = await fetch(`/${fileName}`);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load ${fileName}`);
-      }
-      
-      const data = await response.json();
-      let formattedParts: SparePart[] = [];
-
-      if (category.key === "WSD" || category.key === "PMA_WSD") {
-        // Handle WSD structure (array format)
-        formattedParts = (data || [])
-          .filter((item: any) => item && item["Item_Description"])
-          .map((item: any) => ({
-            id: Math.random().toString(36).substr(2, 9),
-            name: item["Item_Description"] || "",
-            quantity: Number(item["Quantity"]) || 0,
-            location: item["Location"] || "C&C Warehouse, Depot",
-            itemCode: item["Sr_No"]?.toString() || "",
-            imisCode: item["IMIS_Code"] || "",
-            uom: item["UOM"] || "",
-            partNumber: item["Specification"] || "",
-            boqNumber: item["BOQ_No"]?.toString() || "",
-            lastUpdated: new Date().toISOString().split('T')[0]
-          }));
-      } else {
-        // Handle other JSON structures
-        const key = Object.keys(data)[0];
-        const items = data[key] || [];
-        
-        formattedParts = items
-          .filter((item: any) => {
-            const inventoryField = item[key + " (Spares Inventory)"] || 
-                                item["(Sanitary Items Inventory)"] ||
-                                item["PSCADA System - (Spares Inventory)"] ||
-                                item["Item Detail"] ||
-                                item["Item_Description"] || 
-                                item["Item Description"] ||
-                                item["Item Name"];
-            const belongsto = item["Item Belongs To"] || "";
-            return item && inventoryField && inventoryField !== "-";
-          })
-          .map((item: any) => {
-            const itemName = item[key + " (Spares Inventory)"] || 
-                           item["(Sanitary Items Inventory)"] ||
-                           item["PSCADA System - (Spares Inventory)"] ||
-                           item["Item Detail"] ||
-                           item["Item_Description"] || 
-                           item["Item Description"] ||
-                           item["Item Name"] || "";
-            const belongsto = item["Item Belongs To"] || "";
-
-            const quantity = Number(item["Quantity"]) || 
-                           Number(item["Current Balance"]) || 
-                           Number(item["In-stock"]) || 0;
-
-            const imisCode = item["IMIS Codes"] || 
-                           item[" IMIS Codes"] ||
-                           item["IMIS Code"] || 
-                           item["IMIS_Code"] || 
-                           item["IMIS CODE"] || "";
-
-            const uom = item["UOM"] || 
-                       item["U/M"] || "";
-
-            const partNumber = item["Part #"] || 
-                             item[" Part #"] ||
-                             item["Part Number"] || 
-                             item["Specification"] || "";
-
-            const boqNumber = item["BOQ #"] || 
-                            item[" BOQ #"] ||
-                            item["BOQ_No"] || 
-                            item["BOQ Number"] || "";
-
-            const serialNumber = item["Sr. #"] || 
-                               item[" Sr. #"] ||
-                               item["Sr_No"] || 
-                               item["Serial Number"] || "";
-
-            return {
-              id: Math.random().toString(36).substr(2, 9),
-              name: itemName,
-              belongsto: belongsto,
-              quantity: quantity,
-              location: item["Location"] || "C&C Warehouse, Depot",
-              itemCode: serialNumber?.toString() || "",
-              imisCode: imisCode,
-              uom: uom,
-              partNumber: partNumber,
-              boqNumber: boqNumber?.toString() || "",
-              lastUpdated: new Date().toISOString().split('T')[0]
-            };
-          });
-      }
-
-      setTabData(prev => ({
-        ...prev,
-        [tabId]: {
-          name: category.name,
-          data: formattedParts,
-          loading: false,
-          error: null
-        }
-      }));
-    } catch (err) {
-      console.error(`Error loading ${tabKey} data for ${mainTab}:`, err);
-      setTabData(prev => ({
-        ...prev,
-        [tabId]: {
-          name: category.name,
-          data: [],
-          loading: false,
-          error: `Failed to load ${mainTab} ${category.name} data`
-        }
-      }));
-    }
-  };
-
-  // Load data when main tab or sub tab changes
+  // Save data to localStorage whenever data changes
   useEffect(() => {
-    if (activeMainTab && activeSubTab) {
-      loadTabData(activeSubTab, activeMainTab);
-    }
-  }, [activeMainTab, activeSubTab]);
+    localStorage.setItem('ppeItems', JSON.stringify(ppeItems));
+  }, [ppeItems]);
 
   // Handle sorting
-  const requestSort = (key: keyof SparePart) => {
+  const requestSort = (key: keyof PPEItem) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig?.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -253,21 +63,27 @@ const InventoryPage = () => {
   };
 
   // Apply sorting, filtering and searching
-  const getFilteredItems = (data: SparePart[]) => {
+  const getFilteredItems = (data: PPEItem[]) => {
     let filtered = [...data];
     
+    // Apply search
     if (searchTerm) {
       filtered = filtered.filter(item => 
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.itemCode && item.itemCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (item.imisCode && item.imisCode.toLowerCase().includes(searchTerm.toLowerCase()))
+        item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.itemDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.issuedTo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.issuedTo.olt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.issuedTo.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.issuedTo.group.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
-    if (selectedLocation !== "all") {
-      filtered = filtered.filter(item => item.location === selectedLocation);
+
+    // Apply group filter
+    if (selectedGroup !== "all") {
+      filtered = filtered.filter(item => item.issuedTo.group === selectedGroup);
     }
     
+    // Apply sorting
     if (sortConfig) {
       filtered.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -283,43 +99,36 @@ const InventoryPage = () => {
     return filtered;
   };
 
-  const currentTabId = `${activeMainTab}_${activeSubTab}`;
-  const currentTabData = tabData[currentTabId];
-  const filteredItems = currentTabData ? getFilteredItems(currentTabData.data) : [];
+  const filteredItems = getFilteredItems(ppeItems);
 
-  // Get unique locations for filter dropdown
-  const locations = currentTabData 
-    ? ["all", ...new Set(currentTabData.data.map(item => item.location))]
-    : ["all"];
+  // Get unique groups for filter dropdown
+  const groups = ["all", ...new Set(ppeItems.map(item => item.issuedTo.group))];
 
   // Modal handlers
   const openAddModal = () => {
     setForm({ 
-      name: "", 
+      itemName: "", 
+      itemDescription: "", 
       quantity: 0, 
-      location: "", 
-      uom: "", 
-      imisCode: "", 
-      boqNumber: "",
-      itemCode: "",
-      partNumber: ""
+      issuedTo: {
+        name: "",
+        olt: "",
+        designation: "",
+        group: ""
+      }
     });
     setEditId(null);
     setShowModal(true);
   };
 
   const openEditModal = (id: string) => {
-    const item = currentTabData?.data.find(item => item.id === id);
+    const item = ppeItems.find(item => item.id === id);
     if (item) {
       setForm({
-        name: item.name,
+        itemName: item.itemName,
+        itemDescription: item.itemDescription,
         quantity: item.quantity,
-        location: item.location,
-        uom: item.uom || "",
-        imisCode: item.imisCode || "",
-        boqNumber: item.boqNumber || "",
-        itemCode: item.itemCode || "",
-        partNumber: item.partNumber || ""
+        issuedTo: item.issuedTo
       });
       setEditId(id);
       setShowModal(true);
@@ -327,20 +136,14 @@ const InventoryPage = () => {
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm("Are you sure you want to remove this item?")) {
-      setTabData(prev => ({
-        ...prev,
-        [currentTabId]: {
-          ...prev[currentTabId],
-          data: prev[currentTabId].data.filter(item => item.id !== id)
-        }
-      }));
+    if (window.confirm("Are you sure you want to remove this PPE item?")) {
+      setPpeItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || form.quantity < 0 || !form.location.trim()) return;
+    if (!form.itemName.trim() || form.quantity < 0 || !form.issuedTo.name.trim()) return;
 
     const updatedItem = {
       ...form,
@@ -348,30 +151,19 @@ const InventoryPage = () => {
       lastUpdated: new Date().toISOString().split('T')[0]
     };
 
-    setTabData(prev => ({
-      ...prev,
-      [currentTabId]: {
-        ...prev[currentTabId],
-        data: editId 
-          ? prev[currentTabId].data.map(item => item.id === editId ? updatedItem : item)
-          : [...prev[currentTabId].data, updatedItem]
-      }
-    }));
+    if (editId) {
+      setPpeItems(prev => prev.map(item => item.id === editId ? updatedItem : item));
+    } else {
+      setPpeItems(prev => [...prev, updatedItem]);
+    }
 
     setShowModal(false);
   };
 
   // Get sort indicator
-  const getSortIndicator = (key: keyof SparePart) => {
+  const getSortIndicator = (key: keyof PPEItem) => {
     if (sortConfig?.key !== key) return null;
     return sortConfig.direction === 'asc' ? '↑' : '↓';
-  };
-
-  // Refresh current tab data
-  const refreshCurrentTab = () => {
-    if (activeMainTab && activeSubTab) {
-      loadTabData(activeSubTab, activeMainTab);
-    }
   };
 
   return (
@@ -380,303 +172,178 @@ const InventoryPage = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Spare Management</h1>
-            <p className="text-gray-600">Track and manage your spare parts inventory across all systems</p>
+            <h1 className="text-2xl font-bold text-gray-800">PPE Items Management</h1>
+            <p className="text-gray-600">Track and manage Personal Protective Equipment and their assignments</p>
           </div>
-          <div className="flex items-center space-x-3 mt-4 md:mt-0">
-            <button
-              onClick={refreshCurrentTab}
-              className="flex items-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
-              disabled={currentTabData?.loading}
-            >
-              <FiRefreshCw className={`mr-2 ${currentTabData?.loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-            <button
-              onClick={openAddModal}
-              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <FiPlus className="mr-2" />
-              Add New Item
-            </button>
-          </div>
+          <button
+            onClick={openAddModal}
+            className="mt-4 md:mt-0 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <FiPlus className="mr-2" />
+            Add New PPE Item
+          </button>
         </div>
 
         {/* Stats Cards */}
-        {currentTabData && !currentTabData.loading && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Total Items</h3>
-              <p className="text-2xl font-bold">{currentTabData.data.length}</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Total Quantity</h3>
-              <p className="text-2xl font-bold">
-                {currentTabData.data.reduce((sum, item) => sum + item.quantity, 0)}
-              </p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Warehouses</h3>
-              <p className="text-2xl font-bold">
-                {new Set(currentTabData.data.map(item => item.location)).size}
-              </p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Low Stock Items</h3>
-              <p className="text-2xl font-bold text-red-600">
-                {currentTabData.data.filter(item => item.quantity < 100).length}
-              </p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-gray-500 font-medium">Total PPE Items</h3>
+            <p className="text-2xl font-bold">{ppeItems.length}</p>
           </div>
-        )}
-
-        {/* Main Navigation */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          {/* Main Tabs */}
-          <div className="flex border-b">
-            <button
-              onClick={() => setActiveMainTab("O&M")}
-              className={`px-6 py-4 font-medium text-sm border-r ${
-                activeMainTab === "O&M" 
-                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              O&M (Operations & Maintenance)
-            </button>
-            <button
-              onClick={() => setActiveMainTab("PMA")}
-              className={`px-6 py-4 font-medium text-sm ${
-                activeMainTab === "PMA" 
-                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              PMA (Punjab Mass Transit Authority)
-            </button>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-gray-500 font-medium">Total Quantity</h3>
+            <p className="text-2xl font-bold">
+              {ppeItems.reduce((sum, item) => sum + item.quantity, 0)}
+            </p>
           </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-gray-500 font-medium">Assigned Personnel</h3>
+            <p className="text-2xl font-bold">
+              {new Set(ppeItems.map(item => item.issuedTo.name)).size}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-gray-500 font-medium">Groups</h3>
+            <p className="text-2xl font-bold">
+              {new Set(ppeItems.map(item => item.issuedTo.group)).size}
+            </p>
+          </div>
+        </div>
 
-          {/* Sub Tabs */}
-          <div className="p-4">
-            <div className="flex flex-wrap gap-2">
-              {getCurrentTabCategories().map((category) => (
+        {/* Filters */}
+        <div className="bg-white p-4 rounded-lg shadow mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+            <div className="relative flex-grow">
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search PPE items, descriptions, or assigned personnel..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {searchTerm && (
                 <button
-                  key={category.key}
-                  onClick={() => setActiveSubTab(category.key)}
-                  className={`px-3 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeSubTab === category.key
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {category.name}
+                  <FiX />
                 </button>
-              ))}
+              )}
+            </div>
+            <div className="w-full md:w-48">
+              <select
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {groups.map(group => (
+                  <option key={group} value={group}>
+                    {group === "all" ? "All Groups" : group}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div>
-          {/* Filters */}
-          <div className="bg-white p-4 rounded-lg shadow mb-6">
-            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-              <div className="flex-shrink-0">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {activeMainTab} - {currentTabData?.name || activeSubTab}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {activeMainTab === "O&M" ? "Operations & Maintenance Inventory" : "Punjab Mass Transit Authority Inventory"}
-                </p>
-              </div>
-              <div className="relative flex-grow">
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search items..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        {/* PPE Items Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => requestSort('itemName')}
                   >
-                    <FiX />
-                  </button>
-                )}
-              </div>
-              <div className="w-full md:w-48">
-                <select
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {locations.map(loc => (
-                    <option key={loc} value={loc}>
-                      {loc === "all" ? "All Locations" : loc}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Loading/Error States */}
-          {currentTabData?.loading && (
-            <div className="bg-white p-8 rounded-lg shadow mb-6 text-center">
-              <FiRefreshCw className="animate-spin mx-auto mb-4 text-blue-600" size={32} />
-              <p className="text-gray-600">Loading {currentTabData.name} data...</p>
-            </div>
-          )}
-          
-          {currentTabData?.error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
-              <div className="flex items-center">
-                <FiX className="mr-2" />
-                <p>{currentTabData.error}</p>
-                <button
-                  onClick={refreshCurrentTab}
-                  className="ml-auto px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                >
-                  Retry
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Inventory Table */}
-          {!currentTabData?.loading && (
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('name')}
-                      >
-                        <div className="flex items-center">
-                          Item Name {getSortIndicator('name')}
+                    <div className="flex items-center">
+                      Item Name {getSortIndicator('itemName')}
+                    </div>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Item Description
+                  </th>
+                  <th 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => requestSort('quantity')}
+                  >
+                    <div className="flex items-center">
+                      Quantity {getSortIndicator('quantity')}
+                    </div>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Issued To
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{item.itemName}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-500 max-w-xs truncate" title={item.itemDescription}>
+                          {item.itemDescription}
                         </div>
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Belongs To
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        IMIS Code
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        BOQ Number
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Part Number
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        UOM
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('quantity')}
-                      >
-                        <div className="flex items-center">
-                          Quantity {getSortIndicator('quantity')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={`text-sm ${item.quantity < 10 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+                          {item.quantity}
                         </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('location')}
-                      >
-                        <div className="flex items-center">
-                          Location {getSortIndicator('location')}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-500">
+                          <div className="font-medium">{item.issuedTo.name}</div>
+                          <div className="text-xs text-gray-400">
+                            OLT: {item.issuedTo.olt} | {item.issuedTo.designation} | Group: {item.issuedTo.group}
+                          </div>
                         </div>
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => openEditModal(item.id!)}
+                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          title="Edit"
+                        >
+                          <FiEdit />
+                        </button>
+                        <button
+                          onClick={() => handleRemove(item.id!)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredItems.length > 0 ? (
-                      filteredItems.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                            {item.itemCode && (
-                              <div className="text-xs text-gray-500">Code: {item.itemCode}</div>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.belongsto || '-'}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.boqNumber || '-'}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.partNumber || '-'}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.uom || '-'}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className={`text-sm ${
-                              item.quantity < 10 ? 'text-red-600 font-bold' : 
-                              item.quantity < 100 ? 'text-orange-600 font-medium' : 
-                              'text-gray-500'
-                            }`}>
-                              {item.quantity}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.location}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => openEditModal(item.id!)}
-                              className="text-blue-600 hover:text-blue-900 mr-4"
-                              title="Edit"
-                            >
-                              <FiEdit />
-                            </button>
-                            <button
-                              onClick={() => handleRemove(item.id!)}
-                              className="text-red-600 hover:text-red-900"
-                              title="Delete"
-                            >
-                              <FiTrash2 />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={8} className="px-6 py-8 text-center text-sm text-gray-500">
-                          {currentTabData?.error 
-                            ? "Failed to load data"
-                            : searchTerm || selectedLocation !== "all" 
-                              ? "No items match your filters" 
-                              : "No items found in inventory"}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                      {searchTerm || selectedGroup !== "all"
+                        ? "No PPE items match your filters" 
+                        : "No PPE items recorded"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Add/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center border-b px-6 py-4">
                 <h2 className="text-lg font-semibold">
-                  {editId ? "Edit Inventory Item" : "Add New Inventory Item"}
+                  {editId ? "Edit PPE Item" : "Add New PPE Item"}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
@@ -691,117 +358,111 @@ const InventoryPage = () => {
                     Item Name *
                   </label>
                   <input
-                    name="name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    name="itemName"
+                    value={form.itemName}
+                    onChange={(e) => setForm({ ...form, itemName: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Item Belongs To *
+                    Item Description
                   </label>
-                  <input
-                    name="belongsto"
-                    value={form.belongsto}
-                    onChange={(e) => setForm({ ...form, belongsto: e.target.value })}
+                  <textarea
+                    name="itemDescription"
+                    value={form.itemDescription}
+                    onChange={(e) => setForm({ ...form, itemDescription: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
+                    rows={3}
+                    placeholder="Describe the PPE item and its specifications..."
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity *
-                    </label>
-                    <input
-                      name="quantity"
-                      type="number"
-                      min="0"
-                      value={form.quantity}
-                      onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      UOM
-                    </label>
-                    <input
-                      name="uom"
-                      value={form.uom}
-                      onChange={(e) => setForm({ ...form, uom: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., PCS, KG, M"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      IMIS Code
-                    </label>
-                    <input
-                      name="imisCode"
-                      value={form.imisCode}
-                      onChange={(e) => setForm({ ...form, imisCode: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="IMIS Code"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      BOQ Number
-                    </label>
-                    <input
-                      name="boqNumber"
-                      value={form.boqNumber}
-                      onChange={(e) => setForm({ ...form, boqNumber: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="BOQ Number"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Item Code
-                    </label>
-                    <input
-                      name="itemCode"
-                      value={form.itemCode}
-                      onChange={(e) => setForm({ ...form, itemCode: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Item Code"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Part Number
-                    </label>
-                    <input
-                      name="partNumber"
-                      value={form.partNumber}
-                      onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Part Number"
-                    />
-                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location *
+                    Quantity *
                   </label>
                   <input
-                    name="location"
-                    value={form.location}
-                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    name="quantity"
+                    type="number"
+                    min="0"
+                    value={form.quantity}
+                    onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
+                
+                {/* Issued To Section */}
+                <div className="border-t pt-4">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Issued To</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Name *
+                      </label>
+                      <input
+                        name="issuedToName"
+                        value={form.issuedTo.name}
+                        onChange={(e) => setForm({ 
+                          ...form, 
+                          issuedTo: { ...form.issuedTo, name: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Receiver Name"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        OLT (Employee Code)
+                      </label>
+                      <input
+                        name="issuedToOlt"
+                        value={form.issuedTo.olt}
+                        onChange={(e) => setForm({ 
+                          ...form, 
+                          issuedTo: { ...form.issuedTo, olt: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Employee Code Number"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Designation
+                      </label>
+                      <input
+                        name="issuedToDesignation"
+                        value={form.issuedTo.designation}
+                        onChange={(e) => setForm({ 
+                          ...form, 
+                          issuedTo: { ...form.issuedTo, designation: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Designation"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Group
+                      </label>
+                      <input
+                        name="issuedToGroup"
+                        value={form.issuedTo.group}
+                        onChange={(e) => setForm({ 
+                          ...form, 
+                          issuedTo: { ...form.issuedTo, group: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Group Number"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     type="button"
@@ -814,7 +475,7 @@ const InventoryPage = () => {
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {editId ? "Save Changes" : "Add Item"}
+                    {editId ? "Save Changes" : "Add PPE Item"}
                   </button>
                 </div>
               </form>
@@ -822,8 +483,8 @@ const InventoryPage = () => {
           </div>
         )}
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
-export default InventoryPage;
+export default InventoryPage; 

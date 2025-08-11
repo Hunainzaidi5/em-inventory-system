@@ -49,497 +49,781 @@ const SpareManagement = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
+  const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
 
-  // System categories
+  // Define system categories with separate O&M and PMA categories
   const systemCategories: SystemCategory[] = [
-    { key: "bas", name: "BAS", omFile: "bas_om.json", pmaFile: "bas_pma.json", type: 'both' },
-    { key: "fire", name: "Fire Fighting", omFile: "fire_om.json", pmaFile: "fire_pma.json", type: 'both' },
-    { key: "plumbing", name: "Plumbing", omFile: "plumbing_om.json", pmaFile: "plumbing_pma.json", type: 'both' },
-    { key: "electrical", name: "Electrical", omFile: "electrical_om.json", pmaFile: "electrical_pma.json", type: 'both' },
-    { key: "hvac", name: "HVAC", omFile: "hvac_om.json", pmaFile: "hvac_pma.json", type: 'both' },
+    // O&M Categories
+    { key: "om_BAS", name: "BAS", omFile: "om/bas.json", pmaFile: "", type: 'om' },
+    { key: "om_BATTERIES", name: "BATTERIES", omFile: "om/batteries.json", pmaFile: "", type: 'om' },
+    { key: "om_ELEVATOR", name: "ELEVATOR", omFile: "om/elevator.json", pmaFile: "", type: 'om' },
+    { key: "om_ESCALATOR", name: "ESCALATOR", omFile: "om/escalator.json", pmaFile: "", type: 'om' },
+    { key: "om_FAS", name: "FAS", omFile: "om/fas.json", pmaFile: "", type: 'om' },
+    { key: "om_FES", name: "FES", omFile: "om/fes.json", pmaFile: "", type: 'om' },
+    { key: "om_GENERAL_ITEMS", name: "GENERAL ITEMS", omFile: "om/general_items.json", pmaFile: "", type: 'om' },
+    { key: "om_HVAC", name: "HVAC", omFile: "om/hvac.json", pmaFile: "", type: 'om' },
+    { key: "om_ILLUMINATION", name: "ILLUMINATION", omFile: "om/illumination.json", pmaFile: "", type: 'om' },
+    { key: "om_PSD", name: "PSD", omFile: "om/psd.json", pmaFile: "", type: 'om' },
+    { key: "om_WSD", name: "WSD", omFile: "om/wsd.json", pmaFile: "", type: 'om' },
+    
+    // PMA Categories (keeping the original ones)
+    { key: "PMA_BAS", name: "BAS", omFile: "", pmaFile: "pma/bas.json", type: 'pma' },
+    { key: "PMA_FAS", name: "FAS", omFile: "", pmaFile: "pma/fas.json", type: 'pma' },
+    { key: "PMA_FES", name: "FES", omFile: "", pmaFile: "pma/fes.json", type: 'pma' },
+    { key: "PMA_PSCADA", name: "PSCADA", omFile: "", pmaFile: "pma/pscada.json", type: 'pma' },
+    { key: "PMA_ELEVATOR", name: "ELEVATOR", omFile: "", pmaFile: "pma/elevator.json", type: 'pma' },
+    { key: "PMA_ESCALATOR", name: "ESCALATOR", omFile: "", pmaFile: "pma/escalator.json", type: 'pma' },
+    { key: "PMA_PSD", name: "PSD", omFile: "", pmaFile: "pma/psd.json", type: 'pma' },
+    { key: "PMA_HVAC", name: "HVAC", omFile: "", pmaFile: "pma/hvac.json", type: 'pma' },
+    { key: "PMA_WSD", name: "WSD", omFile: "", pmaFile: "pma/wsd.json", type: 'pma' },
+    { key: "PMA_ILLUMINATION", name: "ILLUMINATION", omFile: "", pmaFile: "pma/illumination.json", type: 'pma' }
   ];
 
-  // Load data for the current tab
-  useEffect(() => {
-    const loadData = async () => {
-      const currentCategory = systemCategories.find(cat => cat.key === activeSubTab);
-      if (!currentCategory) return;
+  // Get categories for current main tab
+  const getCurrentTabCategories = () => {
+    return systemCategories.filter(cat => 
+      activeMainTab === "O&M" ? cat.type === 'om' : cat.type === 'pma'
+    );
+  };
 
-      const fileToLoad = activeMainTab === "O&M" ? currentCategory.omFile : currentCategory.pmaFile;
+  // Update active sub tab when main tab changes
+  useEffect(() => {
+    const currentCategories = getCurrentTabCategories();
+    if (currentCategories.length > 0 && !currentCategories.find(cat => cat.key === activeSubTab)) {
+      setActiveSubTab(currentCategories[0].key);
+    }
+  }, [activeMainTab]);
+
+  // Load data for a specific tab
+  const loadTabData = async (tabKey: string, mainTab: string) => {
+    const category = systemCategories.find(cat => cat.key === tabKey);
+    if (!category) return;
+
+    const tabId = `${mainTab}_${tabKey}`;
+    
+    setTabData(prev => ({
+      ...prev,
+      [tabId]: {
+        name: category.name,
+        data: [],
+        loading: true,
+        error: null
+      }
+    }));
+
+    try {
+      const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
+      if (!fileName) {
+        throw new Error(`No data file configured for ${mainTab} ${category.name}`);
+      }
       
+      const response = await fetch(`/${fileName}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load ${fileName}`);
+      }
+      
+      const data = await response.json();
+      let formattedParts: SparePart[] = [];
+
+      if (category.key === "WSD" || category.key === "PMA_WSD") {
+        // Handle WSD structure (array format)
+        formattedParts = (data || [])
+          .filter((item: any) => item && item["Item_Description"])
+          .map((item: any) => ({
+            id: Math.random().toString(36).substr(2, 9),
+            name: item["Item_Description"] || "",
+            quantity: Number(item["Quantity"]) || 0,
+            location: item["Location"] || "C&C Warehouse, Depot",
+            itemCode: item["Sr_No"]?.toString() || "",
+            imisCode: item["IMIS_Code"] || "",
+            uom: item["UOM"] || "",
+            partNumber: item["Specification"] || "",
+            boqNumber: item["BOQ_No"]?.toString() || "",
+            lastUpdated: new Date().toISOString().split('T')[0]
+          }));
+      } else {
+        // Handle other JSON structures
+        const key = Object.keys(data)[0];
+        const items = data[key] || [];
+        
+        formattedParts = items
+          .filter((item: any) => {
+            const inventoryField = item[key + " (Spares Inventory)"] || 
+                                item["(Sanitary Items Inventory)"] ||
+                                item["PSCADA System - (Spares Inventory)"] ||
+                                item["Item Detail"] ||
+                                item["Item_Description"] || 
+                                item["Item Description"] ||
+                                item["Item Name"];
+            const belongsto = item["Item Belongs To"] || "";
+            return item && inventoryField && inventoryField !== "-";
+          })
+          .map((item: any) => {
+            const itemName = item[key + " (Spares Inventory)"] || 
+                           item["(Sanitary Items Inventory)"] ||
+                           item["PSCADA System - (Spares Inventory)"] ||
+                           item["Item Detail"] ||
+                           item["Item_Description"] || 
+                           item["Item Description"] ||
+                           item["Item Name"] || "";
+            const belongsto = item["Item Belongs To"] || "";
+
+            const quantity = Number(item["Quantity"]) || 
+                           Number(item["Current Balance"]) || 
+                           Number(item["In-stock"]) || 0;
+
+            const imisCode = item["IMIS Codes"] || 
+                           item[" IMIS Codes"] ||
+                           item["IMIS Code"] || 
+                           item["IMIS_Code"] || 
+                           item["IMIS CODE"] || "";
+
+            const uom = item["UOM"] || 
+                       item["U/M"] || "";
+
+            const partNumber = item["Part #"] || 
+                             item[" Part #"] ||
+                             item["Part Number"] || 
+                             item["Specification"] || "";
+
+            const boqNumber = item["BOQ #"] || 
+                            item[" BOQ #"] ||
+                            item["BOQ_No"] || 
+                            item["BOQ Number"] || "";
+
+            const serialNumber = item["Sr. #"] || 
+                               item[" Sr. #"] ||
+                               item["Sr_No"] || 
+                               item["Serial Number"] || "";
+
+            return {
+              id: Math.random().toString(36).substr(2, 9),
+              name: itemName,
+              belongsto: belongsto,
+              quantity: quantity,
+              location: item["Location"] || "C&C Warehouse, Depot",
+              itemCode: serialNumber?.toString() || "",
+              imisCode: imisCode,
+              uom: uom,
+              partNumber: partNumber,
+              boqNumber: boqNumber?.toString() || "",
+              lastUpdated: new Date().toISOString().split('T')[0]
+            };
+          });
+      }
+
       setTabData(prev => ({
         ...prev,
-        [activeSubTab]: {
-          ...prev[activeSubTab],
-          loading: true,
+        [tabId]: {
+          name: category.name,
+          data: formattedParts,
+          loading: false,
           error: null
         }
       }));
+    } catch (err) {
+      console.error(`Error loading ${tabKey} data for ${mainTab}:`, err);
+      setTabData(prev => ({
+        ...prev,
+        [tabId]: {
+          name: category.name,
+          data: [],
+          loading: false,
+          error: `Failed to load ${mainTab} ${category.name} data`
+        }
+      }));
+    }
+  };
 
-      try {
-        // Simulate API call
-        // In a real app, you would fetch this from your backend
-        const response = await import(`@/data/${fileToLoad}`);
-        
-        setTabData(prev => ({
-          ...prev,
-          [activeSubTab]: {
-            name: `${currentCategory.name} ${activeMainTab} Inventory`,
-            data: response.default,
-            loading: false,
-            error: null
-          }
-        }));
-      } catch (error) {
-        console.error(`Error loading ${fileToLoad}:`, error);
-        setTabData(prev => ({
-          ...prev,
-          [activeSubTab]: {
-            ...prev[activeSubTab],
-            loading: false,
-            error: `Failed to load ${activeMainTab} data for ${currentCategory.name}`
-          }
-        }));
-      }
-    };
-
-    loadData();
+  // Load data when main tab or sub tab changes
+  useEffect(() => {
+    if (activeMainTab && activeSubTab) {
+      loadTabData(activeSubTab, activeMainTab);
+    }
   }, [activeMainTab, activeSubTab]);
 
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: name === 'quantity' ? parseInt(value) || 0 : value
-    }));
+  // Handle sorting
+  const requestSort = (key: keyof SparePart) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig?.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implementation for adding/editing items would go here
-    console.log('Form submitted:', form);
-    setShowModal(false);
+  // Apply sorting, filtering and searching
+  const getFilteredItems = (data: SparePart[]) => {
+    let filtered = [...data];
+    
+    if (searchTerm) {
+      filtered = filtered.filter(item => 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.itemCode && item.itemCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.imisCode && item.imisCode.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+    
+    if (selectedLocation !== "all") {
+      filtered = filtered.filter(item => item.location === selectedLocation);
+    }
+    
+    if (sortConfig) {
+      filtered.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    
+    return filtered;
   };
 
-  // Open edit modal with item data
+  const currentTabId = `${activeMainTab}_${activeSubTab}`;
+  const currentTabData = tabData[currentTabId];
+  const filteredItems = currentTabData ? getFilteredItems(currentTabData.data) : [];
+
+  // Get unique locations for filter dropdown
+  const locations = currentTabData 
+    ? ["all", ...new Set(currentTabData.data.map(item => item.location))]
+    : ["all"];
+
+  // Modal handlers
+  const openAddModal = () => {
+    setForm({ 
+      name: "", 
+      quantity: 0, 
+      location: "", 
+      uom: "", 
+      imisCode: "", 
+      boqNumber: "",
+      itemCode: "",
+      partNumber: ""
+    });
+    setEditId(null);
+    setShowModal(true);
+  };
+
   const openEditModal = (id: string) => {
-    const currentItems = tabData[activeSubTab]?.data || [];
-    const itemToEdit = currentItems.find(item => item.id === id);
-    if (itemToEdit) {
+    const item = currentTabData?.data.find(item => item.id === id);
+    if (item) {
       setForm({
-        name: itemToEdit.name,
-        quantity: itemToEdit.quantity,
-        location: itemToEdit.location,
-        uom: itemToEdit.uom || "",
-        imisCode: itemToEdit.imisCode || "",
-        boqNumber: itemToEdit.boqNumber || "",
-        itemCode: itemToEdit.itemCode || "",
-        partNumber: itemToEdit.partNumber || "",
-        belongsto: itemToEdit.belongsto || ""
+        name: item.name,
+        quantity: item.quantity,
+        location: item.location,
+        uom: item.uom || "",
+        imisCode: item.imisCode || "",
+        boqNumber: item.boqNumber || "",
+        itemCode: item.itemCode || "",
+        partNumber: item.partNumber || ""
       });
       setEditId(id);
       setShowModal(true);
     }
   };
 
-  // Get unique locations for filter
-  const locations = Array.from(new Set(
-    Object.values(tabData).flatMap(tab => 
-      tab.data?.map(item => item.location) || []
-    )
-  )).filter(Boolean) as string[];
+  const handleRemove = (id: string) => {
+    if (window.confirm("Are you sure you want to remove this item?")) {
+      setTabData(prev => ({
+        ...prev,
+        [currentTabId]: {
+          ...prev[currentTabId],
+          data: prev[currentTabId].data.filter(item => item.id !== id)
+        }
+      }));
+    }
+  };
 
-  // Filter items based on search term and location
-  const filteredItems = tabData[activeSubTab]?.data?.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.itemCode && item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesLocation = selectedLocation === "all" || item.location === selectedLocation;
-    return matchesSearch && matchesLocation;
-  }) || [];
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || form.quantity < 0 || !form.location.trim()) return;
 
-  const currentTabData = tabData[activeSubTab];
+    const updatedItem = {
+      ...form,
+      id: editId || Math.random().toString(36).substr(2, 9),
+      lastUpdated: new Date().toISOString().split('T')[0]
+    };
+
+    setTabData(prev => ({
+      ...prev,
+      [currentTabId]: {
+        ...prev[currentTabId],
+        data: editId 
+          ? prev[currentTabId].data.map(item => item.id === editId ? updatedItem : item)
+          : [...prev[currentTabId].data, updatedItem]
+      }
+    }));
+
+    setShowModal(false);
+  };
+
+  // Get sort indicator
+  const getSortIndicator = (key: keyof SparePart) => {
+    if (sortConfig?.key !== key) return null;
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
+
+  // Refresh current tab data
+  const refreshCurrentTab = () => {
+    if (activeMainTab && activeSubTab) {
+      loadTabData(activeSubTab, activeMainTab);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Spare Parts Management</h1>
-          <p className="text-muted-foreground">
-            Manage and track all spare parts inventory
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            setForm({
-              name: "",
-              quantity: 0,
-              location: "",
-              uom: "",
-              imisCode: "",
-              boqNumber: "",
-              itemCode: "",
-              partNumber: "",
-              belongsto: ""
-            });
-            setEditId(null);
-            setShowModal(true);
-          }}
-          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 h-10"
-        >
-          <FiPlus className="mr-2 h-4 w-4" />
-          Add New Item
-        </button>
-      </div>
-
-      {/* Tabs */}
-      <div className="space-y-4">
-        {/* Main Tabs */}
-        <div className="flex space-x-1 rounded-lg bg-muted p-1">
-          {["O&M", "PMA"].map((tab) => (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Spare Management</h1>
+            <p className="text-gray-600">Track and manage your spare parts inventory across all systems</p>
+          </div>
+          <div className="flex items-center space-x-3 mt-4 md:mt-0">
             <button
-              key={tab}
-              onClick={() => setActiveMainTab(tab)}
-              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                activeMainTab === tab
-                  ? "bg-background text-foreground shadow"
-                  : "text-muted-foreground hover:bg-muted/50"
-              }`}
+              onClick={refreshCurrentTab}
+              className="flex items-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+              disabled={currentTabData?.loading}
             >
-              {tab}
+              <FiRefreshCw className={`mr-2 ${currentTabData?.loading ? 'animate-spin' : ''}`} />
+              Refresh
             </button>
-          ))}
-        </div>
-
-        {/* Sub Tabs */}
-        <div className="flex flex-wrap gap-1">
-          {systemCategories
-            .filter(cat => cat.type === 'both' || cat.type.toLowerCase() === activeMainTab.toLowerCase())
-            .map((category) => (
-              <button
-                key={category.key}
-                onClick={() => setActiveSubTab(category.key)}
-                className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                  activeSubTab === category.key
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <FiSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search by name or item code..."
-            className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <select
-          className="flex h-10 w-full sm:w-[200px] items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          value={selectedLocation}
-          onChange={(e) => setSelectedLocation(e.target.value)}
-        >
-          <option value="all">All Locations</option>
-          {locations.map((location) => (
-            <option key={location} value={location}>
-              {location}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Content */}
-      <div className="rounded-md border">
-        {currentTabData?.loading ? (
-          <div className="flex items-center justify-center p-8">
-            <FiRefreshCw className="mr-2 h-4 w-4 animate-spin" />
-            Loading...
+            <button
+              onClick={openAddModal}
+              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <FiPlus className="mr-2" />
+              Add New Item
+            </button>
           </div>
-        ) : currentTabData?.error ? (
-          <div className="p-8 text-center text-destructive">
-            {currentTabData.error}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item Code
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    IMIS Code
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    BOQ Number
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Part Number
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    UOM
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
-                  </th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                        <div className="text-sm text-gray-500">{item.belongsto || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.itemCode || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.boqNumber || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.partNumber || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.uom || '-'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm ${
-                          item.quantity < 10 ? 'text-red-600 font-bold' : 
-                          item.quantity < 100 ? 'text-orange-600 font-medium' : 
-                          'text-gray-500'
-                        }`}>
-                          {item.quantity}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{item.location}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => openEditModal(item.id!)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
-                          title="Edit"
-                        >
-                          <FiEdit />
-                        </button>
-                        <button
-                          // onClick={() => handleRemove(item.id!)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={9} className="px-6 py-8 text-center text-sm text-gray-500">
-                      {searchTerm || selectedLocation !== "all" 
-                        ? "No items match your filters" 
-                        : "No items found in inventory"}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+        </div>
+
+        {/* Stats Cards */}
+        {currentTabData && !currentTabData.loading && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Total Items</h3>
+              <p className="text-2xl font-bold">{currentTabData.data.length}</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Total Quantity</h3>
+              <p className="text-2xl font-bold">
+                {currentTabData.data.reduce((sum, item) => sum + item.quantity, 0)}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Warehouses</h3>
+              <p className="text-2xl font-bold">
+                {new Set(currentTabData.data.map(item => item.location)).size}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500 font-medium">Low Stock Items</h3>
+              <p className="text-2xl font-bold text-red-600">
+                {currentTabData.data.filter(item => item.quantity < 100).length}
+              </p>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Add/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl rounded-lg bg-background shadow-lg">
-            <div className="flex items-center justify-between border-b p-4">
-              <h2 className="text-lg font-semibold">
-                {editId ? "Edit Inventory Item" : "Add New Inventory Item"}
-              </h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-              >
-                <FiX className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </button>
+        {/* Main Navigation */}
+        <div className="bg-white rounded-lg shadow mb-6">
+          {/* Main Tabs */}
+          <div className="flex border-b">
+            <button
+              onClick={() => setActiveMainTab("O&M")}
+              className={`px-6 py-4 font-medium text-sm border-r ${
+                activeMainTab === "O&M" 
+                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
+                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              O&M (Operations & Maintenance)
+            </button>
+            <button
+              onClick={() => setActiveMainTab("PMA")}
+              className={`px-6 py-4 font-medium text-sm ${
+                activeMainTab === "PMA" 
+                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
+                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              PMA (Punjab Mass Transit Authority)
+            </button>
+          </div>
+
+          {/* Sub Tabs */}
+          <div className="p-4">
+            <div className="flex flex-wrap gap-2">
+              {getCurrentTabCategories().map((category) => (
+                <button
+                  key={category.key}
+                  onClick={() => setActiveSubTab(category.key)}
+                  className={`px-3 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                    activeSubTab === category.key
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Item Name <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleInputChange}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Item Belongs To <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="belongsto"
-                  value={form.belongsto}
-                  onChange={handleInputChange}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  required
-                />
-              </div>
+          </div>
+        </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Content Area */}
+        <div>
+          {/* Filters */}
+          <div className="bg-white p-4 rounded-lg shadow mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+              <div className="flex-shrink-0">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {activeMainTab} - {currentTabData?.name || activeSubTab}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {activeMainTab === "O&M" ? "Operations & Maintenance Inventory" : "Punjab Mass Transit Authority Inventory"}
+                </p>
+              </div>
+              <div className="relative flex-grow">
+                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <FiX />
+                  </button>
+                )}
+              </div>
+              <div className="w-full md:w-48">
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {locations.map(loc => (
+                    <option key={loc} value={loc}>
+                      {loc === "all" ? "All Locations" : loc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Loading/Error States */}
+          {currentTabData?.loading && (
+            <div className="bg-white p-8 rounded-lg shadow mb-6 text-center">
+              <FiRefreshCw className="animate-spin mx-auto mb-4 text-blue-600" size={32} />
+              <p className="text-gray-600">Loading {currentTabData.name} data...</p>
+            </div>
+          )}
+          
+          {currentTabData?.error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+              <div className="flex items-center">
+                <FiX className="mr-2" />
+                <p>{currentTabData.error}</p>
+                <button
+                  onClick={refreshCurrentTab}
+                  className="ml-auto px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Inventory Table */}
+          {!currentTabData?.loading && (
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th 
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => requestSort('name')}
+                      >
+                        <div className="flex items-center">
+                          Item Name {getSortIndicator('name')}
+                        </div>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Belongs To
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        IMIS Code
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        BOQ Number
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Part Number
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        UOM
+                      </th>
+                      <th 
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => requestSort('quantity')}
+                      >
+                        <div className="flex items-center">
+                          Quantity {getSortIndicator('quantity')}
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        onClick={() => requestSort('location')}
+                      >
+                        <div className="flex items-center">
+                          Location {getSortIndicator('location')}
+                        </div>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredItems.length > 0 ? (
+                      filteredItems.map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                            {item.itemCode && (
+                              <div className="text-xs text-gray-500">Code: {item.itemCode}</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.belongsto || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.boqNumber || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.partNumber || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.uom || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className={`text-sm ${
+                              item.quantity < 10 ? 'text-red-600 font-bold' : 
+                              item.quantity < 100 ? 'text-orange-600 font-medium' : 
+                              'text-gray-500'
+                            }`}>
+                              {item.quantity}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">{item.location}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => openEditModal(item.id!)}
+                              className="text-blue-600 hover:text-blue-900 mr-4"
+                              title="Edit"
+                            >
+                              <FiEdit />
+                            </button>
+                            <button
+                              onClick={() => handleRemove(item.id!)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Delete"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={8} className="px-6 py-8 text-center text-sm text-gray-500">
+                          {currentTabData?.error 
+                            ? "Failed to load data"
+                            : searchTerm || selectedLocation !== "all" 
+                              ? "No items match your filters" 
+                              : "No items found in inventory"}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Add/Edit Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+              <div className="flex justify-between items-center border-b px-6 py-4">
+                <h2 className="text-lg font-semibold">
+                  {editId ? "Edit Spare Item" : "Add New Spare Item"}
+                </h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <FiX size={24} />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Quantity <span className="text-destructive">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Item Name *
                   </label>
                   <input
-                    type="number"
-                    name="quantity"
-                    min="0"
-                    value={form.quantity}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    name="name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Unit of Measure (UOM)
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Item Belongs To *
                   </label>
                   <input
-                    type="text"
-                    name="uom"
-                    value={form.uom}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="e.g., PCS, KG, M"
+                    name="belongsto"
+                    value={form.belongsto}
+                    onChange={(e) => setForm({ ...form, belongsto: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Quantity *
+                    </label>
+                    <input
+                      name="quantity"
+                      type="number"
+                      min="0"
+                      value={form.quantity}
+                      onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      UOM
+                    </label>
+                    <input
+                      name="uom"
+                      value={form.uom}
+                      onChange={(e) => setForm({ ...form, uom: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., PCS, KG, M"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      IMIS Code
+                    </label>
+                    <input
+                      name="imisCode"
+                      value={form.imisCode}
+                      onChange={(e) => setForm({ ...form, imisCode: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="IMIS Code"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      BOQ Number
+                    </label>
+                    <input
+                      name="boqNumber"
+                      value={form.boqNumber}
+                      onChange={(e) => setForm({ ...form, boqNumber: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="BOQ Number"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Item Code
+                    </label>
+                    <input
+                      name="itemCode"
+                      value={form.itemCode}
+                      onChange={(e) => setForm({ ...form, itemCode: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Item Code"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Part Number
+                    </label>
+                    <input
+                      name="partNumber"
+                      value={form.partNumber}
+                      onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Part Number"
+                    />
+                  </div>
+                </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    IMIS Code
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Location *
                   </label>
                   <input
-                    type="text"
-                    name="imisCode"
-                    value={form.imisCode}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="IMIS Code"
+                    name="location"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    BOQ Number
-                  </label>
-                  <input
-                    type="text"
-                    name="boqNumber"
-                    value={form.boqNumber}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="BOQ Number"
-                  />
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {editId ? "Save Changes" : "Add Item"}
+                  </button>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Item Code
-                  </label>
-                  <input
-                    type="text"
-                    name="itemCode"
-                    value={form.itemCode}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Item Code"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Part Number
-                  </label>
-                  <input
-                    type="text"
-                    name="partNumber"
-                    value={form.partNumber}
-                    onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Part Number"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Location <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="location"
-                  value={form.location}
-                  onChange={handleInputChange}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                >
-                  {editId ? "Save Changes" : "Add Item"}
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
 
-export default SpareManagement;
+export default SpareManagement;  
