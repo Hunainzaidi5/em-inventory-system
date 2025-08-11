@@ -6,7 +6,7 @@ export interface SparePart {
     location: string;
     lastUpdated?: string;
     itemCode?: string;
-    imisCode?: string;
+    imis_code?: string;
     uom?: string;
     partNumber?: string;
     boq_number?: string;

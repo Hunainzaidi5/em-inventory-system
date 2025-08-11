@@ -15,7 +15,7 @@ const SpareManagement: React.FC = () => {
     quantity: 0, 
     location: "", 
     uom: "", 
-    imisCode: "", 
+    imis_code: "", 
     boq_number: "",
     itemCode: "",
     partNumber: "",
@@ -128,7 +128,7 @@ const SpareManagement: React.FC = () => {
             quantity: Number(item["Quantity"]) || 0,
             location: item["Location"] || "C&C Warehouse, Depot",
             itemCode: item["Sr_No"]?.toString() || "",
-            imisCode: item["IMIS_Code"] || "",
+            imis_code: item["IMIS_Code"] || "",
             uom: item["UOM"] || "",
             partNumber: item["Specification"] || "",
             boq_number: item["BOQ_No"]?.toString() || "",
@@ -164,7 +164,7 @@ const SpareManagement: React.FC = () => {
                            Number(item["Current Balance"]) || 
                            Number(item["In-stock"]) || 0;
 
-            const imisCode = item["IMIS Codes"] || 
+            const imis_code = item["IMIS Codes"] || 
                            item[" IMIS Codes"] ||
                            item["IMIS Code"] || 
                            item["IMIS_Code"] || 
@@ -183,7 +183,7 @@ const SpareManagement: React.FC = () => {
               quantity: quantity,
               location: item["Location"] || "C&C Warehouse, Depot",
               itemCode: serialNumber?.toString() || "",
-              imisCode: imisCode,
+              imis_code: imis_code,
               uom: uom,
               partNumber: partNumber,
               category: category || category.name,
@@ -291,7 +291,7 @@ const SpareManagement: React.FC = () => {
       filtered = filtered.filter(item => 
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (item.itemCode && item.itemCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (item.imisCode && item.imisCode.toLowerCase().includes(searchTerm.toLowerCase()))
+        (item.imis_code && item.imis_code.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     
@@ -329,7 +329,7 @@ const SpareManagement: React.FC = () => {
       quantity: 0, 
       location: "", 
       uom: "", 
-      imisCode: "", 
+      imis_code: "", 
       boq_number: "",
       itemCode: "",
       partNumber: ""
@@ -346,7 +346,7 @@ const SpareManagement: React.FC = () => {
         quantity: item.quantity,
         location: item.location,
         uom: item.uom || "",
-        imisCode: item.imisCode || "",
+        imis_code: item.imis_code || "",
         boq_number: item.boq_number || "",
         itemCode: item.itemCode || "",
         partNumber: item.partNumber || ""
@@ -413,7 +413,7 @@ const SpareManagement: React.FC = () => {
           quantity: 0,
           location: '',
           uom: '',
-          imisCode: '',
+          imis_code: '',
           boq_number: '',
           itemCode: '',
           partNumber: '',
@@ -686,7 +686,7 @@ const SpareManagement: React.FC = () => {
                             <div className="text-sm text-gray-500">{item.belongsto || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">{item.imisCode || '-'}</div>
+                            <div className="text-sm text-gray-500">{item.imis_code || '-'}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500">{item.boq_number || '-'}</div>
@@ -822,9 +822,9 @@ const SpareManagement: React.FC = () => {
                       IMIS Code
                     </label>
                     <input
-                      name="imisCode"
-                      value={form.imisCode}
-                      onChange={(e) => setForm({ ...form, imisCode: e.target.value })}
+                      name="imis_code"
+                      value={form.imis_code}
+                      onChange={(e) => setForm({ ...form, imis_code: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="IMIS Code"
                     />
