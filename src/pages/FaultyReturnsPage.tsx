@@ -419,9 +419,9 @@ const FaultyReturnsPage = () => {
                       Part Number
                     </label>
                     <input
-                      name="part_number"
-                      value={form.part_number}
-                      onChange={(e) => setForm({ ...form, part_number: e.target.value })}
+                      name="partNumber"
+                      value={form.partNumber}
+                      onChange={(e) => setForm({ ...form, partNumber: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Part Number"
                     />
