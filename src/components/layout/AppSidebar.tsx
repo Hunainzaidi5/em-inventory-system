@@ -51,6 +51,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { TbTools } from "react-icons/tb";
+import { BsTools } from "react-icons/bs";
+import { MdOutlineInventory2 } from "react-icons/md";
+import { TfiRulerPencil } from "react-icons/tfi";
+import { FaHelmetSafety } from "react-icons/fa6";
+import { FaToolbox } from "react-icons/fa6";
+import { TbTruckReturn } from "react-icons/tb";
+import { GrDocumentUser } from "react-icons/gr";
 
 const mainMenuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home, exact: true },
@@ -58,15 +66,15 @@ const mainMenuItems = [
 ];
 
 const inventoryMenuItems = [
-  { title: "Spare Management", url: "/dashboard/spare-management", icon: HammerIcon },
-  { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: RotateCcw },
-  { title: "PPE Items", url: "/dashboard/ppe", icon: Shield },
-  { title: "Stationery Items", url: "/dashboard/stationery", icon: Box },
+  { title: "Spare Management", url: "/dashboard/spare-management", icon: FaToolbox },
+  { title: "Faulty Returns", url: "/dashboard/faulty-returns", icon: TbTruckReturn },
+  { title: "PPE Items", url: "/dashboard/ppe", icon: FaHelmetSafety },
+  { title: "Stationery Items", url: "/dashboard/stationery", icon: TfiRulerPencil },
 ];
 
 const documentsMenuItems = [
   { title: "Requisition", url: "/dashboard/requisition", icon: ListTodo },
-  { title: "Gate Pass", url: "/dashboard/gate-pass", icon: Key },
+  { title: "Gate Pass", url: "/dashboard/gate-pass", icon: GrDocumentUser },
   { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
 ];
 
@@ -225,9 +233,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {[
-                    { title: "Inventory", url: "/dashboard/inventory", icon: Package },
-                    { title: "Tools", url: "/dashboard/tools", icon: Wrench },
-                    { title: "General Tools", url: "/dashboard/general-tools", icon: Gauge }
+                    { title: "Inventory", url: "/dashboard/inventory", icon: MdOutlineInventory2 },
+                    { title: "Tools", url: "/dashboard/tools", icon: BsTools },
+                    { title: "General Tools", url: "/dashboard/general-tools", icon: TbTools }
                   ].map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
