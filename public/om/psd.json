@@ -2,7 +2,9 @@
   "PSD": [
   {
   "Sr. #": "1",
+  "Item Code (Brand)": "",
   "Item Name": "Belt for PSD",
+  "IMIS CODE": "",
   "UOM": "Mtr",
   "Quantity": 120,
   "boq_number": "",
@@ -14,6 +16,7 @@
     "Sr. #": "2",
   "Item Code (Brand)": "Ledger",
   "Item Name": "PSD Daily Patrol",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": 0,
   "boq_number": "",
@@ -23,7 +26,9 @@
  },
  {
     "Sr. #": "3",
+  "Item Code (Brand)": "Ledger",
   "Item Name": "Maintenance Form Of PSD's (Monthly & Annual)",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": 0,
   "boq_number": "",

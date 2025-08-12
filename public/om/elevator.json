@@ -26,7 +26,9 @@
  },
  {
   "Sr. #": "3",
+  "Item Code (Brand)": "Ledger",
   "Item Name": "Half Month Maintenance Form Of Elevator",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -36,7 +38,9 @@
  },
  {
   "Sr. #": "4",
+  "Item Code (Brand)": "Ledger",
   "Item Name": "Quarterly Maintenance Form Of Elevator",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -46,7 +50,9 @@
  },
  {
   "Sr. #": "5",
+  "Item Code (Brand)": "Ledger",
   "Item Name": "Annual Maintenance Form Of Elevator",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",

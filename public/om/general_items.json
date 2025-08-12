@@ -302,6 +302,7 @@
  },
  {
   "Sr. #": "26",
+  "Item Code (Brand)": "",
   "Item Name": "Fire Equipment inspection Sticker",
   "IMIS CODE": "006-0001-00-001109",
   "UOM": "No,s",
@@ -337,6 +338,7 @@
  },
  {
   "Sr. #": "29",
+  "Item Code (Brand)": "",
   "Item Name": "Baby \/ Angle Grinder 115mm (Bosch)",
   "IMIS CODE": "001-001801-018086",
   "UOM": "No,s",
@@ -396,6 +398,7 @@
  },
  {
   "Sr. #": "34",
+  "Item Code (Brand)": "",
   "Item Name": "Duster Towel Large\/ Towel Rags",
   "IMIS CODE": "003-0017-00-017005",
   "UOM": "No,s",
@@ -407,6 +410,7 @@
  },
  {
   "Sr. #": "35",
+  "Item Code (Brand)": "",
   "Item Name": "Cleaning Brush",
   "IMIS CODE": "003-0000-00-000148",
   "UOM": "No,s",
@@ -672,6 +676,7 @@
   "Sr. #": "57",
   "Item Code (Brand)": "400-g",
   "Item Name": "Soldering wire with paste",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -683,6 +688,7 @@
   "Sr. #": "58",
   "Item Code (Brand)": "Ledger",
   "Item Name": "Tool Box Talk-New",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -694,6 +700,7 @@
   "Sr. #": "59",
   "Item Code (Brand)": "Ledger",
   "Item Name": "Track Entry Data Record",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -703,6 +710,7 @@
  },
  {
   "Sr. #": "60",
+  "Item Code (Brand)": "",
   "Item Name": "High Speed Diesel",
   "IMIS CODE": "003-0011-00-011018",
   "UOM": "Ltr",
@@ -726,7 +734,9 @@
  },
  {
   "Sr. #": "62",
+  "Item Code (Brand)": "",
   "Item Name": "Fixed stairway with handrail and landing platform",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "0",
   "boq_number": "",
@@ -736,6 +746,7 @@
  },
  {
   "Sr. #": "63",
+  "Item Code (Brand)": "",
   "Item Name": "Sub Meter 3-phase KWH Digital Mater",
   "IMIS CODE": "003-0010-00-001034",
   "UOM": "No,s",
@@ -749,6 +760,7 @@
   "Sr. #": "64",
   "Item Code (Brand)": "400-ml",
   "Item Name": "VMD 93 Graphite Lubricant",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "6",
   "boq_number": "",
@@ -760,6 +772,7 @@
   "Sr. #": "65",
   "Item Code (Brand)": "1-Kg",
   "Item Name": "Belzona 1111 Super Metal",
+  "IMIS CODE": "",
   "UOM": "No,s",
   "Quantity": "1",
   "boq_number": "",
