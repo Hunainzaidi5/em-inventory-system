@@ -7,6 +7,9 @@
     "IMIS CODE": "003-0011-00-011019",
     "UOM": "Ltr",
     "Quantity": "120",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -16,6 +19,9 @@
     "IMIS CODE": "003-0011-00-011020",
     "UOM": "Ltr",
     "Quantity": "450",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -24,6 +30,9 @@
     "IMIS CODE": "003-0000-33-000141",
     "UOM": "Kgs",
     "Quantity": "114",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -33,6 +42,9 @@
     "IMIS CODE": "010-1100-09-011001",
     "UOM": "Ltr",
     "Quantity": "21",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -42,6 +54,9 @@
     "IMIS CODE": "001-0020-00-020039",
     "UOM": "Set.s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -51,6 +66,9 @@
     "IMIS CODE": "003-0055-00-055005",
     "UOM": "Sft",
     "Quantity": "80",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -60,6 +78,9 @@
     "IMIS CODE": "003-0055-00-055006",
     "UOM": "Sft",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -69,6 +90,9 @@
     "IMIS CODE": "003-0070-00-070004",
     "UOM": "Kgs",
     "Quantity": "27",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -77,6 +101,9 @@
     "IMIS CODE": "003-0072-00-072001",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -86,6 +113,9 @@
     "IMIS CODE": "003-0070-00-070005",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -95,6 +125,9 @@
     "IMIS CODE": "001-0010-00-010020",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -104,6 +137,9 @@
     "IMIS CODE": "003-0055-00-055006",
     "UOM": "Ft",
     "Quantity": "80",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -112,6 +148,9 @@
     "IMIS CODE": "003-0003-00-003009",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -121,6 +160,9 @@
     "IMIS CODE": "002-3000-00-003017",
     "UOM": "No,s",
     "Quantity": "4",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -129,6 +171,9 @@
     "Item Name": "AHU Daily Patrol Book",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -137,6 +182,9 @@
     "Item Name": "Chiller Routing Inspection Book",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -145,6 +193,9 @@
     "Item Name": "HVAC Cooling Tower Routing Inspection Book AC Season",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -153,6 +204,9 @@
     "Item Name": "HVAC Pump Routing Inspection Book",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -161,6 +215,9 @@
     "Item Name": "Filter Cleaning Log",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -169,6 +226,9 @@
     "IMIS CODE": "003-0070-00-070006",
     "UOM": "Kg,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -177,6 +237,9 @@
     "Item Name": "Motorized Valve",
     "UOM": "No,s",
     "Quantity": "14",
+    "boq_number": "",
+    "category": "HVAC",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  }
 ]

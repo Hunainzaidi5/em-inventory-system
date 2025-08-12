@@ -5,24 +5,35 @@
         "Item Code (Brand)": "RJ-11",
         "Item Name": "Cable Connector 6 Pin",
         "IMIS CODE": "003-0002-00-002016",
-        "U/M": "No,s",
+        "UOM": "No,s",
         "Quantity": "0",
+        "boq_number": "",
+        "category": "BAS",
+        "belongsto": "O&M",
         "Location": "C&C Warehouse, Depot"
         },
         {
         "Sr. #": "2",
         "Item Code (Brand)": "Ledger",
         "Item Name": "BAS Weekly Inspection Checklist",
-        "U/M": "No,s",
+        "IMIS CODE": "",
+        "UOM": "No,s",
         "Quantity": "0",
+        "boq_number": "",
+        "category": "BAS",
+        "belongsto": "O&M",
         "Location": "C&C Warehouse, Depot"
         },
         {
         "Sr. #": "3",
         "Item Code (Brand)": "CAT-6",
         "Item Name": "Ethernet Cable",
-        "U/M": "Mtr",
+        "IMIS CODE": "",
+        "UOM": "Mtr",
         "Quantity": "305",
+        "boq_number": "",
+        "category": "BAS",
+        "belongsto": "O&M",
         "Location": "C&C Warehouse, Depot"
         }
     ]

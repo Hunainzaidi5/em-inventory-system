@@ -7,6 +7,9 @@
     "IMIS CODE": "003-0062-00-062003",
     "UOM": "Ltr",
     "Quantity": "33",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -14,6 +17,9 @@
     "Item Name": "Half Month Maintenance Form Of Escalator",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -21,6 +27,9 @@
     "Item Name": "Quarterly Maintenance Form Of Escalator",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -28,6 +37,9 @@
     "Item Name": "Semi- Annual Maintenance Form Of Escalator",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -35,6 +47,9 @@
     "Item Name": "Annual Maintenance Form Of Escalator",
     "UOM": "No,s",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  },
  {
@@ -44,6 +59,9 @@
     "IMIS CODE": "003-0011-00-011021",
     "UOM": "Ltr",
     "Quantity": "0",
+    "boq_number": "",
+    "category": "ESCALATOR",
+    "belongsto": "O&M",
     "Location": "C&C Warehouse, Depot"
  }
 ]

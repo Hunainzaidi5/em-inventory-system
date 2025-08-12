@@ -49,6 +49,18 @@ const GeneralToolsPage = () => {
     }
   }, []);
 
+  // Listen to inventory-sync events to reload local data so counts update after requisition.
+  useEffect(() => {
+    const handler = () => {
+      const saved = localStorage.getItem('generalToolsItems');
+      if (saved) {
+        try { setGeneralToolsItems(JSON.parse(saved)); } catch {}
+      }
+    };
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, []);
+
   // Save data to localStorage whenever data changes
   useEffect(() => {
     localStorage.setItem('generalToolsItems', JSON.stringify(generalToolsItems));

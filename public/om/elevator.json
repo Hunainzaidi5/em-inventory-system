@@ -7,6 +7,9 @@
   "IMIS CODE": "003-0031-00-003105",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "ELEVATOR",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -16,6 +19,9 @@
   "IMIS CODE": "011-0002-02-020002",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "ELEVATOR",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -23,6 +29,9 @@
   "Item Name": "Half Month Maintenance Form Of Elevator",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "ELEVATOR",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -30,6 +39,9 @@
   "Item Name": "Quarterly Maintenance Form Of Elevator",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "ELEVATOR",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -37,6 +49,9 @@
   "Item Name": "Annual Maintenance Form Of Elevator",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "ELEVATOR",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

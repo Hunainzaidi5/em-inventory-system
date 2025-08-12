@@ -7,6 +7,9 @@
   "IMIS CODE": "002-2400-00-024006",
   "UOM": "No,s",
   "Quantity": "46",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -16,6 +19,9 @@
   "IMIS CODE": "002-2400-00-024007",
   "UOM": "No,s",
   "Quantity": "18",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -25,6 +31,9 @@
   "IMIS CODE": "002-2400-09-024001",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -34,6 +43,9 @@
   "IMIS CODE": "003-0025-52-002518",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -43,6 +55,9 @@
   "IMIS CODE": "003-0025-52-002517",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -52,6 +67,9 @@
   "IMIS CODE": "002-2400-00-024003",
   "UOM": "No,s",
   "Quantity": "140",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -61,6 +79,9 @@
   "IMIS CODE": "003-0025-00-002505",
   "UOM": "No.s",
   "Quantity": "600",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -70,6 +91,9 @@
   "IMIS CODE": "003-0025-00-025008",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -79,6 +103,9 @@
   "IMIS CODE": "003-0025-26-025011",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "BATTERIES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

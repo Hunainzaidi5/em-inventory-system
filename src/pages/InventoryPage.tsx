@@ -48,6 +48,18 @@ const InventoryPage = () => {
     }
   }, []);
 
+  // Listen to inventory-sync events to reload local data so counts update after requisition.
+  useEffect(() => {
+    const handler = () => {
+      const saved = localStorage.getItem('inventoryItems');
+      if (saved) {
+        try { setInventoryItems(JSON.parse(saved)); } catch {}
+      }
+    };
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, []);
+
   // Save data to localStorage whenever data changes
   useEffect(() => {
     localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));

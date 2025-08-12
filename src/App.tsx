@@ -129,6 +129,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="general-tools" element={<GeneralToolsPage />} />
+        <Route path="requisition" element={<RequisitionPage />} />
         <Route element={<DevOnlyRoute />}>
           <Route path="reseed" element={<ReseedDataPage />} />
         </Route>

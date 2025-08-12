@@ -7,6 +7,9 @@
   "IMIS CODE": "011-0011-00-011001",
   "UOM": "No.s",
   "Quantity": "165",
+  "boq_number": "",
+  "category": "FES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -15,6 +18,9 @@
   "Item Name": "Cylinder Room Daily Inspection Checklist",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "FES",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

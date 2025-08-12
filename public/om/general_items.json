@@ -7,6 +7,9 @@
   "IMIS CODE": "003-0000-00-000038",
   "UOM": "No.s",
   "Quantity": "120",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -16,6 +19,9 @@
   "IMIS CODE": "003-0011-31-011044",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -25,6 +31,9 @@
   "IMIS CODE": "003-0000-00-030014",
   "UOM": "No.s",
   "Quantity": "64",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -34,6 +43,9 @@
   "IMIS CODE": "003-0000-00-030015",
   "UOM": "No.s",
   "Quantity": "32",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -43,6 +55,9 @@
   "IMIS CODE": "003-0018-32-030016",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -52,6 +67,9 @@
   "IMIS CODE": "003-0017-00-017006",
   "UOM": "Kgs",
   "Quantity": "190",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -61,6 +79,9 @@
   "IMIS CODE": "003-0000-00-000056",
   "UOM": "No.s",
   "Quantity": "24",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -70,6 +91,9 @@
   "IMIS CODE": "012-0200-04-002001",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -79,6 +103,9 @@
   "IMIS CODE": "003-0048-00-048001",
   "UOM": "Set.s",
   "Quantity": "2",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -88,6 +115,9 @@
   "IMIS CODE": "003-0011-00-011033",
   "UOM": "No.s",
   "Quantity": "26",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -97,6 +127,9 @@
   "IMIS CODE": "003-0033-00-003350",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -106,6 +139,9 @@
   "IMIS CODE": "003-0033-00-003349",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -115,6 +151,9 @@
   "IMIS CODE": "003-0033-00-003351",
   "UOM": "No.s",
   "Quantity": "300",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -124,6 +163,9 @@
   "IMIS CODE": "003-0033-00-003359",
   "UOM": "No.s",
   "Quantity": "300",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -133,6 +175,9 @@
   "IMIS CODE": "003-0033-00-003354",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -142,6 +187,9 @@
   "IMIS CODE": "010-0700-00-007003",
   "UOM": "Kgs",
   "Quantity": "27",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -151,6 +199,9 @@
   "IMIS CODE": "003-0000-00-000092",
   "UOM": "Kgs",
   "Quantity": "50",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -160,6 +211,9 @@
   "IMIS CODE": "003-0062-00-062002",
   "UOM": "Ltr",
   "Quantity": "50",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -169,6 +223,9 @@
   "IMIS CODE": "003-0000-00-000060",
   "UOM": "No.s",
   "Quantity": "28",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -178,6 +235,9 @@
   "IMIS CODE": "003-0032-00-003201",
   "UOM": "No.s",
   "Quantity": "50",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -187,6 +247,9 @@
   "IMIS CODE": "003-0069-00-069001",
   "UOM": "No,s",
   "Quantity": "63",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -196,6 +259,9 @@
   "IMIS CODE": "002-1300-00-013005",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -205,6 +271,9 @@
   "IMIS CODE": "003-0062-00-062004",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -214,6 +283,9 @@
   "IMIS CODE": "003-0033-00-003392",
   "UOM": "No.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -223,6 +295,9 @@
   "IMIS CODE": "003-0062-00-062005",
   "UOM": "No,s",
   "Quantity": "3",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -231,6 +306,9 @@
   "IMIS CODE": "006-0001-00-001109",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -240,6 +318,9 @@
   "IMIS CODE": "001-0018-00-018053",
   "UOM": "Set.s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -249,6 +330,9 @@
   "IMIS CODE": "003-0011-00-011001",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -257,6 +341,9 @@
   "IMIS CODE": "001-001801-018086",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -266,6 +353,9 @@
   "IMIS CODE": "003-0026-00-026007",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -275,6 +365,9 @@
   "IMIS CODE": "003-0026-00-026008",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -284,6 +377,9 @@
   "IMIS CODE": "003-0026-00-026009",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -293,6 +389,9 @@
   "IMIS CODE": "003-0009-00-009032",
   "UOM": "No,s",
   "Quantity": "100",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -301,6 +400,9 @@
   "IMIS CODE": "003-0017-00-017005",
   "UOM": "No,s",
   "Quantity": "22",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -309,6 +411,9 @@
   "IMIS CODE": "003-0000-00-000148",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -318,6 +423,9 @@
   "IMIS CODE": "001-0000-00-000053",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -327,6 +435,9 @@
   "IMIS CODE": "003-0011-00-011071",
   "UOM": "No,s",
   "Quantity": "50",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -336,6 +447,9 @@
   "IMIS CODE": "003-0029-00-029006",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -345,6 +459,9 @@
   "IMIS CODE": "003-0058-00-058001",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -354,6 +471,9 @@
   "IMIS CODE": "003-0058-00-005801",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -363,6 +483,9 @@
   "IMIS CODE": "003-0058-00-058002",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -372,6 +495,9 @@
   "IMIS CODE": "003-0000-00-000105",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -381,6 +507,9 @@
   "IMIS CODE": "001-0043-01-043012",
   "UOM": "No,s",
   "Quantity": "3",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -390,6 +519,9 @@
   "IMIS CODE": "003-0053-00-053003",
   "UOM": "Mtr",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -399,6 +531,9 @@
   "IMIS CODE": "001-0005-36-005008",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -408,6 +543,9 @@
   "IMIS CODE": "003-0003-01-003003",
   "UOM": "Kg,s",
   "Quantity": "3",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -417,6 +555,9 @@
   "IMIS CODE": "011-0001-00-001015",
   "UOM": "No,s",
   "Quantity": "2",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -426,6 +567,9 @@
   "IMIS CODE": "003-0033-00-003398",
   "UOM": "No,s",
   "Quantity": "150",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -435,6 +579,9 @@
   "IMIS CODE": "003-0033-00-003399",
   "UOM": "No,s",
   "Quantity": "50",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -444,6 +591,9 @@
   "IMIS CODE": "001-0054-00-054003",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -453,6 +603,9 @@
   "IMIS CODE": "003-0005-00-005015",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -462,6 +615,9 @@
   "IMIS CODE": "003-0005-00-005016",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -471,6 +627,9 @@
   "IMIS CODE": "003-0005-00-005017",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -480,6 +639,9 @@
   "IMIS CODE": "003-0005-00-005020",
   "UOM": "No,s",
   "Quantity": "16",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -489,6 +651,9 @@
   "IMIS CODE": "003-0050-00-052026",
   "UOM": "Mtr",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -498,6 +663,9 @@
   "IMIS CODE": "003-0050-00-052026",
   "UOM": "Mtr",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -506,6 +674,9 @@
   "Item Name": "Soldering wire with paste",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -514,6 +685,9 @@
   "Item Name": "Tool Box Talk-New",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -522,6 +696,9 @@
   "Item Name": "Track Entry Data Record",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -530,6 +707,9 @@
   "IMIS CODE": "003-0011-00-011018",
   "UOM": "Ltr",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -539,13 +719,19 @@
   "IMIS CODE": "001-0054-36-054005",
   "UOM": "No,s",
   "Quantity": "4",
-  "Location": "C&C Warehouse, Depot"
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
+    "Location": "C&C Warehouse, Depot"
  },
  {
   "Sr. #": "62",
   "Item Name": "Fixed stairway with handrail and landing platform",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -554,6 +740,9 @@
   "IMIS CODE": "003-0010-00-001034",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -562,6 +751,9 @@
   "Item Name": "VMD 93 Graphite Lubricant",
   "UOM": "No,s",
   "Quantity": "6",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -570,6 +762,9 @@
   "Item Name": "Belzona 1111 Super Metal",
   "UOM": "No,s",
   "Quantity": "1",
+  "boq_number": "",
+  "category": "GENERAL ITEMS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

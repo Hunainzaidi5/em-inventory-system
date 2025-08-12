@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
 import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions } from "@/services/requisitionService";
 import { useToast } from "@/components/ui/use-toast";
+import { adjustQuantityForRequisition } from '@/services/itemQuantityService';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
@@ -167,42 +168,51 @@ const RequisitionPage = () => {
   // Handle form submission
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const errors = validateForm(formData);
     setFormErrors(errors);
-    
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-    
+    if (Object.keys(errors).length > 0) return;
+
     setIsSaving(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (isEditMode && selectedRequisition) {
-      // Update existing requisition
-      setRequisition(prev => prev.map(tx => 
-        tx.id === selectedRequisition.id 
-          ? {
-              ...tx,
-              ...formData
-            }
-          : tx
-      ));
-    } else {
-      // Create new requisition
-      const newRequisition: Requisition = {
-        id: Date.now().toString(),
-        ...formData,
-        referenceNumber: generateReferenceNumber(),
-        createdAt: new Date().toISOString()
-      };
-      setRequisition(prev => [newRequisition, ...prev]);
+    try {
+      if (isEditMode && selectedRequisition) {
+        await updateRequisition(selectedRequisition.id, {
+          requisitionType: formData.requisitionType,
+          itemType: formData.itemType,
+          itemName: formData.itemName,
+          quantity: formData.quantity,
+          issuedTo: formData.issuedTo,
+          department: formData.department,
+          // status excluded: service type does not accept it
+          notes: formData.notes,
+        });
+      } else {
+        await createRequisition({
+          requisitionType: formData.requisitionType,
+          itemType: formData.itemType,
+          itemName: formData.itemName,
+          quantity: formData.quantity,
+          issuedTo: formData.issuedTo,
+          department: formData.department,
+          // status excluded: service sets default
+          notes: formData.notes,
+        });
+        // Adjust item quantity according to requisition
+        await adjustQuantityForRequisition({
+          itemType: formData.itemType as any,
+          itemName: formData.itemName,
+          requisitionType: formData.requisitionType as any,
+          quantity: formData.quantity,
+        });
+      }
+
+      await fetchRequisitions();
+      handleCloseForm();
+    } catch (error) {
+      console.error('Error saving requisition:', error);
+      toast({ title: 'Error', description: 'Failed to save requisition', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
     }
-    
-    setIsSaving(false);
-    handleCloseForm();
   };
 
   // Handle opening form for new requisition

@@ -6,6 +6,9 @@
   "Item Name": "FAS Weekly Inspection Checklist",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "FAS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -14,6 +17,9 @@
   "Item Name": "Heat Dettector (Siemens)",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "FAS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -22,6 +28,9 @@
   "Item Name": "Smoke Dettector (Siemens)",
   "UOM": "No,s",
   "Quantity": "0",
+  "boq_number": "",
+  "category": "FAS",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

@@ -5,6 +5,9 @@
   "Item Name": "Belt for PSD",
   "UOM": "Mtr",
   "Quantity": 120,
+  "boq_number": "",
+  "category": "PSD",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -13,6 +16,9 @@
   "Item Name": "PSD Daily Patrol",
   "UOM": "No,s",
   "Quantity": 0,
+  "boq_number": "",
+  "category": "PSD",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  },
  {
@@ -20,6 +26,9 @@
   "Item Name": "Maintenance Form Of PSD's (Monthly & Annual)",
   "UOM": "No,s",
   "Quantity": 0,
+  "boq_number": "",
+  "category": "PSD",
+  "belongsto": "O&M",
   "Location": "C&C Warehouse, Depot"
  }
 ]

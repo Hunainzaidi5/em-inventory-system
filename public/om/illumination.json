@@ -7,6 +7,9 @@
             "IMIS CODE": "003-0010-07-010006",
             "UOM": "MTR",
             "Quantity": 805,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -16,6 +19,9 @@
             "IMIS CODE": "003-0010-07-010002",
             "UOM": "MTR",
             "Quantity": 1000,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -25,6 +31,9 @@
             "IMIS CODE": "003-0010-07-010005",
             "UOM": "MTR",
             "Quantity": 1000,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -34,6 +43,9 @@
             "IMIS CODE": "003-0010-07-010004",
             "UOM": "MTR",
             "Quantity": 1000,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -43,6 +55,9 @@
             "IMIS CODE": "003-0010-07-010001",
             "UOM": "MTR",
             "Quantity": 500,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -52,6 +67,9 @@
             "IMIS CODE": "003-0009-08-009003",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -61,6 +79,9 @@
             "IMIS CODE": "003-0009-08-009004",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -70,6 +91,9 @@
             "IMIS CODE": "003-0009-08-009006",
             "UOM": "No.s",
             "Quantity": 30,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -79,6 +103,9 @@
             "IMIS CODE": "003-0009-08-009007",
             "UOM": "No.s",
             "Quantity": 30,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -88,6 +115,9 @@
             "IMIS CODE": "011-0005-00-005001",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -97,6 +127,9 @@
             "IMIS CODE": "011-0005-00-005002",
             "UOM": "No.s",
             "Quantity": 100,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -106,6 +139,9 @@
             "IMIS CODE": "011-0007-00-007002",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -115,7 +151,10 @@
             "IMIS CODE": "011-0007-09-007001",
             "UOM": "No.s",
             "Quantity": 122,
-            "Location": "C&C Warehouse, Depot"
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
+                "Location": "C&C Warehouse, Depot"
         },
         {
             "Sr. #": "14",
@@ -123,6 +162,9 @@
             "IMIS CODE": "011-0008-00-008001",
             "UOM": "No.s",
             "Quantity": 1400,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -132,6 +174,9 @@
             "IMIS CODE": "011-0008-00-008003",
             "UOM": "No.s",
             "Quantity": 255,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -141,6 +186,9 @@
             "IMIS CODE": "011-0008-00-008004",
             "UOM": "No.s",
             "Quantity": 366,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -150,6 +198,9 @@
             "IMIS CODE": "011-0008-00-008006",
             "UOM": "No.s",
             "Quantity": 246,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -159,6 +210,9 @@
             "IMIS CODE": "011-0007-00-007012",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -168,6 +222,9 @@
             "IMIS CODE": "011-0007-00-007013",
             "UOM": "No.s",
             "Quantity": 27,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -177,6 +234,9 @@
             "IMIS CODE": "011-0007-00-007004",
             "UOM": "No.s",
             "Quantity": 62,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -186,6 +246,9 @@
             "IMIS CODE": "011-0001-08-001007",
             "UOM": "MTR",
             "Quantity": 2340,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -195,6 +258,9 @@
             "IMIS CODE": "003-0052-00-052011",
             "UOM": "No.s",
             "Quantity": 200,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -204,6 +270,9 @@
             "IMIS CODE": "011-0007-00-007007",
             "UOM": "No.s",
             "Quantity": 44,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -213,6 +282,9 @@
             "IMIS CODE": "011-0007-00-007008",
             "UOM": "No.s",
             "Quantity": 8,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -222,6 +294,9 @@
             "IMIS CODE": "011-0007-00-007009",
             "UOM": "No.s",
             "Quantity": 65,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -231,6 +306,9 @@
             "IMIS CODE": "011-0007-00-007006",
             "UOM": "No.s",
             "Quantity": 183,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -240,6 +318,9 @@
             "IMIS CODE": "011-0007-00-007011",
             "UOM": "No.s",
             "Quantity": 9,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -249,6 +330,9 @@
             "IMIS CODE": "011-0007-00-007010",
             "UOM": "No.s",
             "Quantity": 32,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -258,6 +342,9 @@
             "IMIS CODE": "003-0056-00-056001",
             "UOM": "Kgs",
             "Quantity": 275,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -267,6 +354,9 @@
             "IMIS CODE": "011-0007-00-007005",
             "UOM": "No,s",
             "Quantity": 126,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -276,6 +366,9 @@
             "IMIS CODE": "003-0057-00-005705",
             "UOM": "FT",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -284,6 +377,9 @@
             "IMIS CODE": "003-0000-00-000028",
             "UOM": "No.s",
             "Quantity": 200,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -292,6 +388,9 @@
             "IMIS CODE": "003-0009-04-009012",
             "UOM": "No.s",
             "Quantity": 60,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -301,6 +400,9 @@
             "IMIS CODE": "011-0008-00-008002",
             "UOM": "No.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -310,6 +412,9 @@
             "IMIS CODE": "011-0007-00-007023",
             "UOM": "No.s",
             "Quantity": 250,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -319,6 +424,9 @@
             "IMIS CODE": "011-0007-00-007024",
             "UOM": "No.s",
             "Quantity": 40,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -328,6 +436,9 @@
             "IMIS CODE": "011-0007-00-007041",
             "UOM": "No.s",
             "Quantity": 14,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -337,6 +448,9 @@
             "IMIS CODE": "011-0007-00-007033",
             "UOM": "No,s",
             "Quantity": 65,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -346,6 +460,9 @@
             "IMIS CODE": "011-0017-00-017002",
             "UOM": "No,s",
             "Quantity": 50,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -355,6 +472,9 @@
             "IMIS CODE": "011-0019-00-019005",
             "UOM": "MTR",
             "Quantity": 10,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -364,6 +484,9 @@
             "IMIS CODE": "011-0019-00-019006",
             "UOM": "MTR",
             "Quantity": 10,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -373,6 +496,9 @@
             "IMIS CODE": "011-0019-00-019001",
             "UOM": "MTR",
             "Quantity": 10,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -382,6 +508,9 @@
             "IMIS CODE": "003-0000-00-000152",
             "UOM": "MTR",
             "Quantity": 10,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -390,6 +519,9 @@
             "IMIS CODE": "003-0022-00-022008",
             "UOM": "No,s",
             "Quantity": 60,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -399,6 +531,9 @@
             "IMIS CODE": "011-0017-00-017003",
             "UOM": "No,s",
             "Quantity": 50,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -407,6 +542,9 @@
             "IMIS CODE": "003-0022-00-022009",
             "UOM": "No,s",
             "Quantity": 252,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -416,6 +554,9 @@
             "IMIS CODE": "011-0007-09-007035",
             "UOM": "No,s",
             "Quantity": 31,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -425,6 +566,9 @@
             "IMIS CODE": "011-0008-00-008011",
             "UOM": "No,s",
             "Quantity": 31,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -433,6 +577,9 @@
             "IMIS CODE": "001-0007-00-007040",
             "UOM": "No,s",
             "Quantity": 400,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -442,6 +589,9 @@
             "IMIS CODE": "011-0007-00-007042",
             "UOM": "No,s",
             "Quantity": 25,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -451,6 +601,9 @@
             "IMIS CODE": "011-0008-00-008010",
             "UOM": "No,s",
             "Quantity": 25,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -460,6 +613,9 @@
             "IMIS CODE": "003-0037-00-003738",
             "UOM": "Set.s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -469,6 +625,9 @@
             "IMIS CODE": "011-0001-00-001014",
             "UOM": "MTR",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -478,6 +637,9 @@
             "IMIS CODE": "011-0007-16-007045",
             "UOM": "No,s",
             "Quantity": 50,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -487,6 +649,9 @@
             "IMIS CODE": "011-0008-00-008012",
             "UOM": "No,s",
             "Quantity": 150,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -496,6 +661,9 @@
             "IMIS CODE": "011-0007-00-007044",
             "UOM": "No,s",
             "Quantity": 160,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -505,6 +673,9 @@
             "IMIS CODE": "011-0004-02-004009",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -514,6 +685,9 @@
             "IMIS CODE": "011-0004-02-004010",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -523,6 +697,9 @@
             "IMIS CODE": "011-0004-02-004011",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -532,6 +709,9 @@
             "IMIS CODE": "011-0004-02-004012",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -541,6 +721,9 @@
             "IMIS CODE": "011-0004-02-004013",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -550,6 +733,9 @@
             "IMIS CODE": "011-0004-02-004014",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -559,6 +745,9 @@
             "IMIS CODE": "011-0004-02-004015",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -568,6 +757,9 @@
             "IMIS CODE": "011-0004-02-004016",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -577,6 +769,9 @@
             "IMIS CODE": "011-0007-00-007046",
             "UOM": "No,s",
             "Quantity": 100,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -586,6 +781,9 @@
             "IMIS CODE": "011-0007-00-007025",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -595,6 +793,9 @@
             "IMIS CODE": "011-0021-00-021003",
             "UOM": "No,s",
             "Quantity": 130,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -604,6 +805,9 @@
             "IMIS CODE": "011-0005-00-005018",
             "UOM": "No,s",
             "Quantity": 20,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -613,6 +817,9 @@
             "IMIS CODE": "011-0008-00-008013",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -621,6 +828,9 @@
             "Item Name": "EPS Weekly Patrol",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -629,6 +839,9 @@
             "Item Name": "DB Of LV Weekly Patrol",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -638,6 +851,9 @@
             "IMIS CODE": "011-0015-00-015004",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -647,6 +863,9 @@
             "IMIS CODE": "001-0035-43-035071",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -655,6 +874,9 @@
             "Item Name": "LED Flood Light (SOGO)",
             "UOM": "No,s",
             "Quantity": 0,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         },
         {
@@ -663,6 +885,9 @@
             "Item Name": "Ceramic Fuse",
             "UOM": "No,s",
             "Quantity": 40,
+            "boq_number": "",
+            "category": "ILLUMINATION",
+            "belongsto": "O&M",
             "Location": "C&C Warehouse, Depot"
         }
     ]
