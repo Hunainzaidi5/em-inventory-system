@@ -187,6 +187,7 @@ const AddUserPage = () => {
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     console.debug('[UserManagement] UpdateUser: start', { userId, isEditing, form: { ...formData, avatar: !!formData.avatar && formData.avatar.length } });
+    debugger;
     if (isLoading) return;
     
     setIsLoading(true);
@@ -199,6 +200,7 @@ const AddUserPage = () => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${userId || 'new'}/${Date.now()}.${fileExt}`;
         console.debug('[UserManagement] ProfileAvatarUpload: uploading', { fileName, size: file.size, type: file.type });
+        debugger;
         
         // Ensure folder per user: if creating, we'll re-write path after auth ID is known
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -319,7 +321,7 @@ const AddUserPage = () => {
             </div>
           </div>
 
-          <div onSubmit={handleSubmit(onSubmit)} className="p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-8">
             {error && (
               <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">
                 <div className="flex items-center space-x-2">
@@ -466,7 +468,7 @@ const AddUserPage = () => {
                 Cancel
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
