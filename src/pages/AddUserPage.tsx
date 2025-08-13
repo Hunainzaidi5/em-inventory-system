@@ -197,7 +197,7 @@ const AddUserPage = () => {
           className="mb-4 text-blue-600 hover:underline text-sm"
           onClick={() => navigate('/dashboard/users')}
         >
-          â† Back to User Management
+          Back to User Management
         </button>
         <h2 className="text-2xl font-bold mb-6 text-center">Add New User</h2>
         {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
