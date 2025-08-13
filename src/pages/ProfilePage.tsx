@@ -58,11 +58,11 @@ function ChangePasswordInline({ userEmail }: { userEmail: string }) {
     <div className="space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="current_password" className="flex items-center gap-2">
+          <Label htmlFor="current_password_inline" className="flex items-center gap-2">
             <Lock className="h-4 w-4" /> Current Password
           </Label>
           <Input
-            id="current_password"
+            id="current_password_inline"
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
@@ -71,11 +71,11 @@ function ChangePasswordInline({ userEmail }: { userEmail: string }) {
           />
         </div>
         <div>
-          <Label htmlFor="new_password" className="flex items-center gap-2">
+          <Label htmlFor="new_password_inline" className="flex items-center gap-2">
             <Lock className="h-4 w-4" /> New Password
           </Label>
           <Input
-            id="new_password"
+            id="new_password_inline"
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}

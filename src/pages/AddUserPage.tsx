@@ -186,6 +186,7 @@ const AddUserPage = () => {
   }, [userId, setValue, navigate]);
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
+    console.debug('[UserManagement] UpdateUser: start', { userId, isEditing, form: { ...formData, avatar: !!formData.avatar && formData.avatar.length } });
     if (isLoading) return;
     
     setIsLoading(true);
@@ -197,6 +198,7 @@ const AddUserPage = () => {
         const file = formData.avatar[0] as File;
         const fileExt = file.name.split('.').pop();
         const fileName = `${userId || 'new'}/${Date.now()}.${fileExt}`;
+        console.debug('[UserManagement] ProfileAvatarUpload: uploading', { fileName, size: file.size, type: file.type });
         
         // Ensure folder per user: if creating, we'll re-write path after auth ID is known
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -209,6 +211,7 @@ const AddUserPage = () => {
           // continue save without avatar instead of hard failing
         } else {
           avatarUrl = uploadData?.path || fileName;
+          console.debug('[UserManagement] ProfileAvatarUpload: uploaded', { path: avatarUrl });
         }
       }
       // Ensure the role is a valid UserRole
@@ -228,13 +231,16 @@ const AddUserPage = () => {
         if (avatarUrl) {
           updateData.avatar = avatarUrl;
         }
-        
+        console.debug('[UserManagement] UpdateUser: updating profile', { userId, updateData });
         const { error: updateError } = await supabase
           .from('profiles')
           .update(updateData)
           .eq('id', userId);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('[UserManagement] UpdateUser: update error', updateError);
+          throw updateError;
+        }
         
         // If the current user is updating their own profile, update the auth context
         if (currentUser?.id === userId) {
@@ -242,9 +248,11 @@ const AddUserPage = () => {
           window.dispatchEvent(new Event('inventory-sync'));
         }
         
+        console.debug('[UserManagement] UpdateUser: success', { userId });
         toast.success('User updated successfully');
       } else {
         // Create new user
+        console.debug('[UserManagement] CreateUser: creating', { email: formData.email });
         const { success, error: registerError } = await registerUser({
           email: formData.email,
           password: formData.password,
@@ -256,6 +264,7 @@ const AddUserPage = () => {
         });
 
         if (!success) throw new Error(registerError || 'Registration failed');
+        console.debug('[UserManagement] CreateUser: success', { email: formData.email });
 
         if (registerError) throw registerError;
         toast.success('User created successfully');
