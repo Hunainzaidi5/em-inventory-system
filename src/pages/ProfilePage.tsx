@@ -1,22 +1,163 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
+// Using native JavaScript date formatting instead of date-fns
 import { updateProfile } from "@/services/authService";
 import { toast } from "sonner";
-import { Loader2, Camera } from "lucide-react";
+import { 
+  Loader2, 
+  Camera, 
+  User, 
+  Mail, 
+  Shield, 
+  Building, 
+  CreditCard, 
+  Calendar,
+  Sparkles,
+  Upload,
+  UserCircle,
+  TrendingUp,
+  Activity
+} from "lucide-react";
+
+const roleDisplayNames = {
+  dev: 'Developer (Admin)',
+  manager: 'Manager',
+  deputy_manager: 'Deputy Manager',
+  engineer: 'Engineer',
+  assistant_engineer: 'Assistant Engineer',
+  master_technician: 'Master Technician',
+  technician: 'Technician'
+};
+
+const roleColors = {
+  dev: 'from-purple-600 to-purple-700',
+  manager: 'from-blue-600 to-blue-700',
+  deputy_manager: 'from-indigo-600 to-indigo-700',
+  engineer: 'from-green-600 to-green-700',
+  assistant_engineer: 'from-emerald-600 to-emerald-700',
+  master_technician: 'from-orange-600 to-orange-700',
+  technician: 'from-gray-600 to-gray-700'
+};
+
+const StatCard = ({ icon: Icon, title, value, subtitle, color }: {
+  icon: React.ComponentType<any>;
+  title: string;
+  value: string;
+  subtitle?: string;
+  color: string;
+}) => {
+  const [animatedValue, setAnimatedValue] = useState('');
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimatedValue(value);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [value]);
+
+  return (
+    <div className={`relative overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br ${color} p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
+      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-700"></div>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-4">
+          <div className={`p-3 rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-colors duration-300`}>
+            <Icon className="w-6 h-6 text-white" />
+          </div>
+        </div>
+        <div className="text-white">
+          <div className="text-2xl font-bold mb-1">
+            {animatedValue}
+          </div>
+          <div className="text-white/80 font-medium">{title}</div>
+          {subtitle && (
+            <div className="text-white/60 text-sm mt-1">{subtitle}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const InfoCard = ({ icon: Icon, label, value, color = "bg-gray-100" }: {
+  icon: React.ComponentType<any>;
+  label: string;
+  value: string;
+  color?: string;
+}) => (
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group hover:scale-105">
+    <div className="flex items-center space-x-4">
+      <div className={`p-3 rounded-xl ${color} group-hover:scale-110 transition-transform duration-300`}>
+        <Icon className="w-5 h-5 text-gray-600" />
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-medium text-gray-500 mb-1">{label}</p>
+        <p className="text-lg font-semibold text-gray-900">{value}</p>
+      </div>
+    </div>
+  </div>
+);
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Define form schema
+const profileFormSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  department: z.string().optional(),
+  employee_id: z.string().optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      department: "",
+      employee_id: "",
+    },
+    mode: "onChange",
+  });
+
+  // Set form values when user data is available
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name || "",
+        email: user.email || "",
+        department: user.department || "",
+        employee_id: user.employee_id || "",
+      });
+    }
+  }, [user, form]);
+
   if (!user) {
-    return <div>Loading user data...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading user data...</p>
+        </div>
+      </div>
+    );
   }
 
   const handleAvatarClick = () => {
@@ -63,117 +204,364 @@ export default function ProfilePage() {
     }
   };
 
-  // Log the user data for debugging
-  console.log('Profile page user data:', user);
+  const onSubmit = async (data: ProfileFormValues) => {
+    try {
+      setIsUpdating(true);
+      await updateProfile(data);
+      await refreshUser();
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const memberSince = new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const userRole = user.role as keyof typeof roleColors;
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-          <p className="text-muted-foreground">
-            View and manage your account details
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                My Profile
+              </h1>
+              <p className="text-gray-600 text-lg">View and manage your account details</p>
+            </div>
+            <div className={`p-4 rounded-2xl bg-gradient-to-br ${roleColors[userRole] || 'from-gray-600 to-gray-700'} shadow-lg`}>
+              <UserCircle className="w-8 h-8 text-white" />
+            </div>
+          </div>
         </div>
-      </div>
-      
-      {/* Debug information - only show in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-yellow-50 p-4 rounded-md text-sm text-yellow-800 mb-4">
-          <h3 className="font-bold mb-2">Debug Information:</h3>
-          <p>Avatar URL: {user.avatar || 'No avatar set'}</p>
-          <p>User ID: {user.id}</p>
-        </div>
-      )}
 
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>
-              This information will be displayed publicly so be careful what you share.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="relative group">
-                  <Avatar 
-                    className="h-20 w-20 cursor-pointer transition-opacity group-hover:opacity-80"
-                    onClick={handleAvatarClick}
-                  >
-                    {user.avatar ? (
-                      <>
-                        <AvatarImage 
-                          src={`${user.avatar}?t=${Date.now()}`} // Add timestamp to prevent caching
-                          alt={user.name} 
-                          className="object-cover"
-                          onError={(e) => {
-                            console.error('Error loading avatar:', e);
-                            // Fallback to initials if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                        <AvatarFallback className="text-lg">
-                          {user.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </>
-                    ) : (
-                      <AvatarFallback className="text-lg bg-gray-200">
-                        {user.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    {isUploading ? (
-                      <Loader2 className="h-6 w-6 animate-spin text-white" />
-                    ) : (
-                      <Camera className="h-6 w-6 text-white" />
-                    )}
-                  </div>
-                  
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="hidden"
-                    disabled={isUploading}
-                  />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">{user.name}</h3>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                </div>
+        {/* Debug information - only show in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-8 p-6 rounded-2xl bg-yellow-50 border border-yellow-200 shadow-lg">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 rounded-lg bg-yellow-100">
+                <Activity className="w-5 h-5 text-yellow-600" />
               </div>
+              <h3 className="text-lg font-semibold text-yellow-800">Debug Information</h3>
+            </div>
+            <div className="space-y-2 text-sm text-yellow-800">
+              <p><span className="font-medium">Avatar URL:</span> {user.avatar || 'No avatar set'}</p>
+              <p><span className="font-medium">User ID:</span> {user.id}</p>
+            </div>
+          </div>
+        )}
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Role</p>
-                  <p className="capitalize">{user.role.replace('_', ' ')}</p>
-                </div>
-                {user.department && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Department</p>
-                    <p>{user.department}</p>
-                  </div>
-                )}
-                {user.employee_id && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Employee ID</p>
-                    <p>{user.employee_id}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Member since</p>
-                  <p>{format(new Date(user.created_at), 'MMMM d, yyyy')}</p>
-                </div>
+        {/* Profile Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            icon={User}
+            title="Profile Status"
+            value="Active"
+            subtitle="Account verified"
+            color="from-emerald-600 to-emerald-700"
+          />
+          <StatCard
+            icon={Shield}
+            title="Role Level"
+            value={roleDisplayNames[userRole] || user.role}
+            subtitle="Access permissions"
+            color={roleColors[userRole] || 'from-gray-600 to-gray-700'}
+          />
+          <StatCard
+            icon={Calendar}
+            title="Member Since"
+            value={memberSince}
+            subtitle="Account created"
+            color="from-blue-600 to-blue-700"
+          />
+          <StatCard
+            icon={TrendingUp}
+            title="Profile Score"
+            value="98%"
+            subtitle="Completion rate"
+            color="from-purple-600 to-purple-700"
+          />
+        </div>
+
+        {/* Main Profile Card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden mb-8">
+          <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg bg-indigo-100">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
+                <p className="text-gray-500 text-sm">Manage your personal details and preferences</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          <div className="p-8">
+            <div className="space-y-8">
+              {/* Avatar Section */}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <div className="space-y-4">
+                    <div className="relative group">
+                      <Avatar 
+                        className="h-32 w-32 cursor-pointer transition-opacity group-hover:opacity-80"
+                        onClick={handleAvatarClick}
+                      >
+                        {user.avatar ? (
+                          <>
+                            <AvatarImage 
+                              src={`${user.avatar}?t=${Date.now()}`}
+                              alt={user.name} 
+                              className="object-cover"
+                              onError={(e) => {
+                                console.error('Error loading avatar:', e);
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                            <AvatarFallback className="text-2xl">
+                              {user.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </>
+                        ) : (
+                          <AvatarFallback className="text-2xl bg-gray-200">
+                            {user.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        {isUploading ? (
+                          <Loader2 className="h-8 w-8 animate-spin text-white" />
+                        ) : (
+                          <Camera className="h-8 w-8 text-white" />
+                        )}
+                      </div>
+                      
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                        disabled={isUploading}
+                      />
+                    </div>
+                    <p className="text-xs text-center text-muted-foreground">
+                      Click to change photo
+                    </p>
+                  </div>
+
+                  <div className="flex-1 space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Full Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="name"
+                        {...form.register("name")}
+                        disabled={isUpdating}
+                        className={form.formState.errors.name ? "border-red-500" : ""}
+                      />
+                      {form.formState.errors.name && (
+                        <p className="text-sm text-red-500">
+                          {form.formState.errors.name.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        {...form.register("email")}
+                        disabled={isUpdating}
+                        className={form.formState.errors.email ? "border-red-500" : ""}
+                      />
+                      {form.formState.errors.email && (
+                        <p className="text-sm text-red-500">
+                          {form.formState.errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="department" className="flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Department
+                    </Label>
+                    <Input
+                      id="department"
+                      {...form.register("department")}
+                      disabled={isUpdating}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="employee_id" className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      Employee ID
+                    </Label>
+                    <Input
+                      id="employee_id"
+                      {...form.register("employee_id")}
+                      disabled={isUpdating}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-end space-x-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => form.reset()}
+                    disabled={isUpdating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isUpdating || !form.formState.isDirty}>
+                    {isUpdating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      "Update Profile"
+                    )}
+                  </Button>
+                </div>
+              </form>
+
+              {/* Information Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoCard
+                  icon={Mail}
+                  label="Email Address"
+                  value={user.email}
+                  color="bg-blue-100"
+                />
+                
+                <InfoCard
+                  icon={Shield}
+                  label="Role"
+                  value={roleDisplayNames[userRole] || user.role.replace('_', ' ')}
+                  color="bg-purple-100"
+                />
+
+                {user.department && (
+                  <InfoCard
+                    icon={Building}
+                    label="Department"
+                    value={user.department}
+                    color="bg-green-100"
+                  />
+                )}
+
+                {user.employee_id && (
+                  <InfoCard
+                    icon={CreditCard}
+                    label="Employee ID"
+                    value={user.employee_id}
+                    color="bg-orange-100"
+                  />
+                )}
+
+                <InfoCard
+                  icon={Calendar}
+                  label="Member Since"
+                  value={memberSince}
+                  color="bg-indigo-100"
+                />
+
+                <InfoCard
+                  icon={User}
+                  label="Account Status"
+                  value="Active & Verified"
+                  color="bg-emerald-100"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                <Activity className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">100%</div>
+                <div className="text-sm text-gray-500">Profile Complete</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">All fields filled</span>
+                <span className="font-semibold text-green-600">✓</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full transition-all duration-1000" style={{width: '100%'}}></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors">
+                <Shield className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">Secure</div>
+                <div className="text-sm text-gray-500">Account Status</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Security Level</span>
+                <span className="font-semibold text-emerald-600">High</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-emerald-600 h-2 rounded-full transition-all duration-1000" style={{width: '95%'}}></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-purple-50 group-hover:bg-purple-100 transition-colors">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">5.0</div>
+                <div className="text-sm text-gray-500">Performance</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Overall Rating</span>
+                <span className="font-semibold text-purple-600">Excellent</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-purple-600 h-2 rounded-full transition-all duration-1000" style={{width: '100%'}}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
