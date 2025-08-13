@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
+import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Package, Save, AlertCircle } from "lucide-react";
 import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions, Requisition as ServiceRequisition } from "@/services/requisitionService";
 import { useToast } from "@/components/ui/use-toast";
 import { adjustQuantityForRequisition } from '@/services/itemQuantityService';
+import { getSpareParts } from '@/services/spareService';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
@@ -56,6 +57,8 @@ const RequisitionPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [itemOptions, setItemOptions] = useState<{ name: string; quantity: number }[]>([]);
+  const [availableQuantity, setAvailableQuantity] = useState<number | null>(null);
   
   const locationOptions = [
     { value: 'Depot' as const, label: 'Depot' },
@@ -114,8 +117,8 @@ const RequisitionPage = () => {
     itemName: '',
     quantity: 1,
     issuedTo: '',
-    location: 'all',
-    department: 'all',
+    location: 'Depot',
+    department: 'em_systems',
     status: 'pending',
     notes: ''
   } as RequisitionFormData);
@@ -179,21 +182,61 @@ const RequisitionPage = () => {
     if (data.quantity <= 0) {
       errors.quantity = 'Quantity must be greater than 0';
     }
+
+    // For issue/consume, ensure sufficient stock when we know availability
+    if ((data.requisitionType === 'issue' || data.requisitionType === 'consume') && availableQuantity !== null) {
+      if (data.quantity > availableQuantity) {
+        errors.quantity = `Insufficient stock. Available: ${availableQuantity}`;
+      }
+    }
     
     if (!data.issuedTo.trim()) {
       errors.issuedTo = 'Issued to field is required';
     }
     
-    if (!data.location.trim()) {
+    if (!data.location || !String(data.location).trim()) {
       errors.location = 'Location is required';
     }
     
-    if (!data.department.trim()) {
+    if (!data.department || !String(data.department).trim()) {
       errors.department = 'Department is required';
     }
     
     return errors;
   };
+
+  // Load items per item type from appropriate source
+  const loadItemsForType = useCallback(async (type: ItemType) => {
+    try {
+      if (type === 'spare_management') {
+        const parts = await getSpareParts();
+        const opts = (parts || []).map(p => ({ name: p.name, quantity: Number(p.quantity) || 0 }));
+        setItemOptions(opts);
+        return;
+      }
+      const storageKeyMap: Record<ItemType, string> = {
+        inventory: 'inventoryItems',
+        tool: 'toolsItems',
+        general_tools: 'generalToolsItems',
+        ppe: 'ppeItems',
+        stationery: 'stationeryItems',
+        faulty_return: 'faultyReturns',
+        spare_management: ''
+      } as const;
+      const key = storageKeyMap[type];
+      if (!key) { setItemOptions([]); return; }
+      const raw = localStorage.getItem(key);
+      if (!raw) { setItemOptions([]); return; }
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) { setItemOptions([]); return; }
+      const opts = arr.map((it: any) => ({ name: String(it.itemName || it.name || '').trim(), quantity: Number(it.quantity) || 0 }))
+        .filter((o: any) => o.name);
+      setItemOptions(opts);
+    } catch (e) {
+      console.error('[Requisition] Failed loading items for type', type, e);
+      setItemOptions([]);
+    }
+  }, []);
 
   // Handle form submission
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -308,6 +351,18 @@ const RequisitionPage = () => {
         [field]: undefined
       }));
     }
+
+    if (field === 'itemType') {
+      setAvailableQuantity(null);
+      setItemOptions([]);
+      setFormData(prev => ({ ...prev, itemName: '' }));
+      loadItemsForType(value as ItemType);
+    }
+
+    if (field === 'itemName') {
+      const opt = itemOptions.find(o => o.name.toLowerCase() === String(value).toLowerCase());
+      setAvailableQuantity(opt ? opt.quantity : null);
+    }
   };
 
   const handleDeleteRequisition = (id: string) => {
@@ -376,6 +431,20 @@ const RequisitionPage = () => {
       subscription();
     };
   }, [fetchRequisitions]);
+
+  // Initial load of item options and keep them in sync with local modules
+  useEffect(() => {
+    loadItemsForType(formData.itemType);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const handler = () => {
+      loadItemsForType(formData.itemType);
+    };
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, [formData.itemType, loadItemsForType]);
 
   const exportToCSV = () => {
     const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Location', 'Department', 'Date', 'Status', 'Notes'];
@@ -460,7 +529,7 @@ const RequisitionPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -479,8 +548,8 @@ const RequisitionPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total</p>
@@ -489,7 +558,7 @@ const RequisitionPage = () => {
             <Package className="h-8 w-8 text-blue-500" />
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Completed</p>
@@ -500,7 +569,7 @@ const RequisitionPage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Pending</p>
@@ -511,7 +580,7 @@ const RequisitionPage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Overdue</p>
@@ -630,7 +699,7 @@ const RequisitionPage = () => {
                   <option value="stationery">Stationery</option>
                   <option value="faulty_return">Faulty Return</option>
                   <option value="inventory">Inventory</option>
-                  <option value="tools">Tools</option>
+                  <option value="tool">Tools</option>
                   <option value="general_tools">General Tools</option>
                 </select>
               </div>
@@ -718,7 +787,7 @@ const RequisitionPage = () => {
       </div>
 
       {/* Requisition Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
@@ -810,7 +879,7 @@ const RequisitionPage = () => {
       {/* Requisition Form Modal */}
       {showRequisitionForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-xl font-bold text-gray-900">
                 {isEditMode ? 'Edit Requisition' : 'New Requisition'}
@@ -859,7 +928,7 @@ const RequisitionPage = () => {
                     <option value="stationery">Stationery</option>
                     <option value="faulty_return">Faulty Return</option>
                     <option value="inventory">Inventory</option>
-                    <option value="tools">Tools</option>
+                    <option value="tool">Tools</option>
                     <option value="general_tools">General Tools</option>
                   </select>
                 </div>
@@ -869,16 +938,22 @@ const RequisitionPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Item Name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.itemName}
                     onChange={(e) => handleFormChange('itemName', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       formErrors.itemName ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Enter item name"
                     disabled={isSaving}
-                  />
+                  >
+                    <option value="">Select an item</option>
+                    {itemOptions.map(opt => (
+                      <option key={opt.name} value={opt.name}>{opt.name}</option>
+                    ))}
+                  </select>
+                  {availableQuantity !== null && (
+                    <div className="mt-2 text-xs text-gray-600">Available: <span className={availableQuantity > 0 ? 'text-emerald-600' : 'text-red-600'}>{availableQuantity}</span></div>
+                  )}
                   {formErrors.itemName && (
                     <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
                       <AlertCircle className="h-4 w-4" />
@@ -1054,7 +1129,7 @@ const RequisitionPage = () => {
       {/* Requisition Details Modal */}
       {showDetails && selectedRequisition && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-xl font-bold text-gray-900">Requisition Details</h2>
               <button
