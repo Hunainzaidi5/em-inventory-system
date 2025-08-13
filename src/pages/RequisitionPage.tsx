@@ -7,14 +7,14 @@ import { getSpareParts } from '@/services/spareService';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
-type StatusType = 'completed' | 'pending' | 'overdue';
+ type StatusType = 'completed' | 'pending' | 'overdue' | 'cancelled';
 
 type Requisition = ServiceRequisition;
 
 interface Filters {
   requisitionType: RequisitionType | 'all';
   itemType: ItemType | 'all';
-  status: 'completed' | 'pending' | 'overdue' | 'all';
+  status: 'completed' | 'pending' | 'overdue' | 'cancelled' | 'all';
   location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   dateRange: {
@@ -31,7 +31,7 @@ interface RequisitionFormData {
   issuedTo: string;
   location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
-  status: 'completed' | 'pending' | 'overdue';
+  status: 'completed' | 'pending' | 'overdue' | 'cancelled';
   notes: string;
 }
 
