@@ -23,75 +23,10 @@ import {
   Upload,
   UserCircle,
   TrendingUp,
-  Activity,
-  Lock
+  Activity
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabase";
-
-function ChangePasswordInline({ userEmail }: { userEmail: string }) {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = async () => {
-    if (!newPassword || newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters");
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      // Supabase does not require current password for updateUser when a valid session exists
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) throw error;
-      setCurrentPassword("");
-      setNewPassword("");
-      toast.success("Password updated successfully");
-    } catch (e: any) {
-      toast.error(e.message || "Failed to update password");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="current_password_inline" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" /> Current Password
-          </Label>
-          <Input
-            id="current_password_inline"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="Enter current password"
-            autoComplete="current-password"
-          />
-        </div>
-        <div>
-          <Label htmlFor="new_password_inline" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" /> New Password
-          </Label>
-          <Input
-            id="new_password_inline"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Enter new password (min 8 chars)"
-            autoComplete="new-password"
-          />
-        </div>
-      </div>
-      <div>
-        <Button onClick={handleChange} disabled={isSubmitting || newPassword.length < 8}>
-          {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</>) : "Change Password"}
-        </Button>
-      </div>
-    </div>
-  );
-}
 
 const roleDisplayNames = {
   dev: 'Developer (Admin)',
@@ -167,6 +102,28 @@ const InfoCard = ({ icon: Icon, label, value, color = "bg-gray-100" }: {
         <p className="text-sm font-medium text-gray-500 mb-1">{label}</p>
         <p className="text-lg font-semibold text-gray-900">{value}</p>
       </div>
+    </div>
+  </div>
+);
+
+const ProfileCard = ({ title, children }: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+      <div className="flex items-center space-x-3">
+        <div className="p-2 rounded-lg bg-indigo-100">
+          <Sparkles className="w-5 h-5 text-indigo-600" />
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+          <p className="text-gray-500 text-sm">Manage your personal details and preferences</p>
+        </div>
+      </div>
+    </div>
+    <div className="p-8">
+      {children}
     </div>
   </div>
 );
@@ -356,357 +313,238 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Main Profile Card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden mb-8">
-          <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-indigo-100">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
-                <p className="text-gray-500 text-sm">Manage your personal details and preferences</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-8">
-            <div className="space-y-8">
+        {/* Profile Information Card */}
+        <ProfileCard title="Profile Information">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Avatar and Form Section */}
+            <div className="flex flex-col lg:flex-row gap-8">
               {/* Avatar Section */}
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="flex flex-col sm:flex-row gap-6">
-                  <div className="space-y-4">
-                    <div className="relative group">
-                      <Avatar 
-                        className="h-32 w-32 cursor-pointer transition-opacity group-hover:opacity-80"
-                        onClick={handleAvatarClick}
-                      >
-                        {user.avatar ? (
-                          <>
-                            <AvatarImage 
-                              src={getAvatarUrl(user.id, user.avatar)}
-                              alt={user.name} 
-                              className="object-cover"
-                              onError={(e) => {
-                                console.error('Error loading avatar:', e);
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
-                            />
-                            <AvatarFallback className="text-2xl">
-                              {user.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </>
-                        ) : (
-                          <AvatarFallback className="text-2xl bg-gray-200">
-                            {user.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                      
-                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        {isUploading ? (
-                          <Loader2 className="h-8 w-8 animate-spin text-white" />
-                        ) : (
-                          <Camera className="h-8 w-8 text-white" />
-                        )}
-                      </div>
-                      
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        className="hidden"
-                        disabled={isUploading}
-                      />
+              <div className="flex flex-col items-center space-y-4 lg:w-1/3">
+                <div className="relative group">
+                  <Avatar 
+                    className="h-40 w-40 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+                    onClick={handleAvatarClick}
+                  >
+                    {user.avatar ? (
+                      <>
+                        <AvatarImage 
+                          src={getAvatarUrl(user.id, user.avatar)}
+                          alt={user.name} 
+                          className="object-cover"
+                          onError={(e) => {
+                            console.error('Error loading avatar:', e);
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                        <AvatarFallback className="text-4xl bg-gradient-to-br from-indigo-100 to-purple-100">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </>
+                    ) : (
+                      <AvatarFallback className="text-4xl bg-gradient-to-br from-gray-100 to-gray-200">
+                        {user.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    {isUploading ? (
+                      <Loader2 className="h-10 w-10 animate-spin text-white" />
+                    ) : (
+                      <Camera className="h-10 w-10 text-white" />
+                    )}
+                  </div>
+                  
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                    disabled={isUploading}
+                  />
+                </div>
+                
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Profile Picture</p>
+                  <p className="text-xs text-gray-500">Click to upload or change</p>
+                  {isUploading && (
+                    <div className="flex items-center justify-center space-x-2 text-blue-600">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm">Uploading...</span>
                     </div>
-                    <p className="text-xs text-center text-muted-foreground">
-                      Click to change photo
-                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Form Fields Section */}
+              <div className="flex-1 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <User className="h-4 w-4 text-indigo-600" />
+                      Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      {...form.register("name")}
+                      disabled={isUpdating}
+                      className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors ${
+                        form.formState.errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
+                      placeholder="Enter your full name"
+                    />
+                    {form.formState.errors.name && (
+                      <p className="text-sm text-red-500 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                        {form.formState.errors.name.message}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex-1 space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Full Name <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="name"
-                        {...form.register("name")}
-                        disabled={isUpdating}
-                        className={form.formState.errors.name ? "border-red-500" : ""}
-                      />
-                      {form.formState.errors.name && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.name.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        Email <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        {...form.register("email")}
-                        disabled={isUpdating}
-                        className={form.formState.errors.email ? "border-red-500" : ""}
-                      />
-                      {form.formState.errors.email && (
-                        <p className="text-sm text-red-500">
-                          {form.formState.errors.email.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="department" className="flex items-center gap-2">
-                        <Building className="h-4 w-4" />
-                        Department
-                      </Label>
-                      <Input
-                        id="department"
-                        {...form.register("department")}
-                        disabled={isUpdating}
-                      />
-                    </div>
-
-                    <ChangePasswordInline userEmail={user.email} />
-
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <Mail className="h-4 w-4 text-indigo-600" />
+                      Email Address <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...form.register("email")}
+                      disabled={isUpdating}
+                      className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors ${
+                        form.formState.errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
+                      placeholder="Enter your email address"
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-sm text-red-500 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                        {form.formState.errors.email.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="employee_id" className="flex items-center gap-2">
-                      <CreditCard className="h-4 w-4" />
+                    <Label htmlFor="department" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <Building className="h-4 w-4 text-indigo-600" />
+                      Department
+                    </Label>
+                    <Input
+                      id="department"
+                      {...form.register("department")}
+                      disabled={isUpdating}
+                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+                      placeholder="Enter your department"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="employee_id" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <CreditCard className="h-4 w-4 text-indigo-600" />
                       Employee ID
                     </Label>
                     <Input
                       id="employee_id"
                       {...form.register("employee_id")}
                       disabled={isUpdating}
+                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+                      placeholder="Enter your employee ID"
                     />
                   </div>
                 </div>
 
-                <div className="pt-4 flex justify-end space-x-4">
+                {/* Form Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => form.reset()}
                     disabled={isUpdating}
+                    className="h-11 px-6 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    Cancel
+                    Reset Changes
                   </Button>
-                  <Button type="submit" disabled={isUpdating || !form.formState.isDirty}>
+                  <Button 
+                    type="submit" 
+                    disabled={isUpdating || !form.formState.isDirty}
+                    className="h-11 px-8 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     {isUpdating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
+                        Updating Profile...
                       </>
                     ) : (
-                      "Update Profile"
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Update Profile
+                      </>
                     )}
                   </Button>
                 </div>
-              </form>
+              </div>
+            </div>
+          </form>
 
-              {/* Information Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Information Grid */}
+          <div className="mt-12 pt-8 border-t border-gray-100">
+            <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+              <Activity className="h-5 w-5 text-indigo-600" />
+              Account Information
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <InfoCard
+                icon={Mail}
+                label="Email Address"
+                value={user.email}
+                color="bg-blue-100"
+              />
+              
+              <InfoCard
+                icon={Shield}
+                label="Role"
+                value={roleDisplayNames[userRole] || user.role.replace('_', ' ')}
+                color="bg-purple-100"
+              />
+
+              {user.department && (
                 <InfoCard
-                  icon={Mail}
-                  label="Email Address"
-                  value={user.email}
-                  color="bg-blue-100"
+                  icon={Building}
+                  label="Department"
+                  value={user.department}
+                  color="bg-green-100"
                 />
-                
+              )}
+
+              {user.employee_id && (
                 <InfoCard
-                  icon={Shield}
-                  label="Role"
-                  value={roleDisplayNames[userRole] || user.role.replace('_', ' ')}
-                  color="bg-purple-100"
+                  icon={CreditCard}
+                  label="Employee ID"
+                  value={user.employee_id}
+                  color="bg-orange-100"
                 />
+              )}
 
-                {user.department && (
-                  <InfoCard
-                    icon={Building}
-                    label="Department"
-                    value={user.department}
-                    color="bg-green-100"
-                  />
-                )}
+              <InfoCard
+                icon={Calendar}
+                label="Member Since"
+                value={memberSince}
+                color="bg-indigo-100"
+              />
 
-                {user.employee_id && (
-                  <InfoCard
-                    icon={CreditCard}
-                    label="Employee ID"
-                    value={user.employee_id}
-                    color="bg-orange-100"
-                  />
-                )}
-
-                <InfoCard
-                  icon={Calendar}
-                  label="Member Since"
-                  value={memberSince}
-                  color="bg-indigo-100"
-                />
-
-                <InfoCard
-                  icon={User}
-                  label="Account Status"
-                  value="Active & Verified"
-                  color="bg-emerald-100"
-                />
-              </div>
+              <InfoCard
+                icon={User}
+                label="Account Status"
+                value="Active & Verified"
+                color="bg-emerald-100"
+              />
             </div>
           </div>
-        </div>
-
-        {/* Password Section (Change only) */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg transition-all duration-300 p-6 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-xl bg-red-50">
-                <Shield className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900">Password & Security</h3>
-                <p className="text-gray-600">Manage your account security settings</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-start space-x-3">
-                <div className="p-2 rounded-lg bg-blue-100">
-                  <Shield className="w-4 h-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-blue-900 mb-1">Change Password</h4>
-                  <p className="text-sm text-blue-700 mb-3">
-                    Update your password. Enter your current password and a new password.
-                  </p>
-                  <ChangePasswordInline userEmail={user.email} />
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="flex items-start space-x-3">
-                <div className="p-2 rounded-lg bg-green-100">
-                  <Lock className="w-4 h-4 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-green-900 mb-1">Change Password</h4>
-                  <p className="text-sm text-green-700 mb-3">
-                    Change your current password to a new one. You'll need to enter your current password for security.
-                  </p>
-                  <Button
-                    onClick={() => {
-                      // TODO: Implement password change modal/form
-                      toast.info('Password change feature coming soon!');
-                    }}
-                    variant="outline"
-                    className="bg-green-600 text-white hover:bg-green-700 border-green-600"
-                  >
-                    Change Password
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-              <div className="flex items-start space-x-3">
-                <div className="p-2 rounded-lg bg-amber-100">
-                  <Activity className="w-4 h-4 text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-amber-900 mb-1">Security Tips</h4>
-                  <ul className="text-sm text-amber-700 space-y-1">
-                    <li>• Use a strong, unique password</li>
-                    <li>• Never share your login credentials</li>
-                    <li>• Log out when using shared devices</li>
-                    <li>• Enable two-factor authentication if available</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Additional Sections removed as requested */}
-        <div className="hidden">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                <Activity className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">100%</div>
-                <div className="text-sm text-gray-500">Profile Complete</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">All fields filled</span>
-                <span className="font-semibold text-green-600">✓</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full transition-all duration-1000" style={{width: '100%'}}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors">
-                <Shield className="w-6 h-6 text-emerald-600" />
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">Secure</div>
-                <div className="text-sm text-gray-500">Account Status</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Security Level</span>
-                <span className="font-semibold text-emerald-600">High</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-emerald-600 h-2 rounded-full transition-all duration-1000" style={{width: '95%'}}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-purple-50 group-hover:bg-purple-100 transition-colors">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">5.0</div>
-                <div className="text-sm text-gray-500">Performance</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Overall Rating</span>
-                <span className="font-semibold text-purple-600">Excellent</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-purple-600 h-2 rounded-full transition-all duration-1000" style={{width: '100%'}}></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </ProfileCard>
       </div>
     </div>
   );
