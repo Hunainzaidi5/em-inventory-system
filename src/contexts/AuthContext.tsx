@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
-import { supabase } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 import { User, LoginCredentials, RegisterData, UserRole, AuthenticationError } from '@/types/auth';
 
 interface AuthContextType {
