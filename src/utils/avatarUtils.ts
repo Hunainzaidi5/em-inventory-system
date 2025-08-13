@@ -75,16 +75,20 @@ export const getAvatarUrl = (userId: string, avatarPath: string): string => {
   
   const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
   
-  // If it's already a full URL, return as is
-  if (avatarPath.startsWith('http')) {
-    return avatarPath;
-  }
+  // Already absolute
+  if (avatarPath.startsWith('http')) return avatarPath;
   
-  // If it's a path (starts with /), it's a path in the storage bucket
+  // Leading slash => bucket-relative path
   if (avatarPath.startsWith('/')) {
     return `${baseUrl}/storage/v1/object/public/avatars${avatarPath}`;
   }
   
-  // Otherwise, treat it as a filename in the avatars bucket
-  return `${baseUrl}/storage/v1/object/public/avatars/${userId}/${avatarPath}`;
+  // If path contains a slash, assume it's already bucket-relative (e.g. userId/filename)
+  if (avatarPath.includes('/')) {
+    const clean = avatarPath.replace(/^\/+/, '');
+    return `${baseUrl}/storage/v1/object/public/avatars/${clean}`;
+  }
+  
+  // Plain filename: assume it lives at the root of avatars bucket
+  return `${baseUrl}/storage/v1/object/public/avatars/${avatarPath}`;
 };

@@ -145,14 +145,15 @@ const AddUserPage = () => {
       
       if (isEditing && userId) {
         // Update existing user
-        const { error: updateError } = await supabase
+                const { error: updateError } = await supabase
           .from('profiles')
           .update({
             full_name: formData.name,
             role: userRole,
             department: formData.department,
             employee_id: formData.employee_id,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            ...(avatarUrl ? { avatar: avatarUrl } : {})
           })
           .eq('id', userId);
 

@@ -41,6 +41,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { getAvatarUrl } from "@/utils/avatarUtils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -291,7 +292,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
                       {user.avatar ? (
                         <>
                           <AvatarImage 
-                            src={`${user.avatar}${user.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`} 
+                            src={getAvatarUrl(user.id, user.avatar)}
                             alt={user.name}
                             className="object-cover"
                             onError={(e) => {
