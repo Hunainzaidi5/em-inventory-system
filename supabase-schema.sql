@@ -303,6 +303,7 @@ CREATE TABLE requisition (
   condition_on_return TEXT,
   notes TEXT,
   reference_number TEXT UNIQUE,
+  status TEXT DEFAULT 'pending', -- 'pending', 'completed', 'overdue'
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

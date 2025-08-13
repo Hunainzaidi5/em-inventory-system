@@ -548,12 +548,26 @@ export const updateProfile = async (updates: Partial<User> & { avatarFile?: File
     // Remove the avatarFile from updates before saving to the database
     const { avatarFile, ...profileUpdates } = updates;
     
+    // Map interface fields to database fields
+    const dbUpdates: any = {
+      updated_at: new Date().toISOString(),
+    };
+    
+    // Map name to full_name for database
+    if (profileUpdates.name !== undefined) {
+      dbUpdates.full_name = profileUpdates.name;
+    }
+    
+    // Map other fields directly
+    if (profileUpdates.email !== undefined) dbUpdates.email = profileUpdates.email;
+    if (profileUpdates.role !== undefined) dbUpdates.role = profileUpdates.role;
+    if (profileUpdates.department !== undefined) dbUpdates.department = profileUpdates.department;
+    if (profileUpdates.employee_id !== undefined) dbUpdates.employee_id = profileUpdates.employee_id;
+    if (profileUpdates.avatar !== undefined) dbUpdates.avatar = profileUpdates.avatar;
+    
     const { data, error } = await supabase
       .from('profiles')
-      .update({
-        ...profileUpdates,
-        updated_at: new Date().toISOString(),
-      })
+      .update(dbUpdates)
       .eq('id', authUser.id)
       .select()
       .single();

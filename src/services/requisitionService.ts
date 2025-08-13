@@ -26,7 +26,7 @@ export interface RequisitionFormData extends Omit<Requisition, 'id' | 'createdAt
 
 export const getRequisitions = async () => {
   const { data, error } = await supabase
-    .from('requisitions')
+    .from('requisition')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -40,7 +40,7 @@ export const getRequisitions = async () => {
 
 export const createRequisition = async (requisition: Omit<RequisitionFormData, 'id'>) => {
   const { data, error } = await supabase
-    .from('requisitions')
+    .from('requisition')
     .insert([{
       ...requisition,
       status: 'pending', // Default status
@@ -60,7 +60,7 @@ export const createRequisition = async (requisition: Omit<RequisitionFormData, '
 
 export const updateRequisition = async (id: string, updates: Partial<RequisitionFormData>) => {
   const { data, error } = await supabase
-    .from('requisitions')
+    .from('requisition')
     .update(updates)
     .eq('id', id)
     .select()
@@ -76,7 +76,7 @@ export const updateRequisition = async (id: string, updates: Partial<Requisition
 
 export const deleteRequisition = async (id: string) => {
   const { error } = await supabase
-    .from('requisitions')
+    .from('requisition')
     .delete()
     .eq('id', id);
 
@@ -92,7 +92,7 @@ export const subscribeToRequisitions = (callback: (payload: any) => void) => {
     .channel('requisitions-changes')
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'requisitions' },
+      { event: '*', schema: 'public', table: 'requisition' },
       callback
     )
     .subscribe();

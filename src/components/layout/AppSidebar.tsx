@@ -310,15 +310,14 @@ export function AppSidebar({ className }: AppSidebarProps) {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border shadow-sm p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    <button 
+                      type="button"
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border shadow-sm p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent"
                       onClick={handleRefreshAvatar}
                       title="Refresh avatar"
                     >
                       <RotateCcw className="h-3 w-3" />
-                    </Button>
+                    </button>
                   </div>
                   {!collapsed && (
                     <div className="text-left min-w-0 flex-1">

@@ -7,7 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using native JavaScript date formatting instead of date-fns
-import { updateProfile } from "@/services/authService";
+import { updateProfile, resetPassword } from "@/services/authService";
+import { getAvatarUrl } from "@/utils/avatarUtils";
 import { toast } from "sonner";
 import { 
   Loader2, 
@@ -250,6 +251,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-2 text-sm text-yellow-800">
               <p><span className="font-medium">Avatar URL:</span> {user.avatar || 'No avatar set'}</p>
+              <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar ? getAvatarUrl(user.id, user.avatar) : 'No avatar set'}</p>
               <p><span className="font-medium">User ID:</span> {user.id}</p>
             </div>
           </div>
@@ -315,7 +317,7 @@ export default function ProfilePage() {
                         {user.avatar ? (
                           <>
                             <AvatarImage 
-                              src={`${user.avatar}?t=${Date.now()}`}
+                              src={getAvatarUrl(user.id, user.avatar)}
                               alt={user.name} 
                               className="object-cover"
                               onError={(e) => {
@@ -492,6 +494,70 @@ export default function ProfilePage() {
                   value="Active & Verified"
                   color="bg-emerald-100"
                 />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Password Reset Section */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 rounded-xl bg-red-50">
+                <Shield className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Password & Security</h3>
+                <p className="text-gray-600">Manage your account security settings</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-start space-x-3">
+                <div className="p-2 rounded-lg bg-blue-100">
+                  <Shield className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-blue-900 mb-1">Reset Password</h4>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Click the button below to receive a password reset link via email. 
+                    The link will be sent to your registered email address: <strong>{user.email}</strong>
+                  </p>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await resetPassword(user.email);
+                        toast.success('Password reset email sent! Check your inbox.');
+                      } catch (error) {
+                        console.error('Error sending password reset:', error);
+                        toast.error('Failed to send password reset email. Please try again.');
+                      }
+                    }}
+                    variant="outline"
+                    className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600"
+                  >
+                    Send Password Reset Email
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="flex items-start space-x-3">
+                <div className="p-2 rounded-lg bg-amber-100">
+                  <Activity className="w-4 h-4 text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-amber-900 mb-1">Security Tips</h4>
+                  <ul className="text-sm text-amber-700 space-y-1">
+                    <li>• Use a strong, unique password</li>
+                    <li>• Never share your login credentials</li>
+                    <li>• Log out when using shared devices</li>
+                    <li>• Enable two-factor authentication if available</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
