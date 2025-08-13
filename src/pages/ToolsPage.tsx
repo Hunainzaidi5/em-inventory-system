@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck } from "react-icons/fi";
-import InventoryPage from "./InventoryPage";
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiBox } from "react-icons/fi";
 
 interface IssuedTo {
   name: string;
@@ -146,7 +145,12 @@ const ToolsPage = () => {
         itemDescription: item.itemDescription,
         itemLocation: item.itemLocation,
         quantity: item.quantity,
-        issuedTo: item.issuedTo
+        issuedTo: {
+          name: item.issuedTo.name,
+          olt: item.issuedTo.olt,
+          designation: item.issuedTo.designation,
+          group: item.issuedTo.group
+        }
       });
       setEditId(id);
       setShowModal(true);
@@ -154,14 +158,14 @@ const ToolsPage = () => {
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm("Are you sure you want to remove this Tools item?")) {
+    if (window.confirm("Are you sure you want to remove this tool item?")) {
       setToolsItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.itemName.trim() || form.quantity < 0 || !form.issuedTo.name.trim()) return;
+    if (!form.itemName.trim() || form.quantity < 0 || !form.itemLocation.trim()) return;
 
     const updatedItem = {
       ...form,
@@ -185,75 +189,110 @@ const ToolsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Tools Items Management</h1>
-            <p className="text-gray-600">Track and manage Tools and their assignments</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+          <div className="mb-4 md:mb-0">
+            <div className="flex items-center mb-2">
+              <div className="p-2 bg-orange-100 rounded-lg mr-3">
+                <FiTool className="w-6 h-6 text-orange-600" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Tools Management
+              </h1>
+            </div>
+            <p className="text-slate-600 ml-11">Track and manage all tools and equipment assignments</p>
           </div>
           <button
             onClick={openAddModal}
-            className="mt-4 md:mt-0 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
-            <FiPlus className="mr-2" />
-            Add New Tools Item
+            <FiPlus className="mr-2 w-5 h-5" />
+            Add New Tool
           </button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total Tools Items</h3>
-            <p className="text-2xl font-bold">{toolsItems.length}</p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-slate-500 font-medium text-sm">Total Tools</h3>
+                <p className="text-3xl font-bold text-slate-800">{toolsItems.length}</p>
+              </div>
+              <div className="p-3 bg-orange-100 rounded-xl">
+                <FiTool className="w-6 h-6 text-orange-600" />
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Total Quantity</h3>
-            <p className="text-2xl font-bold">
-              {toolsItems.reduce((sum, item) => sum + item.quantity, 0)}
-            </p>
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-slate-500 font-medium text-sm">Total Quantity</h3>
+                <p className="text-3xl font-bold text-emerald-600">
+                  {toolsItems.reduce((sum, item) => sum + item.quantity, 0)}
+                </p>
+              </div>
+              <div className="p-3 bg-emerald-100 rounded-xl">
+                <FiPackage className="w-6 h-6 text-emerald-600" />
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Assigned Personnel</h3>
-            <p className="text-2xl font-bold">
-              {new Set(toolsItems.map(item => item.issuedTo.name)).size}
-            </p>
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-slate-500 font-medium text-sm">Active Users</h3>
+                <p className="text-3xl font-bold text-purple-600">
+                  {new Set(toolsItems.map(item => item.issuedTo.name)).size}
+                </p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-xl">
+                <FiUsers className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-gray-500 font-medium">Groups</h3>
-            <p className="text-2xl font-bold">
-              {new Set(toolsItems.map(item => item.issuedTo.group)).size}
-            </p>
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-slate-500 font-medium text-sm">Locations</h3>
+                <p className="text-3xl font-bold text-blue-600">
+                  {new Set(toolsItems.map(item => item.itemLocation)).size}
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <FiMapPin className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
             <div className="relative flex-grow">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search Tools items, descriptions, or assigned personnel..."
+                placeholder="Search tools, descriptions, locations, or assigned users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-12 pr-12 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition-all duration-200"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                  <FiX />
+                  <FiX className="w-5 h-5" />
                 </button>
               )}
             </div>
-            <div className="w-full md:w-48">
+            <div className="w-full md:w-56">
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition-all duration-200"
               >
                 {groups.map(group => (
                   <option key={group} value={group}>
@@ -266,93 +305,104 @@ const ToolsPage = () => {
         </div>
 
         {/* Tools Items Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="w-full">
+              <thead className="bg-slate-50/80">
                 <tr>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
                     onClick={() => requestSort('itemName')}
                   >
-                    <div className="flex items-center">
-                      Item Name {getSortIndicator('itemName')}
+                    <div className="flex items-center space-x-1">
+                      <span>Tool Name</span>
+                      <span className="text-slate-400">{getSortIndicator('itemName')}</span>
                     </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item Description
                   </th>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort('quantity')}
+                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    onClick={() => requestSort('itemDescription')}
                   >
-                    <div className="flex items-center">
-                      Quantity {getSortIndicator('quantity')}
+                    <div className="flex items-center space-x-1">
+                      <span>Description</span>
+                      <span className="text-slate-400">{getSortIndicator('itemDescription')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Issued To
+                  <th 
+                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    onClick={() => requestSort('itemLocation')}
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Location</span>
+                      <span className="text-slate-400">{getSortIndicator('itemLocation')}</span>
+                    </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                  <th 
+                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    onClick={() => requestSort('quantity')}
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Quantity</span>
+                      <span className="text-slate-400">{getSortIndicator('quantity')}</span>
+                    </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Assigned To
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.itemName}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-500 max-w-xs truncate" title={item.itemDescription}>
-                          {item.itemDescription}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm ${item.quantity < 10 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
-                          {item.quantity}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-500">
-                          <div className="font-medium">{item.issuedTo.name}</div>
-                          <div className="text-xs text-gray-400">
-                            OLT: {item.issuedTo.olt} | {item.issuedTo.designation} | Group: {item.issuedTo.group}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <tbody className="bg-white/50 divide-y divide-slate-200/50">
+                {filteredItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-slate-900">{item.itemName}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-600 max-w-xs truncate" title={item.itemDescription}>
+                        {item.itemDescription}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-2">
+                        <FiMapPin className="w-4 h-4 text-slate-400" />
+                        <span className="text-sm text-slate-600">{item.itemLocation}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        {item.quantity}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-600">
+                        <div className="font-medium text-slate-900">{item.issuedTo.name}</div>
+                        <div className="text-xs text-slate-500">{item.issuedTo.designation}</div>
+                        <div className="text-xs text-slate-500">{item.issuedTo.group}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center space-x-2">
                         <button
                           onClick={() => openEditModal(item.id!)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
                           title="Edit"
                         >
-                          <FiEdit />
+                          <FiEdit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleRemove(item.id!)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
                           title="Delete"
                         >
-                          <FiTrash2 />
+                          <FiTrash2 className="w-4 h-4" />
                         </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                      {searchTerm || selectedGroup !== "all"
-                        ? "No Tools items match your filters" 
-                        : "No Tools items recorded"}
+                      </div>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
@@ -360,155 +410,125 @@ const ToolsPage = () => {
 
         {/* Add/Edit Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center border-b px-6 py-4">
-                <h2 className="text-lg font-semibold">
-                  {editId ? "Edit Tools Item" : "Add New Tools Item"}
-                </h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <FiX size={24} />
-                </button>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-slate-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    {editId ? 'Edit Tool' : 'Add New Tool'}
+                  </h3>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    <FiX className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Item Name *
-                  </label>
-                  <input
-                    name="itemName"
-                    value={form.itemName}
-                    onChange={(e) => setForm({ ...form, itemName: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+              
+              <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Tool Name *</label>
+                    <input
+                      type="text"
+                      value={form.itemName}
+                      onChange={(e) => setForm({...form, itemName: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Quantity *</label>
+                    <input
+                      type="number"
+                      value={form.quantity}
+                      onChange={(e) => setForm({...form, quantity: parseInt(e.target.value) || 0})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                      min="0"
+                      required
+                    />
+                  </div>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Item Description
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
                   <textarea
-                    name="itemDescription"
                     value={form.itemDescription}
-                    onChange={(e) => setForm({ ...form, itemDescription: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => setForm({...form, itemDescription: e.target.value})}
                     rows={3}
-                    placeholder="Describe the Tools item and its specifications..."
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                    placeholder="Describe the tool and its specifications..."
                   />
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Location *</label>
                   <input
-                    name="itemLocation"
+                    type="text"
                     value={form.itemLocation}
-                    onChange={(e) => setForm({ ...form, itemLocation: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity *
-                  </label>
-                  <input
-                    name="quantity"
-                    type="number"
-                    min="0"
-                    value={form.quantity}
-                    onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => setForm({...form, itemLocation: e.target.value})}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                    placeholder="e.g., Tool Shed, Workshop A"
                     required
                   />
                 </div>
                 
-                {/* Issued To Section */}
-                <div className="border-t pt-4">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Issued To</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="border-t border-slate-200 pt-6">
+                  <h4 className="text-md font-medium text-slate-900 mb-4">Assigned To</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name *
-                      </label>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Name</label>
                       <input
-                        name="issuedToName"
+                        type="text"
                         value={form.issuedTo.name}
-                        onChange={(e) => setForm({ 
-                          ...form, 
-                          issuedTo: { ...form.issuedTo, name: e.target.value }
-                        })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Receiver Name"
-                        required
+                        onChange={(e) => setForm({...form, issuedTo: {...form.issuedTo, name: e.target.value}})}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        OLT (Employee Code)
-                      </label>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">OLT</label>
                       <input
-                        name="issuedToOlt"
+                        type="text"
                         value={form.issuedTo.olt}
-                        onChange={(e) => setForm({ 
-                          ...form, 
-                          issuedTo: { ...form.issuedTo, olt: e.target.value }
-                        })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Employee Code Number"
+                        onChange={(e) => setForm({...form, issuedTo: {...form.issuedTo, olt: e.target.value}})}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                       />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Designation
-                      </label>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Designation</label>
                       <input
-                        name="issuedToDesignation"
+                        type="text"
                         value={form.issuedTo.designation}
-                        onChange={(e) => setForm({ 
-                          ...form, 
-                          issuedTo: { ...form.issuedTo, designation: e.target.value }
-                        })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Designation"
+                        onChange={(e) => setForm({...form, issuedTo: {...form.issuedTo, designation: e.target.value}})}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Group
-                      </label>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Group</label>
                       <input
-                        name="issuedToGroup"
+                        type="text"
                         value={form.issuedTo.group}
-                        onChange={(e) => setForm({ 
-                          ...form, 
-                          issuedTo: { ...form.issuedTo, group: e.target.value }
-                        })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Group Number"
+                        onChange={(e) => setForm({...form, issuedTo: {...form.issuedTo, group: e.target.value}})}
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                       />
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex justify-end space-x-4 pt-6 border-t border-slate-200">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    className="px-6 py-3 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                   >
-                    {editId ? "Save Changes" : "Add Tools Item"}
+                    {editId ? 'Update Tool' : 'Add Tool'}
                   </button>
                 </div>
               </form>
@@ -516,8 +536,8 @@ const ToolsPage = () => {
           </div>
         )}
       </div>
-  </div>
-);
+    </div>
+  );
 };
 
 export default ToolsPage; 
