@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { supabase } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 // Files organized by main categories and systems

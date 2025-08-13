@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 import { User, UserRole } from '@/types/auth';
 
 // Helper function to format role names for display

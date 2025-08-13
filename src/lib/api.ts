@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { supabase } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 
 // Create a simple axios instance that can be used for any non-Supabase API calls
 const api: AxiosInstance = axios.create({
