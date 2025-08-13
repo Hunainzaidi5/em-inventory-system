@@ -1,31 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
 import { User, LoginCredentials, RegisterData, AuthResponse, UserRole, AuthenticationError } from '@/types/auth';
 import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
-
-// Debug log environment variables
-console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set');
-console.log('Supabase Anon Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set');
-
-// Initialize the Supabase client with environment variables
-export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || '',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || '',
-  {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-      storage: window.localStorage,
-      flowType: 'pkce',
-      debug: true,
-    },
-    global: {
-      headers: {
-        'x-application-name': 'em-inventory-system',
-      },
-    },
-  }
-);
+import { supabase } from '@/lib/supabase';
 
 // Set the auth cookie options for production
 if (import.meta.env.PROD) {

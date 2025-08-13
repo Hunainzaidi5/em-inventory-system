@@ -23,7 +23,8 @@ import {
   Upload,
   UserCircle,
   TrendingUp,
-  Activity
+  Activity,
+  Lock
 } from "lucide-react";
 
 const roleDisplayNames = {
@@ -539,6 +540,30 @@ export default function ProfilePage() {
                     className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600"
                   >
                     Send Password Reset Email
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-start space-x-3">
+                <div className="p-2 rounded-lg bg-green-100">
+                  <Lock className="w-4 h-4 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-green-900 mb-1">Change Password</h4>
+                  <p className="text-sm text-green-700 mb-3">
+                    Change your current password to a new one. You'll need to enter your current password for security.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      // TODO: Implement password change modal/form
+                      toast.info('Password change feature coming soon!');
+                    }}
+                    variant="outline"
+                    className="bg-green-600 text-white hover:bg-green-700 border-green-600"
+                  >
+                    Change Password
                   </Button>
                 </div>
               </div>

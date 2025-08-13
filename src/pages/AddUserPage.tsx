@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { supabase } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -218,15 +218,22 @@ const AddUserPage = () => {
       
       if (isEditing && userId) {
         // Update existing user
+        const updateData: any = {
+          full_name: formData.name,
+          role: userRole,
+          department: formData.department,
+          employee_id: formData.employee_id,
+          updated_at: new Date().toISOString()
+        };
+        
+        // Add avatar update if a new avatar was uploaded
+        if (avatarUrl) {
+          updateData.avatar = avatarUrl;
+        }
+        
         const { error: updateError } = await supabase
           .from('profiles')
-          .update({
-            full_name: formData.name,
-            role: userRole,
-            department: formData.department,
-            employee_id: formData.employee_id,
-            updated_at: new Date().toISOString()
-          })
+          .update(updateData)
           .eq('id', userId);
 
         if (updateError) throw updateError;
