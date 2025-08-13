@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using native JavaScript date formatting instead of date-fns
-import { updateProfile, resetPassword } from "@/services/authService";
+import { updateProfile } from "@/services/authService";
 import { getAvatarUrl } from "@/utils/avatarUtils";
 import { toast } from "sonner";
 import { 
@@ -26,6 +26,72 @@ import {
   Activity,
   Lock
 } from "lucide-react";
+
+import { supabase } from "@/lib/supabase";
+
+function ChangePasswordInline({ userEmail }: { userEmail: string }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = async () => {
+    if (!newPassword || newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      // Supabase does not require current password for updateUser when a valid session exists
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setCurrentPassword("");
+      setNewPassword("");
+      toast.success("Password updated successfully");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update password");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="current_password" className="flex items-center gap-2">
+            <Lock className="h-4 w-4" /> Current Password
+          </Label>
+          <Input
+            id="current_password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="Enter current password"
+            autoComplete="current-password"
+          />
+        </div>
+        <div>
+          <Label htmlFor="new_password" className="flex items-center gap-2">
+            <Lock className="h-4 w-4" /> New Password
+          </Label>
+          <Input
+            id="new_password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Enter new password (min 8 chars)"
+            autoComplete="new-password"
+          />
+        </div>
+      </div>
+      <div>
+        <Button onClick={handleChange} disabled={isSubmitting || newPassword.length < 8}>
+          {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</>) : "Change Password"}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 const roleDisplayNames = {
   dev: 'Developer (Admin)',
@@ -397,22 +463,25 @@ export default function ProfilePage() {
                         </p>
                       )}
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="department" className="flex items-center gap-2">
+                        <Building className="h-4 w-4" />
+                        Department
+                      </Label>
+                      <Input
+                        id="department"
+                        {...form.register("department")}
+                        disabled={isUpdating}
+                      />
+                    </div>
+
+                    <ChangePasswordInline userEmail={user.email} />
+
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="department" className="flex items-center gap-2">
-                      <Building className="h-4 w-4" />
-                      Department
-                    </Label>
-                    <Input
-                      id="department"
-                      {...form.register("department")}
-                      disabled={isUpdating}
-                    />
-                  </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="employee_id" className="flex items-center gap-2">
                       <CreditCard className="h-4 w-4" />
@@ -500,8 +569,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Password Reset Section */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 mb-6">
+        {/* Password Section (Change only) */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-lg transition-all duration-300 p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="p-3 rounded-xl bg-red-50">
@@ -521,26 +590,11 @@ export default function ProfilePage() {
                   <Shield className="w-4 h-4 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-blue-900 mb-1">Reset Password</h4>
+                  <h4 className="font-medium text-blue-900 mb-1">Change Password</h4>
                   <p className="text-sm text-blue-700 mb-3">
-                    Click the button below to receive a password reset link via email. 
-                    The link will be sent to your registered email address: <strong>{user.email}</strong>
+                    Update your password. Enter your current password and a new password.
                   </p>
-                  <Button
-                    onClick={async () => {
-                      try {
-                        await resetPassword(user.email);
-                        toast.success('Password reset email sent! Check your inbox.');
-                      } catch (error) {
-                        console.error('Error sending password reset:', error);
-                        toast.error('Failed to send password reset email. Please try again.');
-                      }
-                    }}
-                    variant="outline"
-                    className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600"
-                  >
-                    Send Password Reset Email
-                  </Button>
+                  <ChangePasswordInline userEmail={user.email} />
                 </div>
               </div>
             </div>
@@ -588,8 +642,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Additional Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Additional Sections removed as requested */}
+        <div className="hidden">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">

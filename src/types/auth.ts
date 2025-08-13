@@ -25,7 +25,8 @@ export interface RegisterData extends LoginCredentials {
   role: UserRole;
   department: string;
   employee_id: string;
-  avatar?: string;
+  avatar?: string; // legacy support if a URL is provided
+  avatarFile?: File; // optional raw file to upload during registration
 }
 
 export interface AuthResponse {

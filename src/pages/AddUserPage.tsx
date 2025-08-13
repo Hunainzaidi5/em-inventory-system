@@ -194,24 +194,22 @@ const AddUserPage = () => {
     try {
       let avatarUrl = '';
       if (formData.avatar && formData.avatar.length > 0) {
-        const file = formData.avatar[0];
+        const file = formData.avatar[0] as File;
         const fileExt = file.name.split('.').pop();
-        const fileName = `${formData.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
+        const fileName = `${userId || 'new'}/${Date.now()}.${fileExt}`;
         
-        // Upload the file to Supabase storage
-        const { error: uploadError } = await supabase.storage
+        // Ensure folder per user: if creating, we'll re-write path after auth ID is known
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(fileName, file);
+          .upload(fileName, file, { cacheControl: '3600', upsert: true });
           
         if (uploadError) {
           console.error('Upload error:', uploadError);
           toast.error('Failed to upload avatar.');
-          return;
+          // continue save without avatar instead of hard failing
+        } else {
+          avatarUrl = uploadData?.path || fileName;
         }
-        
-        // Store just the filename in the database
-        // The full URL will be constructed in getCurrentUser
-        avatarUrl = fileName;
       }
       // Ensure the role is a valid UserRole
       const userRole = formData.role as UserRole;
@@ -240,13 +238,14 @@ const AddUserPage = () => {
         
         // If the current user is updating their own profile, update the auth context
         if (currentUser?.id === userId) {
-          // You might want to refresh the auth context here
+          // Fire a soft event so UIs can refetch
+          window.dispatchEvent(new Event('inventory-sync'));
         }
         
         toast.success('User updated successfully');
       } else {
         // Create new user
-        const { error: registerError } = await registerUser({
+        const { success, error: registerError } = await registerUser({
           email: formData.email,
           password: formData.password,
           name: formData.name,
@@ -255,6 +254,8 @@ const AddUserPage = () => {
           employee_id: formData.employee_id,
           avatar: avatarUrl,
         });
+
+        if (!success) throw new Error(registerError || 'Registration failed');
 
         if (registerError) throw registerError;
         toast.success('User created successfully');
