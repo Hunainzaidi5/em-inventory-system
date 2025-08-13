@@ -12,6 +12,7 @@ interface StationeryItem {
   id?: string;
   itemName: string;
   itemDescription: string;
+  itemLocation: string;
   itemType: string;
   quantity: number;
   issuedTo: IssuedTo;
@@ -25,6 +26,7 @@ const StationeryItemsPage = () => {
   const [form, setForm] = useState<Omit<StationeryItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
+    itemLocation: "", 
     itemType: "", 
     quantity: 0, 
     issuedTo: {
@@ -86,6 +88,7 @@ const StationeryItemsPage = () => {
       filtered = filtered.filter(item => 
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.itemDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.itemLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.itemType.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.issuedTo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.issuedTo.olt.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -131,6 +134,7 @@ const StationeryItemsPage = () => {
     setForm({ 
       itemName: "", 
       itemDescription: "", 
+      itemLocation: "", 
       itemType: "", 
       quantity: 0, 
       issuedTo: {
@@ -150,6 +154,7 @@ const StationeryItemsPage = () => {
       setForm({
         itemName: item.itemName,
         itemDescription: item.itemDescription,
+        itemLocation: item.itemLocation,
         itemType: item.itemType,
         quantity: item.quantity,
         issuedTo: item.issuedTo
@@ -316,6 +321,9 @@ const StationeryItemsPage = () => {
                     Issued To
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -419,6 +427,19 @@ const StationeryItemsPage = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
                     placeholder="Describe the stationery item and its specifications..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Location
+                  </label>
+                  <textarea
+                    name="itemLocation"
+                    value={form.itemLocation}
+                    onChange={(e) => setForm({ ...form, itemLocation: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Describe the stationery item dispatch location..."
                   />
                 </div>
                 <div>

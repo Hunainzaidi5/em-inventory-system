@@ -13,6 +13,7 @@ interface ToolsItem {
   id?: string;
   itemName: string;
   itemDescription: string;
+  itemLocation: string;
   quantity: number;
   issuedTo: IssuedTo;
   lastUpdated?: string;
@@ -25,6 +26,7 @@ const ToolsPage = () => {
   const [form, setForm] = useState<Omit<ToolsItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
+    itemLocation: "", 
     quantity: 0, 
     issuedTo: {
       name: "",
@@ -84,6 +86,7 @@ const ToolsPage = () => {
       filtered = filtered.filter(item => 
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.itemDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.itemLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.issuedTo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.issuedTo.olt.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.issuedTo.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -122,6 +125,7 @@ const ToolsPage = () => {
     setForm({ 
       itemName: "", 
       itemDescription: "", 
+      itemLocation: "", 
       quantity: 0, 
       issuedTo: {
         name: "",
@@ -140,6 +144,7 @@ const ToolsPage = () => {
       setForm({
         itemName: item.itemName,
         itemDescription: item.itemDescription,
+        itemLocation: item.itemLocation,
         quantity: item.quantity,
         issuedTo: item.issuedTo
       });
@@ -289,6 +294,9 @@ const ToolsPage = () => {
                     Issued To
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -389,6 +397,18 @@ const ToolsPage = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
                     placeholder="Describe the Tools item and its specifications..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Location
+                  </label>
+                  <input
+                    name="itemLocation"
+                    value={form.itemLocation}
+                    onChange={(e) => setForm({ ...form, itemLocation: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
                 <div>

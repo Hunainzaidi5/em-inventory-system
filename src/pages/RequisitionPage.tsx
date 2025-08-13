@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Calendar, Users, Package, Save, AlertCircle } from "lucide-react";
-import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions } from "@/services/requisitionService";
+import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions, Requisition as ServiceRequisition } from "@/services/requisitionService";
 import { useToast } from "@/components/ui/use-toast";
 import { adjustQuantityForRequisition } from '@/services/itemQuantityService';
 
@@ -8,24 +8,13 @@ type RequisitionType = 'issue' | 'return' | 'consume';
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
 type StatusType = 'completed' | 'pending' | 'overdue';
 
-interface Requisition {
-  id: string;
-  requisitionType: RequisitionType;
-  itemType: ItemType;
-  itemName: string;
-  quantity: number;
-  issuedTo: string;
-  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
-  referenceNumber: string;
-  createdAt: string;
-  status: StatusType;
-  notes?: string;
-}
+type Requisition = ServiceRequisition;
 
 interface Filters {
   requisitionType: RequisitionType | 'all';
   itemType: ItemType | 'all';
   status: 'completed' | 'pending' | 'overdue' | 'all';
+  location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   dateRange: {
     start: string;
@@ -39,6 +28,7 @@ interface RequisitionFormData {
   itemName: string;
   quantity: number;
   issuedTo: string;
+  location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   status: 'completed' | 'pending' | 'overdue';
   notes: string;
@@ -49,6 +39,7 @@ interface FormErrors {
   quantity?: string;
   issuedTo?: string;
   department?: string;
+  location?: string;
 }
 
 const RequisitionPage = () => {
@@ -66,6 +57,37 @@ const RequisitionPage = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
   
+  const locationOptions = [
+    { value: 'Depot' as const, label: 'Depot' },
+    { value: 'Station 1' as const, label: 'Station 1' },
+    { value: 'Station 2' as const, label: 'Station 2' },
+    { value: 'Station 3' as const, label: 'Station 3' },
+    { value: 'Station 4' as const, label: 'Station 4' },
+    { value: 'Station 5' as const, label: 'Station 5' },
+    { value: 'Station 6' as const, label: 'Station 6' },
+    { value: 'Station 7' as const, label: 'Station 7' },
+    { value: 'Station 8' as const, label: 'Station 8' },
+    { value: 'Station 9' as const, label: 'Station 9' },
+    { value: 'Station 10' as const, label: 'Station 10' },
+    { value: 'Station 11' as const, label: 'Station 11' },
+    { value: 'Station 12' as const, label: 'Station 12' },
+    { value: 'Station 13' as const, label: 'Station 13' },
+    { value: 'Station 14' as const, label: 'Station 14' },
+    { value: 'Station 15' as const, label: 'Station 15' },
+    { value: 'Station 16' as const, label: 'Station 16' },
+    { value: 'Station 17' as const, label: 'Station 17' },
+    { value: 'Station 18' as const, label: 'Station 18' },
+    { value: 'Station 19' as const, label: 'Station 19' },
+    { value: 'Station 20' as const, label: 'Station 20' },
+    { value: 'Station 21' as const, label: 'Station 21' },
+    { value: 'Station 22' as const, label: 'Station 22' },
+    { value: 'Station 23' as const, label: 'Station 23' },
+    { value: 'Station 24' as const, label: 'Station 24' },
+    { value: 'Station 25' as const, label: 'Station 25' },
+    { value: 'Station 26' as const, label: 'Station 26' },
+    { value: 'Stabling Yard' as const, label: 'Stabling Yard' }
+  ] as const;
+
   // Department options with display names
   const departmentOptions = [
     { value: 'em_systems' as const, label: 'E&M Systems' },
@@ -81,6 +103,7 @@ const RequisitionPage = () => {
     requisitionType: 'all',
     itemType: 'all',
     status: 'all',
+    location: 'all',
     department: 'all',
     dateRange: { start: '', end: '' }
   } as Filters);
@@ -91,6 +114,7 @@ const RequisitionPage = () => {
     itemName: '',
     quantity: 1,
     issuedTo: '',
+    location: 'all',
     department: 'all',
     status: 'pending',
     notes: ''
@@ -103,11 +127,13 @@ const RequisitionPage = () => {
         tx.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.issuedTo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.referenceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tx.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.department.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesType = filters.requisitionType === 'all' || tx.requisitionType === filters.requisitionType;
       const matchesItemType = filters.itemType === 'all' || tx.itemType === filters.itemType;
       const matchesStatus = filters.status === 'all' || tx.status === filters.status;
+      const matchesLocation = !filters.location || tx.location === filters.location;
       const matchesDepartment = !filters.department || tx.department === filters.department;
 
       let matchesDateRange = true;
@@ -121,7 +147,7 @@ const RequisitionPage = () => {
         }
       }
 
-      return matchesSearch && matchesType && matchesItemType && matchesStatus && matchesDepartment && matchesDateRange;
+      return matchesSearch && matchesType && matchesItemType && matchesStatus && matchesLocation && matchesDepartment && matchesDateRange;
     });
   }, [requisition, searchTerm, filters]);
 
@@ -158,6 +184,10 @@ const RequisitionPage = () => {
       errors.issuedTo = 'Issued to field is required';
     }
     
+    if (!data.location.trim()) {
+      errors.location = 'Location is required';
+    }
+    
     if (!data.department.trim()) {
       errors.department = 'Department is required';
     }
@@ -182,6 +212,7 @@ const RequisitionPage = () => {
           quantity: formData.quantity,
           issuedTo: formData.issuedTo,
           department: formData.department,
+          location: formData.location,
           // status excluded: service type does not accept it
           notes: formData.notes,
         });
@@ -193,6 +224,7 @@ const RequisitionPage = () => {
           quantity: formData.quantity,
           issuedTo: formData.issuedTo,
           department: formData.department,
+          location: formData.location,
           // status excluded: service sets default
           notes: formData.notes,
         });
@@ -226,6 +258,7 @@ const RequisitionPage = () => {
       quantity: 1,
       issuedTo: '',
       department: 'all',
+      location: 'all',
       status: 'pending',
       notes: ''
     } as RequisitionFormData);
@@ -244,6 +277,7 @@ const RequisitionPage = () => {
       quantity: requisition.quantity,
       issuedTo: requisition.issuedTo,
       department: requisition.department,
+      location: requisition.location,
       status: requisition.status,
       notes: requisition.notes || ''
     });
@@ -344,7 +378,7 @@ const RequisitionPage = () => {
   }, [fetchRequisitions]);
 
   const exportToCSV = () => {
-    const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Department', 'Date', 'Status', 'Notes'];
+    const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Location', 'Department', 'Date', 'Status', 'Notes'];
     const csvContent = [
       headers.join(','),
       ...filteredRequisition.map(tx => [
@@ -353,6 +387,7 @@ const RequisitionPage = () => {
         tx.itemType,
         tx.quantity,
         `"${tx.issuedTo}"`,
+        `"${tx.location}"`,
         `"${tx.department}"`,
         new Date(tx.createdAt).toLocaleDateString(),
         tx.status,
@@ -375,6 +410,7 @@ const RequisitionPage = () => {
       itemType: 'all',
       status: 'all',
       department: 'all',
+      location: 'all',
       dateRange: { start: '', end: '' }
     } as Filters);
   };
@@ -502,6 +538,28 @@ const RequisitionPage = () => {
             />
           </div>
           
+          {/* Location Dropdown */}
+          <div className="w-full md:w-48">
+            <select
+              value={filters.location}
+              onChange={(e) => {
+                const value = e.target.value as Requisition['location'];
+                setFilters(prev => ({
+                  ...prev,
+                  location: value || 'all'
+                }));
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Locations</option>
+              {locationOptions.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
           {/* Department Dropdown */}
           <div className="w-full md:w-48">
             <select
@@ -577,6 +635,44 @@ const RequisitionPage = () => {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <select
+                  value={filters.location}
+                  onChange={(e) => setFilters(prev => ({...prev, location: e.target.value as any}))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Locations</option>
+                  <option value="Depot">Depot</option>
+                  <option value="Station 1">Station 1</option>
+                  <option value="Station 2">Station 2</option>
+                  <option value="Station 3">Station 3</option>
+                  <option value="Station 4">Station 4</option>
+                  <option value="Station 5">Station 5</option>
+                  <option value="Station 6">Station 6</option>
+                  <option value="Station 7">Station 7</option>
+                  <option value="Station 8">Station 8</option>
+                  <option value="Station 9">Station 9</option>
+                  <option value="Station 10">Station 10</option>
+                  <option value="Station 11">Station 11</option>
+                  <option value="Station 12">Station 12</option>
+                  <option value="Station 13">Station 13</option>
+                  <option value="Station 14">Station 14</option>
+                  <option value="Station 15">Station 15</option>
+                  <option value="Station 16">Station 16</option>
+                  <option value="Station 17">Station 17</option>
+                  <option value="Station 18">Station 18</option>
+                  <option value="Station 19">Station 19</option>
+                  <option value="Station 20">Station 20</option>
+                  <option value="Station 21">Station 21</option>
+                  <option value="Station 22">Station 22</option>
+                  <option value="Station 23">Station 23</option>
+                  <option value="Station 24">Station 24</option>
+                  <option value="Station 25">Station 25</option>
+                  <option value="Station 26">Station 26</option>
+                  <option value="Stabling Yard">Stabling Yard</option>                 
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                 <select
                   value={filters.department}
@@ -633,6 +729,7 @@ const RequisitionPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issued To</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -662,6 +759,7 @@ const RequisitionPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">{getTypeBadge(txn.itemType)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.quantity}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.issuedTo}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.location}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {departmentOptions.find(d => d.value === txn.department)?.label || txn.department}
                     </td>
@@ -835,6 +933,36 @@ const RequisitionPage = () => {
                   )}
                 </div>
 
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.location}
+                    onChange={(e) => handleFormChange('location', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.location ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    disabled={isSaving}
+                  >
+                    <option value="">Select a location</option>
+                    <option value="Depot">Depot</option>
+                    {Array.from({ length: 26 }, (_, i) => (
+                      <option key={`station-${i + 1}`} value={`Station ${i + 1}`}>
+                        Station {i + 1}
+                      </option>
+                    ))}
+                    <option value="Stabling Yard">Stabling Yard</option>
+                  </select>
+                  {formErrors.location && (
+                    <div className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4" />
+                      {formErrors.location}
+                    </div>
+                  )}
+                </div>
+
                 {/* Department */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -965,6 +1093,10 @@ const RequisitionPage = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Issued To</label>
                   <p className="mt-1 text-sm text-gray-900">{selectedRequisition.issuedTo}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Location</label>
+                  <p className="mt-1 text-sm text-gray-900">{selectedRequisition.location}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Department</label>
