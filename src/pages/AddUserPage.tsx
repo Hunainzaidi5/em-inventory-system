@@ -11,20 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
-import { 
-  User, 
-  Mail, 
-  Lock, 
-  Shield, 
-  Building, 
-  CreditCard, 
-  Camera, 
-  ArrowLeft, 
-  UserPlus, 
-  Save,
-  X,
-  Sparkles
-} from 'lucide-react';
 
 // Define the roles that can be assigned to new users (excludes 'dev' role)
 // These must match the database enum 'user_role'
@@ -63,58 +49,6 @@ const formSchema = z.object({
   avatar: z.any().optional(),
 });
 
-const roleDisplayNames = {
-  dev: 'Developer (Admin)',
-  manager: 'Manager',
-  deputy_manager: 'Deputy Manager',
-  engineer: 'Engineer',
-  assistant_engineer: 'Assistant Engineer',
-  master_technician: 'Master Technician',
-  technician: 'Technician'
-};
-
-const roleColors = {
-  dev: 'from-purple-600 to-purple-700',
-  manager: 'from-blue-600 to-blue-700',
-  deputy_manager: 'from-indigo-600 to-indigo-700',
-  engineer: 'from-green-600 to-green-700',
-  assistant_engineer: 'from-emerald-600 to-emerald-700',
-  master_technician: 'from-orange-600 to-orange-700',
-  technician: 'from-gray-600 to-gray-700'
-};
-
-const InputField = ({ 
-  icon: Icon, 
-  label, 
-  error, 
-  children, 
-  required = false 
-}: {
-  icon: React.ComponentType<any>;
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-  required?: boolean;
-}) => (
-  <div className="space-y-2">
-    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-      <div className="p-2 rounded-lg bg-gray-100 mr-3">
-        <Icon className="w-4 h-4 text-gray-600" />
-      </div>
-      {label}
-      {required && <span className="text-red-500 ml-1">*</span>}
-    </label>
-    <div className="relative">
-      {children}
-      {error && (
-        <div className="absolute -bottom-6 left-0">
-          <p className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded-md">{error}</p>
-        </div>
-      )}
-    </div>
-  </div>
-);
-
 const AddUserPage = () => {
   const { userId } = useParams<{ userId?: string }>();
   const { register: registerUser, user: currentUser } = useAuth();
@@ -122,8 +56,6 @@ const AddUserPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
-  const [selectedRole, setSelectedRole] = useState<AssignableRole>('technician');
-  const [animationKey, setAnimationKey] = useState(0);
 
   const {
     register,
@@ -142,10 +74,6 @@ const AddUserPage = () => {
       employee_id: '',
     },
   });
-
-  useEffect(() => {
-    setAnimationKey(prev => prev + 1);
-  }, []);
 
   // Fetch user data when in edit mode
   useEffect(() => {
@@ -168,7 +96,6 @@ const AddUserPage = () => {
         setValue('role', user.role || 'technician');
         setValue('department', user.department || '');
         setValue('employee_id', user.employee_id || '');
-        setSelectedRole(user.role || 'technician');
         
         setIsEditing(true);
       } catch (err) {
@@ -186,8 +113,6 @@ const AddUserPage = () => {
   }, [userId, setValue, navigate]);
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    console.debug('[UserManagement] UpdateUser: start', { userId, isEditing, form: { ...formData, avatar: !!formData.avatar && formData.avatar.length } });
-    debugger;
     if (isLoading) return;
     
     setIsLoading(true);
@@ -196,66 +121,52 @@ const AddUserPage = () => {
     try {
       let avatarUrl = '';
       if (formData.avatar && formData.avatar.length > 0) {
-        const file = formData.avatar[0] as File;
+        const file = formData.avatar[0];
         const fileExt = file.name.split('.').pop();
-        const fileName = `${userId || 'new'}/${Date.now()}.${fileExt}`;
-        console.debug('[UserManagement] ProfileAvatarUpload: uploading', { fileName, size: file.size, type: file.type });
-        debugger;
+        const fileName = `${formData.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
         
-        // Ensure folder per user: if creating, we'll re-write path after auth ID is known
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        // Upload the file to Supabase storage
+        const { error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(fileName, file, { cacheControl: '3600', upsert: true });
+          .upload(fileName, file);
           
         if (uploadError) {
           console.error('Upload error:', uploadError);
           toast.error('Failed to upload avatar.');
-          // continue save without avatar instead of hard failing
-        } else {
-          avatarUrl = uploadData?.path || fileName;
-          console.debug('[UserManagement] ProfileAvatarUpload: uploaded', { path: avatarUrl });
+          return;
         }
+        
+        // Store just the filename in the database
+        // The full URL will be constructed in getCurrentUser
+        avatarUrl = fileName;
       }
       // Ensure the role is a valid UserRole
       const userRole = formData.role as UserRole;
       
       if (isEditing && userId) {
         // Update existing user
-        const updateData: any = {
-          full_name: formData.name,
-          role: userRole,
-          department: formData.department,
-          employee_id: formData.employee_id,
-          updated_at: new Date().toISOString()
-        };
-        
-        // Add avatar update if a new avatar was uploaded
-        if (avatarUrl) {
-          updateData.avatar = avatarUrl;
-        }
-        console.debug('[UserManagement] UpdateUser: updating profile', { userId, updateData });
         const { error: updateError } = await supabase
           .from('profiles')
-          .update(updateData)
+          .update({
+            full_name: formData.name,
+            role: userRole,
+            department: formData.department,
+            employee_id: formData.employee_id,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', userId);
 
-        if (updateError) {
-          console.error('[UserManagement] UpdateUser: update error', updateError);
-          throw updateError;
-        }
+        if (updateError) throw updateError;
         
         // If the current user is updating their own profile, update the auth context
         if (currentUser?.id === userId) {
-          // Fire a soft event so UIs can refetch
-          window.dispatchEvent(new Event('inventory-sync'));
+          // You might want to refresh the auth context here
         }
         
-        console.debug('[UserManagement] UpdateUser: success', { userId });
         toast.success('User updated successfully');
       } else {
         // Create new user
-        console.debug('[UserManagement] CreateUser: creating', { email: formData.email });
-        const { success, error: registerError } = await registerUser({
+        const { error: registerError } = await registerUser({
           email: formData.email,
           password: formData.password,
           name: formData.name,
@@ -264,9 +175,6 @@ const AddUserPage = () => {
           employee_id: formData.employee_id,
           avatar: avatarUrl,
         });
-
-        if (!success) throw new Error(registerError || 'Registration failed');
-        console.debug('[UserManagement] CreateUser: success', { email: formData.email });
 
         if (registerError) throw registerError;
         toast.success('User created successfully');
@@ -282,195 +190,113 @@ const AddUserPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md bg-white p-8 rounded shadow">
+        <button
+          type="button"
+          className="mb-4 text-blue-600 hover:underline text-sm"
+          onClick={() => navigate('/dashboard/users')}
+        >
+          â† Back to User Management
+        </button>
+        <h2 className="text-2xl font-bold mb-6 text-center">Add New User</h2>
+        {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
+        <div className="mb-4">
+          <label htmlFor="name" className="block mb-1 font-medium">Full Name</label>
+          <input 
+            id="name" 
+            {...register('name')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.name ? 'border-red-500' : 'border-gray-300'}`} 
+            disabled={isLoading}
+          />
+          {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="block mb-1 font-medium">Email</label>
+          <input 
+            id="email" 
+            type="email" 
+            {...register('email')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            disabled={isLoading}
+          />
+          {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="block mb-1 font-medium">Password</label>
+          <input 
+            id="password" 
+            type="password" 
+            {...register('password')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+            disabled={isLoading}
+          />
+          {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="role" className="block mb-1 font-medium">Role</label>
+          <select 
+            id="role" 
+            {...register('role')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
+            disabled={isLoading}
+            defaultValue=""
+          >
+            <option value="" disabled>Select a role</option>
+            <option value="dev">Developer (Admin)</option>
+            <option value="manager">Manager</option>
+            <option value="deputy_manager">Deputy Manager</option>
+            <option value="engineer">Engineer</option>
+            <option value="assistant_engineer">Assistant Engineer</option>
+            <option value="master_technician">Master Technician</option>
+            <option value="technician">Technician</option>
+          </select>
+          {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="department" className="block mb-1 font-medium">Department</label>
+          <input 
+            id="department" 
+            {...register('department')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.department ? 'border-red-500' : 'border-gray-300'}`}
+            disabled={isLoading}
+          />
+          {errors.department && <p className="text-sm text-red-500">{errors.department.message}</p>}
+        </div>
+        <div className="mb-6">
+          <label htmlFor="employee_id" className="block mb-1 font-medium">Employee ID</label>
+          <input 
+            id="employee_id" 
+            {...register('employee_id')} 
+            className={`w-full px-3 py-2 border rounded-md ${errors.employee_id ? 'border-red-500' : 'border-gray-300'}`}
+            disabled={isLoading}
+          />
+          {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id.message}</p>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="avatar" className="block mb-1 font-medium">Avatar (optional)</label>
+          <input id="avatar" type="file" accept="image/*" {...register('avatar')} className="w-full px-3 py-2 border rounded-md" />
+        </div>
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
+          >
+            {isLoading 
+              ? (isEditing ? 'Updating...' : 'Creating...')
+              : (isEditing ? 'Update User' : 'Add User')}
+          </button>
           <button
             type="button"
             onClick={() => navigate('/dashboard/users')}
-            className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 mb-6 group transition-all duration-300 hover:translate-x-1"
+            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+            disabled={isLoading}
           >
-            <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-            <span className="font-medium">Back to User Management</span>
+            Cancel
           </button>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {isEditing ? 'Edit User' : 'Add New User'}
-              </h1>
-              <p className="text-gray-600 text-lg">
-                {isEditing ? 'Update user information and permissions' : 'Create a new user account with appropriate permissions'}
-              </p>
-            </div>
-            <div className={`p-4 rounded-2xl bg-gradient-to-br ${roleColors[selectedRole]} shadow-lg`}>
-              <UserPlus className="w-8 h-8 text-white" />
-            </div>
-          </div>
         </div>
-
-        {/* Form Card */}
-        <div key={`form-${animationKey}`} className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-          <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-indigo-100">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900">User Information</h2>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="p-8">
-            {error && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">
-                <div className="flex items-center space-x-2">
-                  <X className="w-5 h-5 text-red-500" />
-                  <span className="font-medium">{error}</span>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Personal Information */}
-              <div className="space-y-8">
-                <div className="pb-4 border-b border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Personal Information</h3>
-                  <p className="text-gray-500 text-sm">Basic user details and contact information</p>
-                </div>
-
-                <InputField icon={User} label="Full Name" error={errors.name?.message} required>
-                  <input
-                    {...register('name')}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                    placeholder="Enter full name"
-                    disabled={isLoading}
-                  />
-                </InputField>
-
-                <InputField icon={Mail} label="Email Address" error={errors.email?.message} required>
-                  <input
-                    type="email"
-                    {...register('email')}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                    placeholder="Enter email address"
-                    disabled={isLoading}
-                  />
-                </InputField>
-
-                {!isEditing && (
-                  <InputField icon={Lock} label="Password" error={errors.password?.message} required>
-                    <input
-                      type="password"
-                      {...register('password')}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                      placeholder="Enter secure password"
-                      disabled={isLoading}
-                    />
-                  </InputField>
-                )}
-
-                <InputField icon={Camera} label="Profile Avatar">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    {...register('avatar')}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-600 file:font-medium hover:file:bg-indigo-100"
-                    disabled={isLoading}
-                  />
-                </InputField>
-              </div>
-
-              {/* Professional Information */}
-              <div className="space-y-8">
-                <div className="pb-4 border-b border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Professional Information</h3>
-                  <p className="text-gray-500 text-sm">Role, department, and organizational details</p>
-                </div>
-
-                <InputField icon={Shield} label="Role" error={errors.role?.message} required>
-                  <select
-                    {...register('role', {
-                      onChange: (e) => setSelectedRole(e.target.value as AssignableRole)
-                    })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                    disabled={isLoading}
-                  >
-                    {assignableRoles.map((role) => (
-                      <option key={role} value={role}>
-                        {roleDisplayNames[role]}
-                      </option>
-                    ))}
-                  </select>
-                </InputField>
-
-                <InputField icon={Building} label="Department" error={errors.department?.message} required>
-                  <input
-                    {...register('department')}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                    placeholder="Enter department name"
-                    disabled={isLoading}
-                  />
-                </InputField>
-
-                <InputField icon={CreditCard} label="Employee ID" error={errors.employee_id?.message} required>
-                  <input
-                    {...register('employee_id')}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
-                    placeholder="Enter employee ID"
-                    disabled={isLoading}
-                  />
-                </InputField>
-
-                {/* Role Preview Card */}
-                <div className={`p-6 rounded-2xl bg-gradient-to-br ${roleColors[selectedRole]} shadow-lg transform transition-all duration-500 hover:scale-105`}>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Shield className="w-6 h-6 text-white" />
-                    <span className="text-white font-semibold">Selected Role</span>
-                  </div>
-                  <div className="text-white">
-                    <div className="text-2xl font-bold mb-1">{roleDisplayNames[selectedRole]}</div>
-                    <div className="text-white/80 text-sm">
-                      This role will determine the user's permissions and access level
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-12 pt-8 border-t border-gray-100">
-              <button
-                type="submit"
-                disabled={isLoading}
-                onClick={handleSubmit(onSubmit)}
-                className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>{isEditing ? 'Updating User...' : 'Creating User...'}</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-5 h-5" />
-                    <span>{isEditing ? 'Update User' : 'Create User'}</span>
-                  </>
-                )}
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => navigate('/dashboard/users')}
-                disabled={isLoading}
-                className="flex-1 sm:flex-none px-8 py-4 border-2 border-gray-200 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      </form>
     </div>
   );
 };
