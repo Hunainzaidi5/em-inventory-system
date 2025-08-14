@@ -33,17 +33,7 @@ CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
 
 CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
 
-CREATE TYPE ppe_type AS ENUM (
-  'Helmet Yellow',
-  'Helmet White',
-  'Inner Strip',
-  'Reflective Waist',
-  'Safety Shoes',
-  'Goggles',
-  'Dust Mask',
-  'Raincoat',
-  'Earplugs'
-);
+-- Removed unused ppe_type enum
 
 -- User profiles table (extends Supabase auth.users)
 CREATE TABLE profiles (
@@ -223,14 +213,85 @@ CREATE POLICY "Users can update their own inventory items"
   ON inventory_items FOR UPDATE 
   USING (auth.uid() = created_by);
 
+-- Tools table (aligns with Tools page structure)
+CREATE TABLE tools (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  item_name TEXT NOT NULL,
+  item_description TEXT,
+  item_location TEXT,
+  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+  -- Issued To fields
+  issued_to_name TEXT,
+  issued_to_olt TEXT,
+  issued_to_designation TEXT,
+  issued_to_group TEXT,
+  status item_status DEFAULT 'available',
+  notes TEXT,
+  created_by UUID REFERENCES profiles(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS on tools table
+ALTER TABLE tools ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for tools
+CREATE POLICY "Users can view all tools"
+  ON tools FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert tools"
+  ON tools FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Creators can update their tools"
+  ON tools FOR UPDATE
+  USING (auth.uid() = created_by);
+
+-- General Tools table (aligns with General Tools page structure)
+CREATE TABLE general_tools (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  item_name TEXT NOT NULL,
+  item_description TEXT,
+  item_location TEXT,
+  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+  -- Issued To fields
+  issued_to_name TEXT,
+  issued_to_olt TEXT,
+  issued_to_designation TEXT,
+  issued_to_group TEXT,
+  status item_status DEFAULT 'available',
+  notes TEXT,
+  created_by UUID REFERENCES profiles(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS on general_tools table
+ALTER TABLE general_tools ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for general_tools
+CREATE POLICY "Users can view all general_tools"
+  ON general_tools FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert general_tools"
+  ON general_tools FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Creators can update their general_tools"
+  ON general_tools FOR UPDATE
+  USING (auth.uid() = created_by);
+
 -- PPE items table (Updated to match React implementation)
 CREATE TABLE ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
+  item_location TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
   -- Issued To fields
-  issued_to_name TEXT NOT NULL,
+  issued_to_name TEXT,
   issued_to_olt TEXT,
   issued_to_designation TEXT,
   issued_to_group TEXT,
@@ -244,15 +305,29 @@ CREATE TABLE ppe_items (
 -- Enable RLS on ppe_items table
 ALTER TABLE ppe_items ENABLE ROW LEVEL SECURITY;
 
+-- RLS policies for ppe_items
+CREATE POLICY "Users can view all ppe items"
+  ON ppe_items FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert ppe items"
+  ON ppe_items FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Creators can update their ppe items"
+  ON ppe_items FOR UPDATE
+  USING (auth.uid() = created_by);
+
 -- Stationery items table (Updated to match React implementation)
 CREATE TABLE stationery_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
   item_type TEXT,
+  item_location TEXT,
   quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
   -- Issued To fields
-  issued_to_name TEXT NOT NULL,
+  issued_to_name TEXT,
   issued_to_olt TEXT,
   issued_to_designation TEXT,
   issued_to_group TEXT,
@@ -265,6 +340,19 @@ CREATE TABLE stationery_items (
 
 -- Enable RLS on stationery_items table
 ALTER TABLE stationery_items ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for stationery_items
+CREATE POLICY "Users can view all stationery items"
+  ON stationery_items FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert stationery items"
+  ON stationery_items FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Creators can update their stationery items"
+  ON stationery_items FOR UPDATE
+  USING (auth.uid() = created_by);
 
 -- Faulty Returns table (New table to match React implementation)
 CREATE TABLE faulty_returns (
@@ -373,19 +461,28 @@ CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
 CREATE INDEX idx_inventory_items_status ON inventory_items(status);
 CREATE INDEX idx_inventory_items_partNumber ON inventory_items(partNumber);
 
+-- Tools indexes
 CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name);
 CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group);
-CREATE INDEX idx_tools_brand ON tools(brand);
 CREATE INDEX idx_tools_status ON tools(status);
+CREATE INDEX idx_tools_location ON tools(item_location);
+
+-- General Tools indexes
+CREATE INDEX idx_general_tools_issued_to_name ON general_tools(issued_to_name);
+CREATE INDEX idx_general_tools_issued_to_group ON general_tools(issued_to_group);
+CREATE INDEX idx_general_tools_status ON general_tools(status);
+CREATE INDEX idx_general_tools_location ON general_tools(item_location);
 
 CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
 CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
 CREATE INDEX idx_ppe_items_status ON ppe_items(status);
+CREATE INDEX idx_ppe_items_location ON ppe_items(item_location);
 
 CREATE INDEX idx_stationery_items_issued_to_name ON stationery_items(issued_to_name);
 CREATE INDEX idx_stationery_items_issued_to_group ON stationery_items(issued_to_group);
 CREATE INDEX idx_stationery_items_item_type ON stationery_items(item_type);
 CREATE INDEX idx_stationery_items_status ON stationery_items(status);
+CREATE INDEX idx_stationery_items_location ON stationery_items(item_location);
 
 CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
 CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location);
@@ -432,6 +529,7 @@ CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH
 CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_general_tools_updated_at BEFORE UPDATE ON general_tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
@@ -446,6 +544,7 @@ COMMENT ON TABLE categories IS 'Main categories: O&M and PMA';
 COMMENT ON TABLE systems IS 'System types: Elevator, Escalator, PSD, HVAC, WSD, LV, FAS, FES';
 COMMENT ON TABLE inventory_items IS 'Main inventory spare parts with full tracking';
 COMMENT ON TABLE tools IS 'Tools inventory with assignment tracking';
+COMMENT ON TABLE general_tools IS 'General tools and miscellaneous equipment with assignment tracking';
 COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory with assignment tracking';
 COMMENT ON TABLE stationery_items IS 'Stationery items with assignment tracking';
 COMMENT ON TABLE faulty_returns IS 'Faulty returns tracking with location management';
