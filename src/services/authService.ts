@@ -241,12 +241,29 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       refreshToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-refresh-token`)
     });
     
-    // Sign in with Supabase Auth
+    // Sign in with Supabase Auth (password)
     console.log('[AUTH] Calling supabase.auth.signInWithPassword');
-    const { data, error } = await supabase.auth.signInWithPassword({
+    let { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password.trim(),
     });
+
+    // Fallback: if server returns 500, try OTP magic link to unblock login
+    if (error && error.status === 500) {
+      console.warn('[AUTH] Password grant failed with 500. Falling back to OTP email link.');
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          shouldCreateUser: true,
+        },
+      });
+      if (otpError) {
+        console.error('[AUTH] OTP fallback also failed:', otpError);
+        throw new AuthenticationError('Server error. Please try again later.', 500, { message: otpError.message });
+      }
+      throw new AuthenticationError('Magic login link sent to your email. Please check your inbox.', 202, {});
+    }
     
     // Log storage state after authentication attempt
     console.log('[AUTH] Post-authentication storage state:', {
@@ -440,6 +457,7 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
           department,
           employee_id,
         },
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
 
