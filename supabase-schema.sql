@@ -371,6 +371,38 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- Ensure camelCase columns exist for reseed payload compatibility
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema='public' AND table_name='spare_parts'
+  ) THEN
+    -- itemCode
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='spare_parts' AND column_name='itemCode'
+    ) THEN
+      ALTER TABLE spare_parts ADD COLUMN "itemCode" TEXT;
+    END IF;
+    -- partNumber
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='spare_parts' AND column_name='partNumber'
+    ) THEN
+      ALTER TABLE spare_parts ADD COLUMN "partNumber" TEXT;
+    END IF;
+    -- lastUpdated
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='spare_parts' AND column_name='lastUpdated'
+    ) THEN
+      ALTER TABLE spare_parts ADD COLUMN "lastUpdated" TIMESTAMPTZ;
+    END IF;
+  END IF;
+END
+$$;
+
 DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can insert their own inventory items'
@@ -927,29 +959,27 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_requi
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_gate_passes_updated_at') THEN CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_issuance_records_updated_at') THEN CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 
--- Seed: default profile for dev user if the Auth user already exists (no Auth creation here)
-DO $$
-DECLARE
-  v_email TEXT := 'syedhunainalizaidi@gmail.com';
-  v_env TEXT := (SELECT value FROM app_settings WHERE key = 'env');
-  v_uid UUID;
-BEGIN
-  IF COALESCE(v_env, 'prod') = 'dev' THEN
-    SELECT id INTO v_uid FROM auth.users WHERE email = v_email;
-    IF v_uid IS NOT NULL THEN
-      INSERT INTO public.profiles (id, email, full_name, role, department, is_active, created_at, updated_at)
-      VALUES (v_uid, v_email, 'Syed Hunain Ali', 'dev'::user_role, 'E&M SYSTEMS', TRUE, NOW(), NOW())
-      ON CONFLICT (id) DO UPDATE SET
-        email = EXCLUDED.email,
-        full_name = EXCLUDED.full_name,
-        role = EXCLUDED.role,
-        department = EXCLUDED.department,
-        is_active = TRUE,
-        updated_at = NOW();
-    END IF;
-  END IF;
-END
-$$;
+-- Seed: default profile when env='dev' and auth user exists (no DO $$ to avoid delimiter issues)
+INSERT INTO public.profiles (id, email, full_name, role, department, is_active, created_at, updated_at)
+SELECT u.id,
+       'syedhunainalizaidi@gmail.com',
+       'Syed Hunain Ali',
+       'dev'::user_role,
+       'E&M SYSTEMS',
+       TRUE,
+       NOW(),
+       NOW()
+FROM auth.users u
+JOIN app_settings s ON s.key = 'env'
+WHERE COALESCE(s.value, 'prod') = 'dev'
+  AND u.email = 'syedhunainalizaidi@gmail.com'
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role,
+  department = EXCLUDED.department,
+  is_active = TRUE,
+  updated_at = NOW();
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';
