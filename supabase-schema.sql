@@ -5,38 +5,88 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types/enums
-CREATE TYPE user_role AS ENUM (
-  'admin',
-  'dev', 
-  'manager',
-  'deputy_manager',
-  'engineer',
-  'assistant_engineer',
-  'master_technician',
-  'technician'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'user_role' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE user_role AS ENUM (
+      'admin',
+      'dev', 
+      'manager',
+      'deputy_manager',
+      'engineer',
+      'assistant_engineer',
+      'master_technician',
+      'technician'
+    );
+  END IF;
+END
+$$;
 
-CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'item_category' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
+  END IF;
+END
+$$;
 
-CREATE TYPE system_type AS ENUM (
-  'Elevator',
-  'Escalator', 
-  'PSD',
-  'HVAC',
-  'WSD',
-  'LV',
-  'FAS',
-  'FES'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'system_type' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE system_type AS ENUM (
+      'Elevator',
+      'Escalator', 
+      'PSD',
+      'HVAC',
+      'WSD',
+      'LV',
+      'FAS',
+      'FES'
+    );
+  END IF;
+END
+$$;
 
-CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'requisition_type' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
+  END IF;
+END
+$$;
 
-CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'item_status' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
+  END IF;
+END
+$$;
 
 -- Removed unused ppe_type enum
 
 -- User profiles table (extends Supabase auth.users)
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   full_name TEXT NOT NULL,
@@ -52,10 +102,12 @@ CREATE TABLE profiles (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON profiles;
 CREATE POLICY "Public profiles are viewable by everyone." 
   ON profiles FOR SELECT 
   USING (true);
 
+DROP POLICY IF EXISTS "Users can update their own profile." ON profiles;
 CREATE POLICY "Users can update their own profile." 
   ON profiles FOR UPDATE 
   USING (auth.uid() = id);
@@ -100,7 +152,8 @@ END;
 $$;
 
 -- Trigger the function every time a user is created
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
@@ -118,12 +171,13 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger the function every time a user is updated
-CREATE OR REPLACE TRIGGER on_auth_user_updated
+DROP TRIGGER IF EXISTS on_auth_user_updated ON auth.users;
+CREATE TRIGGER on_auth_user_updated
   AFTER UPDATE ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_user_updated();
 
 -- Locations table
-CREATE TABLE locations (
+CREATE TABLE IF NOT EXISTS locations (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   description TEXT,
@@ -134,13 +188,19 @@ CREATE TABLE locations (
 );
 
 -- Insert default locations
-INSERT INTO locations (name, description) VALUES 
-('GMG Warehouse', 'Main warehouse facility'),
-('E&M Systems Ground Floor Store', 'Ground floor storage area'),
-('E&M Systems 2nd Floor Store', 'Second floor storage area');
+INSERT INTO locations (name, description)
+SELECT v.name, v.description
+FROM (VALUES
+  ('GMG Warehouse', 'Main warehouse facility'),
+  ('E&M Systems Ground Floor Store', 'Ground floor storage area'),
+  ('E&M Systems 2nd Floor Store', 'Second floor storage area')
+) AS v(name, description)
+WHERE NOT EXISTS (
+  SELECT 1 FROM locations l WHERE l.name = v.name
+);
 
 -- Categories table
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name item_category NOT NULL,
   description TEXT,
@@ -149,12 +209,18 @@ CREATE TABLE categories (
 );
 
 -- Insert default categories
-INSERT INTO categories (name, description) VALUES 
-('O&M', 'Operations and Maintenance parts'),
-('PMA', 'Punjab Mass Transit Authority parts');
+INSERT INTO categories (name, description)
+SELECT v.name::item_category, v.description
+FROM (VALUES
+  ('O&M', 'Operations and Maintenance parts'),
+  ('PMA', 'Punjab Mass Transit Authority parts')
+) AS v(name, description)
+WHERE NOT EXISTS (
+  SELECT 1 FROM categories c WHERE c.name = v.name::item_category
+);
 
 -- Systems table
-CREATE TABLE systems (
+CREATE TABLE IF NOT EXISTS systems (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name system_type NOT NULL UNIQUE,
   description TEXT,
@@ -163,18 +229,24 @@ CREATE TABLE systems (
 );
 
 -- Insert default systems
-INSERT INTO systems (name, description) VALUES 
-('Elevator', 'Elevator system components'),
-('Escalator', 'Escalator system components'),
-('PSD', 'Platform Screen Door system components'),
-('HVAC', 'Heating, Ventilation, and Air Conditioning components'),
-('WSD', 'Water Supply and Drainage components'),
-('LV', 'Low Voltage electrical components'),
-('FAS', 'Fire Alarm System components'),
-('FES', 'Fire Extinguishing System components');
+INSERT INTO systems (name, description)
+SELECT v.name::system_type, v.description
+FROM (VALUES
+  ('Elevator', 'Elevator system components'),
+  ('Escalator', 'Escalator system components'),
+  ('PSD', 'Platform Screen Door system components'),
+  ('HVAC', 'Heating, Ventilation, and Air Conditioning components'),
+  ('WSD', 'Water Supply and Drainage components'),
+  ('LV', 'Low Voltage electrical components'),
+  ('FAS', 'Fire Alarm System components'),
+  ('FES', 'Fire Extinguishing System components')
+) AS v(name, description)
+WHERE NOT EXISTS (
+  SELECT 1 FROM systems s WHERE s.name = v.name::system_type
+);
 
 -- Inventory items table
-CREATE TABLE inventory_items (
+CREATE TABLE IF NOT EXISTS inventory_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   part_name TEXT NOT NULL,
   partNumber TEXT UNIQUE,
@@ -201,20 +273,38 @@ CREATE TABLE inventory_items (
 ALTER TABLE inventory_items ENABLE ROW LEVEL SECURITY;
 
 -- Example RLS policy for inventory_items (adjust as needed)
-CREATE POLICY "Users can view all inventory items" 
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can view all inventory items'
+  ) THEN
+    CREATE POLICY "Users can view all inventory items" 
   ON inventory_items FOR SELECT 
   USING (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Users can insert their own inventory items" 
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can insert their own inventory items'
+  ) THEN
+    CREATE POLICY "Users can insert their own inventory items" 
   ON inventory_items FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+END $$;
 
-CREATE POLICY "Users can update their own inventory items" 
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can update their own inventory items'
+  ) THEN
+    CREATE POLICY "Users can update their own inventory items" 
   ON inventory_items FOR UPDATE 
   USING (auth.uid() = created_by);
+  END IF;
+END $$;
 
 -- Tools table (aligns with Tools page structure)
-CREATE TABLE tools (
+CREATE TABLE IF NOT EXISTS tools (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -236,20 +326,26 @@ CREATE TABLE tools (
 ALTER TABLE tools ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for tools
-CREATE POLICY "Users can view all tools"
-  ON tools FOR SELECT
-  USING (true);
-
-CREATE POLICY "Authenticated users can insert tools"
-  ON tools FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Creators can update their tools"
-  ON tools FOR UPDATE
-  USING (auth.uid() = created_by);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'tools' AND policyname = 'Users can view all tools'
+  ) THEN
+    CREATE POLICY "Users can view all tools" ON tools FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'tools' AND policyname = 'Authenticated users can insert tools'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert tools" ON tools FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'tools' AND policyname = 'Creators can update their tools'
+  ) THEN
+    CREATE POLICY "Creators can update their tools" ON tools FOR UPDATE USING (auth.uid() = created_by);
+  END IF;
+END $$;
 
 -- General Tools table (aligns with General Tools page structure)
-CREATE TABLE general_tools (
+CREATE TABLE IF NOT EXISTS general_tools (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -271,20 +367,26 @@ CREATE TABLE general_tools (
 ALTER TABLE general_tools ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for general_tools
-CREATE POLICY "Users can view all general_tools"
-  ON general_tools FOR SELECT
-  USING (true);
-
-CREATE POLICY "Authenticated users can insert general_tools"
-  ON general_tools FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Creators can update their general_tools"
-  ON general_tools FOR UPDATE
-  USING (auth.uid() = created_by);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'general_tools' AND policyname = 'Users can view all general_tools'
+  ) THEN
+    CREATE POLICY "Users can view all general_tools" ON general_tools FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'general_tools' AND policyname = 'Authenticated users can insert general_tools'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert general_tools" ON general_tools FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'general_tools' AND policyname = 'Creators can update their general_tools'
+  ) THEN
+    CREATE POLICY "Creators can update their general_tools" ON general_tools FOR UPDATE USING (auth.uid() = created_by);
+  END IF;
+END $$;
 
 -- PPE items table (Updated to match React implementation)
-CREATE TABLE ppe_items (
+CREATE TABLE IF NOT EXISTS ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -306,20 +408,26 @@ CREATE TABLE ppe_items (
 ALTER TABLE ppe_items ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for ppe_items
-CREATE POLICY "Users can view all ppe items"
-  ON ppe_items FOR SELECT
-  USING (true);
-
-CREATE POLICY "Authenticated users can insert ppe items"
-  ON ppe_items FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Creators can update their ppe items"
-  ON ppe_items FOR UPDATE
-  USING (auth.uid() = created_by);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ppe_items' AND policyname = 'Users can view all ppe items'
+  ) THEN
+    CREATE POLICY "Users can view all ppe items" ON ppe_items FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ppe_items' AND policyname = 'Authenticated users can insert ppe items'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert ppe items" ON ppe_items FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'ppe_items' AND policyname = 'Creators can update their ppe items'
+  ) THEN
+    CREATE POLICY "Creators can update their ppe items" ON ppe_items FOR UPDATE USING (auth.uid() = created_by);
+  END IF;
+END $$;
 
 -- Stationery items table (Updated to match React implementation)
-CREATE TABLE stationery_items (
+CREATE TABLE IF NOT EXISTS stationery_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -342,20 +450,26 @@ CREATE TABLE stationery_items (
 ALTER TABLE stationery_items ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for stationery_items
-CREATE POLICY "Users can view all stationery items"
-  ON stationery_items FOR SELECT
-  USING (true);
-
-CREATE POLICY "Authenticated users can insert stationery items"
-  ON stationery_items FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Creators can update their stationery items"
-  ON stationery_items FOR UPDATE
-  USING (auth.uid() = created_by);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'stationery_items' AND policyname = 'Users can view all stationery items'
+  ) THEN
+    CREATE POLICY "Users can view all stationery items" ON stationery_items FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'stationery_items' AND policyname = 'Authenticated users can insert stationery items'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert stationery items" ON stationery_items FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'stationery_items' AND policyname = 'Creators can update their stationery items'
+  ) THEN
+    CREATE POLICY "Creators can update their stationery items" ON stationery_items FOR UPDATE USING (auth.uid() = created_by);
+  END IF;
+END $$;
 
 -- Faulty Returns table (New table to match React implementation)
-CREATE TABLE faulty_returns (
+CREATE TABLE IF NOT EXISTS faulty_returns (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   boq_number TEXT,
@@ -376,7 +490,7 @@ CREATE TABLE faulty_returns (
 ALTER TABLE faulty_returns ENABLE ROW LEVEL SECURITY;
 
 -- Requisition table (for all item types)
-CREATE TABLE requisition (
+CREATE TABLE IF NOT EXISTS requisition (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   requisition_type requisition_type NOT NULL,
   item_type TEXT NOT NULL, -- 'inventory', 'tool', 'ppe', 'stationery'
@@ -397,7 +511,7 @@ CREATE TABLE requisition (
 );
 
 -- Gate passes table
-CREATE TABLE gate_passes (
+CREATE TABLE IF NOT EXISTS gate_passes (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   pass_number TEXT UNIQUE NOT NULL,
   requester_name TEXT NOT NULL,
@@ -420,7 +534,7 @@ CREATE TABLE gate_passes (
 );
 
 -- issuance records table
-CREATE TABLE issuance_records (
+CREATE TABLE IF NOT EXISTS issuance_records (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   policy_number TEXT UNIQUE NOT NULL,
   issuance_provider TEXT NOT NULL,
@@ -443,7 +557,7 @@ CREATE TABLE issuance_records (
 );
 
 -- Audit log table for tracking all changes
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   table_name TEXT NOT NULL,
   record_id UUID NOT NULL,
@@ -454,53 +568,241 @@ CREATE TABLE audit_logs (
   changed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Ensure required columns exist on legacy tables (idempotent)
+DO $$
+BEGIN
+  -- tools.item_location
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'public' AND table_name = 'tools'
+  ) THEN
+    -- tools.issued_to_* and status
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'issued_to_name'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN issued_to_name TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'issued_to_olt'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN issued_to_olt TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'issued_to_designation'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN issued_to_designation TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'issued_to_group'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN issued_to_group TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'status'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN status item_status DEFAULT 'available';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'item_location'
+    ) THEN
+      ALTER TABLE tools ADD COLUMN item_location TEXT;
+    END IF;
+  END IF;
+
+  -- general_tools.item_location
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'public' AND table_name = 'general_tools'
+  ) THEN
+    -- general_tools.issued_to_* and status
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'issued_to_name'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN issued_to_name TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'issued_to_olt'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN issued_to_olt TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'issued_to_designation'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN issued_to_designation TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'issued_to_group'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN issued_to_group TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'status'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN status item_status DEFAULT 'available';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'general_tools' AND column_name = 'item_location'
+    ) THEN
+      ALTER TABLE general_tools ADD COLUMN item_location TEXT;
+    END IF;
+  END IF;
+
+  -- ppe_items.item_location
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'public' AND table_name = 'ppe_items'
+  ) THEN
+    -- ppe_items.issued_to_* and status
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'issued_to_name'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN issued_to_name TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'issued_to_olt'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN issued_to_olt TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'issued_to_designation'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN issued_to_designation TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'issued_to_group'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN issued_to_group TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'status'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN status item_status DEFAULT 'available';
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'ppe_items' AND column_name = 'item_location'
+    ) THEN
+      ALTER TABLE ppe_items ADD COLUMN item_location TEXT;
+    END IF;
+  END IF;
+
+  -- stationery_items.item_location
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'public' AND table_name = 'stationery_items'
+  ) THEN
+    -- stationery_items.issued_to_* and status
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'issued_to_name'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN issued_to_name TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'issued_to_olt'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN issued_to_olt TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'issued_to_designation'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN issued_to_designation TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'issued_to_group'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN issued_to_group TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'status'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN status item_status DEFAULT 'available';
+    END IF;
+    -- stationery_items.item_type
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'item_type'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN item_type TEXT;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'stationery_items' AND column_name = 'item_location'
+    ) THEN
+      ALTER TABLE stationery_items ADD COLUMN item_location TEXT;
+    END IF;
+  END IF;
+END
+$$;
+
 -- Create indexes for better performance
-CREATE INDEX idx_inventory_items_category ON inventory_items(category_id);
-CREATE INDEX idx_inventory_items_system ON inventory_items(system_id);
-CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
-CREATE INDEX idx_inventory_items_status ON inventory_items(status);
-CREATE INDEX idx_inventory_items_partNumber ON inventory_items(partNumber);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_category') THEN CREATE INDEX idx_inventory_items_category ON inventory_items(category_id); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_system') THEN CREATE INDEX idx_inventory_items_system ON inventory_items(system_id); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_location') THEN CREATE INDEX idx_inventory_items_location ON inventory_items(location_id); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_status') THEN CREATE INDEX idx_inventory_items_status ON inventory_items(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_partnumber') THEN CREATE INDEX idx_inventory_items_partNumber ON inventory_items(partNumber); END IF; END $$;
 
 -- Tools indexes
-CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name);
-CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group);
-CREATE INDEX idx_tools_status ON tools(status);
-CREATE INDEX idx_tools_location ON tools(item_location);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_tools_issued_to_name') THEN CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_tools_issued_to_group') THEN CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_tools_status') THEN CREATE INDEX idx_tools_status ON tools(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_tools_location') THEN CREATE INDEX idx_tools_location ON tools(item_location); END IF; END $$;
 
 -- General Tools indexes
-CREATE INDEX idx_general_tools_issued_to_name ON general_tools(issued_to_name);
-CREATE INDEX idx_general_tools_issued_to_group ON general_tools(issued_to_group);
-CREATE INDEX idx_general_tools_status ON general_tools(status);
-CREATE INDEX idx_general_tools_location ON general_tools(item_location);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_general_tools_issued_to_name') THEN CREATE INDEX idx_general_tools_issued_to_name ON general_tools(issued_to_name); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_general_tools_issued_to_group') THEN CREATE INDEX idx_general_tools_issued_to_group ON general_tools(issued_to_group); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_general_tools_status') THEN CREATE INDEX idx_general_tools_status ON general_tools(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_general_tools_location') THEN CREATE INDEX idx_general_tools_location ON general_tools(item_location); END IF; END $$;
 
-CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
-CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
-CREATE INDEX idx_ppe_items_status ON ppe_items(status);
-CREATE INDEX idx_ppe_items_location ON ppe_items(item_location);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_ppe_items_issued_to_name') THEN CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_ppe_items_issued_to_group') THEN CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_ppe_items_status') THEN CREATE INDEX idx_ppe_items_status ON ppe_items(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_ppe_items_location') THEN CREATE INDEX idx_ppe_items_location ON ppe_items(item_location); END IF; END $$;
 
-CREATE INDEX idx_stationery_items_issued_to_name ON stationery_items(issued_to_name);
-CREATE INDEX idx_stationery_items_issued_to_group ON stationery_items(issued_to_group);
-CREATE INDEX idx_stationery_items_item_type ON stationery_items(item_type);
-CREATE INDEX idx_stationery_items_status ON stationery_items(status);
-CREATE INDEX idx_stationery_items_location ON stationery_items(item_location);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_stationery_items_issued_to_name') THEN CREATE INDEX idx_stationery_items_issued_to_name ON stationery_items(issued_to_name); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_stationery_items_issued_to_group') THEN CREATE INDEX idx_stationery_items_issued_to_group ON stationery_items(issued_to_group); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_stationery_items_item_type') THEN CREATE INDEX idx_stationery_items_item_type ON stationery_items(item_type); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_stationery_items_status') THEN CREATE INDEX idx_stationery_items_status ON stationery_items(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_stationery_items_location') THEN CREATE INDEX idx_stationery_items_location ON stationery_items(item_location); END IF; END $$;
 
-CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
-CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location);
-CREATE INDEX idx_faulty_returns_status ON faulty_returns(status);
-CREATE INDEX idx_faulty_returns_created_at ON faulty_returns(created_at);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_faulty_returns_pick_up_location') THEN CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_faulty_returns_storage_location') THEN CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_faulty_returns_status') THEN CREATE INDEX idx_faulty_returns_status ON faulty_returns(status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_faulty_returns_created_at') THEN CREATE INDEX idx_faulty_returns_created_at ON faulty_returns(created_at); END IF; END $$;
 
-CREATE INDEX idx_requisition_item_type_id ON requisition(item_type, item_id);
-CREATE INDEX idx_requisition_issued_to ON requisition(issued_to);
-CREATE INDEX idx_requisition_created_at ON requisition(created_at);
-CREATE INDEX idx_requisition_type ON requisition(requisition_type);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_requisition_item_type_id') THEN CREATE INDEX idx_requisition_item_type_id ON requisition(item_type, item_id); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_requisition_issued_to') THEN CREATE INDEX idx_requisition_issued_to ON requisition(issued_to); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_requisition_created_at') THEN CREATE INDEX idx_requisition_created_at ON requisition(created_at); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_requisition_type') THEN CREATE INDEX idx_requisition_type ON requisition(requisition_type); END IF; END $$;
 
-CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at);
-CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status);
-CREATE INDEX idx_issuance_records_end_date ON issuance_records(end_date);
-CREATE INDEX idx_issuance_records_status ON issuance_records(status);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_gate_passes_created_at') THEN CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_gate_passes_status') THEN CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_issuance_records_end_date') THEN CREATE INDEX idx_issuance_records_end_date ON issuance_records(end_date); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_issuance_records_status') THEN CREATE INDEX idx_issuance_records_status ON issuance_records(status); END IF; END $$;
 
-CREATE INDEX idx_audit_logs_table_record ON audit_logs(table_name, record_id);
-CREATE INDEX idx_audit_logs_changed_at ON audit_logs(changed_at);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_audit_logs_table_record') THEN CREATE INDEX idx_audit_logs_table_record ON audit_logs(table_name, record_id); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_audit_logs_changed_at') THEN CREATE INDEX idx_audit_logs_changed_at ON audit_logs(changed_at); END IF; END $$;
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
@@ -522,20 +824,20 @@ EXCEPTION
 END;
 $$;
 
--- Create triggers for updated_at timestamps
-CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_locations_updated_at BEFORE UPDATE ON locations FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_general_tools_updated_at BEFORE UPDATE ON general_tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+-- Create triggers for updated_at timestamps (idempotent)
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_profiles_updated_at') THEN CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_locations_updated_at') THEN CREATE TRIGGER update_locations_updated_at BEFORE UPDATE ON locations FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_categories_updated_at') THEN CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_systems_updated_at') THEN CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_inventory_items_updated_at') THEN CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_tools_updated_at') THEN CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_general_tools_updated_at') THEN CREATE TRIGGER update_general_tools_updated_at BEFORE UPDATE ON general_tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_ppe_items_updated_at') THEN CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_stationery_items_updated_at') THEN CREATE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_faulty_returns_updated_at') THEN CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_requisition_updated_at') THEN CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_gate_passes_updated_at') THEN CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_issuance_records_updated_at') THEN CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';
