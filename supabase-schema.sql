@@ -331,6 +331,46 @@ CREATE POLICY "Users can view all inventory items"
   END IF;
 END $$;
 
+-- Spare parts table (for bulk reseed/import and spare management)
+CREATE TABLE IF NOT EXISTS spare_parts (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name TEXT NOT NULL,
+  belongsto TEXT,
+  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+  location TEXT,
+  itemCode TEXT,
+  imis_code TEXT,
+  uom TEXT,
+  partNumber TEXT,
+  category TEXT,
+  boq_number TEXT,
+  lastUpdated TIMESTAMP WITH TIME ZONE,
+  last_updated TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE spare_parts ENABLE ROW LEVEL SECURITY;
+
+-- RLS: allow read for all, writes for authenticated
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='spare_parts' AND policyname='Read spare_parts'
+  ) THEN
+    CREATE POLICY "Read spare_parts" ON spare_parts FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='spare_parts' AND policyname='Write spare_parts'
+  ) THEN
+    CREATE POLICY "Write spare_parts" ON spare_parts FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='spare_parts' AND policyname='Update spare_parts'
+  ) THEN
+    CREATE POLICY "Update spare_parts" ON spare_parts FOR UPDATE USING (auth.role() = 'authenticated');
+  END IF;
+END $$;
+
 DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can insert their own inventory items'
