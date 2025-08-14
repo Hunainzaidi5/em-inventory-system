@@ -873,35 +873,26 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_requi
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_gate_passes_updated_at') THEN CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_issuance_records_updated_at') THEN CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 
--- Seed: default user (idempotent)
+-- Seed: default profile for dev user if the Auth user already exists (no Auth creation here)
 DO $$
 DECLARE
   v_email TEXT := 'syedhunainalizaidi@gmail.com';
   v_env TEXT := (SELECT value FROM app_settings WHERE key = 'env');
+  v_uid UUID;
 BEGIN
   IF COALESCE(v_env, 'prod') = 'dev' THEN
-    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = v_email) THEN
-      PERFORM auth.create_user(
-        email := v_email,
-        password := 'APPLE_1414',
-        email_confirm := true,
-        user_metadata := jsonb_build_object(
-          'name', 'Syed Hunain Ali',
-          'role', 'dev',
-          'department', 'E&M SYSTEMS'
-        )
-      );
+    SELECT id INTO v_uid FROM auth.users WHERE email = v_email;
+    IF v_uid IS NOT NULL THEN
+      INSERT INTO public.profiles (id, email, full_name, role, department, is_active, created_at, updated_at)
+      VALUES (v_uid, v_email, 'Syed Hunain Ali', 'dev'::user_role, 'E&M SYSTEMS', TRUE, NOW(), NOW())
+      ON CONFLICT (id) DO UPDATE SET
+        email = EXCLUDED.email,
+        full_name = EXCLUDED.full_name,
+        role = EXCLUDED.role,
+        department = EXCLUDED.department,
+        is_active = TRUE,
+        updated_at = NOW();
     END IF;
-
-    -- Ensure profile fields are set
-    UPDATE public.profiles
-    SET 
-      full_name = 'Syed Hunain Ali',
-      role = 'dev'::user_role,
-      department = 'E&M SYSTEMS',
-      is_active = true,
-      updated_at = NOW()
-    WHERE email = v_email;
   END IF;
 END
 $$;
