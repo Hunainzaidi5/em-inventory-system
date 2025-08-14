@@ -219,6 +219,17 @@ WHERE NOT EXISTS (
   SELECT 1 FROM categories c WHERE c.name = v.name::item_category
 );
 
+-- App settings for environment controls (dev/prod)
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
+-- Default environment is 'prod'; override to 'dev' locally to enable dev-only seeds
+INSERT INTO app_settings(key, value)
+SELECT 'env', 'prod'
+WHERE NOT EXISTS (SELECT 1 FROM app_settings WHERE key = 'env');
+
 -- Systems table
 CREATE TABLE IF NOT EXISTS systems (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -838,6 +849,39 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_fault
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_requisition_updated_at') THEN CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_gate_passes_updated_at') THEN CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_issuance_records_updated_at') THEN CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
+
+-- Seed: default user (idempotent)
+DO $$
+DECLARE
+  v_email TEXT := 'syedhunainalizaidi@gmail.com';
+  v_env TEXT := (SELECT value FROM app_settings WHERE key = 'env');
+BEGIN
+  IF COALESCE(v_env, 'prod') = 'dev' THEN
+    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = v_email) THEN
+      PERFORM auth.create_user(
+        email := v_email,
+        password := 'APPLE_1414',
+        email_confirm := true,
+        user_metadata := jsonb_build_object(
+          'name', 'Syed Hunain Ali',
+          'role', 'dev',
+          'department', 'E&M SYSTEMS'
+        )
+      );
+    END IF;
+
+    -- Ensure profile fields are set
+    UPDATE public.profiles
+    SET 
+      full_name = 'Syed Hunain Ali',
+      role = 'dev'::user_role,
+      department = 'E&M SYSTEMS',
+      is_active = true,
+      updated_at = NOW()
+    WHERE email = v_email;
+  END IF;
+END
+$$;
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';
