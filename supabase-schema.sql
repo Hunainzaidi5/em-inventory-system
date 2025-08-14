@@ -73,6 +73,9 @@ CREATE TABLE IF NOT EXISTS profiles (
 -- Enable RLS on profiles table
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
+-- Ensure optional columns exist on profiles
+ALTER TABLE IF EXISTS profiles ADD COLUMN IF NOT EXISTS avatar TEXT;
+
 -- Create policies for profiles (idempotent)
 DO $$
 BEGIN
@@ -617,6 +620,66 @@ COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
 
 -- Seed rows (idempotent)
+-- Profiles seed (only if corresponding auth.users exist)
+INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
+SELECT '01ae1df5-18ef-439e-817b-6995a7a76315', 'syedhunainalizaidi@gmail.com', 'Syed Hunain Ali', 'dev', 'E&M SYSTEMS', '1414', TRUE, '2025-08-14 06:53:10+00', '2025-08-14 06:58:44.259668+00', NULL
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '01ae1df5-18ef-439e-817b-6995a7a76315')
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role::user_role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  avatar = EXCLUDED.avatar;
+
+INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
+SELECT '0b44535a-243e-4329-aef6-382e0c8afe81', 'muhammed.bilal@olmrts.com.pk', 'Muhammed Bilal', 'manager', 'E&M SYSTEMS', '1959', TRUE, '2025-08-07 08:35:26.101205+00', '2025-08-13 10:25:51.556129+00', NULL
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '0b44535a-243e-4329-aef6-382e0c8afe81')
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role::user_role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  avatar = EXCLUDED.avatar;
+
+INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
+SELECT '301905c8-c6b7-4868-bc54-619a4039cf5a', 'kamran.amjad@olmrts.com.pk', 'Kamran Amjad', 'engineer', 'E&M SYSTEMS', '0816', TRUE, '2025-08-07 07:56:07.325922+00', '2025-08-13 10:25:42.513133+00', NULL
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '301905c8-c6b7-4868-bc54-619a4039cf5a')
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role::user_role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  avatar = EXCLUDED.avatar;
+
+INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
+SELECT '6c374d9c-1c73-4660-9afb-53f00c1dc7c1', 'arsalan.arshad@gmail.com', 'Arsalan Arshad', 'technician', 'E&M SYSTEMS', '2386', TRUE, '2025-08-13 10:25:19.984258+00', '2025-08-13 10:26:03.457333+00', NULL
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '6c374d9c-1c73-4660-9afb-53f00c1dc7c1')
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role::user_role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  avatar = EXCLUDED.avatar;
+
+INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
+SELECT '6e04c1f8-f6f2-4faf-9da4-99f0060460ad', 'syediqrarhaider110@gmail.com', 'Iqrar Haider', 'technician', 'E&M SYSTEMS', '2204', TRUE, '2025-08-05 12:37:06.501122+00', '2025-08-07 07:02:17.869726+00', NULL
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '6e04c1f8-f6f2-4faf-9da4-99f0060460ad')
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role::user_role,
+  department = EXCLUDED.department,
+  employee_id = EXCLUDED.employee_id,
+  is_active = EXCLUDED.is_active,
+  avatar = EXCLUDED.avatar;
 -- Tools seed
 INSERT INTO tools (tool_name, brand, model, serial_number, quantity, issued_to_name, status)
 SELECT 'Cordless Drill', 'DeWalt', 'DCD791', 'SN-DRILL-001', 5, 'Store', 'available'
