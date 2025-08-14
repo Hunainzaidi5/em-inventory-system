@@ -133,6 +133,20 @@ CREATE POLICY "Users can update their own profile."
   ON profiles FOR UPDATE 
   USING (auth.uid() = id);
 
+-- Allow profile creation by end-users (own row) and by service/internal auth
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'Users and service can insert profiles'
+  ) THEN
+    CREATE POLICY "Users and service can insert profiles"
+      ON profiles FOR INSERT
+      WITH CHECK (
+        auth.uid() = id OR auth.role() = 'service_role'
+      );
+  END IF;
+END $$;
+
 -- Function to handle new user signups
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS TRIGGER 
