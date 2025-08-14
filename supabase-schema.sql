@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   full_name TEXT NOT NULL,
-  role user_role NOT NULL DEFAULT 'technician',
+  role user_role NOT NULL DEFAULT 'dev',
   department TEXT,
   employee_id TEXT UNIQUE,
   is_active BOOLEAN DEFAULT true,
@@ -135,7 +135,7 @@ BEGIN
     NEW.id, 
     COALESCE(NEW.email, ''), 
     COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'technician')::user_role,
+    COALESCE(NEW.raw_user_meta_data->>'role', 'dev')::user_role,
     TRUE,
     NOW(),
     NOW()
