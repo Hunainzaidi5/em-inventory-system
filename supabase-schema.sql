@@ -12,16 +12,16 @@ BEGIN
     JOIN pg_namespace n ON n.oid = t.typnamespace
     WHERE t.typname = 'user_role' AND n.nspname = 'public'
   ) THEN
-    CREATE TYPE user_role AS ENUM (
-      'admin',
-      'dev', 
-      'manager',
-      'deputy_manager',
-      'engineer',
-      'assistant_engineer',
-      'master_technician',
-      'technician'
-    );
+CREATE TYPE user_role AS ENUM (
+  'admin',
+  'dev', 
+  'manager',
+  'deputy_manager',
+  'engineer',
+  'assistant_engineer',
+  'master_technician',
+  'technician'
+);
   END IF;
 END
 $$;
@@ -33,7 +33,7 @@ BEGIN
     JOIN pg_namespace n ON n.oid = t.typnamespace
     WHERE t.typname = 'item_category' AND n.nspname = 'public'
   ) THEN
-    CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
+CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
   END IF;
 END
 $$;
@@ -45,16 +45,16 @@ BEGIN
     JOIN pg_namespace n ON n.oid = t.typnamespace
     WHERE t.typname = 'system_type' AND n.nspname = 'public'
   ) THEN
-    CREATE TYPE system_type AS ENUM (
-      'Elevator',
-      'Escalator', 
-      'PSD',
-      'HVAC',
-      'WSD',
-      'LV',
-      'FAS',
-      'FES'
-    );
+CREATE TYPE system_type AS ENUM (
+  'Elevator',
+  'Escalator', 
+  'PSD',
+  'HVAC',
+  'WSD',
+  'LV',
+  'FAS',
+  'FES'
+);
   END IF;
 END
 $$;
@@ -66,7 +66,7 @@ BEGIN
     JOIN pg_namespace n ON n.oid = t.typnamespace
     WHERE t.typname = 'requisition_type' AND n.nspname = 'public'
   ) THEN
-    CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
+CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
   END IF;
 END
 $$;
@@ -78,7 +78,7 @@ BEGIN
     JOIN pg_namespace n ON n.oid = t.typnamespace
     WHERE t.typname = 'item_status' AND n.nspname = 'public'
   ) THEN
-    CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
+CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
   END IF;
 END
 $$;
@@ -100,6 +100,27 @@ CREATE TABLE IF NOT EXISTS profiles (
 
 -- Enable RLS on profiles table
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Relax email uniqueness to avoid invite/create conflicts; use non-unique index instead
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.table_constraints
+    WHERE table_schema = 'public'
+      AND table_name = 'profiles'
+      AND constraint_type = 'UNIQUE'
+      AND constraint_name = 'profiles_email_key'
+  ) THEN
+    ALTER TABLE profiles DROP CONSTRAINT profiles_email_key;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_class WHERE relname = 'idx_profiles_email'
+  ) THEN
+    CREATE INDEX idx_profiles_email ON profiles(email);
+  END IF;
+END
+$$;
 
 -- Create policies for profiles
 DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON profiles;
@@ -140,7 +161,9 @@ BEGIN
     NOW(),
     NOW()
   )
-  ON CONFLICT (id) DO NOTHING;
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    updated_at = NOW();
   
   RETURN NEW;
 EXCEPTION
@@ -191,8 +214,8 @@ CREATE TABLE IF NOT EXISTS locations (
 INSERT INTO locations (name, description)
 SELECT v.name, v.description
 FROM (VALUES
-  ('GMG Warehouse', 'Main warehouse facility'),
-  ('E&M Systems Ground Floor Store', 'Ground floor storage area'),
+('GMG Warehouse', 'Main warehouse facility'),
+('E&M Systems Ground Floor Store', 'Ground floor storage area'),
   ('E&M Systems 2nd Floor Store', 'Second floor storage area')
 ) AS v(name, description)
 WHERE NOT EXISTS (
@@ -212,7 +235,7 @@ CREATE TABLE IF NOT EXISTS categories (
 INSERT INTO categories (name, description)
 SELECT v.name::item_category, v.description
 FROM (VALUES
-  ('O&M', 'Operations and Maintenance parts'),
+('O&M', 'Operations and Maintenance parts'),
   ('PMA', 'Punjab Mass Transit Authority parts')
 ) AS v(name, description)
 WHERE NOT EXISTS (
@@ -243,13 +266,13 @@ CREATE TABLE IF NOT EXISTS systems (
 INSERT INTO systems (name, description)
 SELECT v.name::system_type, v.description
 FROM (VALUES
-  ('Elevator', 'Elevator system components'),
-  ('Escalator', 'Escalator system components'),
-  ('PSD', 'Platform Screen Door system components'),
-  ('HVAC', 'Heating, Ventilation, and Air Conditioning components'),
-  ('WSD', 'Water Supply and Drainage components'),
-  ('LV', 'Low Voltage electrical components'),
-  ('FAS', 'Fire Alarm System components'),
+('Elevator', 'Elevator system components'),
+('Escalator', 'Escalator system components'),
+('PSD', 'Platform Screen Door system components'),
+('HVAC', 'Heating, Ventilation, and Air Conditioning components'),
+('WSD', 'Water Supply and Drainage components'),
+('LV', 'Low Voltage electrical components'),
+('FAS', 'Fire Alarm System components'),
   ('FES', 'Fire Extinguishing System components')
 ) AS v(name, description)
 WHERE NOT EXISTS (
@@ -288,7 +311,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can view all inventory items'
   ) THEN
-    CREATE POLICY "Users can view all inventory items" 
+CREATE POLICY "Users can view all inventory items" 
   ON inventory_items FOR SELECT 
   USING (true);
   END IF;
@@ -298,7 +321,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can insert their own inventory items'
   ) THEN
-    CREATE POLICY "Users can insert their own inventory items" 
+CREATE POLICY "Users can insert their own inventory items" 
   ON inventory_items FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
   END IF;
@@ -308,7 +331,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'inventory_items' AND policyname = 'Users can update their own inventory items'
   ) THEN
-    CREATE POLICY "Users can update their own inventory items" 
+CREATE POLICY "Users can update their own inventory items" 
   ON inventory_items FOR UPDATE 
   USING (auth.uid() = created_by);
   END IF;
