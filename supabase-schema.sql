@@ -4,61 +4,49 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create custom types/enums (idempotent via DO blocks)
-DO $$ BEGIN
-  CREATE TYPE user_role AS ENUM (
-    'admin',
-    'dev', 
-    'manager',
-    'deputy_manager',
-    'engineer',
-    'assistant_engineer',
-    'master_technician',
-    'technician'
-  );
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+-- Create custom types/enums
+CREATE TYPE user_role AS ENUM (
+  'admin',
+  'dev', 
+  'manager',
+  'deputy_manager',
+  'engineer',
+  'assistant_engineer',
+  'master_technician',
+  'technician'
+);
 
-DO $$ BEGIN
-  CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TYPE item_category AS ENUM ('O&M', 'PMA');
 
-DO $$ BEGIN
-  CREATE TYPE system_type AS ENUM (
-    'Elevator',
-    'Escalator', 
-    'PSD',
-    'HVAC',
-    'WSD',
-    'LV',
-    'FAS',
-    'FES'
-  );
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TYPE system_type AS ENUM (
+  'Elevator',
+  'Escalator', 
+  'PSD',
+  'HVAC',
+  'WSD',
+  'LV',
+  'FAS',
+  'FES'
+);
 
-DO $$ BEGIN
-  CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TYPE requisition_type AS ENUM ('issue', 'return', 'consume');
 
-DO $$ BEGIN
-  CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TYPE item_status AS ENUM ('available', 'issued', 'consumed', 'faulty');
 
-DO $$ BEGIN
-  CREATE TYPE ppe_type AS ENUM (
-    'Helmet Yellow',
-    'Helmet White',
-    'Inner Strip',
-    'Reflective Waist',
-    'Safety Shoes',
-    'Goggles',
-    'Dust Mask',
-    'Raincoat',
-    'Earplugs'
-  );
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TYPE ppe_type AS ENUM (
+  'Helmet Yellow',
+  'Helmet White',
+  'Inner Strip',
+  'Reflective Waist',
+  'Safety Shoes',
+  'Goggles',
+  'Dust Mask',
+  'Raincoat',
+  'Earplugs'
+);
 
 -- User profiles table (extends Supabase auth.users)
-CREATE TABLE IF NOT EXISTS profiles (
+CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   full_name TEXT NOT NULL,
@@ -73,23 +61,14 @@ CREATE TABLE IF NOT EXISTS profiles (
 -- Enable RLS on profiles table
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Ensure optional columns exist on profiles
-ALTER TABLE IF EXISTS profiles ADD COLUMN IF NOT EXISTS avatar TEXT;
+-- Create policies for profiles
+CREATE POLICY "Public profiles are viewable by everyone." 
+  ON profiles FOR SELECT 
+  USING (true);
 
--- Create policies for profiles (idempotent)
-DO $$
-BEGIN
-  CREATE POLICY "Public profiles are viewable by everyone." 
-    ON profiles FOR SELECT 
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$
-BEGIN
-  CREATE POLICY "Users can update their own profile." 
-    ON profiles FOR UPDATE 
-    USING (auth.uid() = id);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE POLICY "Users can update their own profile." 
+  ON profiles FOR UPDATE 
+  USING (auth.uid() = id);
 
 -- Function to handle new user signups
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
@@ -154,7 +133,7 @@ CREATE OR REPLACE TRIGGER on_auth_user_updated
   FOR EACH ROW EXECUTE FUNCTION public.handle_user_updated();
 
 -- Locations table
-CREATE TABLE IF NOT EXISTS locations (
+CREATE TABLE locations (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   description TEXT,
@@ -165,20 +144,13 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 
 -- Insert default locations
-INSERT INTO locations (name, description)
-VALUES ('GMG Warehouse', 'Main warehouse facility')
-ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO locations (name, description)
-VALUES ('E&M Systems Ground Floor Store', 'Ground floor storage area')
-ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO locations (name, description)
-VALUES ('E&M Systems 2nd Floor Store', 'Second floor storage area')
-ON CONFLICT (name) DO NOTHING;
+INSERT INTO locations (name, description) VALUES 
+('GMG Warehouse', 'Main warehouse facility'),
+('E&M Systems Ground Floor Store', 'Ground floor storage area'),
+('E&M Systems 2nd Floor Store', 'Second floor storage area');
 
 -- Categories table
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE categories (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name item_category NOT NULL,
   description TEXT,
@@ -187,16 +159,12 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- Insert default categories
-INSERT INTO categories (name, description)
-SELECT 'O&M', 'Operations and Maintenance parts'
-WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'O&M');
-
-INSERT INTO categories (name, description)
-SELECT 'PMA', 'Punjab Mass Transit Authority parts'
-WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'PMA');
+INSERT INTO categories (name, description) VALUES 
+('O&M', 'Operations and Maintenance parts'),
+('PMA', 'Punjab Mass Transit Authority parts');
 
 -- Systems table
-CREATE TABLE IF NOT EXISTS systems (
+CREATE TABLE systems (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name system_type NOT NULL UNIQUE,
   description TEXT,
@@ -205,17 +173,18 @@ CREATE TABLE IF NOT EXISTS systems (
 );
 
 -- Insert default systems
-INSERT INTO systems (name, description) VALUES ('Elevator', 'Elevator system components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('Escalator', 'Escalator system components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('PSD', 'Platform Screen Door system components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('HVAC', 'Heating, Ventilation, and Air Conditioning components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('WSD', 'Water Supply and Drainage components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('LV', 'Low Voltage electrical components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('FAS', 'Fire Alarm System components') ON CONFLICT (name) DO NOTHING;
-INSERT INTO systems (name, description) VALUES ('FES', 'Fire Extinguishing System components') ON CONFLICT (name) DO NOTHING;
+INSERT INTO systems (name, description) VALUES 
+('Elevator', 'Elevator system components'),
+('Escalator', 'Escalator system components'),
+('PSD', 'Platform Screen Door system components'),
+('HVAC', 'Heating, Ventilation, and Air Conditioning components'),
+('WSD', 'Water Supply and Drainage components'),
+('LV', 'Low Voltage electrical components'),
+('FAS', 'Fire Alarm System components'),
+('FES', 'Fire Extinguishing System components');
 
 -- Inventory items table
-CREATE TABLE IF NOT EXISTS inventory_items (
+CREATE TABLE inventory_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   part_name TEXT NOT NULL,
   partNumber TEXT UNIQUE,
@@ -242,106 +211,20 @@ CREATE TABLE IF NOT EXISTS inventory_items (
 ALTER TABLE inventory_items ENABLE ROW LEVEL SECURITY;
 
 -- Example RLS policy for inventory_items (adjust as needed)
-DO $$ BEGIN
-  CREATE POLICY "Users can view all inventory items" 
-    ON inventory_items FOR SELECT 
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE POLICY "Users can view all inventory items" 
+  ON inventory_items FOR SELECT 
+  USING (true);
 
-DO $$ BEGIN
-  CREATE POLICY "Users can insert their own inventory items" 
-    ON inventory_items FOR INSERT 
-    WITH CHECK (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE POLICY "Users can insert their own inventory items" 
+  ON inventory_items FOR INSERT 
+  WITH CHECK (auth.role() = 'authenticated');
 
-DO $$ BEGIN
-  CREATE POLICY "Users can update their own inventory items" 
-    ON inventory_items FOR UPDATE 
-    USING (auth.uid() = created_by);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
--- Tools table (New)
-CREATE TABLE IF NOT EXISTS tools (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  tool_name TEXT NOT NULL,
-  tool_description TEXT,
-  brand TEXT,
-  model TEXT,
-  serial_number TEXT UNIQUE,
-  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  -- Issued To fields
-  issued_to_name TEXT NOT NULL,
-  issued_to_olt TEXT,
-  issued_to_designation TEXT,
-  issued_to_group TEXT,
-  status item_status DEFAULT 'available',
-  notes TEXT,
-  created_by UUID REFERENCES profiles(id),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS on tools table
-ALTER TABLE tools ENABLE ROW LEVEL SECURITY;
-
--- Policies for tools (idempotent)
-DO $$ BEGIN
-  CREATE POLICY "Users can view all tools"
-    ON tools FOR SELECT
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can insert tools"
-    ON tools FOR INSERT
-    WITH CHECK (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can update their own tools"
-    ON tools FOR UPDATE
-    USING (auth.uid() = created_by);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
--- General Tools table (New)
-CREATE TABLE IF NOT EXISTS general_tools (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  tool_name TEXT NOT NULL,
-  tool_description TEXT,
-  brand TEXT,
-  model TEXT,
-  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-  status item_status DEFAULT 'available',
-  notes TEXT,
-  created_by UUID REFERENCES profiles(id),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS on general_tools table
-ALTER TABLE general_tools ENABLE ROW LEVEL SECURITY;
-
--- Policies for general_tools (idempotent)
-DO $$ BEGIN
-  CREATE POLICY "Users can view all general tools"
-    ON general_tools FOR SELECT
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can insert general tools"
-    ON general_tools FOR INSERT
-    WITH CHECK (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can update their own general tools"
-    ON general_tools FOR UPDATE
-    USING (auth.uid() = created_by);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE POLICY "Users can update their own inventory items" 
+  ON inventory_items FOR UPDATE 
+  USING (auth.uid() = created_by);
 
 -- PPE items table (Updated to match React implementation)
-CREATE TABLE IF NOT EXISTS ppe_items (
+CREATE TABLE ppe_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -361,27 +244,8 @@ CREATE TABLE IF NOT EXISTS ppe_items (
 -- Enable RLS on ppe_items table
 ALTER TABLE ppe_items ENABLE ROW LEVEL SECURITY;
 
--- Policies for ppe_items (idempotent)
-DO $$ BEGIN
-  CREATE POLICY "Users can view all ppe items"
-    ON ppe_items FOR SELECT
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can insert ppe items"
-    ON ppe_items FOR INSERT
-    WITH CHECK (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can update their own ppe items"
-    ON ppe_items FOR UPDATE
-    USING (auth.uid() = created_by);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 -- Stationery items table (Updated to match React implementation)
-CREATE TABLE IF NOT EXISTS stationery_items (
+CREATE TABLE stationery_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   item_description TEXT,
@@ -402,27 +266,8 @@ CREATE TABLE IF NOT EXISTS stationery_items (
 -- Enable RLS on stationery_items table
 ALTER TABLE stationery_items ENABLE ROW LEVEL SECURITY;
 
--- Policies for stationery_items (idempotent)
-DO $$ BEGIN
-  CREATE POLICY "Users can view all stationery items"
-    ON stationery_items FOR SELECT
-    USING (true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can insert stationery items"
-    ON stationery_items FOR INSERT
-    WITH CHECK (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN
-  CREATE POLICY "Users can update their own stationery items"
-    ON stationery_items FOR UPDATE
-    USING (auth.uid() = created_by);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 -- Faulty Returns table (New table to match React implementation)
-CREATE TABLE IF NOT EXISTS faulty_returns (
+CREATE TABLE faulty_returns (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_name TEXT NOT NULL,
   boq_number TEXT,
@@ -443,7 +288,7 @@ CREATE TABLE IF NOT EXISTS faulty_returns (
 ALTER TABLE faulty_returns ENABLE ROW LEVEL SECURITY;
 
 -- Requisition table (for all item types)
-CREATE TABLE IF NOT EXISTS requisition (
+CREATE TABLE requisition (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   requisition_type requisition_type NOT NULL,
   item_type TEXT NOT NULL, -- 'inventory', 'tool', 'ppe', 'stationery'
@@ -464,7 +309,7 @@ CREATE TABLE IF NOT EXISTS requisition (
 );
 
 -- Gate passes table
-CREATE TABLE IF NOT EXISTS gate_passes (
+CREATE TABLE gate_passes (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   pass_number TEXT UNIQUE NOT NULL,
   requester_name TEXT NOT NULL,
@@ -487,7 +332,7 @@ CREATE TABLE IF NOT EXISTS gate_passes (
 );
 
 -- issuance records table
-CREATE TABLE IF NOT EXISTS issuance_records (
+CREATE TABLE issuance_records (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   policy_number TEXT UNIQUE NOT NULL,
   issuance_provider TEXT NOT NULL,
@@ -510,7 +355,7 @@ CREATE TABLE IF NOT EXISTS issuance_records (
 );
 
 -- Audit log table for tracking all changes
-CREATE TABLE IF NOT EXISTS audit_logs (
+CREATE TABLE audit_logs (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   table_name TEXT NOT NULL,
   record_id UUID NOT NULL,
@@ -522,51 +367,43 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- Create indexes for better performance
--- Ensure required columns exist (upgrade-safe)
-ALTER TABLE IF EXISTS requisition ADD COLUMN IF NOT EXISTS item_type TEXT;
-ALTER TABLE IF EXISTS requisition ADD COLUMN IF NOT EXISTS item_id UUID;
+CREATE INDEX idx_inventory_items_category ON inventory_items(category_id);
+CREATE INDEX idx_inventory_items_system ON inventory_items(system_id);
+CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
+CREATE INDEX idx_inventory_items_status ON inventory_items(status);
+CREATE INDEX idx_inventory_items_partNumber ON inventory_items(partNumber);
 
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_inventory_items_category ON inventory_items(category_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_items_system ON inventory_items(system_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_items_location ON inventory_items(location_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_items_status ON inventory_items(status);
-CREATE INDEX IF NOT EXISTS idx_inventory_items_partNumber ON inventory_items(partNumber);
+CREATE INDEX idx_tools_issued_to_name ON tools(issued_to_name);
+CREATE INDEX idx_tools_issued_to_group ON tools(issued_to_group);
+CREATE INDEX idx_tools_brand ON tools(brand);
+CREATE INDEX idx_tools_status ON tools(status);
 
-CREATE INDEX IF NOT EXISTS idx_tools_issued_to_name ON tools(issued_to_name);
-CREATE INDEX IF NOT EXISTS idx_tools_issued_to_group ON tools(issued_to_group);
-CREATE INDEX IF NOT EXISTS idx_tools_brand ON tools(brand);
-CREATE INDEX IF NOT EXISTS idx_tools_status ON tools(status);
+CREATE INDEX idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
+CREATE INDEX idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
+CREATE INDEX idx_ppe_items_status ON ppe_items(status);
 
-CREATE INDEX IF NOT EXISTS idx_general_tools_brand ON general_tools(brand);
-CREATE INDEX IF NOT EXISTS idx_general_tools_status ON general_tools(status);
+CREATE INDEX idx_stationery_items_issued_to_name ON stationery_items(issued_to_name);
+CREATE INDEX idx_stationery_items_issued_to_group ON stationery_items(issued_to_group);
+CREATE INDEX idx_stationery_items_item_type ON stationery_items(item_type);
+CREATE INDEX idx_stationery_items_status ON stationery_items(status);
 
-CREATE INDEX IF NOT EXISTS idx_ppe_items_issued_to_name ON ppe_items(issued_to_name);
-CREATE INDEX IF NOT EXISTS idx_ppe_items_issued_to_group ON ppe_items(issued_to_group);
-CREATE INDEX IF NOT EXISTS idx_ppe_items_status ON ppe_items(status);
+CREATE INDEX idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
+CREATE INDEX idx_faulty_returns_storage_location ON faulty_returns(storage_location);
+CREATE INDEX idx_faulty_returns_status ON faulty_returns(status);
+CREATE INDEX idx_faulty_returns_created_at ON faulty_returns(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_stationery_items_issued_to_name ON stationery_items(issued_to_name);
-CREATE INDEX IF NOT EXISTS idx_stationery_items_issued_to_group ON stationery_items(issued_to_group);
-CREATE INDEX IF NOT EXISTS idx_stationery_items_item_type ON stationery_items(item_type);
-CREATE INDEX IF NOT EXISTS idx_stationery_items_status ON stationery_items(status);
+CREATE INDEX idx_requisition_item_type_id ON requisition(item_type, item_id);
+CREATE INDEX idx_requisition_issued_to ON requisition(issued_to);
+CREATE INDEX idx_requisition_created_at ON requisition(created_at);
+CREATE INDEX idx_requisition_type ON requisition(requisition_type);
 
-CREATE INDEX IF NOT EXISTS idx_faulty_returns_pick_up_location ON faulty_returns(pick_up_location);
-CREATE INDEX IF NOT EXISTS idx_faulty_returns_storage_location ON faulty_returns(storage_location);
-CREATE INDEX IF NOT EXISTS idx_faulty_returns_status ON faulty_returns(status);
-CREATE INDEX IF NOT EXISTS idx_faulty_returns_created_at ON faulty_returns(created_at);
+CREATE INDEX idx_gate_passes_created_at ON gate_passes(created_at);
+CREATE INDEX idx_gate_passes_status ON gate_passes(approval_status);
+CREATE INDEX idx_issuance_records_end_date ON issuance_records(end_date);
+CREATE INDEX idx_issuance_records_status ON issuance_records(status);
 
-CREATE INDEX IF NOT EXISTS idx_requisition_item_type_id ON requisition(item_type, item_id);
-CREATE INDEX IF NOT EXISTS idx_requisition_issued_to ON requisition(issued_to);
-CREATE INDEX IF NOT EXISTS idx_requisition_created_at ON requisition(created_at);
-CREATE INDEX IF NOT EXISTS idx_requisition_type ON requisition(requisition_type);
-
-CREATE INDEX IF NOT EXISTS idx_gate_passes_created_at ON gate_passes(created_at);
-CREATE INDEX IF NOT EXISTS idx_gate_passes_status ON gate_passes(approval_status);
-CREATE INDEX IF NOT EXISTS idx_issuance_records_end_date ON issuance_records(end_date);
-CREATE INDEX IF NOT EXISTS idx_issuance_records_status ON issuance_records(status);
-
-CREATE INDEX IF NOT EXISTS idx_audit_logs_table_record ON audit_logs(table_name, record_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_at ON audit_logs(changed_at);
+CREATE INDEX idx_audit_logs_table_record ON audit_logs(table_name, record_id);
+CREATE INDEX idx_audit_logs_changed_at ON audit_logs(changed_at);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
@@ -588,20 +425,19 @@ EXCEPTION
 END;
 $$;
 
--- Create triggers for updated_at timestamps (idempotent via OR REPLACE)
-CREATE OR REPLACE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_locations_updated_at BEFORE UPDATE ON locations FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_general_tools_updated_at BEFORE UPDATE ON general_tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-CREATE OR REPLACE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+-- Create triggers for updated_at timestamps
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_locations_updated_at BEFORE UPDATE ON locations FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_inventory_items_updated_at BEFORE UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_tools_updated_at BEFORE UPDATE ON tools FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_ppe_items_updated_at BEFORE UPDATE ON ppe_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_stationery_items_updated_at BEFORE UPDATE ON stationery_items FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_faulty_returns_updated_at BEFORE UPDATE ON faulty_returns FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_requisition_updated_at BEFORE UPDATE ON requisition FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';
@@ -610,7 +446,6 @@ COMMENT ON TABLE categories IS 'Main categories: O&M and PMA';
 COMMENT ON TABLE systems IS 'System types: Elevator, Escalator, PSD, HVAC, WSD, LV, FAS, FES';
 COMMENT ON TABLE inventory_items IS 'Main inventory spare parts with full tracking';
 COMMENT ON TABLE tools IS 'Tools inventory with assignment tracking';
-COMMENT ON TABLE general_tools IS 'General tools listing with basic tracking';
 COMMENT ON TABLE ppe_items IS 'Personal Protective Equipment inventory with assignment tracking';
 COMMENT ON TABLE stationery_items IS 'Stationery items with assignment tracking';
 COMMENT ON TABLE faulty_returns IS 'Faulty returns tracking with location management';
@@ -618,92 +453,3 @@ COMMENT ON TABLE requisition IS 'All issue/return/consume requisition across ite
 COMMENT ON TABLE gate_passes IS 'Gate pass generation and tracking';
 COMMENT ON TABLE issuance_records IS 'issuance policies and coverage tracking';
 COMMENT ON TABLE audit_logs IS 'Audit trail for all data changes';
-
--- Seed rows (idempotent)
--- Profiles seed (only if corresponding auth.users exist)
-INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
-SELECT '01ae1df5-18ef-439e-817b-6995a7a76315', 'syedhunainalizaidi@gmail.com', 'Syed Hunain Ali', 'dev', 'E&M SYSTEMS', '1414', TRUE, '2025-08-14 06:53:10+00', '2025-08-14 06:58:44.259668+00', NULL
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '01ae1df5-18ef-439e-817b-6995a7a76315')
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role::user_role,
-  department = EXCLUDED.department,
-  employee_id = EXCLUDED.employee_id,
-  is_active = EXCLUDED.is_active,
-  avatar = EXCLUDED.avatar;
-
-INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
-SELECT '0b44535a-243e-4329-aef6-382e0c8afe81', 'muhammed.bilal@olmrts.com.pk', 'Muhammed Bilal', 'manager', 'E&M SYSTEMS', '1959', TRUE, '2025-08-07 08:35:26.101205+00', '2025-08-13 10:25:51.556129+00', NULL
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '0b44535a-243e-4329-aef6-382e0c8afe81')
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role::user_role,
-  department = EXCLUDED.department,
-  employee_id = EXCLUDED.employee_id,
-  is_active = EXCLUDED.is_active,
-  avatar = EXCLUDED.avatar;
-
-INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
-SELECT '301905c8-c6b7-4868-bc54-619a4039cf5a', 'kamran.amjad@olmrts.com.pk', 'Kamran Amjad', 'engineer', 'E&M SYSTEMS', '0816', TRUE, '2025-08-07 07:56:07.325922+00', '2025-08-13 10:25:42.513133+00', NULL
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '301905c8-c6b7-4868-bc54-619a4039cf5a')
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role::user_role,
-  department = EXCLUDED.department,
-  employee_id = EXCLUDED.employee_id,
-  is_active = EXCLUDED.is_active,
-  avatar = EXCLUDED.avatar;
-
-INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
-SELECT '6c374d9c-1c73-4660-9afb-53f00c1dc7c1', 'arsalan.arshad@gmail.com', 'Arsalan Arshad', 'technician', 'E&M SYSTEMS', '2386', TRUE, '2025-08-13 10:25:19.984258+00', '2025-08-13 10:26:03.457333+00', NULL
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '6c374d9c-1c73-4660-9afb-53f00c1dc7c1')
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role::user_role,
-  department = EXCLUDED.department,
-  employee_id = EXCLUDED.employee_id,
-  is_active = EXCLUDED.is_active,
-  avatar = EXCLUDED.avatar;
-
-INSERT INTO profiles (id, email, full_name, role, department, employee_id, is_active, created_at, updated_at, avatar)
-SELECT '6e04c1f8-f6f2-4faf-9da4-99f0060460ad', 'syediqrarhaider110@gmail.com', 'Iqrar Haider', 'technician', 'E&M SYSTEMS', '2204', TRUE, '2025-08-05 12:37:06.501122+00', '2025-08-07 07:02:17.869726+00', NULL
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE id = '6e04c1f8-f6f2-4faf-9da4-99f0060460ad')
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role::user_role,
-  department = EXCLUDED.department,
-  employee_id = EXCLUDED.employee_id,
-  is_active = EXCLUDED.is_active,
-  avatar = EXCLUDED.avatar;
--- Tools seed
-INSERT INTO tools (tool_name, brand, model, serial_number, quantity, issued_to_name, status)
-SELECT 'Cordless Drill', 'DeWalt', 'DCD791', 'SN-DRILL-001', 5, 'Store', 'available'
-WHERE NOT EXISTS (
-  SELECT 1 FROM tools WHERE serial_number = 'SN-DRILL-001'
-);
-
--- General tools seed
-INSERT INTO general_tools (tool_name, brand, model, quantity, status)
-SELECT 'Hammer', 'Stanley', 'STHT0-51310', 10, 'available'
-WHERE NOT EXISTS (
-  SELECT 1 FROM general_tools WHERE tool_name = 'Hammer' AND brand = 'Stanley' AND model = 'STHT0-51310'
-);
-
--- PPE items seed
-INSERT INTO ppe_items (item_name, item_description, quantity, issued_to_name, status)
-SELECT 'Safety Helmet', 'Yellow helmet', 20, 'Store', 'available'
-WHERE NOT EXISTS (
-  SELECT 1 FROM ppe_items WHERE item_name = 'Safety Helmet'
-);
-
--- Stationery items seed
-INSERT INTO stationery_items (item_name, item_description, item_type, quantity, issued_to_name, status)
-SELECT 'Ballpoint Pen', 'Blue ink pen', 'Pen', 100, 'Office', 'available'
-WHERE NOT EXISTS (
-  SELECT 1 FROM stationery_items WHERE item_name = 'Ballpoint Pen' AND item_type = 'Pen'
-);
