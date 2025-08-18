@@ -269,12 +269,21 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Create function to log user actions
 CREATE OR REPLACE FUNCTION log_user_action(
-  p_user_id UUID,
+  p_user_id TEXT,  -- Changed from UUID to TEXT to be more flexible
   p_action TEXT,
   p_details JSONB DEFAULT NULL
 ) 
 RETURNS void AS $$
+DECLARE
+  v_user_id UUID;
 BEGIN
+  -- Safely convert user_id to UUID, defaulting to NULL if invalid
+  BEGIN
+    v_user_id := p_user_id::UUID;
+  EXCEPTION WHEN OTHERS THEN
+    v_user_id := NULL;
+  END;
+
   INSERT INTO user_audit_log (
     user_id,
     action,
@@ -282,12 +291,17 @@ BEGIN
     ip_address,
     user_agent
   ) VALUES (
-    p_user_id,
+    v_user_id,  -- Use the converted UUID or NULL
     p_action,
     p_details,
     inet_client_addr(),
     current_setting('request.headers', true)::json->>'user-agent'
   );
+  
+  -- If the insert fails, don't fail the whole operation
+  EXCEPTION WHEN OTHERS THEN
+    -- Log the error to the console for debugging
+    RAISE NOTICE 'Failed to log user action: %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
