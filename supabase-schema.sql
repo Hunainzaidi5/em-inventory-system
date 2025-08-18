@@ -291,6 +291,33 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Function to update last login timestamp and IP
+CREATE OR REPLACE FUNCTION public.update_last_login(
+  p_user_id UUID,
+  p_ip_address INET
+) 
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE profiles
+  SET 
+    last_login_at = NOW(),
+    last_login_ip = p_ip_address,
+    updated_at = NOW()
+  WHERE id = p_user_id;
+  
+  -- Reset failed login attempts on successful login
+  UPDATE profiles
+  SET 
+    failed_login_attempts = 0,
+    account_locked_until = NULL,
+    updated_at = NOW()
+  WHERE id = p_user_id;
+END;
+$$;
+
 -- Function to handle new user signups
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS TRIGGER 
@@ -344,9 +371,15 @@ BEGIN
     END IF;
   END IF;
   
-  -- Determine activation status
-  IF activate_now IS NULL THEN
-    activate_now := NOT is_self_signup; -- Active if invited, inactive if self-signup
+  -- For development, activate all users by default
+  -- In production, you might want to implement email verification first
+  IF current_setting('app.settings.environment', true) = 'development' THEN
+    activate_now := true;
+  ELSE
+    -- In production, only activate if invited or first dev
+    IF activate_now IS NULL THEN
+      activate_now := NOT is_self_signup; -- Active if invited, inactive if self-signup
+    END IF;
   END IF;
 
   -- Insert new user profile
@@ -1111,6 +1144,27 @@ END
 $$;
 
 -- Create indexes for better performance
+-- First ensure the is_active column exists before creating the index
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+    FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'profiles' 
+    AND column_name = 'is_active'
+  ) THEN
+    IF NOT EXISTS (
+      SELECT 1 
+      FROM pg_indexes 
+      WHERE indexname = 'idx_profiles_role_active'
+    ) THEN
+      CREATE INDEX idx_profiles_role_active ON profiles(role) WHERE is_active = true;
+    END IF;
+  END IF;
+END $$;
+
+-- Other indexes
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_category') THEN CREATE INDEX idx_inventory_items_category ON inventory_items(category_id); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_system') THEN CREATE INDEX idx_inventory_items_system ON inventory_items(system_id); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_inventory_items_location') THEN CREATE INDEX idx_inventory_items_location ON inventory_items(location_id); END IF; END $$;
