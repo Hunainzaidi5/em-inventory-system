@@ -104,7 +104,7 @@ const AddUserPage = () => {
       name: '',
       email: '',
       password: '',
-      role: 'technician' as AssignableRole,
+      role: 'dev' as AssignableRole,
       department: '',
       employee_id: '',
     },
@@ -134,7 +134,7 @@ const AddUserPage = () => {
         // Set form values from the fetched user data
         setValue('name', user.full_name || '');
         setValue('email', user.email || '');
-        setValue('role', user.role || 'technician');
+        setValue('role', user.role || 'dev');
         setValue('department', user.department || '');
         setValue('employee_id', user.employee_id || '');
         

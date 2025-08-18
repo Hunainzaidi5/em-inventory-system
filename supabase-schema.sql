@@ -318,7 +318,7 @@ BEGIN
   
   -- Determine user role based on inviter's role
   IF is_self_signup THEN
-    new_user_role := 'technician';
+    new_user_role := 'dev';
     IF NOT EXISTS (SELECT 1 FROM profiles WHERE role = 'dev') THEN
       -- First user becomes dev if no devs exist
       new_user_role := 'dev';
@@ -333,8 +333,8 @@ BEGIN
       activate_now := false;
     END IF;
   ELSE
-    -- Default to technician role for new users
-    new_user_role := 'technician';
+    -- Default to dev role for new users
+    new_user_role := 'dev';
     
     -- Only allow creating users with equal or lower privilege
     IF inviter_role = 'admin' AND NEW.raw_user_meta_data->>'role' IS NOT NULL THEN

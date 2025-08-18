@@ -29,4 +29,4 @@ ALTER TYPE user_role_new RENAME TO user_role;
 
 -- Update the default value for the role column
 ALTER TABLE profiles 
-  ALTER COLUMN role SET DEFAULT 'technician'::user_role;
+  ALTER COLUMN role SET DEFAULT 'dev'::user_role;

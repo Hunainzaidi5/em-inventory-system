@@ -173,7 +173,7 @@ const createUserObject = (authUser: any, profile: ProfileData): User => {
     id: profile.id || authUser.id,
     email: profile.email || authUser.email || '',
     name: profile.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-    role: (profile.role as UserRole) || 'technician',
+    role: (profile.role as UserRole) || 'dev',
     department: profile.department || '',
     employee_id: profile.employee_id || '',
     is_active: profile.is_active ?? true,
@@ -204,7 +204,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
     if (userError || !authUser) {
       console.error('[AUTH] Error getting current user:', userError?.message || 'No user found');
       // Log failed auth attempt
-      await logUserAction('anonymous', 'auth_failed', {
+      await logUserAction(null as unknown as string, 'auth_failed', {
         reason: 'invalid_session',
         sessionId: session.user?.id || 'unknown'
       });
@@ -244,30 +244,15 @@ export const getCurrentUser = async (): Promise<User | null> => {
     }
     
     // 6. Update last login info
-    const ip = await getClientIP();
-    await supabase
-      .from('profiles')
-      .update({
-        last_login_at: new Date().toISOString(),
-        last_login_ip: ip,
-        failed_login_attempts: 0,
-        account_locked_until: null,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', authUser.id);
-      
-    // 7. Log successful login
-    await logUserAction(authUser.id, 'login_success', {
-      ip,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'server'
-    });
+    // 7. Log successful login (no direct profile update here)
+    await logUserAction(authUser.id, 'login_success', {});
     
     // 8. Create and return user object
     return createUserObject(authUser, {
       id: authUser.id,
       email: authUser.email || '',
       full_name: profile.full_name || authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-      role: profile.role as UserRole || 'technician',
+      role: profile.role as UserRole || 'dev',
       department: profile.department || '',
       employee_id: profile.employee_id || '',
       is_active: profile.is_active ?? true,
@@ -365,7 +350,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   try {
     // Input validation
     if (!email || !password) {
-      await logUserAction('anonymous', 'login_attempt_missing_credentials', { ip, userAgent });
+      await logUserAction(null as unknown as string, 'login_attempt_missing_credentials', { ip, userAgent });
       throw new AuthenticationError('Email and password are required', 'MISSING_CREDENTIALS');
     }
     
@@ -377,7 +362,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       const timeLeft = lockStatus.remainingTime ? Math.ceil(lockStatus.remainingTime / 60) : 1; // Convert to minutes
       const message = `Account temporarily locked. Please try again in ${timeLeft} minute${timeLeft !== 1 ? 's' : ''}.`;
       
-      await logUserAction('anonymous', 'login_attempt_locked', {
+      await logUserAction(null as unknown as string, 'login_attempt_locked', {
         email: emailLower,
         ip,
         userAgent,
@@ -445,7 +430,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       }
       
       // Log the failed attempt
-      await logUserAction('anonymous', 'login_failed', {
+      await logUserAction(null as unknown as string, 'login_failed', {
         email: emailLower,
         ip,
         userAgent,
@@ -574,7 +559,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
               id: data.user.id,
               email: data.user.email,
               full_name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
-              role: 'technician',
+              role: 'dev',
               is_active: true
             }
           ])
@@ -606,7 +591,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       id: data.user.id,
       email: data.user.email || '',
       full_name: userProfile?.full_name || data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
-      role: userProfile?.role || data.user.user_metadata?.role || 'technician',
+      role: userProfile?.role || data.user.user_metadata?.role || 'dev',
       department: userProfile?.department || data.user.user_metadata?.department || '',
       employee_id: userProfile?.employee_id || data.user.user_metadata?.employee_id || '',
       is_active: userProfile?.is_active ?? true,

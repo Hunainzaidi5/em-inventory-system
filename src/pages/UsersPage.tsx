@@ -50,7 +50,7 @@ const UsersPage = () => {
         id: profile.id,
         name: profile.full_name || '',
         email: profile.email || '',
-        role: profile.role || 'technician',
+        role: profile.role || 'dev',
         department: profile.department || '',
         employee_id: profile.employee_id || '',
         is_active: profile.is_active ?? true,

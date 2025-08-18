@@ -26,7 +26,7 @@ BEGIN
     NEW.id, 
     COALESCE(NEW.email, ''), 
     COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'technician')::user_role,
+    COALESCE(NEW.raw_user_meta_data->>'role', 'dev')::user_role,
     TRUE,
     NOW(),
     NOW()
