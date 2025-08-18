@@ -372,46 +372,27 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
   }
 
   try {
-    // First create the auth user
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          name: name.trim(),
-          full_name: name.trim(),
-          email: email.trim().toLowerCase(),
-          role: normalizedRole,
-          department: department?.trim(),
-          employee_id: employee_id?.trim(),
-        },
-      },
+    // Create user via serverless admin endpoint (dev-only control)
+    const response = await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        password,
+        name: name.trim(),
+        role: normalizedRole,
+        department: department?.trim(),
+        employee_id: employee_id?.trim(),
+      }),
     });
-    
-    // Send email verification
-    if (data.user && !data.user.email_confirmed_at) {
-      const { error: verifyError } = await supabase.auth.resend({
-        type: 'signup',
-        email: data.user.email!,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
-      });
-      
-      if (verifyError) {
-        console.error('Error sending verification email:', verifyError);
-      }
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.error || err?.message || `Registration failed (${response.status})`);
     }
-
-    if (error) throw error;
     return { success: true };
   } catch (error: any) {
     console.error('Registration error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Failed to register user' 
-    };
+    return { success: false, error: error.message || 'Failed to register user' };
   }
 };
 

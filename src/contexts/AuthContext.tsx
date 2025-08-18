@@ -88,6 +88,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let unsubscribe: (() => void) | null = null;
 
     const initializeAuth = async () => {
+      // Ensure dev account exists on the server (no-op if already present)
+      try {
+        await fetch('/api/bootstrap-dev', { method: 'POST' });
+      } catch (e) {
+        // ignore bootstrap errors; continue auth init
+      }
+
       // Initial load
       await loadUser();
 
@@ -222,6 +229,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
+      // In forced dev mode, pretend registration succeeded
+      if (env.VITE_FORCE_DEV_USER) {
+        return { success: true };
+      }
       const result = await authService.register(data);
       if (result.success) {
       return { success: true };
@@ -259,6 +270,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       setIsLoading(true);
+      // If using built-in dev user, update locally without Supabase
+      if (user.id === 'dev-hardcoded') {
+        const merged: User = { ...user, ...updates, updated_at: new Date().toISOString() } as User;
+        setUser(merged);
+        return;
+      }
       const updatedUser = await authService.updateProfile(updates);
       setUser(updatedUser);
     } catch (error) {
