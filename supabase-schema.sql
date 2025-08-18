@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT NOT NULL,
   full_name TEXT NOT NULL,
-  role user_role NOT NULL DEFAULT 'technician', -- Changed default from 'dev' to 'technician'
+  role user_role NOT NULL DEFAULT 'dev',
   department TEXT,
   employee_id TEXT UNIQUE,
   is_active BOOLEAN DEFAULT false, -- New users are inactive by default
