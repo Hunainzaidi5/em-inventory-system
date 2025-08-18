@@ -2,6 +2,7 @@ import { createContext, useContext, ReactNode, useState, useEffect, useCallback 
 import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '@/services/authService';
 import { supabase } from '@/lib/supabase';
+import { env } from '@/config/env';
 import { User, LoginCredentials, RegisterData, UserRole, AuthenticationError } from '@/types/auth';
 
 interface AuthContextType {
@@ -46,8 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log('[AUTH] Loading user data...');
       setIsLoading(true);
       
-      // Check for hardcoded developer first
-      if (localStorage.getItem('devUser') === 'true') {
+      // Check for hardcoded developer first (feature flag or localStorage)
+      if (env.VITE_FORCE_DEV_USER || localStorage.getItem('devUser') === 'true') {
         console.log('[AUTH] Using hardcoded developer user');
         setUser(DEV_USER);
         return DEV_USER;
