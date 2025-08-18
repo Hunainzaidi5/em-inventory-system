@@ -112,6 +112,12 @@ const AddUserPage = () => {
 
   // Fetch user data when in edit mode
   useEffect(() => {
+    // Dev-only guard
+    if (currentUser && currentUser.role !== 'dev') {
+      navigate('/');
+      return;
+    }
+
     const fetchUserData = async () => {
       if (!userId) return;
       
@@ -145,7 +151,7 @@ const AddUserPage = () => {
     if (userId) {
       fetchUserData();
     }
-  }, [userId, setValue, navigate]);
+  }, [userId, setValue, navigate, currentUser]);
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     if (isLoading) return;

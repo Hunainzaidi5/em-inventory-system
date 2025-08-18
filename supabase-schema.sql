@@ -88,18 +88,56 @@ $$;
 -- User profiles table (extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
+  email TEXT NOT NULL,
   full_name TEXT NOT NULL,
-  role user_role NOT NULL DEFAULT 'dev',
+  role user_role NOT NULL DEFAULT 'technician', -- Changed default from 'dev' to 'technician'
   department TEXT,
   employee_id TEXT UNIQUE,
-  is_active BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT false, -- New users are inactive by default
+  last_login_at TIMESTAMP WITH TIME ZONE,
+  last_login_ip INET,
+  failed_login_attempts INTEGER DEFAULT 0,
+  account_locked_until TIMESTAMP WITH TIME ZONE,
+  created_by UUID REFERENCES auth.users(id),
+  updated_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Audit log for user management actions
+CREATE TABLE IF NOT EXISTS user_audit_log (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  action_details JSONB,
+  ip_address INET,
+  user_agent TEXT,
+  performed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Allowed IPs for admin/dev access
+CREATE TABLE IF NOT EXISTS allowed_ips (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  ip_address INET NOT NULL,
+  description TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(ip_address)
 );
 
 -- Enable RLS on profiles table
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_profiles_email_lower ON profiles(LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_profiles_employee_id ON profiles(employee_id) WHERE employee_id IS NOT NULL;
+
+-- Create index for audit log performance
+CREATE INDEX IF NOT EXISTS idx_user_audit_log_user_id ON user_audit_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_audit_log_action ON user_audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_user_audit_log_performed_at ON user_audit_log(performed_at);
 
 -- Relax email uniqueness to avoid invite/create conflicts; use non-unique index instead
 DO $$
@@ -123,29 +161,135 @@ END
 $$;
 
 -- Create policies for profiles
-DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON profiles;
-CREATE POLICY "Public profiles are viewable by everyone." 
+DROP POLICY IF EXISTS "Users can view their own profile" ON profiles;
+CREATE POLICY "Users can view their own profile" 
   ON profiles FOR SELECT 
-  USING (true);
-
-DROP POLICY IF EXISTS "Users can update their own profile." ON profiles;
-CREATE POLICY "Users can update their own profile." 
-  ON profiles FOR UPDATE 
   USING (auth.uid() = id);
 
--- Allow profile creation by end-users (own row) and by service/internal auth
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'Users and service can insert profiles'
-  ) THEN
-    CREATE POLICY "Users and service can insert profiles"
-      ON profiles FOR INSERT
-      WITH CHECK (
-        auth.uid() = id OR auth.role() = 'service_role'
-      );
+-- Devs can view all profiles
+DROP POLICY IF EXISTS "Admins can view all profiles" ON profiles;
+DROP POLICY IF EXISTS "Devs can view all profiles" ON profiles;
+CREATE POLICY "Devs can view all profiles"
+  ON profiles FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles p 
+      WHERE p.id = auth.uid() 
+      AND p.role = 'dev'
+    )
+  );
+
+-- Users can update their own non-sensitive fields
+DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
+CREATE POLICY "Users can update their own profile" 
+  ON profiles FOR UPDATE 
+  USING (
+    auth.uid() = id AND 
+    (
+      -- Can only update these fields
+      (
+        current_setting('request.headers', true)::json->>'x-action' = 'update_profile' AND
+        (
+          SELECT COUNT(*) FROM jsonb_object_keys(current_setting('request.body', true)::jsonb) AS j(k)
+          WHERE k NOT IN ('full_name', 'department', 'employee_id')
+        ) = 0
+      ) OR
+      -- Or if updating last login info
+      (
+        current_setting('request.headers', true)::json->>'x-action' = 'update_last_login' AND
+        (
+          SELECT COUNT(*) FROM jsonb_object_keys(current_setting('request.body', true)::jsonb) AS j(k)
+          WHERE k NOT IN ('last_login_at', 'last_login_ip', 'failed_login_attempts', 'account_locked_until')
+        ) = 0
+      )
+    )
+  );
+
+-- Remove admin update policy; only devs have full access below
+DROP POLICY IF EXISTS "Admins can update non-dev profiles" ON profiles;
+
+-- Devs have full access to all profiles
+DROP POLICY IF EXISTS "Devs have full access to profiles" ON profiles;
+CREATE POLICY "Devs have full access to profiles"
+  ON profiles FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles p 
+      WHERE p.id = auth.uid() 
+      AND p.role = 'dev'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM profiles p 
+      WHERE p.id = auth.uid() 
+      AND p.role = 'dev'
+    )
+  );
+
+-- Only allow profile deletion by devs
+DROP POLICY IF EXISTS "Only devs can delete profiles" ON profiles;
+CREATE POLICY "Only devs can delete profiles"
+  ON profiles FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles p 
+      WHERE p.id = auth.uid() 
+      AND p.role = 'dev'
+    )
+  );
+
+-- Only allow profile creation through the handle_new_user function
+DROP POLICY IF EXISTS "Only handle_new_user can insert profiles" ON profiles;
+CREATE POLICY "Only handle_new_user can insert profiles"
+  ON profiles FOR INSERT
+  WITH CHECK (false); -- No direct inserts allowed
+
+-- Allow service role to bypass RLS for migrations and admin operations
+ALTER TABLE profiles FORCE ROW LEVEL SECURITY;
+ALTER TABLE user_audit_log FORCE ROW LEVEL SECURITY;
+
+-- Create function to check if IP is allowed for admin access
+CREATE OR REPLACE FUNCTION is_admin_ip_allowed()
+RETURNS boolean AS $$
+BEGIN
+  -- Allow all IPs in development
+  IF current_setting('app.settings.environment', true) = 'development' THEN
+    RETURN true;
   END IF;
-END $$;
+  
+  -- Check if the IP is in the allowed_ips table
+  RETURN EXISTS (
+    SELECT 1 
+    FROM allowed_ips 
+    WHERE ip_address = inet_client_addr()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create function to log user actions
+CREATE OR REPLACE FUNCTION log_user_action(
+  p_user_id UUID,
+  p_action TEXT,
+  p_details JSONB DEFAULT NULL
+) 
+RETURNS void AS $$
+BEGIN
+  INSERT INTO user_audit_log (
+    user_id,
+    action,
+    action_details,
+    ip_address,
+    user_agent
+  ) VALUES (
+    p_user_id,
+    p_action,
+    p_details,
+    inet_client_addr(),
+    current_setting('request.headers', true)::json->>'user-agent'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to handle new user signups
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
@@ -153,25 +297,77 @@ RETURNS TRIGGER
 LANGUAGE plpgsql 
 SECURITY DEFINER
 AS $$
+DECLARE
+  inviter_id UUID;
+  inviter_role user_role;
+  new_user_role user_role;
+  is_self_signup BOOLEAN;
+  activate_now BOOLEAN;
 BEGIN
   -- Set a secure search path
   SET search_path = public, pg_temp;
   
-  -- Insert new user profile with default values
+  -- Check if this is a self-signup (no inviter)
+  is_self_signup := (NEW.raw_user_meta_data->>'is_self_signup')::boolean = true;
+  
+  -- Get inviter info if available
+  IF NOT is_self_signup AND NEW.raw_user_meta_data->>'invited_by' IS NOT NULL THEN
+    inviter_id := (NEW.raw_user_meta_data->>'invited_by')::UUID;
+    SELECT role INTO inviter_role FROM profiles WHERE id = inviter_id;
+  END IF;
+  
+  -- Determine user role based on inviter's role
+  IF is_self_signup THEN
+    new_user_role := 'technician';
+    IF NOT EXISTS (SELECT 1 FROM profiles WHERE role = 'dev') THEN
+      -- First user becomes dev if no devs exist
+      new_user_role := 'dev';
+      NEW.raw_user_meta_data := jsonb_set(
+        COALESCE(NEW.raw_user_meta_data, '{}'::jsonb),
+        '{role}',
+        to_jsonb('dev'::text)
+      );
+      -- Activate the first dev account immediately
+      activate_now := true;
+    ELSE
+      activate_now := false;
+    END IF;
+  ELSE
+    -- Default to technician role for new users
+    new_user_role := 'technician';
+    
+    -- Only allow creating users with equal or lower privilege
+    IF inviter_role = 'admin' AND NEW.raw_user_meta_data->>'role' IS NOT NULL THEN
+      new_user_role := LEAST(NEW.raw_user_meta_data->>'role', 'deputy_manager')::user_role;
+    ELSIF inviter_role = 'dev' AND NEW.raw_user_meta_data->>'role' IS NOT NULL THEN
+      new_user_role := (NEW.raw_user_meta_data->>'role')::user_role;
+    END IF;
+  END IF;
+  
+  -- Determine activation status
+  IF activate_now IS NULL THEN
+    activate_now := NOT is_self_signup; -- Active if invited, inactive if self-signup
+  END IF;
+
+  -- Insert new user profile
   INSERT INTO public.profiles (
     id, 
     email, 
     full_name, 
     role, 
-    is_active, 
+    is_active,
+    created_by,
+    updated_by,
     created_at, 
     updated_at
   ) VALUES (
     NEW.id, 
     COALESCE(NEW.email, ''), 
     COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'dev')::user_role,
-    TRUE,
+    new_user_role,
+    activate_now,
+    inviter_id,
+    inviter_id,
     NOW(),
     NOW()
   )
@@ -179,10 +375,48 @@ BEGIN
     email = EXCLUDED.email,
     updated_at = NOW();
   
+  -- Log the user creation
+  INSERT INTO user_audit_log (
+    user_id, 
+    action, 
+    action_details,
+    ip_address,
+    user_agent
+  ) VALUES (
+    NEW.id,
+    CASE WHEN is_self_signup THEN 'self_signup' ELSE 'user_created' END,
+    jsonb_build_object(
+      'email', NEW.email,
+      'role', new_user_role,
+      'invited_by', inviter_id,
+      'is_active', NOT is_self_signup
+    ),
+    inet_client_addr(),
+    current_setting('request.headers', true)::json->>'user-agent'
+  );
+  
   RETURN NEW;
 EXCEPTION
   WHEN OTHERS THEN
     -- Log the error
+    INSERT INTO user_audit_log (
+      user_id,
+      action,
+      action_details,
+      ip_address,
+      user_agent
+    ) VALUES (
+      NEW.id,
+      'user_creation_failed',
+      jsonb_build_object(
+        'error', SQLERRM,
+        'email', COALESCE(NEW.email, 'unknown'),
+        'stack', pg_exception_context()
+      ),
+      inet_client_addr(),
+      current_setting('request.headers', true)::json->>'user-agent'
+    );
+    
     RAISE WARNING 'Error creating user profile: %', SQLERRM;
     RETURN NEW; -- Still return NEW to prevent signup failure
 END;

@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase } from '@/lib/supabase';
 import { User, UserRole } from '@/types/auth';
 
 export const getUsers = async (): Promise<{ data: User[] | null; error: string | null }> => {
