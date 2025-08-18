@@ -60,7 +60,7 @@ export function RegisterPage() {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'technician',
+      role: 'dev',
       department: '',
       employee_id: '',
     },
@@ -160,7 +160,7 @@ export function RegisterPage() {
                 {...register('role')}
                 className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}
               >
-                {regularUserRoles.map((role) => (
+                {userRoles.map((role) => (
                   <option key={role} value={role}>
                     {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
                   </option>
