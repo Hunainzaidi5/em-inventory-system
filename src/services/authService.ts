@@ -327,142 +327,260 @@ const isAccountLocked = async (email: string): Promise<{
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   const { email, password } = credentials;
+  const emailLower = email.toLowerCase();
   const ip = await getClientIP();
   const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'server';
   const now = Date.now();
   
   try {
-    // Input validation
+    // 1. Input validation
     if (!email || !password) {
-      await logUserAction(null as unknown as string, 'login_attempt_missing_credentials', { ip, userAgent });
+      await logUserAction('system', 'login_attempt_missing_credentials', { 
+        ip, 
+        userAgent,
+        timestamp: new Date().toISOString()
+      });
       throw new AuthenticationError('Email and password are required', 'MISSING_CREDENTIALS');
     }
     
-    const emailLower = email.toLowerCase();
-    
-    // Check rate limiting
+    // 2. Check rate limiting and account lock status
     const lockStatus = await isAccountLocked(emailLower);
     if (lockStatus.locked) {
-      const timeLeft = lockStatus.remainingTime ? Math.ceil(lockStatus.remainingTime / 60) : 1; // Convert to minutes
+      const timeLeft = lockStatus.remainingTime ? Math.ceil(lockStatus.remainingTime / 60) : 1;
       const message = `Account temporarily locked. Please try again in ${timeLeft} minute${timeLeft !== 1 ? 's' : ''}.`;
       
-      await logUserAction(null as unknown as string, 'login_attempt_locked', {
+      await logUserAction('system', 'login_attempt_locked', {
         email: emailLower,
         ip,
         userAgent,
         reason: lockStatus.reason || 'account_locked',
-        remainingTime: lockStatus.remainingTime
+        remainingTime: lockStatus.remainingTime,
+        timestamp: new Date().toISOString()
       });
       
       throw new AuthenticationError(
         message,
         lockStatus.reason || 'ACCOUNT_LOCKED',
-        { lockedUntil: failedAttempts.get(emailLower)?.lockedUntil }
+        { 
+          lockedUntil: failedAttempts.get(emailLower)?.lockedUntil,
+          remainingTime: lockStatus.remainingTime
+        }
       );
     }
 
-    console.log('[AUTH] Attempting login for:', email);
+    // 3. Check IP restrictions for admin/dev accounts
+    const isAdminEmail = emailLower.endsWith('@admin.com');
+    if (isAdminEmail) {
+      const isAllowed = await isAdminIPAllowed(ip);
+      if (!isAllowed) {
+        await logUserAction('system', 'admin_login_denied_ip', {
+          email: emailLower,
+          ip,
+          timestamp: new Date().toISOString(),
+          userAgent
+        });
+        
+        throw new AuthenticationError(
+          'Access denied. Your IP address is not authorized for admin access.',
+          'IP_RESTRICTED'
+        );
+      }
+    }
+
+    console.log('[AUTH] Attempting login for:', emailLower);
     
-    // Optional: enforce IP restrictions for dev accounts based on allowed IP list
-    // If you need this, re-enable with actual rule, e.g., check profile.role === 'dev' after sign-in
-    
-    // Sign in with Supabase Auth
+    // 4. Attempt to authenticate with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email: emailLower,
       password: password.trim(),
     });
     
-    // Handle failed login
+    // 5. Handle failed login
     if (error) {
-      const current = failedAttempts.get(emailLower) || { count: 0, lastAttempt: 0, lockedUntil: null } as { count: number; lastAttempt: number; lockedUntil: number | null };
+      // Update failed attempts counter
+      const current = failedAttempts.get(emailLower) || { 
+        count: 0, 
+        lastAttempt: 0, 
+        lockedUntil: null 
+      };
+      
       const failedAttemptsCount = current.count + 1;
-      const nowTs = Date.now();
       const hitLock = failedAttemptsCount >= RATE_LIMIT.MAX_ATTEMPTS;
-      failedAttempts.set(emailLower, { count: failedAttemptsCount, lastAttempt: nowTs, lockedUntil: hitLock ? nowTs + RATE_LIMIT.LOCKOUT_DURATION_MS : null });
+      
+      // Update in-memory tracking
+      failedAttempts.set(emailLower, { 
+        count: failedAttemptsCount, 
+        lastAttempt: now, 
+        lockedUntil: hitLock ? now + RATE_LIMIT.ACCOUNT_LOCKOUT_MS : null 
+      });
+      
+      // Update IP-based rate limiting
+      const ipAttempt = ipAttempts.get(ip) || { count: 0, lastAttempt: 0 };
+      ipAttempts.set(ip, {
+        count: ipAttempt.count + 1,
+        lastAttempt: now
+      });
       
       // Log the failed attempt
-      await logUserAction(null as unknown as string, 'login_failed', {
+      await logUserAction('system', 'login_failed', {
         email: emailLower,
         ip,
         userAgent,
         reason: error.message,
         failedAttempts: failedAttemptsCount,
-        accountLocked: hitLock
+        accountLocked: hitLock,
+        timestamp: new Date().toISOString()
       });
       
       // Clean up old attempts
       cleanupOldAttempts(failedAttempts, RATE_LIMIT.ACCOUNT_LOCKOUT_MS);
       cleanupOldAttempts(ipAttempts, RATE_LIMIT.IP_WINDOW_MS);
       
-      throw new AuthenticationError(
-        hitLock ? `Account locked due to too many failed attempts. Please try again in ${Math.ceil(RATE_LIMIT.LOCKOUT_DURATION_MS / 60000)} minutes.` : 'Invalid email or password',
-        hitLock ? 'ACCOUNT_LOCKED' : 'INVALID_CREDENTIALS'
-      );
-    }
-    
-    // Reset failed attempts on successful login
-    failedAttempts.delete(emailLower);
-    ipAttempts.delete(ip);
-    
-    // Do not write to profiles pre/post login here; DB handles profile state
-    
-    console.log('[AUTH] Login response:', { 
-      hasUser: !!data?.user,
-      userId: data?.user?.id,
-      hasSession: !!data?.session,
-      sessionExpiresAt: data?.session?.expires_at ? new Date(data.session.expires_at * 1000).toISOString() : 'none',
-      error: error?.message 
-    });
-
-    if (error) {
-      // Handle failed login attempts
-      const attempt = failedAttempts.get(email) || { count: 0, lastAttempt: 0, lockedUntil: null };
-      const newCount = attempt.count + 1;
-      
-      // Update failed attempts
-      failedAttempts.set(email, {
-        count: newCount,
-        lastAttempt: Date.now(),
-        lockedUntil: newCount >= RATE_LIMIT.MAX_ATTEMPTS 
-          ? Date.now() + (RATE_LIMIT.LOCKOUT_MINUTES * 60 * 1000)
-          : null
-      });
-      
-      const attemptsLeft = RATE_LIMIT.MAX_ATTEMPTS - newCount;
-      
       // Map error messages to user-friendly versions
       const errorMessages: Record<string, string> = {
-        'Invalid login credentials': `Invalid email or password. ${attemptsLeft > 0 ? `${attemptsLeft} attempts remaining.` : 'Account locked for 15 minutes.'}`,
-        'Email not confirmed': 'Please verify your email address before logging in.',
-        'Network request failed': 'Unable to connect to the server. Please check your internet connection.',
-        '400': 'Invalid request. Please check your input and try again.',
-        '401': 'Authentication failed. Please check your credentials.',
-        '403': 'Access denied. You do not have permission to access this resource.',
-        '429': 'Too many login attempts. Please try again later.',
-        '500': 'Server error. Please try again later.'
+        'Invalid login credentials': 'Invalid email or password',
+        'Email not confirmed': 'Please verify your email address before logging in',
+        'Invalid email or password': 'Invalid email or password',
+        'Email not found': 'No account found with this email address',
+        'Network request failed': 'Unable to connect to the server. Please check your internet connection',
+        '400': 'Invalid request. Please check your input and try again',
+        '401': 'Authentication failed. Please check your credentials',
+        '403': 'Access denied. You do not have permission to access this resource',
+        '429': 'Too many login attempts. Please try again later',
+        '500': 'Server error. Please try again later'
       };
       
       // Get the most specific error message
       const errorMessage = errorMessages[error.status] || 
                          errorMessages[error.message] || 
-                         'An unexpected error occurred during login.';
+                         'An unexpected error occurred during login';
       
-      // Log detailed error information (without sensitive data)
-      const errorDetails = {
-        code: error.status || 'AUTH_ERROR',
-        status: error.status,
-        timestamp: new Date().toISOString(),
-        failedAttempts: newCount,
-        remainingAttempts: Math.max(0, RATE_LIMIT.MAX_ATTEMPTS - newCount)
-      };
+      // Calculate remaining attempts
+      const remainingAttempts = Math.max(0, RATE_LIMIT.MAX_ATTEMPTS - failedAttemptsCount);
       
-      console.error('[AUTH] Login error:', errorDetails);
+      // Format the final error message
+      let finalMessage = errorMessage;
+      if (errorMessage === 'Invalid email or password' && remainingAttempts > 0) {
+        finalMessage += `. ${remainingAttempts} attempt${remainingAttempts !== 1 ? 's' : ''} remaining.`;
+      } else if (hitLock) {
+        const lockoutMinutes = Math.ceil(RATE_LIMIT.ACCOUNT_LOCKOUT_MS / 60000);
+        finalMessage = `Account locked due to too many failed attempts. Please try again in ${lockoutMinutes} minute${lockoutMinutes !== 1 ? 's' : ''}.`;
+      }
       
       throw new AuthenticationError(
-        errorMessage,
-        error.status || 'AUTH_ERROR',
-        errorDetails
+        finalMessage,
+        hitLock ? 'ACCOUNT_LOCKED' : 'INVALID_CREDENTIALS',
+        { 
+          failedAttempts: failedAttemptsCount,
+          remainingAttempts,
+          lockedUntil: hitLock ? now + RATE_LIMIT.ACCOUNT_LOCKOUT_MS : null
+        }
       );
+    }
+    
+    // 6. Handle successful login
+    const { user: authUser, session } = data;
+    
+    if (!authUser || !session) {
+      console.error('[AUTH] No user or session returned after successful login');
+      throw new AuthenticationError(
+        'Authentication succeeded but no user session was established',
+        'AUTH_SESSION_ERROR'
+      );
+    }
+    
+    // 7. Reset failed attempts on successful login
+    failedAttempts.delete(emailLower);
+    ipAttempts.delete(ip);
+    
+    // 8. Get or create user profile
+    try {
+      // First try to get existing profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .single();
+      
+      let userProfile: ProfileData;
+      
+      if (profileError || !profile) {
+        console.log('[AUTH] Profile not found, creating new one');
+        // Create a new profile with default values
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: authUser.id,
+            email: authUser.email || '',
+            full_name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+            role: 'dev', // Default role for new users
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }])
+          .select()
+          .single();
+          
+        if (createError || !newProfile) {
+          console.error('[AUTH] Error creating profile:', createError);
+          throw new AuthenticationError(
+            'Failed to create user profile',
+            'PROFILE_CREATION_ERROR',
+            { error: createError }
+          );
+        }
+        
+        userProfile = newProfile;
+      } else {
+        userProfile = profile;
+      }
+      
+      // 9. Update last login info via RPC to avoid RLS issues
+      await supabase.rpc('update_last_login', {
+        p_user_id: authUser.id,
+        p_ip_address: ip
+      });
+      
+      // 10. Log successful login
+      await logUserAction(authUser.id, 'login_success', {
+        email: authUser.email,
+        ip,
+        userAgent,
+        timestamp: new Date().toISOString(),
+        sessionId: session.access_token
+      });
+      
+      console.log('[AUTH] Login successful:', {
+        userId: authUser.id,
+        email: authUser.email,
+        role: userProfile.role,
+        sessionExpiresAt: session.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'unknown'
+      });
+      
+      // 11. Return the authenticated user with the correct AuthResponse type
+      return {
+        user: createUserObject(authUser, userProfile),
+        token: session.access_token,
+        session: session
+      };
+      
+    } catch (profileError) {
+      console.error('[AUTH] Error handling user profile after login:', profileError);
+      // Even if profile handling fails, we can still return the auth user
+      // with minimal profile data from the auth provider
+      return {
+        user: createUserObject(authUser, {
+          id: authUser.id,
+          email: authUser.email || '',
+          full_name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+          role: 'dev',
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }),
+        token: session.access_token,
+        session: session
+      };
     }
 
     if (!data?.user) {
