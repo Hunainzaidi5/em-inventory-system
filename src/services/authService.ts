@@ -311,23 +311,7 @@ const isAccountLocked = async (email: string): Promise<{
       };
     }
     
-    // 3. Check database for account lock
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('account_locked_until, failed_login_attempts')
-      .eq('email', emailLower)
-      .single();
-      
-    if (profile?.account_locked_until) {
-      const lockTime = new Date(profile.account_locked_until).getTime();
-      if (lockTime > now) {
-        return {
-          locked: true,
-          remainingTime: Math.ceil((lockTime - now) / 1000),
-          reason: 'account_locked'
-        };
-      }
-    }
+    // No pre-login database reads here to avoid 400 due to RLS; rely on in-memory only
     
     return { 
       locked: false 
@@ -390,44 +374,11 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     
     // Handle failed login
     if (error) {
-      // Get current profile to update failed attempts
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('failed_login_attempts')
-        .eq('email', emailLower)
-        .single();
-      
-      const failedAttemptsCount = (profile?.failed_login_attempts || 0) + 1;
-      const isAccountLocked = failedAttemptsCount >= RATE_LIMIT.MAX_ATTEMPTS;
-      const lockoutUntil = isAccountLocked 
-        ? new Date(now + RATE_LIMIT.LOCKOUT_DURATION_MS).toISOString() 
-        : null;
-      
-      // Update failed attempts in database
-      await supabase
-        .from('profiles')
-        .update({
-          failed_login_attempts: failedAttemptsCount,
-          account_locked_until: lockoutUntil,
-          updated_at: new Date().toISOString()
-        })
-        .eq('email', emailLower);
-      
-      // Update in-memory tracking
-      if (isAccountLocked) {
-        failedAttempts.set(emailLower, {
-          count: failedAttemptsCount,
-          lastAttempt: now,
-          lockedUntil: now + RATE_LIMIT.LOCKOUT_DURATION_MS
-        });
-      } else {
-        const existing = failedAttempts.get(emailLower) || { count: 0 };
-        failedAttempts.set(emailLower, {
-          count: failedAttemptsCount,
-          lastAttempt: now,
-          lockedUntil: null
-        });
-      }
+      const current = failedAttempts.get(emailLower) || { count: 0, lastAttempt: 0, lockedUntil: null } as { count: number; lastAttempt: number; lockedUntil: number | null };
+      const failedAttemptsCount = current.count + 1;
+      const nowTs = Date.now();
+      const hitLock = failedAttemptsCount >= RATE_LIMIT.MAX_ATTEMPTS;
+      failedAttempts.set(emailLower, { count: failedAttemptsCount, lastAttempt: nowTs, lockedUntil: hitLock ? nowTs + RATE_LIMIT.LOCKOUT_DURATION_MS : null });
       
       // Log the failed attempt
       await logUserAction(null as unknown as string, 'login_failed', {
@@ -436,7 +387,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
         userAgent,
         reason: error.message,
         failedAttempts: failedAttemptsCount,
-        accountLocked: isAccountLocked
+        accountLocked: hitLock
       });
       
       // Clean up old attempts
@@ -444,10 +395,8 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
       cleanupOldAttempts(ipAttempts, RATE_LIMIT.IP_WINDOW_MS);
       
       throw new AuthenticationError(
-        isAccountLocked 
-          ? `Account locked due to too many failed attempts. Please try again in ${Math.ceil(RATE_LIMIT.LOCKOUT_DURATION_MS / 60000)} minutes.`
-          : 'Invalid email or password',
-        isAccountLocked ? 'ACCOUNT_LOCKED' : 'INVALID_CREDENTIALS'
+        hitLock ? `Account locked due to too many failed attempts. Please try again in ${Math.ceil(RATE_LIMIT.LOCKOUT_DURATION_MS / 60000)} minutes.` : 'Invalid email or password',
+        hitLock ? 'ACCOUNT_LOCKED' : 'INVALID_CREDENTIALS'
       );
     }
     
@@ -455,17 +404,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     failedAttempts.delete(emailLower);
     ipAttempts.delete(ip);
     
-    // Reset failed attempts in database
-    await supabase
-      .from('profiles')
-      .update({
-        failed_login_attempts: 0,
-        account_locked_until: null,
-        last_login_at: new Date().toISOString(),
-        last_login_ip: ip,
-        updated_at: new Date().toISOString()
-      })
-      .eq('email', emailLower);
+    // Do not write to profiles pre/post login here; DB handles profile state
     
     console.log('[AUTH] Login response:', { 
       hasUser: !!data?.user,
