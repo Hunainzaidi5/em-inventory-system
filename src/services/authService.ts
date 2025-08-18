@@ -115,50 +115,19 @@ const isAdminIPAllowed = async (ip: string): Promise<boolean> => {
   }
 };
 
-// Log user action to audit log with detailed information
+// Log user action via RPC (lets the DB handle IP/user-agent; avoids RLS issues)
 const logUserAction = async (userId: string, action: string, details: Record<string, any> = {}) => {
   try {
-    const timestamp = new Date().toISOString();
-    const ip = await getClientIP();
-    const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'server';
-    
-    // Prepare the log entry
-    const logEntry = {
-      user_id: userId,
-      action,
-      details: {
-        ...details,
-        // Add common metadata
-        timestamp,
-        environment: process.env.NODE_ENV || 'development',
-        version: process.env.APP_VERSION || 'unknown',
-      },
-      ip_address: ip,
-      user_agent: userAgent,
-      created_at: timestamp,
-    };
-    
-    // Log to console in development for debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[AUDIT] ${action}`, logEntry);
-    }
-    
-    // Insert into database
-    const { error } = await supabase
-      .from('user_audit_log')
-      .insert(logEntry);
-      
+    const { error } = await supabase.rpc('log_user_action', {
+      p_user_id: userId,
+      p_action: action,
+      p_details: details,
+    });
     if (error) {
       console.error('Failed to log user action to database:', error);
-      // Fallback to console if database logging fails
-      console.error('Failed audit log entry:', logEntry);
     }
-    
-    return { success: !error, error };
   } catch (error) {
     console.error('Error in logUserAction:', error);
-    // Ensure we don't break the application if logging fails
-    return { success: false, error };
   }
 };
 
