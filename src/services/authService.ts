@@ -425,26 +425,8 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 
     console.log('[AUTH] Attempting login for:', email);
     
-    // Check if this is an admin login attempt
-    const isAdminLogin = emailLower.endsWith('@admin.example.com'); // Adjust domain as needed
-    
-    // Enforce IP restrictions for admin accounts
-    if (isAdminLogin) {
-      const isAllowedIP = await isAdminIPAllowed(ip);
-      if (!isAllowedIP) {
-        await logUserAction('anonymous', 'admin_login_attempt_from_unauthorized_ip', {
-          email: emailLower,
-          ip,
-          userAgent,
-          timestamp: new Date().toISOString()
-        });
-        
-        throw new AuthenticationError(
-          'Admin login is restricted to authorized IP addresses only.',
-          'ADMIN_ACCESS_DENIED'
-        );
-      }
-    }
+    // Optional: enforce IP restrictions for dev accounts based on allowed IP list
+    // If you need this, re-enable with actual rule, e.g., check profile.role === 'dev' after sign-in
     
     // Sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({

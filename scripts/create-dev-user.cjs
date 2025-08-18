@@ -51,11 +51,15 @@ async function main() {
 		process.exit(1);
 	}
 
-	const email = process.env.DEV_USER_EMAIL || 'admin@example.com';
-	const password = process.env.DEV_USER_PASSWORD || 'StrongPassw0rd!';
-	const fullName = process.env.DEV_USER_NAME || 'Admin User';
-	const department = process.env.DEV_USER_DEPT || 'E&M';
+	const email = process.env.DEV_USER_EMAIL;
+	const password = process.env.DEV_USER_PASSWORD;
+	const fullName = process.env.DEV_USER_NAME;
+	const department = process.env.DEV_USER_DEPT || '';
 	const role = process.env.DEV_USER_ROLE || 'dev';
+	if (!email || !password || !fullName) {
+		console.error('Missing DEV_USER_EMAIL/DEV_USER_PASSWORD/DEV_USER_NAME env');
+		process.exit(1);
+	}
 
 	const base = SUPABASE_URL.replace(/\/$/, '');
 

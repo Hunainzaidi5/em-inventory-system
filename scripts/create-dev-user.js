@@ -51,11 +51,15 @@ async function main() {
 		process.exit(1);
 	}
 
-	const email = process.env.DEV_USER_EMAIL || 'syedhunainalizaidi@gmail.com';
-	const password = process.env.DEV_USER_PASSWORD || 'APPLE_1414';
-	const fullName = process.env.DEV_USER_NAME || 'Syed Hunain Ali';
-	const department = process.env.DEV_USER_DEPT || 'E&M SYSTEMS';
+	const email = process.env.DEV_USER_EMAIL;
+	const password = process.env.DEV_USER_PASSWORD;
+	const fullName = process.env.DEV_USER_NAME;
+	const department = process.env.DEV_USER_DEPT || '';
 	const role = process.env.DEV_USER_ROLE || 'dev';
+	if (!email || !password || !fullName) {
+		console.error('Missing DEV_USER_EMAIL/DEV_USER_PASSWORD/DEV_USER_NAME env');
+		process.exit(1);
+	}
 
 	// 1) Create confirmed user via Admin API
 	await postJson(

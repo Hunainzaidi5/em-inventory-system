@@ -1,6 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
   // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -12,11 +10,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Missing SUPABASE env' });
   }
 
-  const email = 'syedhunainalizaidi@gmail.com';
-  const password = 'ChangeThisStrongPassw0rd!';
-  const fullName = 'Syed Hunain Ali';
-  const department = 'E&M SYSTEMS';
-  const role = 'dev';
+  const email = process.env.DEV_USER_EMAIL;
+  const password = process.env.DEV_USER_PASSWORD;
+  const fullName = process.env.DEV_USER_NAME;
+  const department = process.env.DEV_USER_DEPT || '';
+  const role = process.env.DEV_USER_ROLE || 'dev';
+  if (!email || !password || !fullName) {
+    return res.status(400).json({ error: 'Missing DEV_USER_* env variables' });
+  }
 
   const headers = {
     apikey: serviceRole,

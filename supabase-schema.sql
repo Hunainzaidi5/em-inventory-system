@@ -1193,27 +1193,7 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_requi
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_gate_passes_updated_at') THEN CREATE TRIGGER update_gate_passes_updated_at BEFORE UPDATE ON gate_passes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_issuance_records_updated_at') THEN CREATE TRIGGER update_issuance_records_updated_at BEFORE UPDATE ON issuance_records FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column(); END IF; END $$;
 
--- Seed: default profile when env='dev' and auth user exists (no DO $$ to avoid delimiter issues)
-INSERT INTO public.profiles (id, email, full_name, role, department, is_active, created_at, updated_at)
-SELECT u.id,
-       'syedhunainalizaidi@gmail.com',
-       'Syed Hunain Ali',
-       'dev'::user_role,
-       'E&M SYSTEMS',
-       TRUE,
-       NOW(),
-       NOW()
-FROM auth.users u
-JOIN app_settings s ON s.key = 'env'
-WHERE COALESCE(s.value, 'prod') = 'dev'
-  AND u.email = 'syedhunainalizaidi@gmail.com'
-ON CONFLICT (id) DO UPDATE SET
-  email = EXCLUDED.email,
-  full_name = EXCLUDED.full_name,
-  role = EXCLUDED.role,
-  department = EXCLUDED.department,
-  is_active = TRUE,
-  updated_at = NOW();
+-- Removed hardcoded dev seed; manage dev user via Supabase auth directly
 
 -- Comments for documentation
 COMMENT ON TABLE profiles IS 'User profile information extending Supabase auth.users';

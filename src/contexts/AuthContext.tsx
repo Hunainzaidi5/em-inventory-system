@@ -27,19 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const DEV_EMAIL = 'syedhunainalizaidi@gmail.com';
-  const DEV_USER: User = {
-    id: 'dev-hardcoded',
-    name: 'Syed Hunain Ali',
-    email: DEV_EMAIL,
-    role: 'dev' as UserRole,
-    department: 'E&M SYSTEMS',
-    employee_id: 'DEV001',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    avatar: undefined,
-  };
+  // No hardcoded developer credentials; use Supabase auth exclusively
 
   // Single source of truth for loading user data
   const loadUser = useCallback(async () => {
@@ -47,12 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log('[AUTH] Loading user data...');
       setIsLoading(true);
       
-      // Check for hardcoded developer first (feature flag or localStorage)
-      if (env.VITE_FORCE_DEV_USER || localStorage.getItem('devUser') === 'true') {
-        console.log('[AUTH] Using hardcoded developer user');
-        setUser(DEV_USER);
-        return DEV_USER;
-      }
+      // Dev-bypass removed; always rely on Supabase session
       
       // Check for existing session
       const { data: { session } } = await supabase.auth.getSession();
@@ -88,17 +71,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let unsubscribe: (() => void) | null = null;
 
     const initializeAuth = async () => {
-      // Ensure dev account exists on the server (best-effort)
-      try {
-        await fetch('/api/bootstrap-dev', { method: 'POST' });
-      } catch (e) {
-        // ignore bootstrap errors; continue auth init
-      }
       // Initial load
       await loadUser();
 
-      // Only set up auth state listener if not using hardcoded developer
-      if (localStorage.getItem('devUser') !== 'true') {
+      // Set up auth state listener
+      {
         console.log('[AUTH] Setting up auth state listener');
         
         const handleAuthChange = async (event: string, session: any) => {
@@ -153,16 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [loadUser, queryClient]);
 
-  // Handle developer login state changes
-  useEffect(() => {
-    if (localStorage.getItem('devUser') === 'true' && !user) {
-      console.log('[AUTH] Developer mode enabled');
-      setUser(DEV_USER);
-    } else if (localStorage.getItem('devUser') !== 'true' && user?.id === 'dev-hardcoded') {
-      console.log('[AUTH] Developer mode disabled');
-      setUser(null);
-    }
-  }, [user]);
+  // Removed dev-only local override logic
 
   const login = async (credentials: LoginCredentials) => {
     console.log('[AUTH_CONTEXT] Login initiated for:', credentials.email);
@@ -228,10 +196,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      // In forced dev mode, pretend registration succeeded
-      if (env.VITE_FORCE_DEV_USER) {
-        return { success: true };
-      }
+      // Dev bypass removed; always use service
       const result = await authService.register(data);
       if (result.success) {
       return { success: true };
