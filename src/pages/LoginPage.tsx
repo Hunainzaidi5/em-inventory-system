@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { signInTestUser } from '@/utils/testAuth';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
@@ -76,6 +77,32 @@ export function LoginPage() {
       }
       
       console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTestLogin = async () => {
+    try {
+      setIsLoading(true);
+      console.log('Attempting test login...');
+      
+      const { success, error } = await signInTestUser();
+      
+      if (success) {
+        console.log('Test login successful, navigating to dashboard');
+        navigate('/dashboard', { replace: true });
+      } else {
+        console.error('Test login failed:', error);
+        setFormError('root', { 
+          message: `Test login failed: ${error}` 
+        });
+      }
+    } catch (error) {
+      console.error('Test login error:', error);
+      setFormError('root', { 
+        message: 'Test login failed. Please try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -233,6 +260,20 @@ export function LoginPage() {
                 <span>256-bit SSL Encrypted</span>
               </div>
             </div>
+
+            {/* Test Login Button - Only in development */}
+            {import.meta.env.DEV && (
+              <div className="mt-4">
+                <Button
+                  type="button"
+                  onClick={handleTestLogin}
+                  className="w-full h-10 bg-yellow-500 text-black font-medium transition-all duration-300 hover:bg-yellow-400 hover:shadow-lg disabled:opacity-70"
+                  disabled={isLoading}
+                >
+                  🧪 Test Login (Dev Only)
+                </Button>
+              </div>
+            )}
           </CardFooter>
         </form>
 

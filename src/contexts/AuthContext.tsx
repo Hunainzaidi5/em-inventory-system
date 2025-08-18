@@ -125,10 +125,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         // Set up auth state change listener using authService
-        const subscription = authService.onAuthStateChange(handleAuthChange);
+        const { data } = authService.onAuthStateChange(handleAuthChange);
         unsubscribe = () => {
           console.log('[AUTH] Unsubscribing from auth state changes');
-          subscription.data.subscription.unsubscribe();
+          if (data?.subscription) {
+            data.subscription.unsubscribe();
+          }
         };
       }
     };

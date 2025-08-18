@@ -1,0 +1,25 @@
+// Environment configuration
+export const env = {
+  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || 'https://xprqghjyofmsiepdzhto.supabase.co',
+  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwcnFnaGp5b2Ztc2llcGR6aHRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNjM2NTIsImV4cCI6MjA3MDczOTY1Mn0.k7TM1qPZjGVPJKq7CWHmjo_qmKcfFHzUY06HTLn1294',
+  VITE_SUPABASE_PROJECT_REF: import.meta.env.VITE_SUPABASE_PROJECT_REF || 'xprqghjyofmsiepdzhto',
+  NODE_ENV: import.meta.env.NODE_ENV || 'development',
+  PROD: import.meta.env.PROD || false,
+  DEV: import.meta.env.DEV || true,
+};
+
+// Validate required environment variables
+export const validateEnv = () => {
+  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'];
+  const missing = required.filter(key => !env[key as keyof typeof env]);
+  
+  if (missing.length > 0) {
+    console.warn('Missing environment variables:', missing);
+    console.warn('Using fallback values for development');
+  }
+  
+  return missing.length === 0;
+};
+
+// Initialize environment validation
+validateEnv();

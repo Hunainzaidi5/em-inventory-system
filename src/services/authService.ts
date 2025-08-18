@@ -1,22 +1,17 @@
 import { User, LoginCredentials, RegisterData, AuthResponse, UserRole, AuthenticationError } from '@/types/auth';
 import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
 import { supabase } from '@/lib/supabase';
+import { env } from '@/config/env';
 
-// Set the auth cookie options for production
-if (import.meta.env.PROD) {
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log('[AUTH] Auth state changed:', event);
-    if (event === 'SIGNED_IN' && session) {
-      // This ensures the session is properly set in the browser
-      document.cookie = `sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token=${session.access_token}; path=/; secure; samesite=lax`;
-    }
-  });
-}
+// Rate limiting configuration
+const RATE_LIMIT = {
+  MAX_ATTEMPTS: 5,
+  LOCKOUT_MINUTES: 15,
+  WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+};
 
-// Test Supabase connection
-supabase.auth.getSession().then(({ data: { session } }) => {
-  console.log('Current session:', session ? 'Active' : 'No active session');
-});
+// Track failed login attempts
+const failedAttempts = new Map<string, { count: number; lastAttempt: number; lockedUntil: number | null }>();
 
 // Helper function to create a consistent user object
 type ProfileData = {
@@ -102,9 +97,11 @@ export const getCurrentUser = async (): Promise<User | null> => {
       const minimalProfile = {
         id: authUser.id,
         email: authUser.email || '',
-        full_name: authUser.user_metadata?.full_name || '',
-        role: 'user' as UserRole,
-        avatar_url: null,
+        full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+        role: (authUser.user_metadata?.role as UserRole) || 'technician',
+        department: authUser.user_metadata?.department || '',
+        employee_id: authUser.user_metadata?.employee_id || '',
+        is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -130,181 +127,110 @@ export const getCurrentUser = async (): Promise<User | null> => {
   }
 };
 
-// Hardcoded developer credentials
-const DEVELOPER_CREDENTIALS = {
-  email: 'syedhunainalizaidi@gmail.com',
-  password: 'APPLE_1414',
-  user: {
-    id: 'dev-hardcoded',
-    name: 'Syed Hunain Ali',
-    email: 'syedhunainalizaidi@gmail.com',
-    role: 'dev',
-    department: 'E&M SYSTEMS',
-    employee_id: 'DEV001',
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  } as User
-};
-
-// Add the developer user to the database if not exists
-const ensureDeveloperUser = async () => {
-  try {
-    // Check if developer user exists in profiles
-    const { data: existingDev } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('email', DEVELOPER_CREDENTIALS.email)
-      .single();
-
-    if (!existingDev) {
-      // Create the developer profile in the database
-      const { error } = await supabase
-        .from('profiles')
-        .insert([{
-          id: DEVELOPER_CREDENTIALS.user.id,
-          full_name: DEVELOPER_CREDENTIALS.user.name,
-          email: DEVELOPER_CREDENTIALS.email,
-          role: 'dev',
-          department: DEVELOPER_CREDENTIALS.user.department,
-          employee_id: DEVELOPER_CREDENTIALS.user.employee_id,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }]);
-
-      if (error) {
-        console.error('Error creating developer profile:', error);
-      }
-    }
-  } catch (error) {
-    console.error('Error ensuring developer user:', error);
+// Check if account is locked
+const isAccountLocked = (email: string): { locked: boolean; remainingTime?: number } => {
+  const attempt = failedAttempts.get(email);
+  if (!attempt || !attempt.lockedUntil) return { locked: false };
+  
+  if (Date.now() < attempt.lockedUntil) {
+    return { 
+      locked: true, 
+      remainingTime: Math.ceil((attempt.lockedUntil - Date.now()) / 1000 / 60) 
+    };
   }
+  
+  // Reset if lockout period has passed
+  failedAttempts.delete(email);
+  return { locked: false };
 };
-
-// Initialize storage bucket for avatars
-// const initStorage = async () => {
-//   try {
-//     // Check if the avatars bucket exists
-//     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-//     if (bucketsError) throw bucketsError;
-//     const bucketExists = buckets.some(bucket => bucket.name === 'avatars');
-//     if (!bucketExists) {
-//       console.log('Creating avatars bucket...');
-//       const { error: createError } = await supabase.storage.createBucket('avatars', {
-//         public: true,
-//         allowedMimeTypes: ['image/*'],
-//         fileSizeLimit: 1024 * 1024 * 2,
-//       });
-//       if (createError) throw createError;
-//       console.log('Avatars bucket created successfully');
-//     }
-//     // Set bucket policies via RPC (requires service role)
-//     const { error: policyError } = await supabase.rpc('set_avatar_policies');
-//     if (policyError) {
-//       console.warn('Failed to set bucket policies:', policyError.message);
-//     }
-//   } catch (error) {
-//     console.error('Error initializing storage:', error);
-//   }
-// };
-
-// Run initialization (disabled in client - requires service role)
-// Promise.all([
-//   ensureDeveloperUser(),
-//   initStorage()
-// ]).catch(console.error);
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  console.log('[AUTH] Attempting login for email:', credentials.email);
-  
-  // Log environment for debugging
-  console.log('[AUTH] Environment:', {
-    isProduction: import.meta.env.PROD,
-    supabaseUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set',
-    domain: window.location.hostname
-  });
+  const { email, password } = credentials;
   
   try {
-    const { email, password } = credentials;
-    console.log(`[AUTH] Attempting login for email: ${email}`);
-    
+    // Input validation
     if (!email || !password) {
-      const errorMsg = 'Email and password are required';
-      console.error(`[AUTH] ${errorMsg}`);
-      throw new Error(errorMsg);
+      throw new AuthenticationError('Email and password are required', 'MISSING_CREDENTIALS');
+    }
+    
+    // Check rate limiting
+    const lockStatus = isAccountLocked(email);
+    if (lockStatus.locked) {
+      throw new AuthenticationError(
+        `Account temporarily locked. Please try again in ${lockStatus.remainingTime} minutes.`,
+        'ACCOUNT_LOCKED',
+        { lockedUntil: failedAttempts.get(email)?.lockedUntil }
+      );
     }
 
-    // Log storage state before authentication
-    console.log('[AUTH] Pre-authentication storage state:', {
-      accessToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token`),
-      refreshToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-refresh-token`)
-    });
+    console.log('[AUTH] Attempting login for:', email);
     
     // Sign in with Supabase Auth
-    console.log('[AUTH] Calling supabase.auth.signInWithPassword');
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
+      email: email.trim().toLowerCase(),
       password: password.trim(),
     });
     
-    // Log storage state after authentication attempt
-    console.log('[AUTH] Post-authentication storage state:', {
-      accessToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-auth-token`),
-      refreshToken: localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_REF || 'tucphgomwmknvlleuiow'}-refresh-token`)
-    });
-
+    // Reset failed attempts on successful login
+    if (!error) {
+      failedAttempts.delete(email);
+    }
+    
     console.log('[AUTH] Login response:', { 
       hasUser: !!data?.user,
       userId: data?.user?.id,
       hasSession: !!data?.session,
       sessionExpiresAt: data?.session?.expires_at ? new Date(data.session.expires_at * 1000).toISOString() : 'none',
-      accessToken: data?.session?.access_token ? `${data.session.access_token.substring(0, 10)}...` : 'none',
-      refreshToken: data?.session?.refresh_token ? `${data.session.refresh_token.substring(0, 10)}...` : 'none',
       error: error?.message 
-    });
-    
-    // Debug: Log storage state
-    console.log('[AUTH] Storage state:', {
-      accessToken: localStorage.getItem('sb-tucphgomwmknvlleuiow-auth-token'),
-      refreshToken: localStorage.getItem('sb-tucphgomwmknvlleuiow-auth-token')
     });
 
     if (error) {
-      const errorCode = error.status || 'AUTH_ERROR';
-      let errorMessage = error.message;
+      // Handle failed login attempts
+      const attempt = failedAttempts.get(email) || { count: 0, lastAttempt: 0, lockedUntil: null };
+      const newCount = attempt.count + 1;
+      
+      // Update failed attempts
+      failedAttempts.set(email, {
+        count: newCount,
+        lastAttempt: Date.now(),
+        lockedUntil: newCount >= RATE_LIMIT.MAX_ATTEMPTS 
+          ? Date.now() + (RATE_LIMIT.LOCKOUT_MINUTES * 60 * 1000)
+          : null
+      });
+      
+      const attemptsLeft = RATE_LIMIT.MAX_ATTEMPTS - newCount;
       
       // Map error messages to user-friendly versions
       const errorMessages: Record<string, string> = {
-        'Invalid login credentials': 'Invalid email or password. Please try again.',
+        'Invalid login credentials': `Invalid email or password. ${attemptsLeft > 0 ? `${attemptsLeft} attempts remaining.` : 'Account locked for 15 minutes.'}`,
         'Email not confirmed': 'Please verify your email address before logging in.',
         'Network request failed': 'Unable to connect to the server. Please check your internet connection.',
         '400': 'Invalid request. Please check your input and try again.',
         '401': 'Authentication failed. Please check your credentials.',
         '403': 'Access denied. You do not have permission to access this resource.',
+        '429': 'Too many login attempts. Please try again later.',
         '500': 'Server error. Please try again later.'
       };
       
       // Get the most specific error message
-      errorMessage = errorMessages[error.status] || 
-                    errorMessages[error.message] || 
-                    'An unexpected error occurred during login.';
+      const errorMessage = errorMessages[error.status] || 
+                         errorMessages[error.message] || 
+                         'An unexpected error occurred during login.';
       
-      // Log detailed error information
+      // Log detailed error information (without sensitive data)
       const errorDetails = {
-        code: errorCode,
+        code: error.status || 'AUTH_ERROR',
         status: error.status,
-        message: error.message,
         timestamp: new Date().toISOString(),
-        path: window.location.pathname
+        failedAttempts: newCount,
+        remainingAttempts: Math.max(0, RATE_LIMIT.MAX_ATTEMPTS - newCount)
       };
       
-      console.error('[AUTH] Login error details:', errorDetails);
+      console.error('[AUTH] Login error:', errorDetails);
       
-      // Throw our custom error
       throw new AuthenticationError(
         errorMessage,
-        errorCode,
+        error.status || 'AUTH_ERROR',
         errorDetails
       );
     }
@@ -403,6 +329,24 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 };
 
 export const register = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
+  // Input validation
+  if (!userData.email || !userData.password) {
+    return { success: false, error: 'Email and password are required' };
+  }
+  
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(userData.email)) {
+    return { success: false, error: 'Please enter a valid email address' };
+  }
+  
+  // Password strength validation
+  if (userData.password.length < 8) {
+    return { 
+      success: false, 
+      error: 'Password must be at least 8 characters long' 
+    };
+  }
   const { email, password, name, role, department, employee_id } = userData;
   
   // Standardize on 'dev' for admin/developer access
@@ -428,20 +372,37 @@ export const register = async (userData: RegisterData): Promise<{ success: boole
   }
 
   try {
+    // First create the auth user
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: email.trim().toLowerCase(),
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
-          name,
-          full_name: name,
-          email,
+          name: name.trim(),
+          full_name: name.trim(),
+          email: email.trim().toLowerCase(),
           role: normalizedRole,
-          department,
-          employee_id,
+          department: department?.trim(),
+          employee_id: employee_id?.trim(),
         },
       },
     });
+    
+    // Send email verification
+    if (data.user && !data.user.email_confirmed_at) {
+      const { error: verifyError } = await supabase.auth.resend({
+        type: 'signup',
+        email: data.user.email!,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+      
+      if (verifyError) {
+        console.error('Error sending verification email:', verifyError);
+      }
+    }
 
     if (error) throw error;
     return { success: true };
@@ -516,7 +477,7 @@ export const updateProfile = async (updates: Partial<User> & { avatarFile?: File
 
     if (!validRoles.includes(updates.role as UserRole)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
-  }
+    }
   }
 
   try {
@@ -564,12 +525,14 @@ export const updateProfile = async (updates: Partial<User> & { avatarFile?: File
 
 // Subscribe to auth state changes
 export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
-  return supabase.auth.onAuthStateChange((event, session) => {
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
     try {
       console.log(`[AUTH] Auth state changed: ${event}`);
       callback(event, session);
-  } catch (error) {
+    } catch (error) {
       console.error('[AUTH] Error in auth state change callback:', error);
-  }
+    }
   });
+  
+  return { data };
 };

@@ -27,6 +27,7 @@ import SpareManagement from "./pages/SpareManagement";
 import ToolsPage from "./pages/ToolsPage";
 import GeneralToolsPage from "./pages/GeneralToolsPage";
 import ReseedDataPage from './pages/ReseedDataPage';
+import { AuthDebugger } from './components/auth/AuthDebugger';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -152,6 +153,7 @@ function App() {
               <AppRoutes />
               <Toaster />
               <Sonner />
+              {import.meta.env.DEV && <AuthDebugger />}
             </TooltipProvider>
           </AuthProvider>
         </Router>
