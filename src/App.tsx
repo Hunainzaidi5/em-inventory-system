@@ -101,10 +101,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      {/* Registration only accessible by dev */}
-      <Route element={<DevOnlyRoute />}>
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route
         path="/dashboard"
@@ -127,17 +124,16 @@ const AppRoutes = () => {
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />
         <Route path="settings" element={<SystemSettingsPage />} />
-        <Route element={<DevOnlyRoute />}>
-          <Route path="users" element={<UsersPage />} />
-          <Route path="add-user" element={<AddUserPage />} />
-          <Route path="edit-user/:userId" element={<AddUserPage />} />
-          <Route path="reseed" element={<ReseedDataPage />} />
-        </Route>
+        <Route path="users" element={<UsersPage />} />
+        <Route path="add-user" element={<AddUserPage />} />
+        <Route path="edit-user/:userId" element={<AddUserPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="tools" element={<ToolsPage />} />
         <Route path="general-tools" element={<GeneralToolsPage />} />
         <Route path="requisition" element={<RequisitionPage />} />
-        
+        <Route element={<DevOnlyRoute />}>
+          <Route path="reseed" element={<ReseedDataPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

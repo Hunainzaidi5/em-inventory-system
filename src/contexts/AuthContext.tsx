@@ -88,13 +88,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let unsubscribe: (() => void) | null = null;
 
     const initializeAuth = async () => {
-      // Ensure dev account exists on the server (no-op if already present)
+      // Ensure dev account exists on the server (best-effort)
       try {
         await fetch('/api/bootstrap-dev', { method: 'POST' });
       } catch (e) {
         // ignore bootstrap errors; continue auth init
       }
-
       // Initial load
       await loadUser();
 

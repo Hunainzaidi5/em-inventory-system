@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { env } from '@/config/env';
 
 // Define valid roles (match your Supabase enum exactly)
 const userRoles = [
@@ -45,7 +46,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, user } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -69,6 +70,11 @@ export function RegisterPage() {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       setIsLoading(true);
+      // Only allow logged-in dev to register users
+      if (user?.role !== 'dev') {
+        setFormError('root', { message: 'Only Dev can create users. Please contact your administrator.' });
+        return;
+      }
       let avatarUrl = '';
       
       // Handle avatar upload if provided
