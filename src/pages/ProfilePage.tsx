@@ -264,7 +264,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Debug information - only show in development */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <div className="mb-8 p-6 rounded-2xl bg-yellow-50 border border-yellow-200 shadow-lg">
             <div className="flex items-center space-x-3 mb-4">
               <div className="p-2 rounded-lg bg-yellow-100">

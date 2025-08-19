@@ -94,7 +94,11 @@ export async function runAllTests(): Promise<TestResult[]> {
   return results;
 }
 
-// Run tests if this file is executed directly
-if (import.meta.url.endsWith(process.argv[1])) {
-  runAllTests().catch(console.error);
+// Run tests if this file is executed directly (Node-only)
+if (typeof window === 'undefined' && typeof process !== 'undefined') {
+  const argv1 = (process as any).argv?.[1] ?? '';
+  const isDirectExecution = typeof import.meta !== 'undefined' && (import.meta as any).url && (import.meta as any).url.endsWith(argv1);
+  if (isDirectExecution) {
+    runAllTests().catch(console.error);
+  }
 }
