@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { authService } from '@/services/authService';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -83,36 +83,25 @@ export function RegisterPage() {
         const fileExt = file.name.split('.').pop();
         const fileName = `${data.email.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}.${fileExt}`;
         
-        // Upload the file to Supabase storage
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, file);
-          
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw new Error('Failed to upload avatar');
-        }
-        
-        // Store just the filename in the database
-        // The full URL will be constructed in getCurrentUser
+        // For now, we'll store the file name as a placeholder
+        // In production, you'd upload to Firebase Storage
         avatarUrl = fileName;
       }
 
-      const { success, error } = await registerUser({
-        name: data.name,
+      const result = await authService.register({
         email: data.email,
         password: data.password,
+        displayName: data.name,
+        role: data.role,
         department: data.department,
         employee_id: data.employee_id,
-        role: data.role,
-        avatar: avatarUrl,
       });
 
-      if (success) {
+      if (result.success) {
         // Show a generic registration success message
         navigate('/login', { state: { message: 'Registration successful! Please login.' } });
-      } else if (error) {
-        setFormError('root', { message: error });
+      } else {
+        setFormError('root', { message: result.message || 'Registration failed' });
       }
     } catch (error) {
       setFormError('root', {

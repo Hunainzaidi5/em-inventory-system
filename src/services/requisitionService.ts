@@ -1,170 +1,220 @@
-import { supabase } from '@/lib/supabase';
+import { FirebaseService } from '@/lib/firebaseService';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
-type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
-type StatusType = 'completed' | 'pending' | 'overdue' | 'cancelled';
 
 export interface Requisition {
   id: string;
-  requisitionType: RequisitionType;
-  itemType: ItemType;
-  itemName: string;
+  user_id: string;
+  item_id: string;
   quantity: number;
-  issuedTo: string;
-  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
-  referenceNumber: string;
-  createdAt: string;
-  status: StatusType;
-  location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
+  type: RequisitionType;
+  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  reason: string;
+  requested_at: string;
+  approved_at?: string;
+  approved_by?: string;
+  notes?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  department?: string;
+  location?: string;
+}
+
+export interface CreateRequisitionData {
+  user_id: string;
+  item_id: string;
+  quantity: number;
+  type: RequisitionType;
+  reason: string;
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  department?: string;
+  location?: string;
   notes?: string;
 }
 
-export interface RequisitionFormData extends Omit<Requisition, 'id' | 'createdAt' | 'referenceNumber' | 'status'> {
-  id?: string;
-  location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
-}
-
-function toCamel(row: any): Requisition {
-  return {
-    id: row.id,
-    requisitionType: row.requisition_type ?? row.requisitionType,
-    itemType: row.item_type ?? row.itemType,
-    itemName: row.item_name ?? row.itemName,
-    quantity: row.quantity,
-    issuedTo: row.issued_to ?? row.issuedTo,
-    department: row.department,
-    referenceNumber: row.reference_number ?? row.referenceNumber,
-    createdAt: row.created_at ?? row.createdAt,
-    status: row.status,
-    location: row.location ?? row.location,
-    notes: row.notes ?? undefined,
-  } as Requisition;
-}
-
-function toSnake(payload: Omit<RequisitionFormData, 'id'> | Partial<RequisitionFormData>) {
-  const p: any = payload;
-  const out: any = {};
-  if (p.requisitionType) out.requisition_type = p.requisitionType;
-  if (p.itemType) out.item_type = p.itemType;
-  if (p.itemName) out.item_name = p.itemName;
-  if (typeof p.quantity === 'number') out.quantity = p.quantity;
-  if (p.issuedTo) out.issued_to = p.issuedTo;
-  if (p.department) out.department = p.department;
-  if (p.location) out.location = p.location;
-  if (p.notes !== undefined) out.notes = p.notes;
-  return out;
-}
-
-export const getRequisitions = async (): Promise<Requisition[]> => {
-  const { data, error } = await supabase
-    .from('requisition')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    // Table missing (42P01) -> graceful fallback
-    if ((error as any).code === '42P01') {
-      console.warn('[requisitionService] Table requisition not found. Run the SQL to create it.');
-      return [];
+export const requisitionService = {
+  // Get all requisitions
+  async getAllRequisitions(): Promise<Requisition[]> {
+    try {
+      const requisitions = await FirebaseService.query('requisitions');
+      return requisitions as Requisition[];
+    } catch (error) {
+      console.error('Error fetching requisitions:', error);
+      throw new Error('Failed to fetch requisitions');
     }
-    console.error('Error fetching requisitions:', error);
-    throw error;
-  }
+  },
 
-  return (data || []).map(toCamel);
-};
+  // Get requisitions by user
+  async getRequisitionsByUser(userId: string): Promise<Requisition[]> {
+    try {
+      const allRequisitions = await this.getAllRequisitions();
+      return allRequisitions.filter(req => req.user_id === userId);
+    } catch (error) {
+      console.error('Error fetching user requisitions:', error);
+      throw new Error('Failed to fetch user requisitions');
+    }
+  },
 
-export const createRequisition = async (requisition: Omit<RequisitionFormData, 'id'>): Promise<Requisition> => {
-  const snake = toSnake(requisition) as any;
-  const row = {
-    requisition_type: snake.requisition_type,
-    item_type: snake.item_type,
-    item_name: snake.item_name,
-    quantity: snake.quantity,
-    issued_to: snake.issued_to,
-    department: snake.department,
-    location: snake.location,
-    notes: snake.notes,
-    status: 'pending',
-    created_at: new Date().toISOString(),
-    reference_number: `TRX-${Date.now()}`,
-  } as const;
-  const { data, error } = await supabase
-    .from('requisition')
-    .insert([row])
-    .select()
-    .single();
+  // Get requisition by ID
+  async getRequisitionById(requisitionId: string): Promise<Requisition | null> {
+    try {
+      const requisition = await FirebaseService.getById('requisitions', requisitionId);
+      return requisition as Requisition;
+    } catch (error) {
+      console.error('Error fetching requisition by ID:', error);
+      return null;
+    }
+  },
 
-  if (error) {
-    if ((error as any).code === '42P01') {
-      console.error('[requisitionService] Table requisition not found.');
-    } else {
+  // Create new requisition
+  async createRequisition(data: CreateRequisitionData): Promise<Requisition> {
+    try {
+      const requisitionId = await FirebaseService.create('requisitions', {
+        ...data,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        priority: data.priority || 'medium'
+      });
+
+      // Return the created requisition
+      return {
+        id: requisitionId,
+        ...data,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        priority: data.priority || 'medium'
+      } as Requisition;
+    } catch (error) {
       console.error('Error creating requisition:', error);
+      throw new Error('Failed to create requisition');
     }
-    throw error;
-  }
+  },
 
-  return toCamel(data);
-};
-
-export const updateRequisition = async (id: string, updates: Partial<RequisitionFormData>): Promise<Requisition> => {
-  const snake = toSnake(updates) as any;
-  const row: any = {};
-  if (snake.requisition_type !== undefined) row.requisition_type = snake.requisition_type;
-  if (snake.item_type !== undefined) row.item_type = snake.item_type;
-  if (snake.item_name !== undefined) row.item_name = snake.item_name;
-  if (snake.quantity !== undefined) row.quantity = snake.quantity;
-  if (snake.issued_to !== undefined) row.issued_to = snake.issued_to;
-  if (snake.department !== undefined) row.department = snake.department;
-  if (snake.location !== undefined) row.location = snake.location;
-  if (snake.notes !== undefined) row.notes = snake.notes;
-  const { data, error } = await supabase
-    .from('requisition')
-    .update(row)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    if ((error as any).code === '42P01') {
-      console.error('[requisitionService] Table requisition not found.');
-    } else {
+  // Update requisition
+  async updateRequisition(requisitionId: string, updates: Partial<Requisition>): Promise<void> {
+    try {
+      await FirebaseService.update('requisitions', requisitionId, updates);
+    } catch (error) {
       console.error('Error updating requisition:', error);
+      throw new Error('Failed to update requisition');
     }
-    throw error;
-  }
+  },
 
-  return toCamel(data);
-};
-
-export const deleteRequisition = async (id: string) => {
-  const { error } = await supabase
-    .from('requisition')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    if ((error as any).code === '42P01') {
-      console.error('[requisitionService] Table requisition not found.');
-      return;
+  // Approve requisition
+  async approveRequisition(requisitionId: string, approvedBy: string, notes?: string): Promise<void> {
+    try {
+      await this.updateRequisition(requisitionId, {
+        status: 'approved',
+        approved_at: new Date().toISOString(),
+        approved_by: approvedBy,
+        notes: notes || undefined
+      });
+    } catch (error) {
+      console.error('Error approving requisition:', error);
+      throw new Error('Failed to approve requisition');
     }
-    console.error('Error deleting requisition:', error);
-    throw error;
+  },
+
+  // Reject requisition
+  async rejectRequisition(requisitionId: string, rejectedBy: string, reason: string): Promise<void> {
+    try {
+      await this.updateRequisition(requisitionId, {
+        status: 'rejected',
+        approved_at: new Date().toISOString(),
+        approved_by: rejectedBy,
+        notes: reason
+      });
+    } catch (error) {
+      console.error('Error rejecting requisition:', error);
+      throw new Error('Failed to reject requisition');
+    }
+  },
+
+  // Complete requisition
+  async completeRequisition(requisitionId: string): Promise<void> {
+    try {
+      await this.updateRequisition(requisitionId, {
+        status: 'completed'
+      });
+    } catch (error) {
+      console.error('Error completing requisition:', error);
+      throw new Error('Failed to complete requisition');
+    }
+  },
+
+  // Delete requisition
+  async deleteRequisition(requisitionId: string): Promise<void> {
+    try {
+      await FirebaseService.delete('requisitions', requisitionId);
+    } catch (error) {
+      console.error('Error deleting requisition:', error);
+      throw new Error('Failed to delete requisition');
+    }
+  },
+
+  // Get pending requisitions
+  async getPendingRequisitions(): Promise<Requisition[]> {
+    try {
+      const allRequisitions = await this.getAllRequisitions();
+      return allRequisitions.filter(req => req.status === 'pending');
+    } catch (error) {
+      console.error('Error fetching pending requisitions:', error);
+      throw new Error('Failed to fetch pending requisitions');
+    }
+  },
+
+  // Get requisitions by status
+  async getRequisitionsByStatus(status: Requisition['status']): Promise<Requisition[]> {
+    try {
+      const allRequisitions = await this.getAllRequisitions();
+      return allRequisitions.filter(req => req.status === status);
+    } catch (error) {
+      console.error('Error fetching requisitions by status:', error);
+      throw new Error('Failed to fetch requisitions by status');
+    }
+  },
+
+  // Get requisitions by priority
+  async getRequisitionsByPriority(priority: Requisition['priority']): Promise<Requisition[]> {
+    try {
+      const allRequisitions = await this.getAllRequisitions();
+      return allRequisitions.filter(req => req.priority === priority);
+    } catch (error) {
+      console.error('Error fetching requisitions by priority:', error);
+      throw new Error('Failed to fetch requisitions by priority');
+    }
+  },
+
+  // Search requisitions
+  async searchRequisitions(query: string): Promise<Requisition[]> {
+    try {
+      const allRequisitions = await this.getAllRequisitions();
+      const searchTerm = query.toLowerCase();
+      
+      return allRequisitions.filter(req => 
+        req.reason.toLowerCase().includes(searchTerm) ||
+        req.notes?.toLowerCase().includes(searchTerm) ||
+        req.department?.toLowerCase().includes(searchTerm) ||
+        req.location?.toLowerCase().includes(searchTerm)
+      );
+    } catch (error) {
+      console.error('Error searching requisitions:', error);
+      throw new Error('Failed to search requisitions');
+    }
+  },
+
+  // Subscribe to requisition changes
+  subscribeToRequisitions(callback: (requisitions: Requisition[]) => void) {
+    // Firebase doesn't have real-time subscriptions in the same way as Supabase
+    // For now, we'll return a simple unsubscribe function
+    // In production, consider using onSnapshot from Firestore
+    return {
+      subscription: {
+        unsubscribe: () => {
+          console.log('Requisition subscription removed');
+        }
+      }
+    };
   }
 };
 
-// Subscribe to requisition changes
-export const subscribeToRequisitions = (callback: (payload: any) => void) => {
-  const subscription = supabase
-    .channel('requisitions-changes')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'requisition' },
-      callback
-    )
-    .subscribe();
-
-  return () => {
-    supabase.removeChannel(subscription);
-  };
-};
+export default requisitionService;

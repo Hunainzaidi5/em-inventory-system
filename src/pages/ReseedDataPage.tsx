@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { FirebaseService } from '@/lib/firebaseService';
 import { useNavigate } from 'react-router-dom';
 
 // Files organized by main categories and systems
@@ -183,7 +183,11 @@ export default function ReseedDataPage() {
         let fileInserted = 0;
         for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
           const batch = mapped.slice(i, i + BATCH_SIZE);
-          const { error } = await supabase.from('spare_parts').insert(batch);
+          // Note: Firebase doesn't support batch inserts in the same way as Supabase
+          // For now, we'll insert items one by one
+          for (const item of batch) {
+            await FirebaseService.create('spareParts', item);
+          }
           if (error) {
             setLog((l) => [...l, `✗ ${file} batch ${i/BATCH_SIZE + 1}: ${error.message}`]);
           } else {

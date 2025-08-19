@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import * as authService from '@/services/authService';
-import { supabase } from '@/lib/supabase';
+import authService from '@/services/authService';
+import { FirebaseAuthService, FirebaseUser } from '@/lib/firebaseAuth';
 import { env } from '@/config/env';
 import { User, LoginCredentials, RegisterData, UserRole, AuthenticationError } from '@/types/auth';
 
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  // No hardcoded developer credentials; use Supabase auth exclusively
+  // No hardcoded developer credentials; use Firebase auth exclusively
 
   // Single source of truth for loading user data
   const loadUser = useCallback(async () => {
@@ -35,12 +35,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log('[AUTH] Loading user data...');
       setIsLoading(true);
       
-      // Dev-bypass removed; always rely on Supabase session
+      // Dev-bypass removed; always rely on Firebase session
       
       // Check for existing session
-      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = FirebaseAuthService.getCurrentUser();
       
-      if (session) {
+      if (currentUser) {
         console.log('[AUTH] Session found, fetching user data');
         const userData = await authService.getCurrentUser();
         setUser(userData);
@@ -109,12 +109,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         // Set up auth state change listener using authService
-        const { data } = authService.onAuthStateChange(handleAuthChange);
+        const { subscription } = authService.onAuthStateChange(handleAuthChange);
         unsubscribe = () => {
           console.log('[AUTH] Unsubscribing from auth state changes');
-          if (data?.subscription) {
-            data.subscription.unsubscribe();
-          }
+          subscription.unsubscribe();
         };
       }
     };
@@ -199,11 +197,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Dev bypass removed; always use service
       const result = await authService.register(data);
       if (result.success) {
-      return { success: true };
-      } else {
-        setError(result.error || 'Registration failed');
-        return { success: false, error: result.error };
+        return { success: true };
       }
+      setError(result.message || 'Registration failed');
+      return { success: false, error: result.message };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
       setError(message);
@@ -234,14 +231,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       setIsLoading(true);
-      // If using built-in dev user, update locally without Supabase
+              // If using built-in dev user, update locally without Firebase
       if (user.id === 'dev-hardcoded') {
         const merged: User = { ...user, ...updates, updated_at: new Date().toISOString() } as User;
         setUser(merged);
         return;
       }
-      const updatedUser = await authService.updateProfile(updates);
-      setUser(updatedUser);
+      await authService.updateProfile(user.id, updates);
+      const refreshed = await authService.getCurrentUser();
+      setUser(refreshed);
     } catch (error) {
       console.error('Update profile error:', error);
       throw error;

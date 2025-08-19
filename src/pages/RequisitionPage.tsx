@@ -397,7 +397,7 @@ const RequisitionPage = () => {
     }
   };
   
-  // Fetch requisitions from Supabase
+  // Fetch requisitions from Firebase
   const fetchRequisitions = useCallback(async () => {
     try {
       setIsLoading(true);

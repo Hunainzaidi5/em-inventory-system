@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { FirebaseAuthService } from '@/lib/firebaseAuth';
 import { env } from '@/config/env';
 
 interface AuthStatus {
@@ -10,9 +10,9 @@ interface AuthStatus {
   session: any;
   error: string | null;
   envStatus: {
-    supabaseUrl: boolean;
-    anonKey: boolean;
-    projectRef: string;
+    firebaseApiKey: boolean;
+    firebaseAuthDomain: boolean;
+    firebaseProjectId: boolean;
   };
   storageStatus: {
     hasAccessToken: boolean;
@@ -30,9 +30,9 @@ export const AuthStatusChecker: React.FC = () => {
     session: null,
     error: null,
     envStatus: {
-      supabaseUrl: false,
-      anonKey: false,
-      projectRef: '',
+      firebaseApiKey: false,
+      firebaseAuthDomain: false,
+      firebaseProjectId: false,
     },
     storageStatus: {
       hasAccessToken: false,
@@ -45,28 +45,28 @@ export const AuthStatusChecker: React.FC = () => {
     const checkAuthStatus = async () => {
       try {
         // Check session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const currentUser = FirebaseAuthService.getCurrentUser();
         
         // Check environment variables
         const envStatus = {
-          supabaseUrl: !!env.VITE_SUPABASE_URL,
-          anonKey: !!env.VITE_SUPABASE_ANON_KEY,
-          projectRef: env.VITE_SUPABASE_PROJECT_REF,
+          firebaseApiKey: !!env.VITE_FIREBASE_API_KEY,
+          firebaseAuthDomain: !!env.VITE_FIREBASE_AUTH_DOMAIN,
+          firebaseProjectId: !!env.VITE_FIREBASE_PROJECT_ID,
         };
 
         // Check storage
         const storageStatus = {
-          hasAccessToken: !!localStorage.getItem(`sb-${env.VITE_SUPABASE_PROJECT_REF}-auth-token`),
-          hasRefreshToken: !!localStorage.getItem(`sb-${env.VITE_SUPABASE_PROJECT_REF}-refresh-token`),
-          hasSession: !!localStorage.getItem('auth_session'),
+          hasAccessToken: !!localStorage.getItem('firebase_auth_token'),
+          hasRefreshToken: !!localStorage.getItem('firebase_refresh_token'),
+          hasSession: !!currentUser,
         };
 
         setStatus({
           isAuthenticated,
           isLoading,
           user,
-          session,
-          error: sessionError?.message || null,
+          session: currentUser,
+          error: null,
           envStatus,
           storageStatus,
         });
@@ -138,16 +138,11 @@ export const AuthStatusChecker: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span>Session User:</span>
-              <span className="text-gray-600">{status.session?.user?.id || 'None'}</span>
+              <span className="text-gray-600">{status.session?.uid || 'None'}</span>
             </div>
             <div className="flex justify-between">
-              <span>Expires At:</span>
-              <span className="text-gray-600">
-                {status.session?.expires_at 
-                  ? new Date(status.session.expires_at * 1000).toLocaleString()
-                  : 'None'
-                }
-              </span>
+              <span>User Email:</span>
+              <span className="text-gray-600">{status.session?.email || 'None'}</span>
             </div>
           </div>
         </div>
@@ -157,20 +152,22 @@ export const AuthStatusChecker: React.FC = () => {
           <h4 className="font-semibold text-gray-700 mb-2">Environment</h4>
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span>Supabase URL:</span>
-              <span className={getStatusColor(status.envStatus.supabaseUrl)}>
-                {getStatusIcon(status.envStatus.supabaseUrl)} {status.envStatus.supabaseUrl ? 'Set' : 'Missing'}
+              <span>Firebase API Key:</span>
+              <span className={getStatusColor(status.envStatus.firebaseApiKey)}>
+                {getStatusIcon(status.envStatus.firebaseApiKey)} {status.envStatus.firebaseApiKey ? 'Set' : 'Missing'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Anon Key:</span>
-              <span className={getStatusColor(status.envStatus.anonKey)}>
-                {getStatusIcon(status.envStatus.anonKey)} {status.envStatus.anonKey ? 'Set' : 'Missing'}
+              <span>Firebase Auth Domain:</span>
+              <span className={getStatusColor(status.envStatus.firebaseAuthDomain)}>
+                {getStatusIcon(status.envStatus.firebaseAuthDomain)} {status.envStatus.firebaseAuthDomain ? 'Set' : 'Missing'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Project Ref:</span>
-              <span className="text-gray-600">{status.envStatus.projectRef}</span>
+              <span>Firebase Project ID:</span>
+              <span className={getStatusColor(status.envStatus.firebaseProjectId)}>
+                {getStatusIcon(status.envStatus.firebaseProjectId)} {status.envStatus.firebaseProjectId ? 'Set' : 'Missing'}
+              </span>
             </div>
           </div>
         </div>

@@ -1,112 +1,187 @@
-import { supabase } from '@/lib/supabase';
+import { FirebaseService } from '@/lib/firebaseService';
 
 export type RequisitionType = 'issue' | 'return' | 'consume';
-export type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
 
-function computeDelta(type: RequisitionType, quantity: number): number {
-  if (type === 'issue' || type === 'consume') return -Math.abs(quantity);
-  if (type === 'return') return Math.abs(quantity);
-  return 0;
+export interface ItemQuantityUpdate {
+  id: string;
+  item_id: string;
+  quantity_change: number;
+  type: RequisitionType;
+  reason: string;
+  user_id: string;
+  timestamp: string;
+  previous_quantity: number;
+  new_quantity: number;
+  location?: string;
+  department?: string;
+  notes?: string;
 }
 
-function clampQuantity(value: number): number {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.floor(value));
+export interface CreateItemQuantityUpdateData {
+  item_id: string;
+  quantity_change: number;
+  type: RequisitionType;
+  reason: string;
+  user_id: string;
+  location?: string;
+  department?: string;
+  notes?: string;
 }
 
-// LocalStorage helpers for legacy modules
-function adjustLocalStorageQuantity(storageKey: string, itemName: string, delta: number) {
-  try {
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) return;
-    const items = JSON.parse(raw);
-    if (!Array.isArray(items)) return;
-
-    const idx = items.findIndex((it: any) =>
-      typeof it?.itemName === 'string' && it.itemName.toLowerCase() === itemName.toLowerCase()
-    );
-    if (idx === -1) return;
-
-    const currentQty = Number(items[idx].quantity) || 0;
-    const newQty = clampQuantity(currentQty + delta);
-    items[idx] = {
-      ...items[idx],
-      quantity: newQty,
-      lastUpdated: new Date().toISOString().split('T')[0],
-    };
-    localStorage.setItem(storageKey, JSON.stringify(items));
-
-    // Broadcast a lightweight custom event so open pages can optionally listen
-    window.dispatchEvent(new CustomEvent('inventory-sync', { detail: { storageKey, itemName, quantity: newQty } }));
-  } catch (e) {
-    console.error(`[QuantityService] Failed to adjust localStorage for ${storageKey}:`, e);
-  }
-}
-
-export async function adjustQuantityForRequisition(params: {
-  itemType: ItemType;
-  itemName: string;
-  requisitionType: RequisitionType;
-  quantity: number;
-}): Promise<void> {
-  const { itemType, itemName, requisitionType, quantity } = params;
-  const delta = computeDelta(requisitionType, quantity);
-  if (!itemName || !Number.isFinite(delta) || delta === 0) return;
-
-  if (itemType === 'spare_management') {
-    // Update Supabase spare_parts
-    const { data: rows, error: fetchError } = await supabase
-      .from('spare_parts')
-      .select('id, quantity')
-      .ilike('name', itemName)
-      .limit(1);
-
-    if (fetchError) {
-      console.error('[QuantityService] Fetch spare_part failed:', fetchError.message);
-      return;
+export const itemQuantityService = {
+  // Get all quantity updates
+  async getAllQuantityUpdates(): Promise<ItemQuantityUpdate[]> {
+    try {
+      const updates = await FirebaseService.query('itemQuantityUpdates');
+      return updates as ItemQuantityUpdate[];
+    } catch (error) {
+      console.error('Error fetching quantity updates:', error);
+      throw new Error('Failed to fetch quantity updates');
     }
-    if (!rows || rows.length === 0) {
-      console.warn(`[QuantityService] spare_part not found by name: ${itemName}`);
-      return;
+  },
+
+  // Get quantity updates by item
+  async getQuantityUpdatesByItem(itemId: string): Promise<ItemQuantityUpdate[]> {
+    try {
+      const allUpdates = await this.getAllQuantityUpdates();
+      return allUpdates.filter(update => update.item_id === itemId);
+    } catch (error) {
+      console.error('Error fetching quantity updates by item:', error);
+      throw new Error('Failed to fetch quantity updates by item');
     }
+  },
 
-    const row = rows[0];
-    const currentQty = Number(row.quantity) || 0;
-    const newQty = clampQuantity(currentQty + delta);
-
-    const { error: updateError } = await supabase
-      .from('spare_parts')
-      .update({ quantity: newQty, lastUpdated: new Date().toISOString() })
-      .eq('id', row.id);
-
-    if (updateError) {
-      console.error('[QuantityService] Update spare_part failed:', updateError.message);
+  // Get quantity updates by user
+  async getQuantityUpdatesByUser(userId: string): Promise<ItemQuantityUpdate[]> {
+    try {
+      const allUpdates = await this.getAllQuantityUpdates();
+      return allUpdates.filter(update => update.user_id === userId);
+    } catch (error) {
+      console.error('Error fetching quantity updates by user:', error);
+      throw new Error('Failed to fetch quantity updates by user');
     }
-    return;
-  }
+  },
 
-  // Legacy modules backed by localStorage
-  switch (itemType) {
-    case 'inventory':
-      adjustLocalStorageQuantity('inventoryItems', itemName, delta);
-      break;
-    case 'tool':
-      adjustLocalStorageQuantity('toolsItems', itemName, delta);
-      break;
-    case 'general_tools':
-      adjustLocalStorageQuantity('generalToolsItems', itemName, delta);
-      break;
-    case 'ppe':
-      adjustLocalStorageQuantity('ppeItems', itemName, delta);
-      break;
-    case 'stationery':
-      adjustLocalStorageQuantity('stationeryItems', itemName, delta);
-      break;
-    case 'faulty_return':
-      // If needed, could map returns into faultyReturns list. For now, adjust quantity if exists by name
-      adjustLocalStorageQuantity('faultyReturns', itemName, delta);
-      break;
-    default:
-      console.warn('[QuantityService] Unknown item type for adjustment:', itemType);
+  // Create new quantity update
+  async createQuantityUpdate(data: CreateItemQuantityUpdateData): Promise<ItemQuantityUpdate> {
+    try {
+      // Get current item quantity
+      const item = await FirebaseService.getById('inventory', data.item_id);
+      if (!item) {
+        throw new Error('Item not found');
+      }
+
+      const currentQuantity = (item as any).current_stock || 0;
+      const newQuantity = currentQuantity + data.quantity_change;
+
+      if (newQuantity < 0) {
+        throw new Error('Quantity cannot go below 0');
+      }
+
+      // Update item quantity
+      await FirebaseService.update('inventory', data.item_id, {
+        current_stock: newQuantity,
+        updated_at: new Date().toISOString()
+      });
+
+      // Create quantity update record
+      const updateId = await FirebaseService.create('itemQuantityUpdates', {
+        ...data,
+        timestamp: new Date().toISOString(),
+        previous_quantity: currentQuantity,
+        new_quantity: newQuantity
+      });
+
+      // Return the created update
+      return {
+        id: updateId,
+        ...data,
+        timestamp: new Date().toISOString(),
+        previous_quantity: currentQuantity,
+        new_quantity: newQuantity
+      } as ItemQuantityUpdate;
+    } catch (error) {
+      console.error('Error creating quantity update:', error);
+      throw error;
+    }
+  },
+
+  // Get quantity update by ID
+  async getQuantityUpdateById(id: string): Promise<ItemQuantityUpdate | null> {
+    try {
+      const update = await FirebaseService.getById('itemQuantityUpdates', id);
+      return update as ItemQuantityUpdate;
+    } catch (error) {
+      console.error('Error fetching quantity update by ID:', error);
+      return null;
+    }
+  },
+
+  // Update quantity update
+  async updateQuantityUpdate(id: string, updates: Partial<ItemQuantityUpdate>): Promise<void> {
+    try {
+      await FirebaseService.update('itemQuantityUpdates', id, updates);
+    } catch (error) {
+      console.error('Error updating quantity update:', error);
+      throw new Error('Failed to update quantity update');
+    }
+  },
+
+  // Delete quantity update
+  async deleteQuantityUpdate(id: string): Promise<void> {
+    try {
+      await FirebaseService.delete('itemQuantityUpdates', id);
+    } catch (error) {
+      console.error('Error deleting quantity update:', error);
+      throw new Error('Failed to delete quantity update');
+    }
+  },
+
+  // Get quantity updates by type
+  async getQuantityUpdatesByType(type: RequisitionType): Promise<ItemQuantityUpdate[]> {
+    try {
+      const allUpdates = await this.getAllQuantityUpdates();
+      return allUpdates.filter(update => update.type === type);
+    } catch (error) {
+      console.error('Error fetching quantity updates by type:', error);
+      throw new Error('Failed to fetch quantity updates by type');
+    }
+  },
+
+  // Search quantity updates
+  async searchQuantityUpdates(query: string): Promise<ItemQuantityUpdate[]> {
+    try {
+      const allUpdates = await this.getAllQuantityUpdates();
+      const searchTerm = query.toLowerCase();
+      
+      return allUpdates.filter(update => 
+        update.reason.toLowerCase().includes(searchTerm) ||
+        update.notes?.toLowerCase().includes(searchTerm) ||
+        update.location?.toLowerCase().includes(searchTerm) ||
+        update.department?.toLowerCase().includes(searchTerm)
+      );
+    } catch (error) {
+      console.error('Error searching quantity updates:', error);
+      throw new Error('Failed to search quantity updates');
+    }
+  },
+
+  // Get quantity updates in date range
+  async getQuantityUpdatesInDateRange(startDate: Date, endDate: Date): Promise<ItemQuantityUpdate[]> {
+    try {
+      const allUpdates = await this.getAllQuantityUpdates();
+      const start = startDate.getTime();
+      const end = endDate.getTime();
+      
+      return allUpdates.filter(update => {
+        const updateTime = new Date(update.timestamp).getTime();
+        return updateTime >= start && updateTime <= end;
+      });
+    } catch (error) {
+      console.error('Error fetching quantity updates in date range:', error);
+      throw new Error('Failed to fetch quantity updates in date range');
+    }
   }
-} 
+};
+
+export default itemQuantityService; 

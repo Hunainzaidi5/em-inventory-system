@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using native JavaScript date formatting instead of date-fns
-import { updateProfile } from "@/services/authService";
 import { getAvatarUrl } from "@/utils/avatarUtils";
 import { toast } from "sonner";
 import { 
@@ -26,7 +25,7 @@ import {
   Activity
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { authService } from "@/services/authService";
 
 const roleDisplayNames = {
   dev: 'Developer (Admin)',
@@ -166,7 +165,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       form.reset({
-        name: user.name || "",
+        name: user.display_name || "",
         email: user.email || "",
         department: user.department || "",
         employee_id: user.employee_id || "",
@@ -209,8 +208,8 @@ export default function ProfilePage() {
       setIsUploading(true);
       
       // Update the profile with the new avatar
-      await updateProfile({ 
-        avatarFile: file 
+      await authService.updateProfile(user.id, { 
+        avatar_url: file.name 
       });
       
       // Refresh the user data to show the new avatar
@@ -232,7 +231,7 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormValues) => {
     try {
       setIsUpdating(true);
-      await updateProfile(data);
+      await authService.updateProfile(user.id, data);
       await refreshUser();
       toast.success("Profile updated successfully");
     } catch (error) {
@@ -274,8 +273,8 @@ export default function ProfilePage() {
               <h3 className="text-lg font-semibold text-yellow-800">Debug Information</h3>
             </div>
             <div className="space-y-2 text-sm text-yellow-800">
-              <p><span className="font-medium">Avatar URL:</span> {user.avatar || 'No avatar set'}</p>
-              <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar ? getAvatarUrl(user.id, user.avatar) : 'No avatar set'}</p>
+                              <p><span className="font-medium">Avatar URL:</span> {user.avatar_url || 'No avatar set'}</p>
+                <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar_url ? getAvatarUrl(user.id, user.avatar_url) : 'No avatar set'}</p>
               <p><span className="font-medium">User ID:</span> {user.id}</p>
             </div>
           </div>
@@ -325,11 +324,11 @@ export default function ProfilePage() {
                     className="h-40 w-40 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
                     onClick={handleAvatarClick}
                   >
-                    {user.avatar ? (
+                    {user.avatar_url ? (
                       <>
                         <AvatarImage 
-                          src={getAvatarUrl(user.id, user.avatar)}
-                          alt={user.name} 
+                          src={getAvatarUrl(user.id, user.avatar_url)}
+                          alt={user.display_name} 
                           className="object-cover"
                           onError={(e) => {
                             console.error('Error loading avatar:', e);
@@ -338,12 +337,12 @@ export default function ProfilePage() {
                           }}
                         />
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-indigo-100 to-purple-100">
-                          {user.name.split(' ').map(n => n[0]).join('')}
+                          {user.display_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </>
                     ) : (
                       <AvatarFallback className="text-4xl bg-gradient-to-br from-gray-100 to-gray-200">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {user.display_name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     )}
                   </Avatar>

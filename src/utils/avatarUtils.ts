@@ -1,94 +1,93 @@
-import { supabase } from '@/lib/supabase';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
+// Upload avatar to Firebase Storage
 export const uploadAvatar = async (file: File, userId: string): Promise<string> => {
   try {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}/${uuidv4()}.${fileExt}`;
+    const fileName = `${userId}_${uuidv4()}.${fileExt}`;
+    const storageRef = ref(storage, `avatars/${fileName}`);
     
-    // Upload the new avatar
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(fileName, file, {
-        cacheControl: '3600',
-        upsert: true
-      });
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
     
-    if (uploadError) throw uploadError;
-    
-    // Get the public URL for the uploaded file
-    const { data: { publicUrl } } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(fileName);
-    
-    // Clean up old avatars
-    await cleanupOldAvatars(userId, fileName);
-    
-    return publicUrl;
+    return downloadURL;
   } catch (error) {
     console.error('Error uploading avatar:', error);
     throw new Error('Failed to upload avatar');
   }
 };
 
-export const deleteAvatar = async (userId: string, fileName: string): Promise<void> => {
+// Get avatar URL from Firebase Storage
+export const getAvatarUrl = (userId: string, avatarPath?: string): string => {
+  if (!avatarPath) {
+    return '';
+  }
+  
+  // If it's already a full URL, return it
+  if (avatarPath.startsWith('http')) {
+    return avatarPath;
+  }
+  
+  // For now, return the path as is
+  // In production, you'd construct the full Firebase Storage URL
+  return avatarPath;
+};
+
+// Delete avatar from Firebase Storage
+export const deleteAvatar = async (userId: string, avatarPath?: string): Promise<void> => {
+  if (!avatarPath) return;
+  
   try {
-    const { error } = await supabase.storage
-      .from('avatars')
-      .remove([`${userId}/${fileName}`]);
+    // Extract filename from path or URL
+    let fileName = avatarPath;
+    if (avatarPath.includes('/')) {
+      fileName = avatarPath.split('/').pop() || '';
+    }
     
-    if (error) throw error;
+    if (fileName) {
+      const storageRef = ref(storage, `avatars/${fileName}`);
+      await deleteObject(storageRef);
+    }
   } catch (error) {
     console.error('Error deleting avatar:', error);
-    // Don't throw the error as this is a non-critical operation
+    // Don't throw error for cleanup operations
   }
 };
 
-const cleanupOldAvatars = async (userId: string, keepFileName: string): Promise<void> => {
+// Clean up old avatar files for a user
+export const cleanupOldAvatars = async (userId: string): Promise<void> => {
   try {
-    const { data: oldFiles, error } = await supabase.storage
-      .from('avatars')
-      .list(userId);
+    const avatarsRef = ref(storage, 'avatars');
+    const result = await listAll(avatarsRef);
     
-    if (error) throw error;
+    // Find all avatar files for this user
+    const userAvatars = result.items.filter(item => 
+      item.name.startsWith(`${userId}_`)
+    );
     
-    if (oldFiles && oldFiles.length > 1) {
-      const filesToRemove = oldFiles
-        .filter(file => file.name !== keepFileName.split('/').pop())
-        .map(file => `${userId}/${file.name}`);
+    // Delete old avatar files (keep only the most recent one)
+    if (userAvatars.length > 1) {
+      // Sort by creation time and delete all but the most recent
+      const sortedAvatars = userAvatars.sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
       
-      if (filesToRemove.length > 0) {
-        await supabase.storage
-          .from('avatars')
-          .remove(filesToRemove)
-          .catch(console.error); // Non-critical if cleanup fails
+      // Delete all but the last one
+      for (let i = 0; i < sortedAvatars.length - 1; i++) {
+        await deleteObject(sortedAvatars[i]);
       }
     }
   } catch (error) {
     console.error('Error cleaning up old avatars:', error);
-    // Don't throw the error as this is a non-critical operation
+    // Don't throw error for cleanup operations
   }
 };
 
-export const getAvatarUrl = (userId: string, avatarPath: string): string => {
-  if (!avatarPath) return '';
-  
-  const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/\/+$/, '');
-  
-  // Already absolute
-  if (avatarPath.startsWith('http')) return avatarPath;
-  
-  // Leading slash => bucket-relative path
-  if (avatarPath.startsWith('/')) {
-    return `${baseUrl}/storage/v1/object/public/avatars${avatarPath}`;
-  }
-  
-  // If path contains a slash, assume it's already bucket-relative (e.g. userId/filename)
-  if (avatarPath.includes('/')) {
-    const clean = avatarPath.replace(/^\/+/, '');
-    return `${baseUrl}/storage/v1/object/public/avatars/${clean}`;
-  }
-  
-  // Plain filename: assume it lives at the root of avatars bucket
-  return `${baseUrl}/storage/v1/object/public/avatars/${avatarPath}`;
+// Get default avatar URL
+export const getDefaultAvatarUrl = (): string => {
+  // Return a default avatar image URL
+  // You can use a service like Gravatar or a local default image
+  return '/placeholder.svg';
 };

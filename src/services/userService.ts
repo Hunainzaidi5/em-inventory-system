@@ -1,46 +1,132 @@
-import { supabase } from '@/lib/supabase';
+import { FirebaseService } from '@/lib/firebaseService';
 import { User, UserRole } from '@/types/auth';
 
-export const getUsers = async (): Promise<{ data: User[] | null; error: string | null }> => {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
+export interface CreateUserData {
+  email: string;
+  display_name: string;
+  role: UserRole;
+  department?: string;
+  employee_id?: string;
+  is_active?: boolean;
+}
 
-    if (error) {
+export const userService = {
+  // Get all users
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const users = await FirebaseService.query('users');
+      return users as User[];
+    } catch (error) {
       console.error('Error fetching users:', error);
-      return { data: null, error: error.message };
+      throw new Error('Failed to fetch users');
     }
+  },
 
-    return { data, error: null };
-  } catch (error) {
-    console.error('Unexpected error fetching users:', error);
-    return { 
-      data: null, 
-      error: error instanceof Error ? error.message : 'An unexpected error occurred' 
-    };
-  }
-};
+  // Create new user
+  async createUser(userData: CreateUserData): Promise<User> {
+    try {
+      const userId = await FirebaseService.create('users', {
+        ...userData,
+        email: userData.email.toLowerCase().trim(),
+        display_name: userData.display_name.trim(),
+        is_active: userData.is_active ?? true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        email_verified: false
+      });
 
-export const deleteUser = async (userId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    const { error } = await supabase
-      .from('profiles')
-      .delete()
-      .eq('id', userId);
+      // Return the created user
+      return {
+        id: userId,
+        ...userData,
+        email: userData.email.toLowerCase().trim(),
+        display_name: userData.display_name.trim(),
+        is_active: userData.is_active ?? true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        email_verified: false
+      } as User;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw new Error('Failed to create user');
+    }
+  },
 
-    if (error) {
+  // Update user
+  async updateUser(userId: string, updates: Partial<User>): Promise<void> {
+    try {
+      await FirebaseService.update('users', userId, {
+        ...updates,
+        updated_at: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw new Error('Failed to update user');
+    }
+  },
+
+  // Delete user
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      await FirebaseService.delete('users', userId);
+    } catch (error) {
       console.error('Error deleting user:', error);
-      return { success: false, error: error.message };
+      throw new Error('Failed to delete user');
     }
+  },
 
-    return { success: true };
-  } catch (error) {
-    console.error('Unexpected error deleting user:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'An unexpected error occurred' 
-    };
+  // Get user by ID
+  async getUserById(userId: string): Promise<User | null> {
+    try {
+      const user = await FirebaseService.getById('users', userId);
+      return user as User;
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      return null;
+    }
+  },
+
+  // Get users by role
+  async getUsersByRole(role: UserRole): Promise<User[]> {
+    try {
+      const allUsers = await this.getAllUsers();
+      return allUsers.filter(user => user.role === role);
+    } catch (error) {
+      console.error('Error fetching users by role:', error);
+      throw new Error('Failed to fetch users by role');
+    }
+  },
+
+  // Get active users
+  async getActiveUsers(): Promise<User[]> {
+    try {
+      const allUsers = await this.getAllUsers();
+      return allUsers.filter(user => user.is_active);
+    } catch (error) {
+      console.error('Error fetching active users:', error);
+      throw new Error('Failed to fetch active users');
+    }
+  },
+
+  // Search users
+  async searchUsers(query: string): Promise<User[]> {
+    try {
+      const allUsers = await this.getAllUsers();
+      const searchTerm = query.toLowerCase();
+      
+      return allUsers.filter(user => 
+        user.display_name.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.department?.toLowerCase().includes(searchTerm) ||
+        user.employee_id?.toLowerCase().includes(searchTerm)
+      );
+    } catch (error) {
+      console.error('Error searching users:', error);
+      throw new Error('Failed to search users');
+    }
   }
 };
+
+export default userService;

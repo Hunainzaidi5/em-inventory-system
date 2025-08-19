@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
 
-// Create a simple axios instance that can be used for any non-Supabase API calls
+// Create a simple axios instance that can be used for any non-Firebase API calls
 const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
@@ -12,12 +12,15 @@ const api: AxiosInstance = axios.create({
 // Request interceptor to add auth token to requests
 api.interceptors.request.use(
   async (config) => {
-    // Get the current session from Supabase
-    const { data: { session } } = await supabase.auth.getSession();
+    // Get the current session from Firebase
+    const user = auth.currentUser;
     
     // Add the auth token if available
-    if (session?.access_token) {
-      config.headers.Authorization = `Bearer ${session.access_token}`;
+    if (user) {
+      const token = await user.getIdToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     
     return config;

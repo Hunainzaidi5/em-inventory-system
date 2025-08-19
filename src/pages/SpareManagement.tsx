@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
-import { getSpareParts, addSparePart, updateSparePart, deleteSparePart, subscribeToSpareParts } from "../services/spareService";
+import spareService from "../services/spareService";
 import { toast } from "../components/ui/use-toast";
 import { SparePart, TabData, SystemCategory } from "../types/spareTypes";
 
@@ -87,8 +87,8 @@ const SpareManagement: React.FC = () => {
     }));
 
     try {
-      // First try to load from Supabase
-      const spareParts = await getSpareParts(category.name);
+      // First try to load from Firebase
+              const spareParts = await spareService.getSparePartsByCategory(category.name);
       
       if (spareParts && spareParts.length > 0) {
         setTabData(prev => ({
@@ -103,7 +103,7 @@ const SpareManagement: React.FC = () => {
         return;
       }
 
-      // Fallback to local JSON files if no data in Supabase
+              // Fallback to local JSON files if no data in Firebase
       const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
       if (!fileName) {
         throw new Error(`No data file configured for ${mainTab} ${category.name}`);
@@ -192,12 +192,12 @@ const SpareManagement: React.FC = () => {
             };
           });
 
-        // Save to Supabase if we loaded from JSON
+        // Save to Firebase if we loaded from JSON
         if (formattedParts.length > 0) {
           try {
-            await Promise.all(formattedParts.map(part => addSparePart(part)));
+            await Promise.all(formattedParts.map(part => spareService.createSparePart(part)));
           } catch (err) {
-            console.error('Error saving initial data to Supabase:', err);
+            console.error('Error saving initial data to Firebase:', err);
           }
         }
       }
@@ -234,45 +234,9 @@ const SpareManagement: React.FC = () => {
 
   const currentTabId = `${activeMainTab}_${activeSubTab}`;
 
-  // Set up real-time subscription
-  useEffect(() => {
-    const subscription = subscribeToSpareParts((payload) => {
-      const tabId = currentTabId;
-      
-      setTabData(prev => {
-        const currentTab = prev[tabId];
-        if (!currentTab) return prev;
-        
-        let newData = [...currentTab.data];
-        
-        switch (payload.eventType) {
-          case 'INSERT':
-            newData = [...currentTab.data, payload.new];
-            break;
-          case 'UPDATE':
-            newData = currentTab.data.map(item => 
-              item.id === payload.new.id ? payload.new : item
-            );
-            break;
-          case 'DELETE':
-            newData = currentTab.data.filter(item => item.id !== payload.old.id);
-            break;
-        }
-        
-        return {
-          ...prev,
-          [tabId]: {
-            ...currentTab,
-            data: newData
-          }
-        };
-      });
-    });
-
-    return () => {
-      subscription(); // Cleanup subscription
-    };
-  }, [currentTabId]);
+  // Note: Firebase doesn't have the same real-time subscription structure as Supabase
+  // For now, we'll refresh data manually when needed
+  // In production, consider using onSnapshot from Firestore
 
   // Handle sorting
   const requestSort = (key: keyof SparePart) => {
@@ -359,7 +323,7 @@ const SpareManagement: React.FC = () => {
   const handleRemove = async (id: string) => {
     if (window.confirm("Are you sure you want to remove this item?")) {
       try {
-        await deleteSparePart(id);
+        await spareService.deleteSparePart(id);
         // The real-time subscription will handle the UI update
         toast({
           title: "Success",
@@ -392,14 +356,14 @@ const SpareManagement: React.FC = () => {
     try {
       if (editId) {
         // Update existing item
-        await updateSparePart(editId, itemData);
+                  await spareService.updateSparePart(editId, itemData);
         toast({
           title: "Success",
           description: "Item updated successfully",
         });
       } else {
         // Add new item
-        await addSparePart(itemData);
+        await spareService.createSparePart(itemData);
         toast({
           title: "Success",
           description: "Item added successfully",

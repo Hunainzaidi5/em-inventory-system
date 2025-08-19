@@ -2,14 +2,16 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
+  display_name: string;
   role: UserRole;
   department?: string;
   employee_id?: string;
   is_active: boolean;
   created_at: string;
   updated_at?: string;
-  avatar?: string;
+  avatar_url?: string;
+  last_login?: string;
+  email_verified?: boolean;
 }
 
 // Authentication request/response types
@@ -21,18 +23,20 @@ export interface LoginCredentials {
 // UserRole is defined below
 
 export interface RegisterData extends LoginCredentials {
-  name: string;
-  role: UserRole;
-  department: string;
-  employee_id: string;
+  displayName: string;
+  role?: UserRole;
+  department?: string;
+  employee_id?: string;
   avatar?: string; // legacy support if a URL is provided
   avatarFile?: File; // optional raw file to upload during registration
 }
 
 export interface AuthResponse {
+  success: boolean;
   user: User;
-  token: string;
-  session?: any; // Session object from Supabase
+  message: string;
+  token?: string;
+  session?: any;
 }
 
 // Custom error class for authentication errors

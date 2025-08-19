@@ -1,8 +1,12 @@
 // Environment configuration
 export const env = {
-  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || 'https://xprqghjyofmsiepdzhto.supabase.co',
-  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwcnFnaGp5b2Ztc2llcGR6aHRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNjM2NTIsImV4cCI6MjA3MDczOTY1Mn0.k7TM1qPZjGVPJKq7CWHmjo_qmKcfFHzUY06HTLn1294',
-  VITE_SUPABASE_PROJECT_REF: import.meta.env.VITE_SUPABASE_PROJECT_REF || 'xprqghjyofmsiepdzhto',
+  VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  VITE_FIREBASE_STORAGE_BUCKET: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  VITE_FIREBASE_MESSAGING_SENDER_ID: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  VITE_FIREBASE_APP_ID: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  VITE_FIREBASE_MEASUREMENT_ID: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || '',
   VITE_FORCE_DEV_USER: (import.meta.env.VITE_FORCE_DEV_USER || 'false') === 'true',
   NODE_ENV: import.meta.env.NODE_ENV || 'development',
   PROD: import.meta.env.PROD || false,
@@ -11,7 +15,7 @@ export const env = {
 
 // Validate required environment variables
 export const validateEnv = () => {
-  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'];
+  const required = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_PROJECT_ID'];
   const missing = required.filter(key => !env[key as keyof typeof env]);
   
   if (missing.length > 0) {

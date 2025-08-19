@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { userService } from '@/services/userService';
 import { User, UserRole } from '@/types/auth';
 
 // Helper function to format role names for display
@@ -29,37 +29,13 @@ const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Fetch all users from Supabase
+  // Fetch all users from Firebase
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true);
       
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching users:', error);
-        setUsers([]);
-        return;
-      }
-
-      // Map the database fields to User type
-      const mappedUsers = (data || []).map(profile => ({
-        id: profile.id,
-        name: profile.full_name || '',
-        email: profile.email || '',
-        role: profile.role || 'dev',
-        department: profile.department || '',
-        employee_id: profile.employee_id || '',
-        is_active: profile.is_active ?? true,
-        created_at: profile.created_at || new Date().toISOString(),
-        updated_at: profile.updated_at,
-        avatar: undefined,
-      }));
-
-      setUsers(mappedUsers);
+      const users = await userService.getAllUsers();
+      setUsers(users);
     } catch (error) {
       console.error('Error fetching users:', error);
       setUsers([]);
@@ -75,16 +51,8 @@ const UsersPage = () => {
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('Deactivate this user account? They will be signed out and cannot log in.')) return;
     try {
-      // Soft-delete: deactivate and mark deleted_at
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_active: false, deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-        .eq('id', userId);
-      if (error) {
-        console.error('Error deactivating user:', error);
-        alert('Failed to deactivate user.');
-        return;
-      }
+      // Soft-delete: deactivate the user
+      await userService.updateUser(userId, { is_active: false });
       // Refresh the users list
       fetchUsers();
       alert('User deactivated');
@@ -144,7 +112,7 @@ const UsersPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.display_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">

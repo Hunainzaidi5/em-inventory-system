@@ -1,141 +1,24 @@
 import { User, LoginCredentials, RegisterData, AuthResponse, UserRole, AuthenticationError } from '@/types/auth';
 import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
-import { supabase } from '@/lib/supabase';
+import { FirebaseAuthService } from '@/lib/firebaseAuth';
+import { FirebaseService } from '@/lib/firebaseService';
 import { env } from '@/config/env';
 import { v4 as uuidv4 } from 'uuid';
 
-// Extend the Window interface to include client IP
-declare global {
-  interface Window {
-    __IP_DEV_ONLY?: string;
-  }
-}
-
 // Rate limiting configuration
 const RATE_LIMIT = {
-  // Account-based rate limiting
-  MAX_ATTEMPTS: 5, // Max failed attempts before lockout
-  LOCKOUT_MINUTES: 15, // Lockout duration in minutes
-  LOCKOUT_DURATION_MS: 15 * 60 * 1000, // 15 minutes in milliseconds
-  ACCOUNT_LOCKOUT_MS: 15 * 60 * 1000, // 15 minutes in milliseconds
-  WINDOW_MS: 15 * 60 * 1000, // 15 minutes window for tracking attempts
-  
-  // IP-based rate limiting
-  IP_MAX_ATTEMPTS: 100, // Max failed attempts per IP per window
-  IP_WINDOW_MS: 60 * 60 * 1000, // 1 hour window for IP-based rate limiting
-  
-  // Cleanup intervals
-  CLEANUP_INTERVAL_MS: 5 * 60 * 1000, // 5 minutes
+  MAX_ATTEMPTS: 5,
+  ACCOUNT_LOCKOUT_MS: 15 * 60 * 1000, // 15 minutes
+  IP_WINDOW_MS: 60 * 60 * 1000, // 1 hour
+  IP_MAX_ATTEMPTS: 20
 };
 
-// Track failed login attempts
+// In-memory rate limiting (in production, use Redis or similar)
 const failedAttempts = new Map<string, { count: number; lastAttempt: number; lockedUntil: number | null }>();
 const ipAttempts = new Map<string, { count: number; lastAttempt: number }>();
 
-// Setup cleanup interval
-if (typeof window !== 'undefined') {
-  // Only run in browser environment
-  setInterval(() => {
-    try {
-      cleanupOldAttempts(failedAttempts, RATE_LIMIT.ACCOUNT_LOCKOUT_MS);
-      cleanupOldAttempts(ipAttempts, RATE_LIMIT.IP_WINDOW_MS);
-    } catch (error) {
-      console.error('Error in rate limit cleanup:', error);
-    }
-  }, RATE_LIMIT.CLEANUP_INTERVAL_MS);
-}
-
-// Get client IP (works with Vercel, Netlify, and other platforms)
-const getClientIP = async (): Promise<string> => {
-  if (typeof window !== 'undefined' && window.__IP_DEV_ONLY) {
-    return window.__IP_DEV_ONLY; // For development/testing
-  }
-
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error('Error getting IP address:', error);
-    return 'unknown';
-  }
-};
-
-// Check if IP is allowed for admin access
-const isAdminIPAllowed = async (ip: string): Promise<boolean> => {
-  // In development, allow all IPs if no specific IPs are set
-  if (process.env.NODE_ENV === 'development' && !process.env.REQUIRE_IP_RESTRICTION) {
-    console.log('[AUTH] Development mode: IP restrictions are disabled');
-    return true;
-  }
-  
-  try {
-    // First check IP ranges in the format '192.168.1.*' or '192.168.*.*'
-    const ipParts = ip.split('.');
-    const ipPatterns = [
-      ip, // Exact match
-      `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.*`, // /24 subnet
-      `${ipParts[0]}.${ipParts[1]}.*.*`, // /16 subnet
-      `${ipParts[0]}.*.*.*` // /8 subnet
-    ];
-    
-    // Check if any of the IP patterns match allowed IPs
-    const { data, error } = await supabase
-      .from('allowed_ips')
-      .select('ip_address')
-      .in('ip_address', ipPatterns);
-      
-    if (error) {
-      console.error('Error querying allowed IPs:', error);
-      return false;
-    }
-    
-    const isAllowed = Array.isArray(data) && data.length > 0;
-    
-    if (!isAllowed) {
-      console.log(`[AUTH] IP ${ip} is not in the allowed IPs list`);
-      // Log the failed admin access attempt
-      await logUserAction('system', 'admin_ip_denied', {
-        ip,
-        timestamp: new Date().toISOString(),
-        matchedPatterns: data?.map(item => item.ip_address) || []
-      });
-    }
-    
-    return isAllowed;
-  } catch (error) {
-    console.error('Error checking admin IP:', error);
-    // Log the error but don't block access to prevent locking out all admins if there's a DB issue
-    await logUserAction('system', 'admin_ip_check_error', {
-      ip,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
-    });
-    return false; // Default to deny on error
-  }
-};
-
-// Log user action via RPC (lets the DB handle IP/user-agent; avoids RLS issues)
-const logUserAction = async (userId: string, action: string, details: Record<string, any> = {}) => {
-  try {
-    const { error } = await supabase.rpc('log_user_action', {
-      p_user_id: userId,
-      p_action: action,
-      p_details: details,
-    });
-    if (error) {
-      console.error('Failed to log user action to database:', error);
-    }
-  } catch (error) {
-    console.error('Error in logUserAction:', error);
-  }
-};
-
-// Helper function to clean up old attempts from rate limiting maps
-const cleanupOldAttempts = <T extends { lastAttempt: number }>(
-  attempts: Map<string, T>,
-  windowMs: number
-): void => {
+// Cleanup old attempts
+const cleanupOldAttempts = (attempts: Map<string, any>, windowMs: number) => {
   const now = Date.now();
   for (const [key, value] of attempts.entries()) {
     if (now - value.lastAttempt > windowMs) {
@@ -144,259 +27,90 @@ const cleanupOldAttempts = <T extends { lastAttempt: number }>(
   }
 };
 
-// Helper function to create a consistent user object
-type ProfileData = {
-  id: string;
-  email: string;
-  full_name?: string;
-  role?: string;
-  department?: string;
-  employee_id?: string;
-  is_active?: boolean;
-  created_at?: string;
-  updated_at?: string;
-  avatar?: string;
-  last_login_at?: string;
-  last_login_ip?: string;
-  failed_login_attempts?: number;
-  account_locked_until?: string | null;
-  created_by?: string | null;
-  updated_by?: string | null;
-  deleted_at?: string | null;
-};
-
-const createUserObject = (authUser: any, profile: ProfileData): User => {
-  const avatarPath = profile.avatar || authUser.user_metadata?.avatar || '';
-  const avatarUrl = getAvatarUrl(authUser.id, avatarPath);
-  
-  return {
-    id: profile.id || authUser.id,
-    email: profile.email || authUser.email || '',
-    name: profile.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-    role: (profile.role as UserRole) || 'dev',
-    department: profile.department || '',
-    employee_id: profile.employee_id || '',
-    is_active: profile.is_active ?? true,
-    created_at: profile.created_at || new Date().toISOString(),
-    updated_at: profile.updated_at,
-    avatar: avatarUrl || undefined,
-  };
-};
-
-// Get the current user with profile data
-export const getCurrentUser = async (): Promise<User | null> => {
-  console.log('[AUTH] === getCurrentUser() started ===');
-  
+// Log user actions
+const logUserAction = async (userId: string, action: string, details: any) => {
   try {
-    // 1. Get the current session
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    const session = sessionData?.session;
-    
-    if (sessionError || !session) {
-      console.error('[AUTH] No active session:', sessionError?.message || 'No session found');
-      return null;
-    }
-
-    // 2. Get the current user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    const authUser = userData?.user;
-    
-    if (userError || !authUser) {
-      console.error('[AUTH] Error getting current user:', userError?.message || 'No user found');
-      // Log failed auth attempt
-      await logUserAction(null as unknown as string, 'auth_failed', {
-        reason: 'invalid_session',
-        sessionId: session.user?.id || 'unknown'
-      });
-      return null;
-    }
-
-    // 3. Get user profile with additional security checks
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
-
-    // 4. Handle profile data
-    if (profileError || !profile) {
-      console.error('[AUTH] Error fetching user profile:', profileError?.message || 'No profile found');
-      
-      // Log the missing profile
-      await logUserAction(authUser.id, 'profile_missing', {
-        email: authUser.email,
-        authProvider: authUser.app_metadata?.provider
-      });
-      
-      // Sign out the user since their profile is missing
-      await supabase.auth.signOut();
-      return null;
-    }
-    
-    // 5. Check if account is active
-    if (!profile.is_active) {
-      console.error('[AUTH] Account is inactive:', authUser.id);
-      await logUserAction(authUser.id, 'login_attempt_inactive_account', {
-        email: authUser.email
-      });
-      await supabase.auth.signOut();
-      throw new AuthenticationError('Account is inactive. Please contact an administrator.');
-    }
-    
-    // 6. Update last login info
-    // 7. Log successful login (no direct profile update here)
-    await logUserAction(authUser.id, 'login_success', {});
-    
-    // 8. Create and return user object
-    return createUserObject(authUser, {
-      id: authUser.id,
-      email: authUser.email || '',
-      full_name: profile.full_name || authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-      role: profile.role as UserRole || 'dev',
-      department: profile.department || '',
-      employee_id: profile.employee_id || '',
-      is_active: profile.is_active ?? true,
-      created_at: profile.created_at || new Date().toISOString(),
-      updated_at: profile.updated_at || new Date().toISOString(),
-      avatar: profile.avatar,
-      last_login_at: profile.last_login_at,
-      last_login_ip: profile.last_login_ip,
-      failed_login_attempts: profile.failed_login_attempts,
-      account_locked_until: profile.account_locked_until,
-      created_by: profile.created_by,
-      updated_by: profile.updated_by
+    await FirebaseService.create('userActions', {
+      userId,
+      action,
+      details,
+      timestamp: new Date(),
+      ip: details.ip || 'unknown'
     });
   } catch (error) {
-    console.error('Error in getCurrentUser:', error);
-    return null;
+    console.error('Failed to log user action:', error);
   }
 };
 
-// Check if account is locked
-const isAccountLocked = async (email: string): Promise<{ 
-  locked: boolean; 
-  remainingTime?: number; 
-  reason?: string 
-}> => {
-  const now = Date.now();
-  const emailLower = email.toLowerCase();
-  
-  try {
-    // 1. Check in-memory rate limiting first
-    const attemptInfo = failedAttempts.get(emailLower) || { 
-      count: 0, 
-      lastAttempt: 0, 
-      lockedUntil: null 
-    };
-    
-    if (attemptInfo.lockedUntil && attemptInfo.lockedUntil > now) {
-      return {
-        locked: true,
-        remainingTime: Math.ceil((attemptInfo.lockedUntil - now) / 1000), // in seconds
-        reason: 'too_many_attempts'
-      };
-    }
-    
-    // 2. Check IP-based rate limiting
-    const ip = await getClientIP();
-    const ipAttemptInfo = ipAttempts.get(ip) || { count: 0, lastAttempt: 0 };
-    
-    if (ipAttemptInfo && 
-        now - ipAttemptInfo.lastAttempt < RATE_LIMIT.IP_WINDOW_MS && 
-        ipAttemptInfo.count >= RATE_LIMIT.IP_MAX_ATTEMPTS) {
-      return {
-        locked: true,
-        remainingTime: Math.ceil((RATE_LIMIT.IP_WINDOW_MS - (now - ipAttemptInfo.lastAttempt)) / 1000),
-        reason: 'ip_rate_limit'
-      };
-    }
-    
-    // No pre-login database reads here to avoid 400 due to RLS; rely on in-memory only
-    
-    return { 
-      locked: false 
-    };
-  } catch (error) {
-    console.error('Error checking account lock status:', error);
-    // Fail open in case of error to not block legitimate users
-    return { 
-      locked: false 
-    };
-  }
+// Get IP address (simplified for now)
+const getClientIP = (): string => {
+  // In a real app, this would come from request headers
+  return 'localhost';
 };
 
-export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  const { email, password } = credentials;
-  const emailLower = email.toLowerCase();
-  const ip = await getClientIP();
-  const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'server';
-  const now = Date.now();
-  
-  try {
-    // 1. Input validation
-    if (!email || !password) {
-      await logUserAction('system', 'login_attempt_missing_credentials', { 
-        ip, 
-        userAgent,
-        timestamp: new Date().toISOString()
-      });
-      throw new AuthenticationError('Email and password are required', 'MISSING_CREDENTIALS');
-    }
-    
-    // 2. Check rate limiting and account lock status
-    const lockStatus = await isAccountLocked(emailLower);
-    if (lockStatus.locked) {
-      const timeLeft = lockStatus.remainingTime ? Math.ceil(lockStatus.remainingTime / 60) : 1;
-      const message = `Account temporarily locked. Please try again in ${timeLeft} minute${timeLeft !== 1 ? 's' : ''}.`;
+export const authService = {
+  // Login user
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const emailLower = credentials.email.toLowerCase().trim();
+    const now = Date.now();
+    const ip = getClientIP();
+    const userAgent = navigator.userAgent;
+
+    try {
+      console.log('[AUTH] Attempting login for:', emailLower);
+
+      // Check if account is locked
+      const lockedAccount = failedAttempts.get(emailLower);
+      if (lockedAccount?.lockedUntil && now < lockedAccount.lockedUntil) {
+        const remainingTime = Math.ceil((lockedAccount.lockedUntil - now) / 60000);
+        throw new AuthenticationError(
+          `Account locked due to too many failed attempts. Please try again in ${remainingTime} minute${remainingTime !== 1 ? 's' : ''}.`,
+          'ACCOUNT_LOCKED'
+        );
+      }
+
+      // Check IP-based rate limiting
+      const ipAttempt = ipAttempts.get(ip);
+      if (ipAttempt && now - ipAttempt.lastAttempt < RATE_LIMIT.IP_WINDOW_MS && ipAttempt.count >= RATE_LIMIT.IP_MAX_ATTEMPTS) {
+        throw new AuthenticationError(
+          'Too many login attempts from this IP. Please try again later.',
+          'IP_RATE_LIMITED'
+        );
+      }
+
+      // Attempt to authenticate with Firebase
+      const firebaseUser = await FirebaseAuthService.signIn(credentials.email, credentials.password);
+
+      // Get user profile from Firestore
+      const userProfile = await FirebaseService.getById('users', firebaseUser.uid);
       
-      await logUserAction('system', 'login_attempt_locked', {
+      if (!userProfile) {
+        throw new AuthenticationError('User profile not found', 'PROFILE_NOT_FOUND');
+      }
+
+      // Clear failed attempts on successful login
+      failedAttempts.delete(emailLower);
+
+      // Log successful login
+      await logUserAction(firebaseUser.uid, 'login_success', {
         email: emailLower,
         ip,
         userAgent,
-        reason: lockStatus.reason || 'account_locked',
-        remainingTime: lockStatus.remainingTime,
         timestamp: new Date().toISOString()
       });
-      
-      throw new AuthenticationError(
-        message,
-        lockStatus.reason || 'ACCOUNT_LOCKED',
-        { 
-          lockedUntil: failedAttempts.get(emailLower)?.lockedUntil,
-          remainingTime: lockStatus.remainingTime
-        }
-      );
-    }
 
-    // 3. Check IP restrictions for admin/dev accounts
-    const isAdminEmail = emailLower.endsWith('@admin.com');
-    if (isAdminEmail) {
-      const isAllowed = await isAdminIPAllowed(ip);
-      if (!isAllowed) {
-        await logUserAction('system', 'admin_login_denied_ip', {
-          email: emailLower,
-          ip,
-          timestamp: new Date().toISOString(),
-          userAgent
-        });
-        
-        throw new AuthenticationError(
-          'Access denied. Your IP address is not authorized for admin access.',
-          'IP_RESTRICTED'
-        );
+      return {
+        success: true,
+        user: userProfile as User,
+        message: 'Login successful'
+      };
+
+    } catch (error) {
+      // Handle Firebase auth errors
+      if (error instanceof AuthenticationError) {
+        throw error;
       }
-    }
 
-    console.log('[AUTH] Attempting login for:', emailLower);
-    
-    // 4. Attempt to authenticate with Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: emailLower,
-      password: password.trim(),
-    });
-    
-    // 5. Handle failed login
-    if (error) {
       // Update failed attempts counter
       const current = failedAttempts.get(emailLower) || { 
         count: 0, 
@@ -413,48 +127,42 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
         lastAttempt: now, 
         lockedUntil: hitLock ? now + RATE_LIMIT.ACCOUNT_LOCKOUT_MS : null 
       });
-      
+
       // Update IP-based rate limiting
       const ipAttempt = ipAttempts.get(ip) || { count: 0, lastAttempt: 0 };
       ipAttempts.set(ip, {
         count: ipAttempt.count + 1,
         lastAttempt: now
       });
-      
+
       // Log the failed attempt
       await logUserAction('system', 'login_failed', {
         email: emailLower,
         ip,
         userAgent,
-        reason: error.message,
+        reason: error instanceof Error ? error.message : 'Unknown error',
         failedAttempts: failedAttemptsCount,
         accountLocked: hitLock,
         timestamp: new Date().toISOString()
       });
-      
+
       // Clean up old attempts
       cleanupOldAttempts(failedAttempts, RATE_LIMIT.ACCOUNT_LOCKOUT_MS);
       cleanupOldAttempts(ipAttempts, RATE_LIMIT.IP_WINDOW_MS);
-      
-      // Map error messages to user-friendly versions
+
+      // Map Firebase error messages to user-friendly versions
       const errorMessages: Record<string, string> = {
-        'Invalid login credentials': 'Invalid email or password',
-        'Email not confirmed': 'Please verify your email address before logging in',
-        'Invalid email or password': 'Invalid email or password',
-        'Email not found': 'No account found with this email address',
-        'Network request failed': 'Unable to connect to the server. Please check your internet connection',
-        '400': 'Invalid request. Please check your input and try again',
-        '401': 'Authentication failed. Please check your credentials',
-        '403': 'Access denied. You do not have permission to access this resource',
-        '429': 'Too many login attempts. Please try again later',
-        '500': 'Server error. Please try again later'
+        'auth/user-not-found': 'No account found with this email address',
+        'auth/wrong-password': 'Invalid email or password',
+        'auth/invalid-email': 'Invalid email address',
+        'auth/user-disabled': 'This account has been disabled',
+        'auth/too-many-requests': 'Too many failed attempts. Please try again later',
+        'auth/network-request-failed': 'Unable to connect to the server. Please check your internet connection'
       };
-      
-      // Get the most specific error message
-      const errorMessage = errorMessages[error.status] || 
-                         errorMessages[error.message] || 
-                         'An unexpected error occurred during login';
-      
+
+      const errorCode = error instanceof Error ? error.message : 'unknown';
+      const errorMessage = errorMessages[errorCode] || 'An unexpected error occurred during login';
+
       // Calculate remaining attempts
       const remainingAttempts = Math.max(0, RATE_LIMIT.MAX_ATTEMPTS - failedAttemptsCount);
       
@@ -466,7 +174,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
         const lockoutMinutes = Math.ceil(RATE_LIMIT.ACCOUNT_LOCKOUT_MS / 60000);
         finalMessage = `Account locked due to too many failed attempts. Please try again in ${lockoutMinutes} minute${lockoutMinutes !== 1 ? 's' : ''}.`;
       }
-      
+
       throw new AuthenticationError(
         finalMessage,
         hitLock ? 'ACCOUNT_LOCKED' : 'INVALID_CREDENTIALS',
@@ -477,429 +185,201 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
         }
       );
     }
-    
-    // 6. Handle successful login
-    const { user: authUser, session } = data;
-    
-    if (!authUser || !session) {
-      console.error('[AUTH] No user or session returned after successful login');
-      throw new AuthenticationError(
-        'Authentication succeeded but no user session was established',
-        'AUTH_SESSION_ERROR'
-      );
-    }
-    
-    // 7. Reset failed attempts on successful login
-    failedAttempts.delete(emailLower);
-    ipAttempts.delete(ip);
-    
-    // 8. Get or create user profile
+  },
+
+  // Register new user
+  async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      // First try to get existing profile
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .single();
-      
-      let userProfile: ProfileData;
-      
-      if (profileError || !profile) {
-        console.log('[AUTH] Profile not found, creating new one');
-        // Create a new profile with default values
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert([{
-            id: authUser.id,
-            email: authUser.email || '',
-            full_name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-            role: 'dev', // Default role for new users
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }])
-          .select()
-          .single();
-          
-        if (createError || !newProfile) {
-          console.error('[AUTH] Error creating profile:', createError);
-          throw new AuthenticationError(
-            'Failed to create user profile',
-            'PROFILE_CREATION_ERROR',
-            { error: createError }
-          );
-        }
-        
-        userProfile = newProfile;
-      } else {
-        userProfile = profile;
-      }
-      
-      // 9. Update last login info via RPC to avoid RLS issues
-      await supabase.rpc('update_last_login', {
-        p_user_id: authUser.id,
-        p_ip_address: ip
-      });
-      
-      // 10. Log successful login
-      await logUserAction(authUser.id, 'login_success', {
-        email: authUser.email,
-        ip,
-        userAgent,
-        timestamp: new Date().toISOString(),
-        sessionId: session.access_token
-      });
-      
-      console.log('[AUTH] Login successful:', {
-        userId: authUser.id,
-        email: authUser.email,
-        role: userProfile.role,
-        sessionExpiresAt: session.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'unknown'
-      });
-      
-      // 11. Return the authenticated user with the correct AuthResponse type
-      return {
-        user: createUserObject(authUser, userProfile),
-        token: session.access_token,
-        session: session
+      console.log('[AUTH] Attempting registration for:', data.email);
+
+      // Create user in Firebase Auth
+      const firebaseUser = await FirebaseAuthService.signUp(data.email, data.password, data.displayName);
+
+      // Create user profile in Firestore
+      const userProfile: User = {
+        id: firebaseUser.uid,
+        email: data.email.toLowerCase().trim(),
+        display_name: data.displayName.trim(),
+        role: data.role || 'technician',
+        avatar_url: undefined,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        is_active: true,
+        email_verified: false
       };
-      
-    } catch (profileError) {
-      console.error('[AUTH] Error handling user profile after login:', profileError);
-      // Even if profile handling fails, we can still return the auth user
-      // with minimal profile data from the auth provider
+
+      // Save to Firestore
+      await FirebaseService.create('users', userProfile);
+
+      // Log successful registration
+      await logUserAction(firebaseUser.uid, 'registration_success', {
+        email: data.email,
+        role: data.role,
+        timestamp: new Date().toISOString()
+      });
+
       return {
-        user: createUserObject(authUser, {
-          id: authUser.id,
-          email: authUser.email || '',
-          full_name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-          role: 'dev',
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }),
-        token: session.access_token,
-        session: session
+        success: true,
+        user: userProfile,
+        message: 'Registration successful. Please check your email to verify your account.'
       };
-    }
 
-    if (!data?.user) {
-      const errorMsg = 'No user data received from authentication service';
-      console.error(`[AUTH] ${errorMsg}`);
-      throw new Error(errorMsg);
-    }
+    } catch (error) {
+      console.error('[AUTH] Registration failed:', error);
 
-    // Ensure we have a valid session
-    if (!data.session) {
-      const errorMsg = 'No active session created during login';
-      console.error(`[AUTH] ${errorMsg}`);
-      throw new Error(errorMsg);
-    }
+      // Map Firebase error messages
+      const errorMessages: Record<string, string> = {
+        'auth/email-already-in-use': 'An account with this email already exists',
+        'auth/invalid-email': 'Invalid email address',
+        'auth/weak-password': 'Password is too weak. Please choose a stronger password',
+        'auth/operation-not-allowed': 'Registration is currently disabled',
+        'auth/network-request-failed': 'Unable to connect to the server. Please check your internet connection'
+      };
 
-    // Get or create user profile
-    let userProfile = null;
+      const errorCode = error instanceof Error ? error.message : 'unknown';
+      const errorMessage = errorMessages[errorCode] || 'Registration failed. Please try again.';
+
+      throw new AuthenticationError(errorMessage, 'REGISTRATION_FAILED');
+    }
+  },
+
+  // Logout user
+  async logout(): Promise<void> {
     try {
-      console.log('[AUTH] Fetching user profile for ID:', data.user.id);
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
-      
-      if (profileError) {
-        console.log('[AUTH] Profile not found, will create one');
-        // Create a default profile if it doesn't exist
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email,
-              full_name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
-              role: 'dev',
-              is_active: true
-            }
-          ])
-          .select()
-          .single();
-          
-        if (createError) {
-          console.error('[AUTH] Error creating profile:', createError);
-          throw new Error('Failed to create user profile');
-        }
-        
-        userProfile = newProfile;
-      } else {
-        userProfile = profile;
+      await FirebaseAuthService.signOut();
+      console.log('[AUTH] User logged out successfully');
+    } catch (error) {
+      console.error('[AUTH] Logout failed:', error);
+      throw new AuthenticationError('Logout failed', 'LOGOUT_FAILED');
+    }
+  },
+
+  // Get current user
+  async getCurrentUser(): Promise<User | null> {
+    try {
+      const currentUser = FirebaseAuthService.getCurrentUser();
+      if (!currentUser) {
+        return null;
       }
-      
-      console.log('[AUTH] User profile:', { 
-        id: userProfile?.id,
-        email: userProfile?.email,
-        role: userProfile?.role 
+
+      const userProfile = await FirebaseService.getById('users', currentUser.uid);
+      return userProfile as User;
+    } catch (error) {
+      console.error('[AUTH] Failed to get current user:', error);
+      return null;
+    }
+  },
+
+  // Update user profile
+  async updateProfile(userId: string, updates: Partial<User>): Promise<void> {
+    try {
+      await FirebaseService.update('users', userId, {
+        ...updates,
+        updated_at: new Date().toISOString()
+      });
+
+      // Log profile update
+      await logUserAction(userId, 'profile_updated', {
+        updates: Object.keys(updates),
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error('[AUTH] Error handling user profile:', error);
-      // Continue with minimal user data if profile handling fails
+      console.error('[AUTH] Failed to update profile:', error);
+      throw new AuthenticationError('Failed to update profile', 'PROFILE_UPDATE_FAILED');
     }
+  },
 
-    // Create user object with available data
-    const user = createUserObject(data.user, {
-      id: data.user.id,
-      email: data.user.email || '',
-      full_name: userProfile?.full_name || data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
-      role: userProfile?.role || data.user.user_metadata?.role || 'dev',
-      department: userProfile?.department || data.user.user_metadata?.department || '',
-      employee_id: userProfile?.employee_id || data.user.user_metadata?.employee_id || '',
-      is_active: userProfile?.is_active ?? true,
-      created_at: userProfile?.created_at || data.user.created_at || new Date().toISOString(),
-      updated_at: userProfile?.updated_at,
-      avatar: userProfile?.avatar || data.user.user_metadata?.avatar || undefined,
-    });
+  // Reset password
+  async resetPassword(email: string): Promise<void> {
+    try {
+      await FirebaseAuthService.resetPassword(email);
+      console.log('[AUTH] Password reset email sent');
+    } catch (error) {
+      console.error('[AUTH] Password reset failed:', error);
+      throw new AuthenticationError('Failed to send password reset email', 'PASSWORD_RESET_FAILED');
+    }
+  },
 
-    console.log('[AUTH] Login successful, returning user:', { 
-      id: user.id, 
-      email: user.email,
-      role: user.role 
+  // Verify email
+  async verifyEmail(): Promise<void> {
+    try {
+      const currentUser = FirebaseAuthService.getCurrentUser();
+      if (!currentUser) {
+        throw new AuthenticationError('No user logged in', 'NO_USER');
+      }
+
+      // Firebase automatically sends verification email on signup
+      // This function can be used to resend if needed
+      console.log('[AUTH] Email verification handled by Firebase');
+    } catch (error) {
+      console.error('[AUTH] Email verification failed:', error);
+      throw new AuthenticationError('Email verification failed', 'EMAIL_VERIFICATION_FAILED');
+    }
+  },
+
+  // Check if user is authenticated
+  async isAuthenticated(): Promise<boolean> {
+    try {
+      const currentUser = FirebaseAuthService.getCurrentUser();
+      return !!currentUser;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  // Get user by ID
+  async getUserById(userId: string): Promise<User | null> {
+    try {
+      const userProfile = await FirebaseService.getById('users', userId);
+      return userProfile as User;
+    } catch (error) {
+      console.error('[AUTH] Failed to get user by ID:', error);
+      return null;
+    }
+  },
+
+  // Get all users (admin only)
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const users = await FirebaseService.query('users');
+      return users as User[];
+    } catch (error) {
+      console.error('[AUTH] Failed to get all users:', error);
+      throw new AuthenticationError('Failed to get users', 'USERS_FETCH_FAILED');
+    }
+  },
+
+  // Delete user (admin only)
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      await FirebaseService.delete('users', userId);
+      
+      // Log user deletion
+      await logUserAction('system', 'user_deleted', {
+        deletedUserId: userId,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('[AUTH] Failed to delete user:', error);
+      throw new AuthenticationError('Failed to delete user', 'USER_DELETION_FAILED');
+    }
+  },
+
+  // Set up auth state change listener
+  onAuthStateChange(callback: (event: string, session: any) => void) {
+    const unsubscribe = FirebaseAuthService.onAuthStateChange((user) => {
+      if (user) {
+        callback('SIGNED_IN', { user });
+      } else {
+        callback('SIGNED_OUT', null);
+      }
     });
 
     return {
-      user,
-      token: data.session.access_token,
-      session: data.session
-    };
-  } catch (error) {
-    console.error('Login error:', error);
-    throw error instanceof Error 
-      ? error 
-      : new Error('An error occurred during login');
-  }
-};
-
-export const register = async (userData: RegisterData): Promise<{ success: boolean; error?: string }> => {
-  // Input validation
-  if (!userData.email || !userData.password) {
-    return { success: false, error: 'Email and password are required' };
-  }
-  
-  // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(userData.email)) {
-    return { success: false, error: 'Please enter a valid email address' };
-  }
-  
-  // Password strength validation
-  if (userData.password.length < 8) {
-    return { 
-      success: false, 
-      error: 'Password must be at least 8 characters long' 
-    };
-  }
-  const { email, password, name, role, department, employee_id } = userData;
-  
-  // Standardize on 'dev' for admin/developer access
-  const roleString = role as string;
-  const normalizedRole = (roleString === 'admin') ? 'dev' : role as UserRole;
-  
-  // Validate the role against the database enum
-  const validRoles = [
-    'dev',
-    'manager',
-    'deputy_manager',
-    'engineer',
-    'assistant_engineer',
-    'master_technician',
-    'technician'
-  ];
-
-  if (!validRoles.includes(normalizedRole)) {
-    return { 
-      success: false, 
-      error: `Invalid role. Must be one of: ${validRoles.join(', ')}` 
-    };
-  }
-
-  try {
-    // Ensure only a dev can register new users
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) {
-      return { success: false, error: 'Not authenticated' };
-    }
-    const { data: inviterProfile, error: inviterError } = await supabase
-      .from('profiles')
-      .select('id, role')
-      .eq('id', authUser.id)
-      .single();
-    if (inviterError || !inviterProfile) {
-      return { success: false, error: 'Unable to verify inviter permissions' };
-    }
-    if (inviterProfile.role !== 'dev') {
-      return { success: false, error: 'Only developers can create new users' };
-    }
-
-    // First create the auth user
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          name: name.trim(),
-          full_name: name.trim(),
-          email: email.trim().toLowerCase(),
-          role: normalizedRole,
-          department: department?.trim(),
-          employee_id: employee_id?.trim(),
-          invited_by: inviterProfile.id,
-          is_self_signup: false,
-        },
-      },
-    });
-    
-    // Send email verification
-    if (data.user && !data.user.email_confirmed_at) {
-      const { error: verifyError } = await supabase.auth.resend({
-        type: 'signup',
-        email: data.user.email!,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
-      });
-      
-      if (verifyError) {
-        console.error('Error sending verification email:', verifyError);
-      }
-    }
-
-    if (error) throw error;
-    return { success: true };
-  } catch (error: any) {
-    console.error('Registration error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Failed to register user' 
+      subscription: { unsubscribe }
     };
   }
 };
 
-export const logout = async (): Promise<void> => {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error('Error during logout:', error);
-    throw error;
-  }
-};
-
-// Password reset
-export const resetPassword = async (email: string): Promise<void> => {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
-  });
-  
-  if (error) {
-    console.error('Error sending password reset email:', error);
-    throw error;
-  }
-};
-
-// Update user profile
-export const updateProfile = async (updates: Partial<User> & { avatarFile?: File }): Promise<User> => {
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  
-  if (!authUser) {
-    throw new Error('User not authenticated');
-  }
-
-  // Handle avatar file upload if provided
-  if (updates.avatarFile) {
-    try {
-      const publicUrl = await uploadAvatar(updates.avatarFile, authUser.id);
-      // Update the avatar URL in the updates object
-      updates.avatar = publicUrl;
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      throw new Error('Failed to upload avatar');
-    }
-  }
-
-  // If updating role, standardize 'admin' to 'dev' and validate against database enum
-  if (updates.role) {
-    // Convert role to string for comparison
-    const roleString = updates.role as string;
-    
-    // Standardize 'admin' to 'dev'
-    if (roleString === 'admin') {
-      updates.role = 'dev' as UserRole;
-    }
-    
-    const validRoles: UserRole[] = [
-      'dev',
-      'manager',
-      'deputy_manager',
-      'engineer',
-      'assistant_engineer',
-      'master_technician',
-      'technician'
-    ];
-
-    if (!validRoles.includes(updates.role as UserRole)) {
-      throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
-    }
-  }
-
-  try {
-    // Remove the avatarFile from updates before saving to the database
-    const { avatarFile, ...profileUpdates } = updates;
-    
-    // Map interface fields to database fields
-    const dbUpdates: any = {
-      updated_at: new Date().toISOString(),
-    };
-    
-    // Map name to full_name for database
-    if (profileUpdates.name !== undefined) {
-      dbUpdates.full_name = profileUpdates.name;
-    }
-    
-    // Map other fields directly
-    if (profileUpdates.email !== undefined) dbUpdates.email = profileUpdates.email;
-    if (profileUpdates.role !== undefined) dbUpdates.role = profileUpdates.role;
-    if (profileUpdates.department !== undefined) dbUpdates.department = profileUpdates.department;
-    if (profileUpdates.employee_id !== undefined) dbUpdates.employee_id = profileUpdates.employee_id;
-    if (profileUpdates.avatar !== undefined) dbUpdates.avatar = profileUpdates.avatar;
-    
-    const { data, error } = await supabase
-      .from('profiles')
-      .update(dbUpdates)
-      .eq('id', authUser.id)
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    // Get the updated user data
-    const updatedUser = await getCurrentUser();
-    if (!updatedUser) {
-      throw new Error('Failed to fetch updated user data');
-    }
-
-    return updatedUser;
-  } catch (error: any) {
-    console.error('Error updating profile:', error);
-    throw new Error(error.message || 'Failed to update profile');
-  }
-};
-
-// Subscribe to auth state changes
-export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
-  const { data } = supabase.auth.onAuthStateChange((event, session) => {
-    try {
-      console.log(`[AUTH] Auth state changed: ${event}`);
-      callback(event, session);
-    } catch (error) {
-      console.error('[AUTH] Error in auth state change callback:', error);
-    }
-  });
-  
-  return { data };
-};
+export default authService;
