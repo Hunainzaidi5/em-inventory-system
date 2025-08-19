@@ -57,7 +57,7 @@ export const userService = {
   // Update user
   async updateUser(userId: string, updates: Partial<User>): Promise<void> {
     try {
-      await FirebaseService.update('users', userId, {
+      await FirebaseService.upsert('users', userId, {
         ...updates,
         updated_at: new Date().toISOString()
       });

@@ -82,7 +82,23 @@ export const authService = {
       const firebaseUser = await FirebaseAuthService.signIn(credentials.email, credentials.password);
 
       // Get user profile from Firestore
-      const userProfile = await FirebaseService.getById('users', firebaseUser.uid);
+      let userProfile = await FirebaseService.getById('users', firebaseUser.uid);
+      if (!userProfile) {
+        // Create a minimal profile on first login
+        const minimalProfile: Partial<User> = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email?.toLowerCase() || '',
+          display_name: firebaseUser.displayName || firebaseUser.email || 'User',
+          role: 'technician',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          last_login: new Date().toISOString(),
+          is_active: true,
+          email_verified: !!firebaseUser.emailVerified,
+        } as Partial<User>;
+        await FirebaseService.upsert('users', firebaseUser.uid, minimalProfile);
+        userProfile = await FirebaseService.getById('users', firebaseUser.uid);
+      }
       
       if (!userProfile) {
         throw new AuthenticationError('User profile not found', 'PROFILE_NOT_FOUND');
@@ -275,7 +291,7 @@ export const authService = {
   // Update user profile
   async updateProfile(userId: string, updates: Partial<User>): Promise<void> {
     try {
-      await FirebaseService.update('users', userId, {
+      await FirebaseService.upsert('users', userId, {
         ...updates,
         updated_at: new Date().toISOString()
       });

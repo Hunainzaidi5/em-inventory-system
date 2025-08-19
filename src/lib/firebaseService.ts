@@ -13,7 +13,8 @@ import {
   startAfter,
   QueryConstraint,
   DocumentData,
-  QueryDocumentSnapshot
+  QueryDocumentSnapshot,
+  setDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -32,6 +33,20 @@ export class FirebaseService {
       return docRef.id;
     } catch (error) {
       console.error('Error creating document:', error);
+      throw error;
+    }
+  }
+
+  static async upsert<T extends DocumentData>(
+    collectionName: string,
+    id: string,
+    data: Partial<T>
+  ): Promise<void> {
+    try {
+      const docRef = doc(db, collectionName, id);
+      await setDoc(docRef, { ...data, updatedAt: new Date() }, { merge: true });
+    } catch (error) {
+      console.error('Error upserting document:', error);
       throw error;
     }
   }

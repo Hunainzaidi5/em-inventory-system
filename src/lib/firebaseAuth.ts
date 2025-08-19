@@ -139,7 +139,7 @@ export class FirebaseAuthService {
   // Update last login timestamp
   private static async updateLastLogin(uid: string): Promise<void> {
     try {
-      await FirebaseService.update('users', uid, {
+      await FirebaseService.upsert('users', uid, {
         lastLogin: new Date()
       });
     } catch (error) {
