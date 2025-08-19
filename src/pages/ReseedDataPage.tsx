@@ -188,13 +188,9 @@ export default function ReseedDataPage() {
           for (const item of batch) {
             await FirebaseService.create('spareParts', item);
           }
-          if (error) {
-            setLog((l) => [...l, `✗ ${file} batch ${i/BATCH_SIZE + 1}: ${error.message}`]);
-          } else {
-            fileInserted += batch.length;
-            totalInserted += batch.length;
-            setLog((l) => [...l, `✓ ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
-          }
+          fileInserted += batch.length;
+          totalInserted += batch.length;
+          setLog((l) => [...l, `✓ ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
         }
         setLog((l) => [...l, `Finished ${file}: inserted ${fileInserted}`]);
         setSummary((s) => ({ inserted: totalInserted, files: s.files + 1 }));

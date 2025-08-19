@@ -92,10 +92,10 @@ export function AppSidebar({ className }: AppSidebarProps) {
   // Debug: Log user data when it changes
   useEffect(() => {
     console.log('User in AppSidebar:', user);
-    if (user?.avatar) {
-      console.log('Avatar URL:', user.avatar);
+    if (user?.avatar_url) {
+      console.log('Avatar URL:', user.avatar_url);
       // Test if the avatar URL is accessible
-      fetch(user.avatar, { method: 'HEAD' })
+      fetch(user.avatar_url, { method: 'HEAD' })
         .then(res => {
           console.log('Avatar URL status:', res.status);
           if (res.ok) {
@@ -140,8 +140,8 @@ export function AppSidebar({ className }: AppSidebarProps) {
     e.stopPropagation();
     try {
       // Add a timestamp to the avatar URL to force a refresh
-      const avatarWithTimestamp = user?.avatar ? 
-        `${user.avatar}${user.avatar.includes('?') ? '&' : '?'}t=${Date.now()}` : 
+      const avatarWithTimestamp = user?.avatar_url ? 
+        `${user.avatar_url}${user.avatar_url.includes('?') ? '&' : '?'}t=${Date.now()}` : 
         '';
       
       // Update the avatar URL in the user object
@@ -289,11 +289,11 @@ export function AppSidebar({ className }: AppSidebarProps) {
                 <div className="flex items-center space-x-2 w-full">
                   <div className="relative">
                     <Avatar className="h-8 w-8 group-hover:opacity-80 transition-opacity">
-                      {user.avatar ? (
+                      {user.avatar_url ? (
                         <>
                           <AvatarImage 
-                            src={getAvatarUrl(user.id, user.avatar)}
-                            alt={user.name}
+                            src={getAvatarUrl(user.id, user.avatar_url)}
+                            alt={user.display_name || user.email}
                             className="object-cover"
                             onError={(e) => {
                               console.error('Error loading avatar in sidebar:', e);
@@ -301,13 +301,15 @@ export function AppSidebar({ className }: AppSidebarProps) {
                               target.style.display = 'none';
                             }}
                           />
-                          <AvatarFallback className="text-xs bg-muted">
-                            {user.name.split(' ').map(n => n[0]).join('')}
+                          <AvatarFallback className="bg-sidebar-accent/20 text-sidebar-foreground">
+                            {user.display_name ? user.display_name.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase() || 'U'}
                           </AvatarFallback>
                         </>
                       ) : (
                         <AvatarFallback className="text-xs bg-muted">
-                          {user.name.split(' ').map(n => n[0]).join('')}
+                          {user.display_name ? 
+                            user.display_name.split(' ').map(n => n[0]).join('') : 
+                            user.email?.charAt(0).toUpperCase() || 'U'}
                         </AvatarFallback>
                       )}
                     </Avatar>
@@ -321,11 +323,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
                     </button>
                   </div>
                   {!collapsed && (
-                    <div className="text-left min-w-0 flex-1">
-                      <div className="text-sm font-medium truncate">{user.name}</div>
-                      <div className="text-xs text-muted-foreground truncate capitalize">
-                        {user.role.replace(/_/g, ' ')}
-                      </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium leading-none">{user.display_name || 'User'}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
                   )}
                   {!collapsed && <ChevronDown className="ml-auto h-4 w-4 opacity-50 shrink-0" />}

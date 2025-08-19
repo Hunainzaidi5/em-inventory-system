@@ -1,20 +1,52 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Package, Save, AlertCircle } from "lucide-react";
-import { getRequisitions, createRequisition, updateRequisition, deleteRequisition, subscribeToRequisitions, Requisition as ServiceRequisition } from "@/services/requisitionService";
-import { useToast } from "@/components/ui/use-toast";
-import { adjustQuantityForRequisition } from '@/services/itemQuantityService';
-import { getSpareParts } from '@/services/spareService';
+import requisitionService from '@/services/requisitionService';
+import type { Requisition as ServiceRequisition } from '@/services/requisitionService';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
-type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
- type StatusType = 'completed' | 'pending' | 'overdue' | 'cancelled';
+type StatusType = 'pending' | 'completed' | 'overdue' | 'cancelled' | 'approved' | 'rejected';
+type ServiceStatusType = 'pending' | 'completed' | 'approved' | 'rejected';
+type PriorityType = 'low' | 'medium' | 'high' | 'urgent';
 
-type Requisition = ServiceRequisition;
+// Helper function to map between UI and service status types
+const mapToServiceStatus = (status: StatusType): ServiceStatusType => {
+  if (status === 'overdue' || status === 'cancelled') {
+    return 'pending'; // or 'rejected' depending on your business logic
+  }
+  return status as ServiceStatusType;
+};
+import { useToast } from "@/components/ui/use-toast";
+import itemQuantityService from '@/services/itemQuantityService';
+import spareService from '@/services/spareService';
+
+type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
+
+interface Requisition extends Omit<ServiceRequisition, 'status' | 'type' | 'item_name' | 'item_type' | 'issued_to' | 'reference_number' | 'created_at' | 'updated_at' | 'created_by' | 'updated_by'> {
+  id: string;
+  status: StatusType;
+  requisitionType: RequisitionType;
+  itemName: string;
+  itemType: ItemType;
+  item_id: string;
+  quantity: number;
+  issuedTo: string;
+  user_id: string;
+  referenceNumber: string;
+  department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
+  location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
+  priority: PriorityType;
+  reason: string;
+  notes?: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+  updated_by?: string;
+}
 
 interface Filters {
   requisitionType: RequisitionType | 'all';
   itemType: ItemType | 'all';
-  status: 'completed' | 'pending' | 'overdue' | 'cancelled' | 'all';
+  status: StatusType | 'all';
   location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
   dateRange: {
@@ -23,16 +55,21 @@ interface Filters {
   };
 }
 
-interface RequisitionFormData {
+interface RequisitionFormState {
   requisitionType: RequisitionType;
   itemType: ItemType;
   itemName: string;
+  item_id: string;
   quantity: number;
   issuedTo: string;
+  user_id: string;
   location: 'Depot' | 'Station 1' | 'Station 2' | 'Station 3' | 'Station 4' | 'Station 5' | 'Station 6' | 'Station 7' | 'Station 8' | 'Station 9' | 'Station 10' | 'Station 11' | 'Station 12' | 'Station 13' | 'Station 14' | 'Station 15' | 'Station 16' | 'Station 17' | 'Station 18' | 'Station 19' | 'Station 20' | 'Station 21' | 'Station 22' | 'Station 23' | 'Station 24' | 'Station 25' | 'Station 26' | 'Stabling Yard' | 'all';
   department: 'em_systems' | 'em_track' | 'em_power' | 'em_signalling' | 'em_communication' | 'em_third_rail' | 'em_safety_quality' | 'all';
-  status: 'completed' | 'pending' | 'overdue' | 'cancelled';
-  notes: string;
+  status: StatusType;
+  referenceNumber: string;
+  reason: string;
+  notes?: string;
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
 }
 
 interface FormErrors {
@@ -45,7 +82,7 @@ interface FormErrors {
 
 const RequisitionPage = () => {
   const { toast } = useToast();
-  const [requisition, setRequisition] = useState<Requisition[]>([]);
+  const [requisitions, setRequisitions] = useState<Requisition[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -111,26 +148,60 @@ const RequisitionPage = () => {
     dateRange: { start: '', end: '' }
   } as Filters);
 
-  const [formData, setFormData] = useState<RequisitionFormData>({
+  // Initialize form state with default values
+  const initialFormState: RequisitionFormState = {
     requisitionType: 'issue',
     itemType: 'inventory',
     itemName: '',
+    item_id: '',
     quantity: 1,
     issuedTo: '',
+    user_id: 'current-user-id', // TODO: Replace with actual user ID from auth context
     location: 'Depot',
     department: 'em_systems',
     status: 'pending',
-    notes: ''
-  } as RequisitionFormData);
+    referenceNumber: `REQ-${Date.now()}`,
+    reason: '',
+    notes: '',
+    priority: 'medium'
+  };
+
+  const [formState, setFormState] = useState<RequisitionFormState>(initialFormState);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    
+    // Handle numeric fields
+    if (type === 'number') {
+      setFormState(prev => ({
+        ...prev,
+        [name]: Number(value)
+      }));
+    } else {
+      setFormState(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+    
+    // Clear error for this field when user starts typing
+    if (formErrors[name as keyof FormErrors]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
 
   // Filter requisition based on search and filters
   const filteredRequisition = useMemo(() => {
-    return requisition.filter(tx => {
+    return requisitions.filter(tx => {
       const matchesSearch = 
         tx.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.issuedTo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.referenceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tx.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tx.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         tx.department.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesType = filters.requisitionType === 'all' || tx.requisitionType === filters.requisitionType;
@@ -141,7 +212,7 @@ const RequisitionPage = () => {
 
       let matchesDateRange = true;
       if (filters.dateRange.start || filters.dateRange.end) {
-        const txDate = new Date(tx.createdAt);
+        const txDate = new Date(tx.created_at || "");
         if (filters.dateRange.start) {
           matchesDateRange = matchesDateRange && txDate >= new Date(filters.dateRange.start);
         }
@@ -152,27 +223,27 @@ const RequisitionPage = () => {
 
       return matchesSearch && matchesType && matchesItemType && matchesStatus && matchesLocation && matchesDepartment && matchesDateRange;
     });
-  }, [requisition, searchTerm, filters]);
+  }, [requisitions, searchTerm, filters]);
 
   // Statistics
   const stats = useMemo(() => {
     return {
-      total: requisition.length,
-      completed: requisition.filter(t => t.status === 'completed').length,
-      pending: requisition.filter(t => t.status === 'pending').length,
-      overdue: requisition.filter(t => t.status === 'overdue').length
+      total: requisitions.length,
+      completed: requisitions.filter(t => t.status === 'completed').length,
+      pending: requisitions.filter(t => t.status === 'pending').length,
+      overdue: requisitions.filter(t => t.status === 'overdue').length
     };
-  }, [requisition]);
+  }, [requisitions]);
 
   // Generate reference number
   const generateReferenceNumber = () => {
     const year = new Date().getFullYear();
-    const nextNumber = String(requisition.length + 1).padStart(3, '0');
+    const nextNumber = String(requisitions.length + 1).padStart(3, '0');
     return `TRX-${year}-${nextNumber}`;
   };
 
   // Validate form
-  const validateForm = (data: RequisitionFormData): FormErrors => {
+  const validateForm = (data: RequisitionFormState): FormErrors => {
     const errors: FormErrors = {};
     
     if (!data.itemName.trim()) {
@@ -209,242 +280,193 @@ const RequisitionPage = () => {
   const loadItemsForType = useCallback(async (type: ItemType) => {
     try {
       if (type === 'spare_management') {
-        const parts = await getSpareParts();
-        const opts = (parts || []).map(p => ({ name: p.name, quantity: Number(p.quantity) || 0 }));
-        setItemOptions(opts);
+        const parts = await spareService.getAllSpareParts();
+        const options = (parts || []).map((p: any) => ({
+          name: p?.name ?? 'Unknown',
+          quantity: Number(p?.quantity ?? 0),
+        }));
+        setItemOptions(options);
         return;
       }
+
       const storageKeyMap: Record<ItemType, string> = {
         inventory: 'inventoryItems',
         tool: 'toolsItems',
         general_tools: 'generalToolsItems',
         ppe: 'ppeItems',
         stationery: 'stationeryItems',
-        faulty_return: 'faultyReturns',
-        spare_management: ''
-      } as const;
-      const key = storageKeyMap[type];
-      if (!key) { setItemOptions([]); return; }
-      const raw = localStorage.getItem(key);
-      if (!raw) { setItemOptions([]); return; }
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) { setItemOptions([]); return; }
-      const opts = arr.map((it: any) => ({ name: String(it.itemName || it.name || '').trim(), quantity: Number(it.quantity) || 0 }))
-        .filter((o: any) => o.name);
-      setItemOptions(opts);
-    } catch (e) {
-      console.error('[Requisition] Failed loading items for type', type, e);
-      setItemOptions([]);
-    }
-  }, []);
+        faulty_return: 'faultyReturnItems',
+        spare_management: 'sparePartsItems',
+      };
 
-  // Handle form submission
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors = validateForm(formData);
-    setFormErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-
-    setIsSaving(true);
-    try {
-      if (isEditMode && selectedRequisition) {
-        await updateRequisition(selectedRequisition.id, {
-          requisitionType: formData.requisitionType,
-          itemType: formData.itemType,
-          itemName: formData.itemName,
-          quantity: formData.quantity,
-          issuedTo: formData.issuedTo,
-          department: formData.department,
-          location: formData.location,
-          // status excluded: service type does not accept it
-          notes: formData.notes,
-        });
-      } else {
-        await createRequisition({
-          requisitionType: formData.requisitionType,
-          itemType: formData.itemType,
-          itemName: formData.itemName,
-          quantity: formData.quantity,
-          issuedTo: formData.issuedTo,
-          department: formData.department,
-          location: formData.location,
-          // status excluded: service sets default
-          notes: formData.notes,
-        });
-        // Adjust item quantity according to requisition
-        await adjustQuantityForRequisition({
-          itemType: formData.itemType as any,
-          itemName: formData.itemName,
-          requisitionType: formData.requisitionType as any,
-          quantity: formData.quantity,
-        });
-      }
-
-      await fetchRequisitions();
-      handleCloseForm();
+      const storageKey = storageKeyMap[type];
+      const raw = typeof window !== 'undefined' ? window.localStorage.getItem(storageKey) : null;
+      const parsed: any[] = raw ? JSON.parse(raw) : [];
+      const options = parsed.map((item: any) => ({
+        name: item?.name ?? item?.itemName ?? item?.title ?? 'Unknown',
+        quantity: Number(item?.quantity ?? item?.available ?? item?.stock ?? 0),
+      }));
+      setItemOptions(options);
     } catch (error) {
-      console.error('Error saving requisition:', error);
-      toast({ title: 'Error', description: 'Failed to save requisition', variant: 'destructive' });
+      console.error('Failed to load items for type:', type, error);
+      setItemOptions([]);
     } finally {
       setIsSaving(false);
     }
-  };
-
-  // Handle opening form for new requisition
-  const handleNewRequisition = () => {
-    setIsEditMode(false);
-    setSelectedRequisition(null);
-    setFormData({
-      requisitionType: 'issue',
-      itemType: 'inventory',
-      itemName: '',
-      quantity: 1,
-      issuedTo: '',
-      department: 'all',
-      location: 'all',
-      status: 'pending',
-      notes: ''
-    } as RequisitionFormData);
-    setFormErrors({});
-    setShowRequisitionForm(true);
-  };
-
-  // Handle opening form for editing
-  const handleEditRequisition = (requisition: Requisition) => {
-    setIsEditMode(true);
-    setSelectedRequisition(requisition);
-    setFormData({
-      requisitionType: requisition.requisitionType,
-      itemType: requisition.itemType,
-      itemName: requisition.itemName,
-      quantity: requisition.quantity,
-      issuedTo: requisition.issuedTo,
-      department: requisition.department,
-      location: requisition.location,
-      status: requisition.status,
-      notes: requisition.notes || ''
-    });
-    setFormErrors({});
-    setShowRequisitionForm(true);
-  };
-
-  // Handle closing form
-  const handleCloseForm = () => {
-    setShowRequisitionForm(false);
-    setIsEditMode(false);
-    setSelectedRequisition(null);
-    setFormErrors({});
-    setIsSaving(false);
-  };
-
-  // Handle form field changes
-  const handleFormChange = (field: keyof RequisitionFormData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Clear error for this field when user starts typing
-    if (formErrors[field as keyof FormErrors]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [field]: undefined
-      }));
-    }
-
-    if (field === 'itemType') {
-      setAvailableQuantity(null);
-      setItemOptions([]);
-      setFormData(prev => ({ ...prev, itemName: '' }));
-      loadItemsForType(value as ItemType);
-    }
-
-    if (field === 'itemName') {
-      const opt = itemOptions.find(o => o.name.toLowerCase() === String(value).toLowerCase());
-      setAvailableQuantity(opt ? opt.quantity : null);
-    }
-  };
-
-  const handleDeleteRequisition = (id: string) => {
-    setRequisitionToDelete(id);
-    setShowDeleteDialog(true);
-  };
-
-  // Handle delete confirmation
-  const handleDeleteConfirm = async () => {
-    if (!requisitionToDelete) return;
-    
-    try {
-      await deleteRequisition(requisitionToDelete);
-      
-      // Refresh the data
-      await fetchRequisitions();
-      
-      setShowDeleteDialog(false);
-      setRequisitionToDelete(null);
-      
-      toast({
-        title: "Success",
-        description: "Requisition deleted successfully",
-      });
-    } catch (error) {
-      console.error('Error deleting requisition:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete requisition",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  // Fetch requisitions from Firebase
-  const fetchRequisitions = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await getRequisitions();
-      setRequisition(data);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch requisitions",
-        variant: "destructive",
-      });
-      console.error("Error fetching requisitions:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
-  
-  // Initial fetch
-  useEffect(() => {
-    fetchRequisitions();
-  }, [fetchRequisitions]);
-  
-  // Subscribe to real-time updates
-  useEffect(() => {
-    const subscription = subscribeToRequisitions((payload) => {
-      console.log('Requisition change:', payload);
-      fetchRequisitions();
-    });
-
-    return () => {
-      subscription();
-    };
-  }, [fetchRequisitions]);
-
-  // Initial load of item options and keep them in sync with local modules
-  useEffect(() => {
-    loadItemsForType(formData.itemType);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const handler = () => {
-      loadItemsForType(formData.itemType);
-    };
-    window.addEventListener('inventory-sync', handler as any);
-    return () => window.removeEventListener('inventory-sync', handler as any);
-  }, [formData.itemType, loadItemsForType]);
+// Handle delete confirmation
+const handleDeleteConfirm = async () => {
+  if (!selectedRequisition) return;
+  
+  try {
+    setIsSaving(true);
+    await requisitionService.deleteRequisition(selectedRequisition.id);
+    setShowDeleteDialog(false);
+    setSelectedRequisition(null);
+    toast({
+      title: 'Success',
+      description: 'Requisition deleted successfully',
+      variant: 'default',
+    });
+  } catch (error) {
+    console.error('Error deleting requisition:', error);
+    toast({
+      title: 'Error',
+      description: 'Failed to delete requisition',
+      variant: 'destructive',
+    });
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+// Handle form field changes
+const handleFormChange = (field: keyof RequisitionFormState, value: any) => {
+  setFormState(prev => ({
+    ...prev,
+    [field]: value
+  }));
+  
+  // Clear error for this field when user starts typing
+  if (formErrors[field as keyof FormErrors]) {
+    setFormErrors(prev => ({
+      ...prev,
+      [field]: undefined
+    }));
+  }
+
+  if (field === 'itemType') {
+    setAvailableQuantity(null);
+    setItemOptions([]);
+    setFormState(prev => ({ ...prev, itemName: '' }));
+    loadItemsForType(value as ItemType);
+  }
+
+  if (field === 'itemName') {
+    const opt = itemOptions.find(o => o.name.toLowerCase() === String(value).toLowerCase());
+    setAvailableQuantity(opt ? opt.quantity : null);
+  }
+};
+
+// Fetch requisitions from Firebase
+const fetchRequisitions = useCallback(async () => {
+  try {
+    setIsLoading(true);
+    const data: ServiceRequisition[] = await requisitionService.getAllRequisitions();
+    // Map the service requisitions to our local Requisition type
+    const mappedRequisitions: Requisition[] = (data || []).map((req: any) => ({
+      id: req.id,
+      status: req.status as StatusType,
+      requisitionType: req.type as RequisitionType,
+      itemName: req.item_name,
+      itemType: req.item_type as ItemType,
+      item_id: req.item_id,
+      quantity: Number(req.quantity ?? 0),
+      issuedTo: req.issued_to,
+      user_id: req.user_id,
+      referenceNumber: req.reference_number,
+      department: (req.department as any) || 'all',
+      location: (req.location as any) || 'all',
+      priority: (req.priority as PriorityType) ?? 'medium',
+      reason: req.reason ?? '',
+      notes: req.notes ?? '',
+      created_at: req.created_at,
+      updated_at: req.updated_at,
+      created_by: req.created_by,
+      updated_by: req.updated_by,
+      requested_at: req.requested_at,
+    }));
+    setRequisitions(mappedRequisitions);
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Failed to fetch requisitions",
+      variant: "destructive",
+    });
+    console.error("Error fetching requisitions:", error);
+  } finally {
+    setIsLoading(false);
+  }
+}, [toast]);
+
+// Initial fetch
+useEffect(() => {
+  fetchRequisitions();
+}, [fetchRequisitions]);
+
+// Subscribe to real-time updates
+useEffect(() => {
+  const maybeSubscriptionOrUnsub = requisitionService.subscribeToRequisitions((reqs: ServiceRequisition[]) => {
+    const mappedRequisitions: Requisition[] = (reqs || []).map((req: any) => ({
+      id: req.id,
+      status: req.status as StatusType,
+      requisitionType: req.type as RequisitionType,
+      itemName: req.item_name,
+      itemType: req.item_type as ItemType,
+      item_id: req.item_id,
+      quantity: Number(req.quantity ?? 0),
+      issuedTo: req.issued_to,
+      user_id: req.user_id,
+      referenceNumber: req.reference_number,
+      department: (req.department as any) || 'all',
+      location: (req.location as any) || 'all',
+      priority: (req.priority as PriorityType) ?? 'medium',
+      reason: req.reason ?? '',
+      notes: req.notes ?? '',
+      created_at: req.created_at,
+      updated_at: req.updated_at,
+      created_by: req.created_by,
+      updated_by: req.updated_by,
+      requested_at: req.requested_at,
+    }));
+    setRequisitions(mappedRequisitions);
+  });
+
+  return () => {
+    const maybe: any = maybeSubscriptionOrUnsub;
+    if (typeof maybe === 'function') {
+      maybe();
+    } else if (maybe && typeof maybe.unsubscribe === 'function') {
+      maybe.unsubscribe();
+    }
+  };
+}, []);
+
+// Initial load of item options and keep them in sync with local modules
+useEffect(() => {
+  const effectiveType = (formState.itemType as ItemType) || 'inventory';
+  loadItemsForType(effectiveType);
+}, [formState.itemType, loadItemsForType]);
+
+useEffect(() => {
+  const handler = () => {
+    const effectiveType = (formState.itemType as ItemType) || 'inventory';
+    loadItemsForType(effectiveType);
+  };
+  window.addEventListener('inventory-sync', handler as any);
+  return () => window.removeEventListener('inventory-sync', handler as any);
+}, [formState.itemType, loadItemsForType]);
 
   const exportToCSV = () => {
     const headers = ['Reference', 'Item', 'Type', 'Quantity', 'Issued To', 'Location', 'Department', 'Date', 'Status', 'Notes'];
@@ -458,7 +480,7 @@ const RequisitionPage = () => {
         `"${tx.issuedTo}"`,
         `"${tx.location}"`,
         `"${tx.department}"`,
-        new Date(tx.createdAt).toLocaleDateString(),
+        new Date(tx.created_at || "").toLocaleDateString(),
         tx.status,
         `"${tx.notes || ''}"`
       ].join(','))
@@ -485,7 +507,7 @@ const RequisitionPage = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const styles = {
+    const styles: Record<string, string> = {
       completed: 'bg-green-100 text-green-800 border-green-200',
       pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       overdue: 'bg-red-100 text-red-800 border-red-200'
@@ -499,7 +521,7 @@ const RequisitionPage = () => {
   };
 
   const getTypeBadge = (type: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       inventory: 'bg-blue-100 text-blue-800',
       tool: 'bg-purple-100 text-purple-800',
       ppe: 'bg-orange-100 text-orange-800',
@@ -515,7 +537,7 @@ const RequisitionPage = () => {
   };
 
   const getRequisitionTypeBadge = (type: RequisitionType) => {
-    const colors = {
+    const colors: Record<RequisitionType, string> = {
       issue: 'bg-green-100 text-green-800',
       return: 'bg-blue-100 text-blue-800',
       consume: 'bg-orange-100 text-orange-800'
@@ -526,6 +548,94 @@ const RequisitionPage = () => {
         {type.charAt(0).toUpperCase() + type.slice(1)}
       </span>
     );
+  };
+
+  const handleNewRequisition = () => {
+    setIsEditMode(false);
+    setFormErrors({});
+    setFormState({ ...initialFormState, referenceNumber: `REQ-${Date.now()}` });
+    setShowRequisitionForm(true);
+  };
+
+  const handleEditRequisition = (req: Requisition) => {
+    setIsEditMode(true);
+    setFormErrors({});
+    setFormState({
+      requisitionType: req.requisitionType,
+      itemType: req.itemType,
+      itemName: req.itemName,
+      item_id: req.item_id,
+      quantity: req.quantity,
+      issuedTo: req.issuedTo,
+      user_id: req.user_id,
+      location: req.location,
+      department: req.department,
+      status: req.status,
+      referenceNumber: req.referenceNumber,
+      reason: req.reason,
+      notes: req.notes,
+      priority: req.priority,
+    });
+    setShowRequisitionForm(true);
+  };
+
+  const handleDeleteRequisition = (id: string) => {
+    setRequisitionToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleCloseForm = () => {
+    if (isSaving) return;
+    setShowRequisitionForm(false);
+    setIsEditMode(false);
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formState) return;
+
+    const data = formState as RequisitionFormState;
+    const errors = validateForm(data);
+    setFormErrors(errors);
+    if (Object.values(errors).some(Boolean)) return;
+
+    setIsSaving(true);
+    try {
+      const payload: any = {
+        type: data.requisitionType,
+        item_type: data.itemType,
+        item_name: data.itemName,
+        item_id: data.item_id,
+        quantity: data.quantity,
+        issued_to: data.issuedTo,
+        user_id: data.user_id,
+        reference_number: data.referenceNumber,
+        department: data.department,
+        location: data.location,
+        status: mapToServiceStatus(data.status),
+        notes: data.notes ?? '',
+        priority: data.priority ?? 'medium',
+        reason: data.reason ?? '',
+      };
+
+      if (isEditMode && selectedRequisition) {
+        await requisitionService.updateRequisition(selectedRequisition.id, payload);
+        toast({ title: 'Updated', description: 'Requisition updated', variant: 'default' });
+      } else {
+        await requisitionService.createRequisition(payload);
+        toast({ title: 'Created', description: 'Requisition created', variant: 'default' });
+      }
+
+      setShowRequisitionForm(false);
+      setIsEditMode(false);
+      setFormState(initialFormState);
+      fetchRequisitions();
+    } catch (error) {
+      console.error('Error saving requisition:', error);
+      toast({ title: 'Error', description: 'Failed to save requisition', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -833,7 +943,7 @@ const RequisitionPage = () => {
                       {departmentOptions.find(d => d.value === txn.department)?.label || txn.department}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(txn.createdAt).toLocaleDateString('en-US', { 
+                      {new Date(txn.created_at).toLocaleDateString('en-US', { 
                         year: 'numeric', 
                         month: 'short', 
                         day: 'numeric' 
@@ -901,7 +1011,7 @@ const RequisitionPage = () => {
                     Requisition Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.requisitionType}
+                    value={formState.requisitionType}
                     onChange={(e) => handleFormChange('requisitionType', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
@@ -918,7 +1028,7 @@ const RequisitionPage = () => {
                     Item Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.itemType}
+                    value={formState.itemType}
                     onChange={(e) => handleFormChange('itemType', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
@@ -939,7 +1049,7 @@ const RequisitionPage = () => {
                     Item Name <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.itemName}
+                    value={formState.itemName}
                     onChange={(e) => handleFormChange('itemName', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       formErrors.itemName ? 'border-red-300' : 'border-gray-300'
@@ -970,7 +1080,7 @@ const RequisitionPage = () => {
                   <input
                     type="number"
                     min="1"
-                    value={formData.quantity}
+                    value={formState.quantity}
                     onChange={(e) => handleFormChange('quantity', parseInt(e.target.value) || 0)}
                     className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       formErrors.quantity ? 'border-red-300' : 'border-gray-300'
@@ -992,7 +1102,7 @@ const RequisitionPage = () => {
                   </label>
                   <input
                     type="text"
-                    value={formData.issuedTo}
+                    value={formState.issuedTo}
                     onChange={(e) => handleFormChange('issuedTo', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       formErrors.issuedTo ? 'border-red-300' : 'border-gray-300'
@@ -1014,7 +1124,7 @@ const RequisitionPage = () => {
                     Location <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.location}
+                    value={formState.location}
                     onChange={(e) => handleFormChange('location', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       formErrors.location ? 'border-red-300' : 'border-gray-300'
@@ -1044,7 +1154,7 @@ const RequisitionPage = () => {
                     Department <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.department}
+                    value={formState.department}
                     onChange={(e) => handleFormChange('department', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
@@ -1065,7 +1175,7 @@ const RequisitionPage = () => {
                     Status <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.status}
+                    value={formState.status}
                     onChange={(e) => handleFormChange('status', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={isSaving}
@@ -1083,7 +1193,7 @@ const RequisitionPage = () => {
                     Notes
                   </label>
                   <textarea
-                    value={formData.notes}
+                    value={formState.notes}
                     onChange={(e) => handleFormChange('notes', e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1180,7 +1290,7 @@ const RequisitionPage = () => {
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700">Date Created</label>
                   <p className="mt-1 text-sm text-gray-900">
-                    {new Date(selectedRequisition.createdAt).toLocaleDateString('en-US', { 
+                    {new Date(selectedRequisition.created_at).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric',

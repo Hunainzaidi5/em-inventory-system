@@ -147,11 +147,19 @@ async function migrateSystemSettings() {
 // Main migration function
 async function runMigration() {
   console.log('🚀 Starting Firebase data migration...');
+  console.log('Firebase Config:', JSON.stringify(firebaseConfig, null, 2));
   
   try {
+    console.log('\n=== Starting Users Migration ===');
     await migrateUsers();
+    
+    console.log('\n=== Starting Inventory Migration ===');
     await migrateInventory();
+    
+    console.log('\n=== Starting Spare Parts Migration ===');
     await migrateSpareParts();
+    
+    console.log('\n=== Starting System Settings Migration ===');
     await migrateSystemSettings();
     
     console.log('\n🎉 Migration completed successfully!');
@@ -161,7 +169,20 @@ async function runMigration() {
     console.log('3. Test the application with the new database');
     
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    console.error('\n❌ Migration failed with error:');
+    console.error(error);
+    
+    if (error.code) {
+      console.error('Firebase Error Code:', error.code);
+      console.error('Firebase Error Message:', error.message);
+      
+      if (error.code === 'app/no-app') {
+        console.error('\n🔥 Firebase App not initialized. Please check your Firebase configuration.');
+      } else if (error.code === 'permission-denied') {
+        console.error('\n🔒 Permission denied. Please check your Firebase Security Rules.');
+      }
+    }
+    
     process.exit(1);
   }
 }

@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"]
+      },
       "target": "ES2020",
       "useDefineForClassFields": true,
       "lib": ["ES2020", "DOM", "DOM.Iterable"],
@@ -19,14 +23,8 @@
       "noUnusedLocals": false,
       "noUnusedParameters": false,
       "noImplicitAny": false,
-      "noFallthroughCasesInSwitch": false,
-  
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["./src/*"]
-      }
+      "noFallthroughCasesInSwitch": false
     },
     "include": ["src", "src/**/*.d.ts"],
     "exclude": ["node_modules"]
   }
-  

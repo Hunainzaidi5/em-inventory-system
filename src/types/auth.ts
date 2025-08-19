@@ -12,6 +12,8 @@ export interface User {
   avatar_url?: string;
   last_login?: string;
   email_verified?: boolean;
+  name?: string;
+  avatar?: string;
 }
 
 // Authentication request/response types
