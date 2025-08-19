@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, UserPlus, Upload, X } from 'lucide-react';
 import { UserRole } from '@/types/auth';
+import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
 
 // Form validation schema
 const userSchema = z.object({
@@ -125,6 +126,12 @@ const AddUserPage: React.FC = () => {
           employee_id: validatedData.employee_id
         });
 
+        // If avatar file chosen, upload and save URL
+        if (avatarFile) {
+          const avatarUrl = await uploadAvatar(avatarFile, userId);
+          await userService.updateUser(userId, { avatar_url: avatarUrl });
+        }
+
         // If password provided, change password for current logged-in user
         if (validatedData.password) {
           await userService.changePassword(validatedData.password);
@@ -136,13 +143,19 @@ const AddUserPage: React.FC = () => {
         if (!validatedData.password) {
           throw new z.ZodError([{ message: 'Password is required', path: ['password'], code: 'custom' } as any]);
         }
-        await userService.createUser({
+        const created = await userService.createUser({
           email: validatedData.email,
           display_name: validatedData.displayName,
           role: validatedData.role,
           department: validatedData.department,
           employee_id: validatedData.employee_id
         });
+
+        // Upload avatar for new user if provided
+        if (avatarFile && created?.id) {
+          const avatarUrl = await uploadAvatar(avatarFile, created.id);
+          await userService.updateUser(created.id, { avatar_url: avatarUrl });
+        }
         toast.success('User created successfully');
       }
       
