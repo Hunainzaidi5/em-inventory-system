@@ -6,7 +6,8 @@ import {
   User,
   sendPasswordResetEmail,
   updateProfile,
-  sendEmailVerification
+  sendEmailVerification,
+  updatePassword
 } from 'firebase/auth';
 import { auth } from './firebase';
 import { FirebaseService } from './firebaseService';
@@ -65,6 +66,13 @@ export class FirebaseAuthService {
       console.error('Error signing up:', error);
       throw error;
     }
+  }
+
+  // Change password for the currently signed-in user
+  static async changePassword(newPassword: string): Promise<void> {
+    const user = auth.currentUser;
+    if (!user) throw new Error('No authenticated user');
+    await updatePassword(user, newPassword);
   }
 
   // Sign out

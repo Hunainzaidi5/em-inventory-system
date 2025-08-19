@@ -20,10 +20,14 @@ const userSchema = z.object({
   role: z.enum(['dev', 'manager', 'deputy_manager', 'engineer', 'assistant_engineer', 'master_technician', 'technician']),
   department: z.string().min(1, 'Department is required'),
   employee_id: z.string().min(1, 'Employee ID is required'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  password: z.string().optional(),
+  confirmPassword: z.string().optional()
+}).refine((data) => {
+  if (!data.password && !data.confirmPassword) return true;
+  if ((data.password || '').length < 8) return false;
+  return data.password === data.confirmPassword;
+}, {
+  message: "Password must be at least 8 characters and match",
   path: ["confirmPassword"],
 });
 
@@ -113,17 +117,25 @@ const AddUserPage: React.FC = () => {
       const validatedData = userSchema.parse(formData);
       
       if (isEditing && userId) {
-        // Update existing user
+        // Update existing user basic fields
         await userService.updateUser(userId, {
           display_name: validatedData.displayName,
           role: validatedData.role,
           department: validatedData.department,
           employee_id: validatedData.employee_id
         });
+
+        // If password provided, change password for current logged-in user
+        if (validatedData.password) {
+          await userService.changePassword(validatedData.password);
+        }
         
         toast.success('User updated successfully');
       } else {
         // Create new user
+        if (!validatedData.password) {
+          throw new z.ZodError([{ message: 'Password is required', path: ['password'], code: 'custom' } as any]);
+        }
         await userService.createUser({
           email: validatedData.email,
           display_name: validatedData.displayName,
@@ -131,7 +143,6 @@ const AddUserPage: React.FC = () => {
           department: validatedData.department,
           employee_id: validatedData.employee_id
         });
-        
         toast.success('User created successfully');
       }
       
@@ -316,35 +327,33 @@ const AddUserPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Password Section - Only for new users */}
-              {!isEditing && (
-                <>
-                  <Separator />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password *</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm Password *</Label>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                        required
-                      />
-                    </div>
+              {/* Password Section - New users required, edit users optional */}
+              <>
+                <Separator />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="password">{isEditing ? 'New Password (optional)' : 'Password *'}</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={formData.password || ''}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      required={!isEditing}
+                    />
                   </div>
-                </>
-              )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">{isEditing ? 'Confirm New Password (optional)' : 'Confirm Password *'}</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={formData.confirmPassword || ''}
+                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                      required={!isEditing}
+                    />
+                  </div>
+                </div>
+              </>
 
               {/* Submit Button */}
               <div className="flex justify-end gap-4 pt-4">

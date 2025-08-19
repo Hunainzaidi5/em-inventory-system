@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
 import spareService from "../services/spareService";
 import { toast } from "../components/ui/use-toast";
@@ -25,6 +25,12 @@ const SpareManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof SparePart; direction: 'asc' | 'desc' } | null>(null);
+
+  // Scrollbar sync refs/state
+  const topScrollRef = useRef<HTMLDivElement>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [horizontalScrollWidth, setHorizontalScrollWidth] = useState<number>(0);
 
   // Define system categories with separate O&M and PMA categories
   const systemCategories: SystemCategory[] = [
@@ -69,6 +75,29 @@ const SpareManagement: React.FC = () => {
     }
   }, [activeMainTab]);
 
+  // Compute and sync scroll widths
+  useEffect(() => {
+    const updateWidth = () => {
+      const width = tableRef.current?.scrollWidth || 0;
+      setHorizontalScrollWidth(width);
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, [tabData, activeMainTab, activeSubTab]);
+
+  const handleTopScroll = () => {
+    if (topScrollRef.current && tableContainerRef.current) {
+      tableContainerRef.current.scrollLeft = topScrollRef.current.scrollLeft;
+    }
+  };
+
+  const handleTableScroll = () => {
+    if (topScrollRef.current && tableContainerRef.current) {
+      topScrollRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
+    }
+  };
+
   // Load data for a specific tab
   const loadTabData = useCallback(async (tabKey: string, mainTab: string) => {
     const category = systemCategories.find(cat => cat.key === tabKey);
@@ -88,7 +117,7 @@ const SpareManagement: React.FC = () => {
 
     try {
       // First try to load from Firebase
-              const spareParts = await spareService.getSparePartsByCategory(category.name);
+      const spareParts = await spareService.getSparePartsByCategory(category.name);
       
       if (spareParts && spareParts.length > 0) {
         setTabData(prev => ({
@@ -103,7 +132,7 @@ const SpareManagement: React.FC = () => {
         return;
       }
 
-              // Fallback to local JSON files if no data in Firebase
+      // Fallback to local JSON files if no data in Firebase
       const fileName = mainTab === "O&M" ? category.omFile : category.pmaFile;
       if (!fileName) {
         throw new Error(`No data file configured for ${mainTab} ${category.name}`);
@@ -356,7 +385,7 @@ const SpareManagement: React.FC = () => {
     try {
       if (editId) {
         // Update existing item
-                  await spareService.updateSparePart(editId, itemData);
+        await spareService.updateSparePart(editId, itemData);
         toast({
           title: "Success",
           description: "Item updated successfully",
@@ -585,8 +614,22 @@ const SpareManagement: React.FC = () => {
           {/* Inventory Table */}
           {!currentTabData?.loading && (
             <div className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+              {/* Top horizontal scrollbar */}
+              <div
+                className="overflow-x-auto h-4 mb-1"
+                ref={topScrollRef}
+                onScroll={handleTopScroll}
+              >
+                <div style={{ width: horizontalScrollWidth }} />
+              </div>
+
+              {/* Main scroll area with both axes */}
+              <div
+                className="max-h-[70vh] overflow-x-auto overflow-y-auto"
+                ref={tableContainerRef}
+                onScroll={handleTableScroll}
+              >
+                <table ref={tableRef} className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th 

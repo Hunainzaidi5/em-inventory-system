@@ -1,3 +1,4 @@
+import { FirebaseAuthService } from '@/lib/firebaseAuth';
 import { FirebaseService } from '@/lib/firebaseService';
 import { User, UserRole } from '@/types/auth';
 
@@ -65,6 +66,10 @@ export const userService = {
       console.error('Error updating user:', error);
       throw new Error('Failed to update user');
     }
+  },
+
+  async changePassword(newPassword: string): Promise<void> {
+    await FirebaseAuthService.changePassword(newPassword);
   },
 
   // Delete user
