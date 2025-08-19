@@ -157,10 +157,11 @@ export const authService = {
         'auth/invalid-email': 'Invalid email address',
         'auth/user-disabled': 'This account has been disabled',
         'auth/too-many-requests': 'Too many failed attempts. Please try again later',
-        'auth/network-request-failed': 'Unable to connect to the server. Please check your internet connection'
+        'auth/network-request-failed': 'Unable to connect to the server. Please check your internet connection',
+        'auth/invalid-credential': 'Invalid email or password',
       };
 
-      const errorCode = error instanceof Error ? error.message : 'unknown';
+      const errorCode = (error as any)?.code || (error as any)?.message || 'unknown';
       const errorMessage = errorMessages[errorCode] || 'An unexpected error occurred during login';
 
       // Calculate remaining attempts
