@@ -155,6 +155,16 @@ export default function Dashboard() {
                     <Bell size={18} className="text-yellow-400" />
                     <span className="text-blue-50 font-medium">Alerts: <span className="font-bold">3</span></span>
                   </div>
+                  <button 
+                    onClick={handleRefresh}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white transition-colors rounded-xl border border-gray-200 text-gray-700 hover:text-gray-900 font-medium shadow-sm"
+                  >
+                    <RefreshCw size={16} className={`${isRefreshing ? 'animate-spin' : ''}`} />
+                    <Clock size={16} />
+                    <span className="font-medium">
+                      {currentTime.toLocaleTimeString()}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
