@@ -34,6 +34,19 @@ const GatePassPage = () => {
 
   const [searchParams] = useSearchParams();
 
+  const formatDepartment = (dept?: string) => {
+    const map: Record<string, string> = {
+      em_systems: 'E&M SYSTEMS',
+      em_track: 'E&M TRACK',
+      em_power: 'E&M POWER',
+      em_signalling: 'E&M SIGNALLING',
+      em_communication: 'E&M COMMUNICATION',
+      em_third_rail: 'E&M THIRD RAIL',
+      em_safety_quality: 'E&M SAFETY & QUALITY',
+    };
+    return dept ? (map[dept] || dept) : '';
+  };
+
   useEffect(() => {
     const id = searchParams.get('id');
     if (!id) return;
@@ -58,7 +71,7 @@ const GatePassPage = () => {
           ...prev,
           issuerName: (record as any).requesterName || prev.issuerName,
           date: record.created_at?.split('T')[0] || prev.date,
-          department: (record as any).department || prev.department,
+          department: formatDepartment((record as any).department || prev.department),
           designation: prev.designation,
           contact: prev.contact,
           signature: prev.signature,
