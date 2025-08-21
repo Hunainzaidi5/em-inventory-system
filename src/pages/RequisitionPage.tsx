@@ -73,6 +73,12 @@ interface RequisitionFormState {
   reason: string;
   notes?: string;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  receiver_name?: string;
+  receiver_department?: string;
+  receiver_instruction_from?: string;
+  receiver_contact?: string;
+  gatepass_destination?: string;
+  expected_return_date?: string;
 }
 
 interface FormErrors {
@@ -97,7 +103,7 @@ const RequisitionPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
-  const [itemOptions, setItemOptions] = useState<{ name: string; quantity: number }[]>([]);
+  const [itemOptions, setItemOptions] = useState<{ id?: string; name: string; quantity: number }[]>([]);
   const [availableQuantity, setAvailableQuantity] = useState<number | null>(null);
   
   const locationOptions = [
@@ -166,7 +172,13 @@ const RequisitionPage = () => {
     referenceNumber: `REQ-${Date.now()}`,
     reason: '',
     notes: '',
-    priority: 'medium'
+    priority: 'medium',
+    receiver_name: '',
+    receiver_department: '',
+    receiver_instruction_from: '',
+    receiver_contact: '',
+    gatepass_destination: '',
+    expected_return_date: ''
   };
 
   const [formState, setFormState] = useState<RequisitionFormState>(initialFormState);
@@ -285,6 +297,7 @@ const RequisitionPage = () => {
       if (type === 'spare_management') {
         const parts = await spareService.getAllSpareParts();
         const options = (parts || []).map((p: any) => ({
+          id: p?.id,
           name: p?.name ?? 'Unknown',
           quantity: Number(p?.quantity ?? 0),
         }));
@@ -306,6 +319,7 @@ const RequisitionPage = () => {
       const raw = typeof window !== 'undefined' ? window.localStorage.getItem(storageKey) : null;
       const parsed: any[] = raw ? JSON.parse(raw) : [];
       const options = parsed.map((item: any) => ({
+        id: item?.id,
         name: item?.name ?? item?.itemName ?? item?.title ?? 'Unknown',
         quantity: Number(item?.quantity ?? item?.available ?? item?.stock ?? 0),
       }));
@@ -369,6 +383,9 @@ const handleFormChange = (field: keyof RequisitionFormState, value: any) => {
   if (field === 'itemName') {
     const opt = itemOptions.find(o => o.name.toLowerCase() === String(value).toLowerCase());
     setAvailableQuantity(opt ? opt.quantity : null);
+    if (opt?.id) {
+      setFormState(prev => ({ ...prev, item_id: opt.id as string }));
+    }
   }
 };
 
@@ -636,12 +653,16 @@ useEffect(() => {
           const type = data.itemType;
           // Update spare parts in Firestore
           if (type === 'spare_management') {
-            // Find the spare by name to get id for update
-            const parts = await spareService.getAllSpareParts();
-            const target = (parts || []).find((p: any) => String(p?.name).toLowerCase() === data.itemName.toLowerCase());
-            if (target?.id) {
+            // Use the selected item_id first; fallback by name
+            let spareId = data.item_id;
+            if (!spareId) {
+              const parts = await spareService.getAllSpareParts();
+              const target = (parts || []).find((p: any) => String(p?.name).toLowerCase() === data.itemName.toLowerCase());
+              spareId = target?.id;
+            }
+            if (spareId) {
               const delta = data.requisitionType === 'return' ? qty : -qty;
-              await spareService.updateStock(target.id, delta, `requisition:${created.id}`, data.user_id);
+              await spareService.updateStock(spareId, delta, `requisition:${created.id}`, data.user_id);
             }
           } else {
             // Modules stored in localStorage: inventoryItems, toolsItems, generalToolsItems, ppeItems, stationeryItems, faultyReturns
@@ -687,7 +708,7 @@ useEffect(() => {
             tools: [
               { description: data.itemName, qty: Number(data.quantity || 0) }
             ],
-            receiver: { name: data.issuedTo, department: data.department },
+            receiver: { name: data.receiver_name || data.issuedTo, department: data.receiver_department || data.department, instructionFrom: data.receiver_instruction_from, contact: data.receiver_contact },
           });
           await notificationService.create({
             type: 'issuance',
@@ -708,6 +729,8 @@ useEffect(() => {
             itemsDescription: data.itemName,
             quantitySummary: String(data.quantity),
             notes: data.notes,
+            destination: data.gatepass_destination,
+            expectedReturnDate: data.expected_return_date,
           });
           await notificationService.create({
             type: 'gate_pass',
@@ -1294,6 +1317,75 @@ useEffect(() => {
                     placeholder="Enter any additional notes..."
                     disabled={isSaving}
                   />
+                </div>
+
+                {/* Issuance & Gate Pass (optional) */}
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Name</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_name || ''}
+                      onChange={(e) => handleFormChange('receiver_name', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Receiver name"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Department</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_department || ''}
+                      onChange={(e) => handleFormChange('receiver_department', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Receiver department"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Instruction From</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_instruction_from || ''}
+                      onChange={(e) => handleFormChange('receiver_instruction_from', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Instruction from"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Contact</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_contact || ''}
+                      onChange={(e) => handleFormChange('receiver_contact', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Receiver contact"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Gate Pass Destination</label>
+                    <input
+                      type="text"
+                      value={formState.gatepass_destination || ''}
+                      onChange={(e) => handleFormChange('gatepass_destination', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Destination"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Expected Return Date</label>
+                    <input
+                      type="date"
+                      value={formState.expected_return_date || ''}
+                      onChange={(e) => handleFormChange('expected_return_date', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isSaving}
+                    />
+                  </div>
                 </div>
               </div>
 
