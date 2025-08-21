@@ -1,6 +1,8 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useSearchParams } from 'react-router-dom';
+import { gatePassService } from '@/services/gatePassService';
 
 const GatePassPage = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +31,56 @@ const GatePassPage = () => {
 
   const [isExporting, setIsExporting] = useState(false);
   const [activeTab, setActiveTab] = useState('form');
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id) return;
+
+    let isMounted = true;
+    (async () => {
+      try {
+        const record = await gatePassService.getById(id);
+        if (!record || !isMounted) return;
+
+        const toolsArray = Array.from({ length: 30 }, () => ({ description: "", unit: "", qty: "", remarks: "" }));
+        if ((record as any).itemsDescription) {
+          toolsArray[0] = {
+            description: (record as any).itemsDescription || "",
+            unit: "",
+            qty: String((record as any).quantitySummary || ""),
+            remarks: (record as any).purpose || "",
+          };
+        }
+
+        setFormData(prev => ({
+          ...prev,
+          issuerName: (record as any).requesterName || prev.issuerName,
+          date: record.created_at?.split('T')[0] || prev.date,
+          department: (record as any).department || prev.department,
+          designation: prev.designation,
+          contact: prev.contact,
+          signature: prev.signature,
+          oltNo: prev.oltNo,
+          tools: toolsArray,
+          receiver: {
+            name: prev.receiver.name,
+            department: prev.receiver.department,
+            sign: prev.receiver.sign,
+            instructionFrom: prev.receiver.instructionFrom,
+            oltNo: prev.receiver.oltNo,
+            contact: prev.receiver.contact,
+          }
+        }));
+        setActiveTab('preview');
+      } catch (e) {
+        // Non-blocking if load fails
+      }
+    })();
+
+    return () => { isMounted = false; };
+  }, [searchParams]);
 
   const handleToolChange = (index, field, value) => {
     const updated = [...formData.tools];

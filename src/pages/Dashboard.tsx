@@ -442,10 +442,10 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   {n.data?.issuanceId && (
-                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation('/dashboard/issuance')}>View Issuance</button>
+                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation(`/dashboard/issuance?id=${encodeURIComponent(n.data.issuanceId)}`)}>View Issuance</button>
                   )}
                   {n.data?.gatePassId && (
-                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation('/dashboard/gate-pass')}>View Gate Pass</button>
+                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation(`/dashboard/gate-pass?id=${encodeURIComponent(n.data.gatePassId)}`)}>View Gate Pass</button>
                   )}
                 </div>
               </div>

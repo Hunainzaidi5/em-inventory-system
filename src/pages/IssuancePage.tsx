@@ -1,6 +1,8 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useSearchParams } from 'react-router-dom';
+import { issuanceService } from '@/services/issuanceService';
 
 // Define TypeScript interfaces for our data structure
 interface Tool {
@@ -58,6 +60,58 @@ const IssuancePage: React.FC = () => {
 
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id) return;
+
+    let isMounted = true;
+    (async () => {
+      try {
+        const record = await issuanceService.getById(id);
+        if (!record || !isMounted) return;
+
+        const toolsArray = Array.from({ length: 30 }, () => ({ description: "", unit: "", qty: "", remarks: "" }));
+        (record.tools || []).forEach((t, idx) => {
+          if (idx < toolsArray.length) {
+            toolsArray[idx] = {
+              description: t.description || "",
+              unit: (t as any).unit || "",
+              qty: String((t as any).qty ?? ""),
+              remarks: (t as any).remarks || "",
+            };
+          }
+        });
+
+        setFormData(prev => ({
+          ...prev,
+          issuerName: (record as any).issuer_name || "",
+          date: record.date || prev.date,
+          department: (record as any).department || "",
+          designation: prev.designation,
+          contact: prev.contact,
+          signature: prev.signature,
+          oltNo: prev.oltNo,
+          tools: toolsArray,
+          receiver: {
+            name: record.receiver?.name || "",
+            department: record.receiver?.department || "",
+            sign: record.receiver?.sign || "",
+            instructionFrom: record.receiver?.instructionFrom || "",
+            oltNo: record.receiver?.oltNo || "",
+            contact: record.receiver?.contact || "",
+          }
+        }));
+        setActiveTab('preview');
+      } catch (e) {
+        // Non-blocking if load fails
+      }
+    })();
+
+    return () => { isMounted = false; };
+  }, [searchParams]);
 
   // Add proper type for the handleToolChange parameters
   const handleToolChange = useCallback((index: number, field: keyof Tool, value: string): void => {

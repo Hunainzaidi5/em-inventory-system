@@ -69,12 +69,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
     let unsubscribe: (() => void) | null = null;
+    let initialEventHandled = false;
 
     const initializeAuth = async () => {
-      // Initial load
-      await loadUser();
-
-      // Set up auth state listener
+      // Set up auth state listener immediately so we don't prematurely clear session on refresh
       {
         console.log('[AUTH] Setting up auth state listener');
         
@@ -106,6 +104,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               console.error('[AUTH] Failed to get updated user:', error);
             }
           }
+
+          if (!initialEventHandled) {
+            initialEventHandled = true;
+            setIsLoading(false);
+          }
         };
 
         // Set up auth state change listener using authService
@@ -126,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         unsubscribe();
       }
     };
-  }, [loadUser, queryClient]);
+  }, [queryClient]);
 
   // Removed dev-only local override logic
 
