@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -28,6 +28,12 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 // Initialize Firebase services
 export const auth = getAuth(app);
+// Ensure session persists across page refreshes
+try {
+  setPersistence(auth, browserLocalPersistence);
+} catch (e) {
+  // Non-fatal if persistence cannot be set
+}
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 

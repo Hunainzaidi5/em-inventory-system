@@ -25,6 +25,7 @@ export interface CreateRequisitionData {
   quantity: number;
   type: RequisitionType;
   reason: string;
+  status?: 'pending' | 'approved' | 'rejected' | 'completed';
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   department?: string;
   location?: string;
@@ -68,10 +69,12 @@ export const requisitionService = {
   // Create new requisition
   async createRequisition(data: CreateRequisitionData): Promise<Requisition> {
     try {
+      const nowIso = new Date().toISOString();
       const requisitionId = await FirebaseService.create('requisitions', {
         ...data,
-        status: 'pending',
-        requested_at: new Date().toISOString(),
+        status: data.status || 'pending',
+        requested_at: nowIso,
+        created_at: nowIso,
         priority: data.priority || 'medium'
       });
 
@@ -79,8 +82,9 @@ export const requisitionService = {
       return {
         id: requisitionId,
         ...data,
-        status: 'pending',
-        requested_at: new Date().toISOString(),
+        status: (data as any).status || 'pending',
+        requested_at: nowIso,
+        created_at: nowIso,
         priority: data.priority || 'medium'
       } as Requisition;
     } catch (error) {
@@ -145,6 +149,17 @@ export const requisitionService = {
   async deleteRequisition(requisitionId: string): Promise<void> {
     try {
       await FirebaseService.delete('requisitions', requisitionId);
+      // Also delete linked issuance and gate pass records if any
+      try {
+        const issuance = await FirebaseService.query<any>('issuanceRecords');
+        const relatedIssuance = (issuance || []).filter(r => r.requisition_id === requisitionId);
+        await Promise.all(relatedIssuance.map(r => FirebaseService.delete('issuanceRecords', r.id)));
+      } catch {}
+      try {
+        const gatePasses = await FirebaseService.query<any>('gatePasses');
+        const relatedGP = (gatePasses || []).filter(r => r.requisition_id === requisitionId);
+        await Promise.all(relatedGP.map(r => FirebaseService.delete('gatePasses', r.id)));
+      } catch {}
     } catch (error) {
       console.error('Error deleting requisition:', error);
       throw new Error('Failed to delete requisition');

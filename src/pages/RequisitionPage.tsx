@@ -651,7 +651,7 @@ useEffect(() => {
         const created = await requisitionService.createRequisition(payload);
         toast({ title: 'Created', description: 'Requisition created', variant: 'default' });
 
-        // Adjust stock or quantities locally and via services where available
+        // Adjust stock or quantities and broadcast for all stats to refresh
         try {
           const qty = Number(data.quantity || 0);
           const type = data.itemType;
@@ -751,6 +751,8 @@ useEffect(() => {
       setIsEditMode(false);
       setFormState(initialFormState);
       fetchRequisitions();
+      // Kick a global refresh for dashboard/overview cards
+      window.dispatchEvent(new Event('inventory-sync'));
     } catch (error) {
       console.error('Error saving requisition:', error);
       toast({ title: 'Error', description: 'Failed to save requisition', variant: 'destructive' });

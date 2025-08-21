@@ -134,7 +134,9 @@ export default function Dashboard() {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    loadAndAnimateStats().finally(() => setTimeout(() => setIsRefreshing(false), 800));
+    loadAndAnimateStats()
+      .then(() => window.dispatchEvent(new Event('inventory-sync')))
+      .finally(() => setTimeout(() => setIsRefreshing(false), 800));
   };
 
   const statsCards = [
