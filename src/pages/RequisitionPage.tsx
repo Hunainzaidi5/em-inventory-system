@@ -334,15 +334,18 @@ const RequisitionPage = () => {
 
 // Handle delete confirmation
 const handleDeleteConfirm = async () => {
-  if (!selectedRequisition) return;
+  if (!requisitionToDelete) return;
   
   try {
     setIsSaving(true);
-    await requisitionService.deleteRequisition(selectedRequisition.id);
+    await requisitionService.deleteRequisition(requisitionToDelete);
+    // Optimistically update UI
+    setRequisitions(prev => prev.filter(r => r.id !== requisitionToDelete));
     setShowDeleteDialog(false);
     setSelectedRequisition(null);
+    setRequisitionToDelete(null);
     toast({
-      title: 'Success',
+      title: 'Deleted',
       description: 'Requisition deleted successfully',
       variant: 'default',
     });
@@ -355,6 +358,7 @@ const handleDeleteConfirm = async () => {
     });
   } finally {
     setIsSaving(false);
+    fetchRequisitions();
   }
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import collectionSyncService from '@/services/collectionSyncService';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
@@ -143,6 +144,8 @@ const AppRoutes = () => {
 function App() {
   React.useEffect(() => {
     console.log("[DEBUG] App component mounted");
+    // Hydrate client-side lists from Firestore on app start
+    collectionSyncService.hydrateAll();
   }, []);
   return (
     <ErrorBoundary>
