@@ -1,4 +1,5 @@
 import { FirebaseService } from '@/lib/firebaseService';
+import { where } from 'firebase/firestore';
 
 type RequisitionType = 'issue' | 'return' | 'consume';
 
@@ -149,16 +150,32 @@ export const requisitionService = {
   async deleteRequisition(requisitionId: string): Promise<void> {
     try {
       await FirebaseService.delete('requisitions', requisitionId);
+
       // Also delete linked issuance and gate pass records if any
       try {
-        const issuance = await FirebaseService.query<any>('issuanceRecords');
-        const relatedIssuance = (issuance || []).filter(r => r.requisition_id === requisitionId);
-        await Promise.all(relatedIssuance.map(r => FirebaseService.delete('issuanceRecords', r.id)));
+        const relatedIssuance = await FirebaseService.query<any>('issuanceRecords', [
+          // @ts-ignore - Firestore QueryConstraint type imported in FirebaseService
+          where('requisition_id', '==', requisitionId)
+        ]);
+        await Promise.all((relatedIssuance || []).map((r: any) => FirebaseService.delete('issuanceRecords', r.id)));
       } catch {}
+
       try {
-        const gatePasses = await FirebaseService.query<any>('gatePasses');
-        const relatedGP = (gatePasses || []).filter(r => r.requisition_id === requisitionId);
-        await Promise.all(relatedGP.map(r => FirebaseService.delete('gatePasses', r.id)));
+        const relatedGP = await FirebaseService.query<any>('gatePasses', [
+          // @ts-ignore
+          where('requisition_id', '==', requisitionId)
+        ]);
+        await Promise.all((relatedGP || []).map((r: any) => FirebaseService.delete('gatePasses', r.id)));
+      } catch {}
+
+      // Delete related notifications referencing this requisition or its artifacts
+      try {
+        const notifications = await FirebaseService.query<any>('notifications');
+        const toDelete = (notifications || []).filter((n: any) => {
+          const d = n.data || {};
+          return d.requisitionId === requisitionId;
+        });
+        await Promise.all(toDelete.map((n: any) => FirebaseService.delete('notifications', n.id)));
       } catch {}
     } catch (error) {
       console.error('Error deleting requisition:', error);

@@ -655,6 +655,7 @@ useEffect(() => {
         try {
           const qty = Number(data.quantity || 0);
           const type = data.itemType;
+          let selectedSpareMeta: any | null = null;
           // Update spare parts in Firestore
           if (type === 'spare_management') {
             // Use the selected item_id first; fallback by name
@@ -662,11 +663,17 @@ useEffect(() => {
             if (!spareId) {
               const parts = await spareService.getAllSpareParts();
               const target = (parts || []).find((p: any) => String(p?.name).toLowerCase() === data.itemName.toLowerCase());
+              selectedSpareMeta = target || null;
               spareId = target?.id;
             }
             if (spareId) {
+              if (!selectedSpareMeta) {
+                selectedSpareMeta = await spareService.getSparePartById(spareId);
+              }
               const delta = data.requisitionType === 'return' ? qty : -qty;
               await spareService.updateStock(spareId, delta, `requisition:${created.id}`, data.user_id);
+              // Immediately notify listeners to refresh stats
+              window.dispatchEvent(new Event('inventory-sync'));
             }
           } else {
             // Modules stored in localStorage: inventoryItems, toolsItems, generalToolsItems, ppeItems, stationeryItems, faultyReturns
@@ -702,7 +709,7 @@ useEffect(() => {
           console.error('Post-requisition stock update failed:', err);
         }
 
-        // Auto-create issuance record and gate pass
+        // Auto-create issuance record and gate pass with enriched data
         try {
           const issuance = await issuanceService.create({
             requisition_id: (created as any).id,
@@ -710,7 +717,7 @@ useEffect(() => {
             department: data.department,
             date: new Date().toISOString().split('T')[0],
             tools: [
-              { description: data.itemName, qty: Number(data.quantity || 0) }
+              { description: data.itemName, unit: (selectedSpareMeta as any)?.uom || undefined, qty: Number(data.quantity || 0) }
             ],
             receiver: { name: data.receiver_name || data.issuedTo, department: data.receiver_department || data.department, instructionFrom: data.receiver_instruction_from, contact: data.receiver_contact },
           });
