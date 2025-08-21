@@ -261,6 +261,17 @@ const SpareManagement: React.FC = () => {
     }
   }, [activeMainTab, activeSubTab]);
 
+  // Live refresh when global inventory updates occur (e.g., after requisition issues/returns)
+  useEffect(() => {
+    const handler = () => {
+      if (activeMainTab && activeSubTab) {
+        loadTabData(activeSubTab, activeMainTab);
+      }
+    };
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, [activeMainTab, activeSubTab, loadTabData]);
+
   const currentTabId = `${activeMainTab}_${activeSubTab}`;
 
   // Note: Firebase doesn't have the same real-time subscription structure as Supabase
