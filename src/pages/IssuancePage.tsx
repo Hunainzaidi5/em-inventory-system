@@ -4,7 +4,6 @@ import html2canvas from "html2canvas";
 import { useSearchParams } from 'react-router-dom';
 import { issuanceService } from '@/services/issuanceService';
 
-// Define TypeScript interfaces for our data structure
 interface Tool {
   description: string;
   unit: string;
