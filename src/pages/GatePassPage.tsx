@@ -65,12 +65,12 @@ const GatePassPage = () => {
           oltNo: prev.oltNo,
           tools: toolsArray,
           receiver: {
-            name: prev.receiver.name,
-            department: prev.receiver.department,
-            sign: prev.receiver.sign,
-            instructionFrom: prev.receiver.instructionFrom,
-            oltNo: prev.receiver.oltNo,
-            contact: prev.receiver.contact,
+            name: (record as any).receiver?.name || prev.receiver.name,
+            department: (record as any).receiver?.department || prev.receiver.department,
+            sign: (record as any).receiver?.sign || prev.receiver.sign,
+            instructionFrom: (record as any).receiver?.instructionFrom || prev.receiver.instructionFrom,
+            oltNo: (record as any).receiver?.oltNo || prev.receiver.oltNo,
+            contact: (record as any).receiver?.contact || prev.receiver.contact,
           }
         }));
         setActiveTab('preview');

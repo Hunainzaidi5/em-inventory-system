@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Package, Save, AlertCircle } from "lucide-react";
 import requisitionService from '@/services/requisitionService';
 import type { Requisition as ServiceRequisition } from '@/services/requisitionService';
@@ -77,6 +78,8 @@ interface RequisitionFormState {
   receiver_department?: string;
   receiver_instruction_from?: string;
   receiver_contact?: string;
+  receiver_sign?: string;
+  receiver_olt_no?: string;
   gatepass_destination?: string;
   expected_return_date?: string;
 }
@@ -92,6 +95,7 @@ interface FormErrors {
 const RequisitionPage = () => {
   const { toast } = useToast();
   const [requisitions, setRequisitions] = useState<Requisition[]>([]);
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -177,6 +181,8 @@ const RequisitionPage = () => {
     receiver_department: '',
     receiver_instruction_from: '',
     receiver_contact: '',
+    receiver_sign: '',
+    receiver_olt_no: '',
     gatepass_destination: '',
     expected_return_date: ''
   };
@@ -652,10 +658,10 @@ useEffect(() => {
         toast({ title: 'Created', description: 'Requisition created', variant: 'default' });
 
         // Adjust stock or quantities and broadcast for all stats to refresh
+        let selectedSpareMeta: any | null = null;
         try {
           const qty = Number(data.quantity || 0);
           const type = data.itemType;
-          let selectedSpareMeta: any | null = null;
           // Update spare parts in Firestore
           if (type === 'spare_management') {
             // Use the selected item_id first; fallback by name
@@ -719,7 +725,14 @@ useEffect(() => {
             tools: [
               { description: data.itemName, unit: (selectedSpareMeta as any)?.uom || undefined, qty: Number(data.quantity || 0) }
             ],
-            receiver: { name: data.receiver_name || data.issuedTo, department: data.receiver_department || data.department, instructionFrom: data.receiver_instruction_from, contact: data.receiver_contact },
+            receiver: {
+              name: data.receiver_name || data.issuedTo,
+              department: data.receiver_department || data.department,
+              sign: data.receiver_sign,
+              instructionFrom: data.receiver_instruction_from,
+              oltNo: data.receiver_olt_no,
+              contact: data.receiver_contact
+            },
           });
           await notificationService.create({
             type: 'issuance',
@@ -727,6 +740,8 @@ useEffect(() => {
             message: `Issuance form created for requisition ${data.referenceNumber}`,
             data: { requisitionId: (created as any).id, issuanceId: issuance.id },
           });
+          // Navigate directly to issuance with id so user lands on the prefilled preview
+          navigate(`/dashboard/issuance?id=${encodeURIComponent(issuance.id)}`);
         } catch (err) {
           console.error('Failed to create issuance record:', err);
         }
@@ -742,6 +757,15 @@ useEffect(() => {
             notes: data.notes,
             destination: data.gatepass_destination,
             expectedReturnDate: data.expected_return_date,
+            // Persist receiver-like fields for gate pass as well
+            receiver: {
+              name: data.receiver_name || data.issuedTo,
+              department: data.receiver_department || data.department,
+              sign: data.receiver_sign,
+              instructionFrom: data.receiver_instruction_from,
+              oltNo: data.receiver_olt_no,
+              contact: data.receiver_contact,
+            } as any,
           });
           await notificationService.create({
             type: 'gate_pass',
@@ -1375,6 +1399,28 @@ useEffect(() => {
                       onChange={(e) => handleFormChange('receiver_contact', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Receiver contact"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Sign</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_sign || ''}
+                      onChange={(e) => handleFormChange('receiver_sign', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Receiver sign"
+                      disabled={isSaving}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver OLT NO.</label>
+                    <input
+                      type="text"
+                      value={formState.receiver_olt_no || ''}
+                      onChange={(e) => handleFormChange('receiver_olt_no', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="OLT number"
                       disabled={isSaving}
                     />
                   </div>

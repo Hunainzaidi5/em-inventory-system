@@ -14,6 +14,7 @@ export interface GatePassRecord {
   approvalStatus?: 'pending' | 'approved' | 'rejected';
   isActive?: boolean;
   notes?: string;
+  receiver?: { name?: string; department?: string; sign?: string; instructionFrom?: string; oltNo?: string; contact?: string };
   created_at?: string;
   updated_at?: string;
 }
