@@ -5,8 +5,10 @@ import requisitionService from '@/services/requisitionService';
 import userService from '@/services/userService';
 import { spareService } from '@/services/spareService';
 import notificationService from '@/services/notificationService';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0]);
@@ -125,9 +127,9 @@ export default function Dashboard() {
     return () => window.removeEventListener('inventory-sync', handler as any);
   }, []);
 
-  const handleNavigation = (route) => {
-    console.log(`Navigating to: ${route}`);
-    // Replace with your navigation logic
+  const handleNavigation = (route: string) => {
+    if (!route) return;
+    navigate(route);
   };
 
   const handleRefresh = () => {
@@ -335,7 +337,7 @@ export default function Dashboard() {
                   <button
                     key={index}
                     className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-2 border-transparent hover:border-gray-100 hover:shadow-lg"
-                    onClick={() => action.route && (window.location.assign(action.route))}
+                    onClick={() => action.route && handleNavigation(action.route)}
                   >
                     <div className={`p-3 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
                       <IconComponent size={20} />
@@ -438,10 +440,10 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   {n.data?.issuanceId && (
-                    <a className="text-sm text-blue-600 hover:underline" href={`/dashboard/issuance`} target="_blank" rel="noreferrer">View Issuance</a>
+                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation('/dashboard/issuance')}>View Issuance</button>
                   )}
                   {n.data?.gatePassId && (
-                    <a className="text-sm text-blue-600 hover:underline" href={`/dashboard/gate-pass`} target="_blank" rel="noreferrer">View Gate Pass</a>
+                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation('/dashboard/gate-pass')}>View Gate Pass</button>
                   )}
                 </div>
               </div>
