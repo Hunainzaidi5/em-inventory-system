@@ -43,6 +43,16 @@ export const gatePassService = {
     });
     return { id, ...data, passNumber } as GatePassRecord;
   },
+
+  async getById(id: string): Promise<GatePassRecord | null> {
+    try {
+      const row = await FirebaseService.getById('gatePasses', id);
+      if (!row) return null;
+      return { id, ...(row as any) } as GatePassRecord;
+    } catch {
+      return null;
+    }
+  },
 };
 
 export default gatePassService;

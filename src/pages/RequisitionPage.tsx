@@ -20,6 +20,7 @@ import itemQuantityService from '@/services/itemQuantityService';
 import spareService from '@/services/spareService';
 import issuanceService from '@/services/issuanceService';
 import gatePassService from '@/services/gatePassService';
+import notificationService from '@/services/notificationService';
 
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
 
@@ -399,6 +400,7 @@ const fetchRequisitions = useCallback(async () => {
       updated_by: req.updated_by,
       requested_at: req.requested_at,
     }));
+    mappedRequisitions.sort((a: any, b: any) => new Date(b.requested_at || b.created_at || 0).getTime() - new Date(a.requested_at || a.created_at || 0).getTime());
     setRequisitions(mappedRequisitions);
   } catch (error) {
     toast({
@@ -442,6 +444,7 @@ useEffect(() => {
       updated_by: req.updated_by,
       requested_at: req.requested_at,
     }));
+    mappedRequisitions.sort((a: any, b: any) => new Date(b.requested_at || b.created_at || 0).getTime() - new Date(a.requested_at || a.created_at || 0).getTime());
     setRequisitions(mappedRequisitions);
   });
 
@@ -676,7 +679,7 @@ useEffect(() => {
 
         // Auto-create issuance record and gate pass
         try {
-          await issuanceService.create({
+          const issuance = await issuanceService.create({
             requisition_id: (created as any).id,
             issuer_name: data.issuedTo,
             department: data.department,
@@ -686,12 +689,18 @@ useEffect(() => {
             ],
             receiver: { name: data.issuedTo, department: data.department },
           });
+          await notificationService.create({
+            type: 'issuance',
+            title: 'Issuance generated',
+            message: `Issuance form created for requisition ${data.referenceNumber}`,
+            data: { requisitionId: (created as any).id, issuanceId: issuance.id },
+          });
         } catch (err) {
           console.error('Failed to create issuance record:', err);
         }
 
         try {
-          await gatePassService.create({
+          const gatePass = await gatePassService.create({
             requisition_id: (created as any).id,
             requesterName: data.issuedTo,
             department: data.department,
@@ -699,6 +708,12 @@ useEffect(() => {
             itemsDescription: data.itemName,
             quantitySummary: String(data.quantity),
             notes: data.notes,
+          });
+          await notificationService.create({
+            type: 'gate_pass',
+            title: 'Gate Pass generated',
+            message: `Gate pass created for requisition ${data.referenceNumber}`,
+            data: { requisitionId: (created as any).id, gatePassId: gatePass.id },
           });
         } catch (err) {
           console.error('Failed to create gate pass:', err);

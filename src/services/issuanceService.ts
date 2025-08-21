@@ -23,6 +23,16 @@ export const issuanceService = {
     });
     return { id, ...data } as IssuanceRecord;
   },
+
+  async getById(id: string): Promise<IssuanceRecord | null> {
+    try {
+      const row = await FirebaseService.getById('issuanceRecords', id);
+      if (!row) return null;
+      return { id, ...(row as any) } as IssuanceRecord;
+    } catch {
+      return null;
+    }
+  },
 };
 
 export default issuanceService;

@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Package, Wrench, Shield, AlertTriangle, TrendingUp, Clock, Users, BarChart3, Bell, Search, Filter, Download, RefreshCw, ArrowUpRight, Activity, Zap, Eye } from "lucide-react";
 import statsService from '@/services/statsService';
+import requisitionService from '@/services/requisitionService';
+import userService from '@/services/userService';
+import { spareService } from '@/services/spareService';
+import notificationService from '@/services/notificationService';
 
 export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0]);
+  const [systemHealth, setSystemHealth] = useState(100);
+  const [activeUsers, setActiveUsers] = useState(0);
+  const [alertsCount, setAlertsCount] = useState(0);
+  const [recentActivity, setRecentActivity] = useState<Array<{ action: string; item: string; user?: string; time: string; quantity?: number; color: string }>>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; message: string; created_at: string; data?: any }>>([]);
 
   // Load live counts and animate them
   const loadAndAnimateStats = async () => {
@@ -17,6 +27,16 @@ export default function Dashboard() {
         counts.ppeTotalQuantity,
         counts.faultyItemsCount,
       ];
+      const total = targets[0] + targets[1] + targets[2];
+      const faulty = targets[3];
+      setSystemHealth(total > 0 ? Math.max(0, Math.round(((total - faulty) / total) * 100)) : 100);
+
+      try {
+        const lowStock = await spareService.getLowStockSpareParts();
+        setAlertsCount((lowStock?.length || 0) + (counts.faultyItemsCount || 0));
+      } catch {
+        setAlertsCount(counts.faultyItemsCount || 0);
+      }
       targets.forEach((target, index) => {
         let current = 0;
         const increment = Math.max(1, Math.floor((target || 0) / 50));
@@ -38,6 +58,56 @@ export default function Dashboard() {
     }
   };
 
+  const loadActiveUsers = async () => {
+    try {
+      const users = await userService.getActiveUsers();
+      setActiveUsers(users.length || 0);
+    } catch {
+      setActiveUsers(0);
+    }
+  };
+
+  const timeAgo = (iso?: string) => {
+    if (!iso) return '';
+    const then = new Date(iso).getTime();
+    const now = Date.now();
+    const diff = Math.max(0, Math.floor((now - then) / 1000));
+    if (diff < 60) return `${diff}s ago`;
+    const m = Math.floor(diff / 60);
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    return `${d}d ago`;
+  };
+
+  const loadRecentActivity = async () => {
+    try {
+      const reqs = await requisitionService.getAllRequisitions();
+      const sorted = (reqs || []).sort((a: any, b: any) => new Date(b.requested_at || b.created_at || 0).getTime() - new Date(a.requested_at || a.created_at || 0).getTime());
+      const top = sorted.slice(0, 8).map((r: any) => ({
+        action: r.type,
+        item: r.item_name,
+        user: r.issued_to,
+        time: timeAgo(r.requested_at || r.created_at),
+        quantity: Number(r.quantity || 0),
+        color: r.type === 'issue' ? 'bg-blue-500' : r.type === 'return' ? 'bg-green-500' : 'bg-orange-500',
+      }));
+      setRecentActivity(top);
+    } catch {
+      setRecentActivity([]);
+    }
+  };
+
+  const loadNotifications = async () => {
+    try {
+      const list = await notificationService.getRecent(10);
+      setNotifications(list as any);
+    } catch {
+      setNotifications([]);
+    }
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -47,6 +117,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadAndAnimateStats();
+    loadActiveUsers();
+    loadRecentActivity();
+    loadNotifications();
     const handler = () => loadAndAnimateStats();
     window.addEventListener('inventory-sync', handler as any);
     return () => window.removeEventListener('inventory-sync', handler as any);
@@ -110,23 +183,18 @@ export default function Dashboard() {
   ];
 
   const quickActions = [
-    { title: "Add New Item", description: "Register new inventory item", icon: Package, color: "from-blue-500 to-blue-600" },
-    { title: "Check Out Tool", description: "Assign tool to employee", icon: Users, color: "from-emerald-500 to-emerald-600" },
-    { title: "Generate Report", description: "Create inventory report", icon: BarChart3, color: "from-purple-500 to-purple-600" },
-    { title: "View Analytics", description: "Access detailed insights", icon: TrendingUp, color: "from-orange-500 to-orange-600" }
+    { title: "Add New Item", description: "Register new inventory item", icon: Package, color: "from-blue-500 to-blue-600", route: "/dashboard/inventory" },
+    { title: "Check Out Tool", description: "Assign tool to employee", icon: Users, color: "from-emerald-500 to-emerald-600", route: "/dashboard/tools" },
+    { title: "Generate Report", description: "Create inventory report", icon: BarChart3, color: "from-purple-500 to-purple-600", route: "/dashboard/availability" },
+    { title: "View Analytics", description: "Access detailed insights", icon: TrendingUp, color: "from-orange-500 to-orange-600", route: "/dashboard/availability" }
   ];
 
-  const recentActivity = [
-    { action: "Tool checkout", item: "Drill Set #D-001", user: "John Smith", time: "2 minutes ago", type: "checkout", color: "bg-blue-500" },
-    { action: "PPE restocked", item: "Safety Helmets", quantity: "50 units", time: "15 minutes ago", type: "restock", color: "bg-green-500" },
-    { action: "Spare part used", item: "Motor Bearing #MB-205", location: "Facility A", time: "1 hour ago", type: "usage", color: "bg-orange-500" },
-    { action: "Faulty item reported", item: "Multimeter #MM-003", user: "Sarah Johnson", time: "2 hours ago", type: "report", color: "bg-red-500" }
-  ];
+  // recentActivity is now loaded dynamically
 
   const systemMetrics = [
-    { label: "System Health", value: "98.5%", icon: Activity, color: "text-green-500" },
-    { label: "Active Users", value: "24", icon: Users, color: "text-blue-500" },
-    { label: "Alerts", value: "3", icon: Bell, color: "text-orange-500" }
+    { label: "System Health", value: `${systemHealth}%`, icon: Activity, color: "text-green-500" },
+    { label: "Active Users", value: String(activeUsers), icon: Users, color: "text-blue-500" },
+    { label: "Alerts", value: String(alertsCount), icon: Bell, color: "text-orange-500" }
   ];
 
   return (
@@ -163,15 +231,15 @@ export default function Dashboard() {
                 <div className="flex flex-wrap gap-4 pt-2">
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
                     <Activity size={18} className="text-green-400" />
-                    <span className="text-blue-50 font-medium">System Health: <span className="font-bold">98.5%</span></span>
+                    <span className="text-blue-50 font-medium">System Health: <span className="font-bold">{systemHealth}%</span></span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
                     <Users size={18} className="text-blue-300" />
-                    <span className="text-blue-50 font-medium">Active Users: <span className="font-bold">24</span></span>
+                    <span className="text-blue-50 font-medium">Active Users: <span className="font-bold">{activeUsers}</span></span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
                     <Bell size={18} className="text-yellow-400" />
-                    <span className="text-blue-50 font-medium">Alerts: <span className="font-bold">3</span></span>
+                    <span className="text-blue-50 font-medium">Alerts: <span className="font-bold">{alertsCount}</span></span>
                   </div>
                   <button 
                     onClick={handleRefresh}
@@ -267,6 +335,7 @@ export default function Dashboard() {
                   <button
                     key={index}
                     className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-2 border-transparent hover:border-gray-100 hover:shadow-lg"
+                    onClick={() => action.route && (window.location.assign(action.route))}
                   >
                     <div className={`p-3 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
                       <IconComponent size={20} />
@@ -305,6 +374,12 @@ export default function Dashboard() {
                 <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                   <Search size={16} className="text-gray-400" />
                 </button>
+                <button onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Bell size={16} className="text-gray-400" />
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">{notifications.length}</span>
+                  )}
+                </button>
                 <button className="text-sm text-blue-600 hover:text-blue-700 font-semibold px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300">
                   View all
                 </button>
@@ -335,7 +410,7 @@ export default function Dashboard() {
                         </span>
                       )}
                       {activity.quantity && `Quantity: ${activity.quantity}`}
-                      {activity.location && `Location: ${activity.location}`}
+                      {/* no location field in activity shape */}
                     </p>
                   </div>
                   <Eye size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1" />
@@ -345,6 +420,35 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {showNotifications && (
+        <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Notifications</h3>
+            <button className="text-sm text-blue-600" onClick={loadNotifications}>Refresh</button>
+          </div>
+          <div className="divide-y">
+            {notifications.length === 0 ? (
+              <div className="text-sm text-gray-500 py-4">No notifications</div>
+            ) : notifications.map(n => (
+              <div key={n.id} className="py-3 flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-medium text-gray-900">{n.title}</div>
+                  <div className="text-sm text-gray-600">{n.message}</div>
+                  <div className="text-xs text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {n.data?.issuanceId && (
+                    <a className="text-sm text-blue-600 hover:underline" href={`/dashboard/issuance`} target="_blank" rel="noreferrer">View Issuance</a>
+                  )}
+                  {n.data?.gatePassId && (
+                    <a className="text-sm text-blue-600 hover:underline" href={`/dashboard/gate-pass`} target="_blank" rel="noreferrer">View Gate Pass</a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
