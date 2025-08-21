@@ -1,10 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Package, Wrench, Shield, AlertTriangle, TrendingUp, Clock, Users, BarChart3, Bell, Search, Filter, Download, RefreshCw, ArrowUpRight, Activity, Zap, Eye } from "lucide-react";
+import statsService from '@/services/statsService';
 
 export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0]);
+
+  // Load live counts and animate them
+  const loadAndAnimateStats = async () => {
+    try {
+      const counts = await statsService.getDashboardCounts();
+      const targets = [
+        counts.sparePartsTotalQuantity,
+        counts.toolsTotalQuantity + counts.generalToolsTotalQuantity,
+        counts.ppeTotalQuantity,
+        counts.faultyItemsCount,
+      ];
+      targets.forEach((target, index) => {
+        let current = 0;
+        const increment = Math.max(1, Math.floor((target || 0) / 50));
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= (target || 0)) {
+            current = target || 0;
+            clearInterval(timer);
+          }
+          setAnimatedStats(prev => {
+            const newStats = [...prev];
+            newStats[index] = Math.floor(current);
+            return newStats;
+          });
+        }, 20);
+      });
+    } catch (e) {
+      // noop, keep zeros
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -14,24 +46,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    // Animate stats on load
-    const targets = [1250, 347, 1250, 60];
-    targets.forEach((target, index) => {
-      let current = 0;
-      const increment = target / 50;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        setAnimatedStats(prev => {
-          const newStats = [...prev];
-          newStats[index] = Math.floor(current);
-          return newStats;
-        });
-      }, 20);
-    });
+    loadAndAnimateStats();
+    const handler = () => loadAndAnimateStats();
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
   }, []);
 
   const handleNavigation = (route) => {
@@ -41,7 +59,7 @@ export default function Dashboard() {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
+    loadAndAnimateStats().finally(() => setTimeout(() => setIsRefreshing(false), 800));
   };
 
   const statsCards = [

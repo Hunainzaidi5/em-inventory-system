@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, Area, AreaChart } from "recharts";
 import { Package, AlertTriangle, Shield, TrendingUp, Eye, Filter } from "lucide-react";
+import statsService from '@/services/statsService';
 
 const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-const inventoryData = [
-  { name: "Inventory Items", value: 2156, color: "#6366f1" },
-  { name: "PPE Items", value: 320, color: "#10b981" },
-  { name: "Faulty Items", value: 60, color: "#ef4444" },
+// Will be populated live
+const initialInventoryData = [
+  { name: "Inventory Items", value: 0, color: "#6366f1" },
+  { name: "PPE Items", value: 0, color: "#10b981" },
+  { name: "Faulty Items", value: 0, color: "#ef4444" },
 ];
 
-const barData = [
-  { name: "Inventory", Available: 2156, Faulty: 20, total: 2176 },
-  { name: "PPE", Available: 320, Faulty: 25, total: 345 },
+const initialBarData = [
+  { name: "Inventory", Available: 0, Faulty: 0, total: 0 },
+  { name: "PPE", Available: 0, Faulty: 0, total: 0 },
 ];
 
 const trendData = [
@@ -115,13 +117,41 @@ const CustomTooltip = ({ active, payload, label }: {
 const AvailabilityOverview = () => {
   const [selectedView, setSelectedView] = useState('overview');
   const [animationKey, setAnimationKey] = useState(0);
+  const [inventoryData, setInventoryData] = useState(initialInventoryData);
+  const [barData, setBarData] = useState(initialBarData);
+
+  const loadStats = async () => {
+    try {
+      const counts = await statsService.getDashboardCounts();
+      const inv = counts.inventoryItemsTotalQuantity + counts.sparePartsTotalQuantity + counts.toolsTotalQuantity + counts.generalToolsTotalQuantity;
+      const ppe = counts.ppeTotalQuantity;
+      const faulty = counts.faultyItemsCount;
+      setInventoryData([
+        { name: 'Inventory Items', value: inv, color: '#6366f1' },
+        { name: 'PPE Items', value: ppe, color: '#10b981' },
+        { name: 'Faulty Items', value: faulty, color: '#ef4444' },
+      ]);
+      setBarData([
+        { name: 'Inventory', Available: inv, Faulty: Math.min(faulty, inv), total: inv + Math.min(faulty, inv) },
+        { name: 'PPE', Available: ppe, Faulty: Math.max(0, faulty - Math.min(faulty, inv)), total: ppe + Math.max(0, faulty - Math.min(faulty, inv)) },
+      ]);
+    } catch {}
+  };
 
   useEffect(() => {
     setAnimationKey(prev => prev + 1);
   }, [selectedView]);
 
-  const totalItems = inventoryData.reduce((sum, item) => sum + item.value, 0);
-  const healthScore = Math.round(((totalItems - 60) / totalItems) * 100);
+  useEffect(() => {
+    loadStats();
+    const handler = () => loadStats();
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, []);
+
+  const totalItems = inventoryData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const faultyCount = (inventoryData.find(i => i.name === 'Faulty Items')?.value || 0);
+  const healthScore = totalItems > 0 ? Math.max(0, Math.round(((totalItems - faultyCount) / totalItems) * 100)) : 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
@@ -167,7 +197,7 @@ const AvailabilityOverview = () => {
           <StatCard
             icon={Package}
             title="Total Inventory"
-            value={2156}
+            value={inventoryData.find(i => i.name === 'Inventory Items')?.value || 0}
             subtitle="Items in stock"
             color="from-indigo-600 to-indigo-700"
             trend="+5.2%"
@@ -175,7 +205,7 @@ const AvailabilityOverview = () => {
           <StatCard
             icon={Shield}
             title="PPE Equipment"
-            value={320}
+            value={inventoryData.find(i => i.name === 'PPE Items')?.value || 0}
             subtitle="Safety items"
             color="from-emerald-600 to-emerald-700"
             trend="+2.1%"
@@ -183,7 +213,7 @@ const AvailabilityOverview = () => {
           <StatCard
             icon={AlertTriangle}
             title="Faulty Items"
-            value={60}
+            value={faultyCount}
             subtitle="Needs attention"
             color="from-red-500 to-red-600"
             trend="-1.3%"

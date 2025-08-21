@@ -18,6 +18,8 @@ const mapToServiceStatus = (status: StatusType): ServiceStatusType => {
 import { useToast } from "@/components/ui/use-toast";
 import itemQuantityService from '@/services/itemQuantityService';
 import spareService from '@/services/spareService';
+import issuanceService from '@/services/issuanceService';
+import gatePassService from '@/services/gatePassService';
 
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
 
@@ -622,8 +624,85 @@ useEffect(() => {
         await requisitionService.updateRequisition(selectedRequisition.id, payload);
         toast({ title: 'Updated', description: 'Requisition updated', variant: 'default' });
       } else {
-        await requisitionService.createRequisition(payload);
+        const created = await requisitionService.createRequisition(payload);
         toast({ title: 'Created', description: 'Requisition created', variant: 'default' });
+
+        // Adjust stock or quantities locally and via services where available
+        try {
+          const qty = Number(data.quantity || 0);
+          const type = data.itemType;
+          // Update spare parts in Firestore
+          if (type === 'spare_management') {
+            // Find the spare by name to get id for update
+            const parts = await spareService.getAllSpareParts();
+            const target = (parts || []).find((p: any) => String(p?.name).toLowerCase() === data.itemName.toLowerCase());
+            if (target?.id) {
+              const delta = data.requisitionType === 'return' ? qty : -qty;
+              await spareService.updateStock(target.id, delta, `requisition:${created.id}`, data.user_id);
+            }
+          } else {
+            // Modules stored in localStorage: inventoryItems, toolsItems, generalToolsItems, ppeItems, stationeryItems, faultyReturns
+            const storageKeyMap: Record<ItemType, string> = {
+              inventory: 'inventoryItems',
+              tool: 'toolsItems',
+              general_tools: 'generalToolsItems',
+              ppe: 'ppeItems',
+              stationery: 'stationeryItems',
+              faulty_return: 'faultyReturns',
+              spare_management: 'sparePartsItems',
+            };
+            const storageKey = storageKeyMap[type];
+            const raw = typeof window !== 'undefined' ? window.localStorage.getItem(storageKey) : null;
+            const list: any[] = raw ? JSON.parse(raw) : [];
+            // For faulty_return, append a record; for others, adjust quantity
+            if (type === 'faulty_return') {
+              list.push({ itemName: data.itemName, quantity: qty, createdAt: new Date().toISOString() });
+            } else {
+              const idx = list.findIndex(it => String(it?.name || it?.itemName).toLowerCase() === data.itemName.toLowerCase());
+              if (idx >= 0) {
+                const delta = data.requisitionType === 'return' ? qty : -qty;
+                const qk = ['current_stock', 'available', 'availableQuantity', 'quantity', 'stock'].find(k => typeof list[idx][k] === 'number') || 'quantity';
+                const next = Math.max(0, Number(list[idx][qk] || 0) + delta);
+                list[idx][qk] = next;
+              }
+            }
+            window.localStorage.setItem(storageKey, JSON.stringify(list));
+            // Notify other pages to refresh
+            window.dispatchEvent(new Event('inventory-sync'));
+          }
+        } catch (err) {
+          console.error('Post-requisition stock update failed:', err);
+        }
+
+        // Auto-create issuance record and gate pass
+        try {
+          await issuanceService.create({
+            requisition_id: (created as any).id,
+            issuer_name: data.issuedTo,
+            department: data.department,
+            date: new Date().toISOString().split('T')[0],
+            tools: [
+              { description: data.itemName, qty: Number(data.quantity || 0) }
+            ],
+            receiver: { name: data.issuedTo, department: data.department },
+          });
+        } catch (err) {
+          console.error('Failed to create issuance record:', err);
+        }
+
+        try {
+          await gatePassService.create({
+            requisition_id: (created as any).id,
+            requesterName: data.issuedTo,
+            department: data.department,
+            purpose: `${data.requisitionType} - ${data.itemName}`,
+            itemsDescription: data.itemName,
+            quantitySummary: String(data.quantity),
+            notes: data.notes,
+          });
+        } catch (err) {
+          console.error('Failed to create gate pass:', err);
+        }
       }
 
       setShowRequisitionForm(false);
