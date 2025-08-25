@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signInTestUser } from '@/utils/testAuth';
 
@@ -109,172 +109,165 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
-      {/* Animated Background Elements */}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ 
+      backgroundColor: '#f8fafc',
+      backgroundImage: 'radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%)'
+    }}>
+      {/* Subtle animated background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div 
-          className="absolute -top-40 -left-40 w-80 h-80 rounded-full opacity-10 animate-pulse"
-          style={{ backgroundColor: '#003366' }}
-        ></div>
-        <div 
-          className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full opacity-5"
-          style={{ backgroundColor: '#003366' }}
-        ></div>
-        <div 
-          className="absolute top-1/2 left-1/4 w-32 h-32 rounded-full opacity-10 animate-bounce"
-          style={{ backgroundColor: '#003366', animationDuration: '3s' }}
-        ></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-sky-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <Card
-        className="w-full max-w-lg relative z-10 border border-white/20 shadow-2xl backdrop-blur-xl rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0a2a4f 0%, #003366 60%)' }}
+        className="w-full max-w-md relative z-10 border-0 shadow-2xl overflow-hidden rounded-2xl"
+        style={{ 
+          background: 'linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%)',
+          boxShadow: '0 20px 40px rgba(0, 51, 102, 0.15), 0 0 0 1px rgba(0, 51, 102, 0.05)'
+        }}
       >
-        {/* Decorative Header */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-white to-blue-400"></div>
+        {/* Decorative top accent */}
+        <div className="h-2 bg-gradient-to-r from-blue-500 to-sky-500"></div>
         
-        <CardHeader className="space-y-3 pb-8 pt-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-32 h-32 rounded-full flex items-center justify-center">
-            <img 
-              src="/eminventory.png"
-              alt="Service Icon"
-              className="w-32 h-32"
-            />
+        <CardHeader className="space-y-3 pb-6 pt-8 px-8">
+          <div className="flex justify-center mb-2">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-sky-50 p-4 shadow-lg">
+              <img 
+                src="/eminventory.png"
+                alt="E&M Inventory Logo"
+                className="w-16 h-16"
+              />
             </div>
           </div>
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-white/10 text-blue-100 ring-1 ring-white/20">
-            <Lock className="h-3 w-3" /> Secure Access
+          
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+              <Shield className="h-3.5 w-3.5" /> Secure Access Portal
+            </div>
           </div>
-          <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
-            E&M Inventory Management System
+          
+          <CardTitle className="text-2xl font-bold text-center text-slate-800">
+            Welcome Back
           </CardTitle>
-          <CardDescription className="text-center text-blue-100/90 text-lg font-medium">
-            Enter your credentials to continue
+          <CardDescription className="text-center text-slate-500 text-sm">
+            Sign in to access your E&M Inventory dashboard
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-8 px-8">
+          <CardContent className="space-y-5 px-8">
             {errors.root && (
-              <div className="bg-red-500/15 border border-red-400/40 text-red-100 p-4 rounded-xl text-sm backdrop-blur-sm">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-300 rounded-full"></div>
-                  <span>{errors.root.message}</span>
+              <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm flex items-start space-x-2.5">
+                <div className="w-4 h-4 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                 </div>
+                <span>{errors.root.message}</span>
               </div>
             )}
 
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-sm font-semibold text-blue-100 flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>Email Address</span>
+            <div className="space-y-2.5">
+              <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                Email Address
               </Label>
-              <div className="relative group rounded-xl ring-1 ring-white/15 focus-within:ring-2 focus-within:ring-white/40 bg-white/5">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                  <Mail className="h-4.5 w-4.5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                </div>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email address"
                   {...register('email')}
-                  className={`h-14 bg-transparent border-0 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 px-4 ${
-                    errors.email 
-                      ? 'ring-2 ring-red-400/70 rounded-xl' 
-                      : ''
+                  className={`h-12 bg-white text-slate-800 placeholder-slate-400 border-slate-200 pl-11 pr-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'hover:border-slate-300'
                   }`}
                 />
-                <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center opacity-60 group-focus-within:opacity-100">
-                  <Mail className="h-4 w-4 text-blue-100" />
-                </div>
               </div>
               {errors.email && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
-                  <div className="w-1 h-1 bg-red-300 rounded-full"></div>
+                <p className="text-sm text-red-600 mt-1.5 flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                   <span>{errors.email.message}</span>
                 </p>
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-semibold text-blue-100 flex items-center space-x-2">
-                  <Lock className="w-4 h-4" />
-                  <span>Password</span>
+                <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                  Password
                 </Label>
                 <Link
                   to="/forgot-password"
-                  className="text-sm font-medium text-blue-200 hover:text-white transition-colors duration-300 hover:underline decoration-dotted underline-offset-4"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200 hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
-              <div className="relative group rounded-xl ring-1 ring-white/15 focus-within:ring-2 focus-within:ring-white/40 bg-white/5">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                  <Lock className="h-4.5 w-4.5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                </div>
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   {...register('password')}
-                  className={`h-14 bg-transparent border-0 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 pr-12 px-4 ${
-                    errors.password 
-                      ? 'ring-2 ring-red-400/70 rounded-xl' 
-                      : ''
+                  className={`h-12 bg-white text-slate-800 placeholder-slate-400 border-slate-200 pl-11 pr-11 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'hover:border-slate-300'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-200 hover:text-white transition-colors duration-200"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition-colors duration-200"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
-                  <div className="w-1 h-1 bg-red-300 rounded-full"></div>
+                <p className="text-sm text-red-600 mt-1.5 flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                   <span>{errors.password.message}</span>
                 </p>
               )}
             </div>
           </CardContent>
 
-          <CardFooter className="px-8 pb-10 pt-6">
+          <CardFooter className="flex flex-col px-8 pb-8 pt-6">
             <Button 
               type="submit" 
-              className="w-full h-14 bg-white text-navy-900 font-bold text-lg transition-all duration-300 hover:bg-blue-50 hover:shadow-2xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-white group relative overflow-hidden"
+              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300 shadow-md hover:shadow-lg rounded-xl disabled:opacity-70"
               disabled={isLoading}
-              style={{ 
-                backgroundColor: '#ffffff',
-                color: '#003366'
-              }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-transparent opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
               {isLoading ? (
-                <div className="flex items-center justify-center space-x-3">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                  <span className="animate-pulse">Authenticating...</span>
+                <div className="flex items-center justify-center space-x-2.5">
+                  <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  <span>Signing in...</span>
                 </div>
               ) : (
-                <div className="flex items-center justify-center space-x-3">
-                  <span>Sign In Securely</span>
-                  <div className="w-2 h-2 bg-current rounded-full group-hover:animate-bounce"></div>
-                </div>
+                'Sign In'
               )}
             </Button>
 
-            {/* Security Badge */}
-            <div className="mt-6 flex justify-center">
-              <div className="flex items-center space-x-2 text-blue-200 text-xs font-medium">
-                <Lock className="w-3 h-3" />
-                <span>256-bit SSL Encrypted</span>
-              </div>
+            {/* Security badge */}
+            <div className="mt-6 flex items-center justify-center space-x-2 text-slate-500 text-xs">
+              <Lock className="w-3.5 h-3.5" />
+              <span>256-bit SSL encryption</span>
             </div>
 
             {/* Test Login Button - Only in development */}
             {import.meta.env.DEV && (
-              <div className="mt-4">
+              <div className="mt-5 w-full">
+                <div className="relative flex items-center py-2">
+                  <div className="flex-grow border-t border-slate-200"></div>
+                  <span className="flex-shrink mx-4 text-slate-500 text-xs">Development</span>
+                  <div className="flex-grow border-t border-slate-200"></div>
+                </div>
+                
                 <Button
                   type="button"
                   onClick={handleTestLogin}
-                  className="w-full h-10 bg-yellow-500 text-black font-medium transition-all duration-300 hover:bg-yellow-400 hover:shadow-lg disabled:opacity-70"
+                  className="w-full h-10 bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium transition-all duration-300 mt-3 rounded-xl shadow-sm"
                   disabled={isLoading}
                 >
                   🧪 Test Login (Dev Only)
@@ -283,10 +276,20 @@ export function LoginPage() {
             )}
           </CardFooter>
         </form>
-
-        {/* Decorative Footer */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400/60 via-white/80 to-blue-400/60"></div>
       </Card>
+
+      {/* Add the blob animation keyframes to your global CSS or use a CSS-in-JS solution */}
+      <style>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+      `}</style>
     </div>
   );
 }
