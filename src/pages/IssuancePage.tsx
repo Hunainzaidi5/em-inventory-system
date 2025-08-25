@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useSearchParams } from 'react-router-dom';
 import { issuanceService } from '@/services/issuanceService';
+import SignaturePad from '@/components/SignaturePad';
 
 interface Tool {
   description: string;
@@ -102,10 +103,10 @@ const IssuancePage: React.FC = () => {
           issuerName: (record as any).issuer_name || "",
           date: record.date || prev.date,
           department: formatDepartment((record as any).department || ""),
-          designation: prev.designation,
-          contact: prev.contact,
-          signature: prev.signature,
-          oltNo: prev.oltNo,
+          designation: (record as any).issuer_designation || "",
+          contact: (record as any).issuer_contact || "",
+          signature: (record as any).issuer_signature || "",
+          oltNo: (record as any).issuer_olt_no || "",
           tools: toolsArray,
           receiver: {
             name: record.receiver?.name || "",
@@ -171,7 +172,9 @@ const IssuancePage: React.FC = () => {
             <td style="font-weight: bold; background-color: #f8f9fa; padding: 8px; border: 1px solid black;">Contact:</td>
             <td style="padding: 8px; border: 1px solid black;">${formData.contact || ''}</td>
             <td style="font-weight: bold; background-color: #f8f9fa; padding: 8px; border: 1px solid black;">Signature:</td>
-            <td colspan="2" style="padding: 8px; border: 1px solid black; height: 30px;"></td>
+            <td colspan="2" style="padding: 8px; border: 1px solid black; height: 30px;">
+              ${formData.signature ? `<img src="${formData.signature}" alt="Issuer Signature" style="max-height: 25px; max-width: 100%;" />` : ''}
+            </td>
           </tr>
           <tr>
             <td style="font-weight: bold; background-color: #f8f9fa; padding: 8px; border: 1px solid black;">OLT NO.</td>
@@ -216,7 +219,9 @@ const IssuancePage: React.FC = () => {
           </tr>
           <tr>
             <td style="font-weight: bold; background-color: #f8f9fa; padding: 8px; border: 1px solid black;">Sign:</td>
-            <td style="padding: 8px; border: 1px solid black; border-bottom: 2px solid #666; min-height: 30px;"></td>
+            <td style="padding: 8px; border: 1px solid black; border-bottom: 2px solid #666; min-height: 30px;">
+              ${formData.receiver.sign ? `<img src="${formData.receiver.sign}" alt="Receiver Signature" style="max-height: 20px; max-width: 100%;" />` : ''}
+            </td>
             <td style="font-weight: bold; background-color: #f8f9fa; padding: 8px; border: 1px solid black;">Instruction from:</td>
             <td colspan="2" style="padding: 8px; border: 1px solid black; border-bottom: 2px solid #666; min-height: 30px;">${formData.receiver.instructionFrom || ''}</td>
           </tr>
@@ -354,243 +359,313 @@ const IssuancePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">
-      {/* Navigation Tabs */}
-      <div className="bg-white rounded-lg shadow-lg mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8 px-6">
-            <button
-              onClick={() => setActiveTab('form')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'form'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              📝 Edit Form
-            </button>
-            <button
-              onClick={() => setActiveTab('preview')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'preview'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              👁️ Preview
-            </button>
-          </nav>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Issuance Management</h1>
+          <p className="text-gray-600">Create and manage issuance forms with digital signatures</p>
         </div>
 
-        {/* Tab Content */}
-        {activeTab === 'form' && (
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Issuance Form</h2>
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1">
+            <nav className="flex space-x-1 p-1">
               <button
-                onClick={clearForm}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                onClick={() => setActiveTab('form')}
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  activeTab === 'form'
+                    ? 'bg-white text-blue-600 shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                }`}
               >
-                🗑️ Clear Form
+                <span className="flex items-center justify-center space-x-2">
+                  <span className="text-lg">📝</span>
+                  <span>Edit Form</span>
+                </span>
               </button>
-            </div>
+              <button
+                onClick={() => setActiveTab('preview')}
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  activeTab === 'preview'
+                    ? 'bg-white text-purple-600 shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <span className="text-lg">👁️</span>
+                  <span>Preview</span>
+                </span>
+              </button>
+            </nav>
+          </div>
 
-            {/* Issuer Information */}
-            <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold text-blue-800 mb-4">👤 Issuer Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Issuer Name *</label>
-                  <input 
-                    type="text"
-                    value={formData.issuerName}
-                    onChange={e => setFormData({ ...formData, issuerName: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter issuer name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
-                  <input 
-                    type="date"
-                    value={formData.date}
-                    onChange={e => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                  <input 
-                    type="text"
-                    value={formData.department}
-                    onChange={e => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter department"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-                  <input 
-                    type="text"
-                    value={formData.designation}
-                    onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter designation"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
-                  <input 
-                    type="text"
-                    value={formData.contact}
-                    onChange={e => setFormData({ ...formData, contact: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter contact number"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">OLT NO.</label>
-                  <input 
-                    type="text"
-                    value={formData.oltNo}
-                    onChange={e => setFormData({ ...formData, oltNo: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter OLT number"
-                  />
-                </div>
-              </div>
-            </div>
+                 {/* Tab Content */}
+         {activeTab === 'form' && (
+           <div className="p-8">
+             <div className="flex justify-between items-center mb-8">
+               <div>
+                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Issuance Form</h2>
+                 <p className="text-gray-600">Fill in the details below to create an issuance form</p>
+               </div>
+               <button
+                 onClick={clearForm}
+                 className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+               >
+                 <span className="flex items-center space-x-2">
+                   <span>🗑️</span>
+                   <span>Clear Form</span>
+                 </span>
+               </button>
+             </div>
 
-            {/* Tools Section */}
-            <div className="bg-green-50 p-4 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold text-green-800 mb-4">🔧 Tools Information</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300 bg-white rounded-lg overflow-hidden">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-3 text-center font-semibold w-16">SR. No.</th>
-                      <th className="border border-gray-300 p-3 text-center font-semibold">Tools Description</th>
-                      <th className="border border-gray-300 p-3 text-center font-semibold w-20">M/U</th>
-                      <th className="border border-gray-300 p-3 text-center font-semibold w-20">QTY.</th>
-                      <th className="border border-gray-300 p-3 text-center font-semibold">Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formData.tools.slice(0, 15).map((tool, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
-                        <td className="border border-gray-300 p-2 text-center font-medium">{i + 1}</td>
-                        <td className="border border-gray-300 p-1">
-                          <input 
-                            type="text"
-                            value={tool.description}
-                            onChange={e => handleToolChange(i, "description", e.target.value)}
-                            className="w-full p-2 border-none outline-none focus:bg-blue-50 rounded"
-                            placeholder="Enter tool description"
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <input 
-                            type="text"
-                            value={tool.unit}
-                            onChange={e => handleToolChange(i, "unit", e.target.value)}
-                            className="w-full p-2 border-none outline-none text-center focus:bg-blue-50 rounded"
-                            placeholder="Unit"
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <input 
-                            type="text"
-                            value={tool.qty}
-                            onChange={e => handleToolChange(i, "qty", e.target.value)}
-                            className="w-full p-2 border-none outline-none text-center focus:bg-blue-50 rounded"
-                            placeholder="Qty"
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <input 
-                            type="text"
-                            value={tool.remarks}
-                            onChange={e => handleToolChange(i, "remarks", e.target.value)}
-                            className="w-full p-2 border-none outline-none focus:bg-blue-50 rounded"
-                            placeholder="Enter remarks"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+                         {/* Issuer Information */}
+             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
+               <div className="flex items-center mb-6">
+                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                   <span className="text-white text-xl">👤</span>
+                 </div>
+                 <div>
+                   <h3 className="text-xl font-bold text-gray-800">Issuer Information</h3>
+                   <p className="text-gray-600">Enter the details of the person issuing the items</p>
+                 </div>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Issuer Name *</label>
+                   <input 
+                     type="text"
+                     value={formData.issuerName}
+                     onChange={e => setFormData({ ...formData, issuerName: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter issuer name"
+                   />
+                 </div>
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Date *</label>
+                   <input 
+                     type="date"
+                     value={formData.date}
+                     onChange={e => setFormData({ ...formData, date: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+                   <input 
+                     type="text"
+                     value={formData.department}
+                     onChange={e => setFormData({ ...formData, department: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter department"
+                   />
+                 </div>
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Designation</label>
+                   <input 
+                     type="text"
+                     value={formData.designation}
+                     onChange={e => setFormData({ ...formData, designation: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter designation"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Contact</label>
+                   <input 
+                     type="text"
+                     value={formData.contact}
+                     onChange={e => setFormData({ ...formData, contact: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter contact number"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">OLT NO.</label>
+                   <input 
+                     type="text"
+                     value={formData.oltNo}
+                     onChange={e => setFormData({ ...formData, oltNo: e.target.value })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter OLT number"
+                   />
+                 </div>
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Signature</label>
+                   <SignaturePad
+                     value={formData.signature}
+                     onChange={(value) => setFormData({ ...formData, signature: value })}
+                     className="w-full"
+                     placeholder="Draw your signature or upload an image"
+                   />
+                 </div>
+               </div>
+             </div>
+
+             {/* Tools Section */}
+             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl mb-8 border border-green-100">
+               <div className="flex items-center mb-6">
+                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                   <span className="text-white text-xl">🔧</span>
+                 </div>
+                 <div>
+                   <h3 className="text-xl font-bold text-gray-800">Tools Information</h3>
+                   <p className="text-gray-600">Add the tools and equipment being issued</p>
+                 </div>
+               </div>
+               <div className="overflow-x-auto">
+                                 <table className="w-full border-collapse border-2 border-gray-200 bg-white rounded-xl overflow-hidden shadow-lg">
+                   <thead>
+                     <tr className="bg-gradient-to-r from-green-500 to-emerald-600">
+                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-16">SR. No.</th>
+                       <th className="border border-gray-300 p-4 text-center font-bold text-white">Tools Description</th>
+                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-20">M/U</th>
+                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-20">QTY.</th>
+                       <th className="border border-gray-300 p-4 text-center font-bold text-white">Remarks</th>
+                     </tr>
+                   </thead>
+                                     <tbody>
+                     {formData.tools.slice(0, 15).map((tool, i) => (
+                       <tr key={i} className={`hover:bg-green-50 transition-colors duration-200 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                         <td className="border border-gray-200 p-3 text-center font-semibold text-gray-700 bg-gray-100">{i + 1}</td>
+                         <td className="border border-gray-200 p-2">
+                           <input 
+                             type="text"
+                             value={tool.description}
+                             onChange={e => handleToolChange(i, "description", e.target.value)}
+                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none focus:bg-green-50 focus:border-green-300 transition-all duration-200"
+                             placeholder="Enter tool description"
+                           />
+                         </td>
+                         <td className="border border-gray-200 p-2">
+                           <input 
+                             type="text"
+                             value={tool.unit}
+                             onChange={e => handleToolChange(i, "unit", e.target.value)}
+                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none text-center focus:bg-green-50 focus:border-green-300 transition-all duration-200"
+                             placeholder="Unit"
+                           />
+                         </td>
+                         <td className="border border-gray-200 p-2">
+                           <input 
+                             type="text"
+                             value={tool.qty}
+                             onChange={e => handleToolChange(i, "qty", e.target.value)}
+                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none text-center focus:bg-green-50 focus:border-green-300 transition-all duration-200"
+                             placeholder="Qty"
+                           />
+                         </td>
+                         <td className="border border-gray-200 p-2">
+                           <input 
+                             type="text"
+                             value={tool.remarks}
+                             onChange={e => handleToolChange(i, "remarks", e.target.value)}
+                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none focus:bg-green-50 focus:border-green-300 transition-all duration-200"
+                             placeholder="Enter remarks"
+                           />
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
                 </table>
               </div>
-              <p className="text-sm text-gray-600 mt-2">💡 Showing first 15 rows for editing. All 30 rows will be included in exports.</p>
+                             <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                 <div className="flex items-center space-x-2">
+                   <span className="text-blue-600 text-lg">💡</span>
+                   <p className="text-sm text-blue-800 font-medium">Showing first 15 rows for editing. All 30 rows will be included in exports.</p>
+                 </div>
+               </div>
             </div>
 
-            {/* Receiver Information */}
-            <div className="bg-purple-50 p-4 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold text-purple-800 mb-4">📥 Receiver Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Receivers Name</label>
-                  <input 
-                    type="text"
-                    value={formData.receiver.name}
-                    onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, name: e.target.value } })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter receiver name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                  <input 
-                    type="text"
-                    value={formData.receiver.department}
-                    onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, department: e.target.value } })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter department"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Instruction from</label>
-                  <input 
-                    type="text"
-                    value={formData.receiver.instructionFrom}
-                    onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, instructionFrom: e.target.value } })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter instruction source"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">OLT NO.</label>
-                  <input 
-                    type="text"
-                    value={formData.receiver.oltNo}
-                    onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, oltNo: e.target.value } })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter OLT number"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Receivers Contact</label>
-                  <input 
-                    type="text"
-                    value={formData.receiver.contact}
-                    onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, contact: e.target.value } })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Enter contact number"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                         {/* Receiver Information */}
+             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl mb-8 border border-purple-100">
+               <div className="flex items-center mb-6">
+                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                   <span className="text-white text-xl">📥</span>
+                 </div>
+                 <div>
+                   <h3 className="text-xl font-bold text-gray-800">Receiver Information</h3>
+                   <p className="text-gray-600">Enter the details of the person receiving the items</p>
+                 </div>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Receivers Name</label>
+                   <input 
+                     type="text"
+                     value={formData.receiver.name}
+                     onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, name: e.target.value } })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter receiver name"
+                   />
+                 </div>
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+                   <input 
+                     type="text"
+                     value={formData.receiver.department}
+                     onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, department: e.target.value } })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter department"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Instruction from</label>
+                   <input 
+                     type="text"
+                     value={formData.receiver.instructionFrom}
+                     onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, instructionFrom: e.target.value } })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter instruction source"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">OLT NO.</label>
+                   <input 
+                     type="text"
+                     value={formData.receiver.oltNo}
+                     onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, oltNo: e.target.value } })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter OLT number"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Receivers Contact</label>
+                   <input 
+                     type="text"
+                     value={formData.receiver.contact}
+                     onChange={e => setFormData({ ...formData, receiver: { ...formData.receiver, contact: e.target.value } })}
+                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     placeholder="Enter contact number"
+                   />
+                 </div>
+                                 <div>
+                   <label className="block text-sm font-semibold text-gray-700 mb-2">Receiver Signature</label>
+                   <SignaturePad
+                     value={formData.receiver.sign}
+                     onChange={(value) => setFormData({ 
+                       ...formData, 
+                       receiver: { ...formData.receiver, sign: value } 
+                     })}
+                     className="w-full"
+                     placeholder="Draw receiver signature or upload an image"
+                   />
+                 </div>
+               </div>
+             </div>
+           </div>
+         )}
 
-        {activeTab === 'preview' && (
-          <div className="p-6">
-            <div className="flex justify-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">Issuance Preview</h2>
-            </div>
+                 {activeTab === 'preview' && (
+           <div className="p-8">
+             <div className="text-center mb-8">
+               <h2 className="text-3xl font-bold text-gray-800 mb-2">Issuance Preview</h2>
+               <p className="text-gray-600">Preview your issuance form before exporting</p>
+             </div>
             
-            {/* Exact replica for display/export */}
-            <div ref={printRef} className="bg-white mx-auto" style={{ width: '210mm', fontFamily: 'Arial, sans-serif' }}>
-              <div className="border-4 border-black">
+                         {/* Exact replica for display/export */}
+             <div ref={printRef} className="bg-white mx-auto shadow-2xl rounded-2xl overflow-hidden" style={{ width: '210mm', fontFamily: 'Arial, sans-serif' }}>
+               <div className="border-4 border-black">
                 {/* Title Header */}
                 <div className="bg-green-100 text-center py-4 border-b-2 border-black">
                   <h1 className="text-2xl font-bold">E & M Sub-Department</h1>
@@ -643,7 +718,15 @@ const IssuancePage: React.FC = () => {
                         Signature:
                       </td>
                       <td className="border-b border-black p-3">
-                        {/* Empty signature cell - no signature pad */}
+                        {formData.signature ? (
+                          <img 
+                            src={formData.signature} 
+                            alt="Issuer Signature" 
+                            className="h-8 max-w-full object-contain"
+                          />
+                        ) : (
+                          <div className="h-8 border-b border-gray-400"></div>
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -733,7 +816,15 @@ const IssuancePage: React.FC = () => {
                         </td>
                         <td className="border-r border-b border-black p-3">
                           <div className="border-b border-gray-400 pb-2" style={{ minHeight: '25px' }}>
-                            {/* Empty signature cell - no signature pad */}
+                            {formData.receiver.sign ? (
+                              <img 
+                                src={formData.receiver.sign} 
+                                alt="Receiver Signature" 
+                                className="h-6 max-w-full object-contain"
+                              />
+                            ) : (
+                              <div className="h-6"></div>
+                            )}
                           </div>
                         </td>
                         <td className="border-r border-b border-black p-3 font-semibold bg-gray-50">
@@ -771,73 +862,99 @@ const IssuancePage: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
 
       {/* Action Buttons - Always Visible */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex flex-wrap justify-center gap-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 mt-8">
+        <div className="text-center mb-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">Export & Actions</h3>
+          <p className="text-gray-600">Export your issuance form or switch between edit and preview modes</p>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-6">
           <button 
             onClick={exportToExcel} 
             disabled={isExporting}
-            className={`px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 ${
+            className={`px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
               isExporting 
                 ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-green-600 hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-1'
+                : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
             }`}
           >
             {isExporting ? (
-              <>
-                <span className="inline-block animate-spin mr-2">⏳</span>
-                Exporting...
-              </>
+              <span className="flex items-center space-x-2">
+                <span className="inline-block animate-spin">⏳</span>
+                <span>Exporting...</span>
+              </span>
             ) : (
-              <>
-                📊 Export to Excel
-              </>
+              <span className="flex items-center space-x-2">
+                <span className="text-lg">📊</span>
+                <span>Export to Excel</span>
+              </span>
             )}
           </button>
           
           <button 
             onClick={exportToPDF} 
             disabled={isExporting}
-            className={`px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 ${
+            className={`px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
               isExporting 
                 ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-1'
+                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
             }`}
           >
             {isExporting ? (
-              <>
-                <span className="inline-block animate-spin mr-2">⏳</span>
-                Exporting...
-              </>
+              <span className="flex items-center space-x-2">
+                <span className="inline-block animate-spin">⏳</span>
+                <span>Exporting...</span>
+              </span>
             ) : (
-              <>
-                📄 Export to PDF
-              </>
+              <span className="flex items-center space-x-2">
+                <span className="text-lg">📄</span>
+                <span>Export to PDF</span>
+              </span>
             )}
           </button>
 
           <button 
             onClick={() => setActiveTab(activeTab === 'form' ? 'preview' : 'form')}
-            className="px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1"
+            className="px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
-            {activeTab === 'form' ? '👁️ Preview' : '📝 Edit'}
+            <span className="flex items-center space-x-2">
+              <span className="text-lg">{activeTab === 'form' ? '👁️' : '📝'}</span>
+              <span>{activeTab === 'form' ? 'Preview' : 'Edit'}</span>
+            </span>
           </button>
         </div>
         
         {/* Status Indicators */}
-        <div className="mt-4 flex justify-center space-x-6 text-sm">
-          <div className={`flex items-center ${formData.issuerName && formData.date ? 'text-green-600' : 'text-red-500'}`}>
-            <span className="mr-1">{formData.issuerName && formData.date ? '✅' : '❌'}</span>
-            Basic Info
-          </div>
-          <div className={`flex items-center ${formData.tools.some(t => t.description) ? 'text-green-600' : 'text-red-500'}`}>
-            <span className="mr-1">{formData.tools.some(t => t.description) ? '✅' : '❌'}</span>
-            Tools Added
-          </div>
-          <div className={`flex items-center ${formData.receiver.name ? 'text-green-600' : 'text-red-500'}`}>
-            <span className="mr-1">{formData.receiver.name ? '✅' : '❌'}</span>
-            Receiver Info
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h4 className="text-center text-sm font-semibold text-gray-700 mb-4">Form Completion Status</h4>
+          <div className="flex justify-center space-x-8">
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.issuerName && formData.date 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.issuerName && formData.date ? '✅' : '❌'}</span>
+              <span className="font-medium">Basic Info</span>
+            </div>
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.tools.some(t => t.description) 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.tools.some(t => t.description) ? '✅' : '❌'}</span>
+              <span className="font-medium">Tools Added</span>
+            </div>
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.receiver.name 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.receiver.name ? '✅' : '❌'}</span>
+              <span className="font-medium">Receiver Info</span>
+            </div>
           </div>
         </div>
       </div>

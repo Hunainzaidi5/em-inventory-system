@@ -22,6 +22,7 @@ import spareService from '@/services/spareService';
 import issuanceService from '@/services/issuanceService';
 import gatePassService from '@/services/gatePassService';
 import notificationService from '@/services/notificationService';
+import SignaturePad from '@/components/SignaturePad';
 
 type ItemType = 'inventory' | 'tool' | 'ppe' | 'stationery' | 'faulty_return' | 'general_tools' | 'spare_management';
 
@@ -753,6 +754,11 @@ useEffect(() => {
             issuer_name: data.issuedTo || '',
             department: data.department || '',
             date: new Date().toISOString().split('T')[0],
+            // Issuer details
+            issuer_designation: data.issuer_designation || '',
+            issuer_contact: data.issuer_contact || '',
+            issuer_signature: data.issuer_signature || '',
+            issuer_olt_no: data.issuer_olt_no || '',
             tools: [
               { 
                 description: data.itemName || '', 
@@ -1419,13 +1425,11 @@ useEffect(() => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Signature</label>
-                      <input
-                        type="text"
+                      <SignaturePad
                         value={formState.issuer_signature || ''}
-                        onChange={(e) => handleFormChange('issuer_signature', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter signature"
-                        disabled={isSaving}
+                        onChange={(value) => handleFormChange('issuer_signature', value)}
+                        className="w-full"
+                        placeholder="Draw your signature or upload an image"
                       />
                     </div>
                     <div>
@@ -1492,13 +1496,11 @@ useEffect(() => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Sign</label>
-                      <input
-                        type="text"
+                      <SignaturePad
                         value={formState.receiver_sign || ''}
-                        onChange={(e) => handleFormChange('receiver_sign', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Receiver sign"
-                        disabled={isSaving}
+                        onChange={(value) => handleFormChange('receiver_sign', value)}
+                        className="w-full"
+                        placeholder="Draw receiver signature or upload an image"
                       />
                     </div>
                     <div>

@@ -6,6 +6,11 @@ export interface IssuanceRecord {
   issuer_name?: string;
   department?: string;
   date: string;
+  // Issuer details
+  issuer_designation?: string;
+  issuer_contact?: string;
+  issuer_signature?: string;
+  issuer_olt_no?: string;
   tools: Array<{ description: string; unit?: string; qty: number; remarks?: string }>;
   receiver?: { name?: string; department?: string; sign?: string; instructionFrom?: string; oltNo?: string; contact?: string };
   created_at?: string;
