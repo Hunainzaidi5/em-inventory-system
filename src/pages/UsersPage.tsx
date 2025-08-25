@@ -49,16 +49,14 @@ const UsersPage = () => {
   }, []);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Deactivate this user account? They will be signed out and cannot log in.')) return;
+    if (!confirm('Delete this user permanently? This action cannot be undone.')) return;
     try {
-      // Soft-delete: deactivate the user
-      await userService.updateUser(userId, { is_active: false });
-      // Refresh the users list
-      fetchUsers();
-      alert('User deactivated');
+      await userService.deleteUser(userId);
+      await fetchUsers();
+      alert('User deleted');
     } catch (error) {
-      console.error('Error deactivating user:', error);
-      alert('Failed to deactivate user');
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user');
     }
   };
 

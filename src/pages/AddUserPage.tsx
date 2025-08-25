@@ -159,7 +159,7 @@ const AddUserPage: React.FC = () => {
         toast.success('User created successfully');
       }
       
-      navigate('dashboard/users');
+      navigate('/dashboard/users');
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.errors[0];
@@ -205,7 +205,7 @@ const AddUserPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('dashboard/users')}
+            onClick={() => navigate('/dashboard/users')}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -373,7 +373,7 @@ const AddUserPage: React.FC = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('dashboard/users')}
+                  onClick={() => navigate('/dashboard/users')}
                   disabled={loading}
                 >
                   Cancel
