@@ -126,11 +126,14 @@ export function LoginPage() {
         ></div>
       </div>
 
-      <Card className="w-full max-w-lg border-0 shadow-2xl relative z-10 backdrop-blur-sm" style={{ backgroundColor: '#003366' }}>
+      <Card
+        className="w-full max-w-lg relative z-10 border border-white/20 shadow-2xl backdrop-blur-xl rounded-2xl overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0a2a4f 0%, #003366 60%)' }}
+      >
         {/* Decorative Header */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-white to-blue-400"></div>
         
-        <CardHeader className="space-y-2 pb-8 pt-12">
+        <CardHeader className="space-y-3 pb-8 pt-12">
           <div className="flex justify-center mb-4">
             <div className="w-32 h-32 rounded-full flex items-center justify-center">
             <img 
@@ -140,10 +143,13 @@ export function LoginPage() {
             />
             </div>
           </div>
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-white/10 text-blue-100 ring-1 ring-white/20">
+            <Lock className="h-3 w-3" /> Secure Access
+          </div>
           <CardTitle className="text-4xl font-bold text-center text-white tracking-tight">
             E&M Inventory Management System
           </CardTitle>
-          <CardDescription className="text-center text-blue-100 text-lg font-medium">
+          <CardDescription className="text-center text-blue-100/90 text-lg font-medium">
             Enter your credentials to continue
           </CardDescription>
         </CardHeader>
@@ -151,7 +157,7 @@ export function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-8 px-8">
             {errors.root && (
-              <div className="bg-red-500 bg-opacity-20 border border-red-300 text-red-100 p-4 rounded-xl text-sm backdrop-blur-sm animate-pulse">
+              <div className="bg-red-500/15 border border-red-400/40 text-red-100 p-4 rounded-xl text-sm backdrop-blur-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-red-300 rounded-full"></div>
                   <span>{errors.root.message}</span>
@@ -159,34 +165,36 @@ export function LoginPage() {
               </div>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <Label htmlFor="email" className="text-sm font-semibold text-blue-100 flex items-center space-x-2">
                 <Mail className="w-4 h-4" />
                 <span>Email Address</span>
               </Label>
-              <div className="relative group">
+              <div className="relative group rounded-xl ring-1 ring-white/15 focus-within:ring-2 focus-within:ring-white/40 bg-white/5">
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email address"
                   {...register('email')}
-                  className={`h-14 bg-white bg-opacity-10 border-2 border-white border-opacity-30 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 focus:bg-opacity-20 focus:border-white focus:border-opacity-60 focus:ring-4 focus:ring-white focus:ring-opacity-20 hover:bg-opacity-15 ${
+                  className={`h-14 bg-transparent border-0 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 px-4 ${
                     errors.email 
-                      ? 'border-red-400 border-opacity-70 focus:border-red-400 focus:ring-red-400' 
+                      ? 'ring-2 ring-red-400/70 rounded-xl' 
                       : ''
                   }`}
                 />
-                <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 group-hover:opacity-60 transition-opacity duration-300"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center opacity-60 group-focus-within:opacity-100">
+                  <Mail className="h-4 w-4 text-blue-100" />
+                </div>
               </div>
               {errors.email && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2 animate-pulse">
+                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
                   <div className="w-1 h-1 bg-red-300 rounded-full"></div>
                   <span>{errors.email.message}</span>
                 </p>
               )}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-sm font-semibold text-blue-100 flex items-center space-x-2">
                   <Lock className="w-4 h-4" />
@@ -199,15 +207,15 @@ export function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <div className="relative group">
+              <div className="relative group rounded-xl ring-1 ring-white/15 focus-within:ring-2 focus-within:ring-white/40 bg-white/5">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   {...register('password')}
-                  className={`h-14 bg-white bg-opacity-10 border-2 border-white border-opacity-30 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 focus:bg-opacity-20 focus:border-white focus:border-opacity-60 focus:ring-4 focus:ring-white focus:ring-opacity-20 hover:bg-opacity-15 pr-12 ${
+                  className={`h-14 bg-transparent border-0 text-white placeholder-blue-200 backdrop-blur-sm transition-all duration-300 pr-12 px-4 ${
                     errors.password 
-                      ? 'border-red-400 border-opacity-70 focus:border-red-400 focus:ring-red-400' 
+                      ? 'ring-2 ring-red-400/70 rounded-xl' 
                       : ''
                   }`}
                 />
@@ -218,10 +226,9 @@ export function LoginPage() {
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
-                <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 group-hover:opacity-60 transition-opacity duration-300"></div>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2 animate-pulse">
+                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
                   <div className="w-1 h-1 bg-red-300 rounded-full"></div>
                   <span>{errors.password.message}</span>
                 </p>
@@ -278,7 +285,7 @@ export function LoginPage() {
         </form>
 
         {/* Decorative Footer */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-white to-blue-400"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400/60 via-white/80 to-blue-400/60"></div>
       </Card>
     </div>
   );
