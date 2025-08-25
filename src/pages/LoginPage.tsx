@@ -148,7 +148,7 @@ export function LoginPage() {
           
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold bg-white/15 text-blue-100 border border-white/30 backdrop-blur-sm">
-              <Shield className="h-4 w-4" /> Secure Access Portal
+              <Shield className="h-4 w-4" /> E&M Inventory Management System
             </div>
           </div>
           
