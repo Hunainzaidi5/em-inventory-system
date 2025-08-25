@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Lock, Mail, Eye, EyeOff, Shield } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff, Shield, Volume2, VolumeX } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signInTestUser } from '@/utils/testAuth';
 
@@ -22,6 +22,8 @@ export function LoginPage() {
   console.log('[DEBUG] LoginPage rendered');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { login, setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,6 +41,23 @@ export function LoginPage() {
       password: '',
     },
   });
+
+  // Handle video playback
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch(error => {
+        console.log('Video autoplay failed:', error);
+      });
+    }
+  }, []);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
@@ -108,15 +127,37 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-sky-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-blob"></div>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          autoPlay
+          muted={isMuted}
+          loop
+          playsInline
+          poster="data:image/gif,AAAA" // Minimal placeholder to avoid black screen
+        >
+          {/* You can replace this with your own video */}
+          <source src="D:\Coding Projects\eminventorysystem\public\vebgv.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        
+        {/* Video overlay for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-slate-900/80"></div>
+        
+        {/* Mute/unmute button */}
+        <button
+          onClick={toggleMute}
+          className="absolute bottom-4 right-4 z-20 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        </button>
       </div>
 
-      <Card className="w-full max-w-md relative z-10 border-0 shadow-2xl overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm">
+      <Card className="w-full max-w-md relative z-10 border-0 shadow-2xl overflow-hidden rounded-2xl bg-white/95 backdrop-blur-sm">
         {/* Decorative top accent */}
         <div className="h-1.5 bg-gradient-to-r from-blue-500 to-sky-500"></div>
         
@@ -268,33 +309,6 @@ export function LoginPage() {
           </CardFooter>
         </form>
       </Card>
-
-      {/* Add the blob animation keyframes */}
-      <style>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
     </div>
   );
 }
