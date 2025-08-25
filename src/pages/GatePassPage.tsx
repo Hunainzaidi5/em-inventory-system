@@ -360,6 +360,7 @@ const GatePassPage = () => {
               </button>
             </nav>
           </div>
+          </div>
 
         {/* Tab Content */}
         {activeTab === 'form' && (
