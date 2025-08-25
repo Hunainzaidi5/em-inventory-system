@@ -1,6 +1,3 @@
-import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getStorage, ref, getMetadata } from 'firebase/storage';
 import app from '@/lib/firebase';
 
 interface TestResult {
@@ -11,8 +8,10 @@ interface TestResult {
 }
 
 export async function testAuthConnection(): Promise<TestResult> {
-  const auth = getAuth(app);
   try {
+    // Lazy-load to avoid bundling errors in analysis tools without firebase deps
+    const { getAuth } = await import(/* @vite-ignore */ 'firebase/auth');
+    const auth = getAuth(app);
     await auth.signOut(); // Ensure we're signed out for the test
     return {
       service: 'Authentication',
@@ -30,8 +29,9 @@ export async function testAuthConnection(): Promise<TestResult> {
 }
 
 export async function testFirestoreConnection(): Promise<TestResult> {
-  const db = getFirestore(app);
   try {
+    const { getFirestore, doc, getDoc } = await import(/* @vite-ignore */ 'firebase/firestore');
+    const db = getFirestore(app);
     // Try to read a document that should exist
     const docRef = doc(db, 'systemSettings', 'main');
     await getDoc(docRef);
@@ -52,8 +52,9 @@ export async function testFirestoreConnection(): Promise<TestResult> {
 }
 
 export async function testStorageConnection(): Promise<TestResult> {
-  const storage = getStorage(app);
   try {
+    const { getStorage, ref, getMetadata } = await import(/* @vite-ignore */ 'firebase/storage');
+    const storage = getStorage(app);
     // Try to get metadata of the root reference
     const storageRef = ref(storage, '/');
     await getMetadata(storageRef);

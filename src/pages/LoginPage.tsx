@@ -112,7 +112,7 @@ export function LoginPage() {
       {/* Large Logo Background */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-20">
         <img 
-          src="/bg-1.png" 
+          src="/eminventory.png" 
           alt="E&M Inventory Background Logo" 
           className="w-full max-w-4xl object-contain"
           style={{ height: '1920px', width: '2560px' }}
