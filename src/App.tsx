@@ -104,6 +104,22 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      {/* Top-level aliases to avoid 404s when users navigate directly */}
+      <Route path="/users" element={<Navigate to="/dashboard/users" replace />} />
+      <Route path="/add-user" element={<Navigate to="/dashboard/add-user" replace />} />
+      <Route path="/edit-user/:userId" element={<Navigate to="/dashboard/edit-user/:userId" replace />} />
+      <Route path="/profile" element={<Navigate to="/dashboard/profile" replace />} />
+      <Route path="/gate-pass" element={<Navigate to="/dashboard/gate-pass" replace />} />
+      <Route path="/issuance" element={<Navigate to="/dashboard/issuance" replace />} />
+      <Route path="/requisition" element={<Navigate to="/dashboard/requisition" replace />} />
+      <Route path="/spare-management" element={<Navigate to="/dashboard/spare-management" replace />} />
+      <Route path="/tools" element={<Navigate to="/dashboard/tools" replace />} />
+      <Route path="/general-tools" element={<Navigate to="/dashboard/general-tools" replace />} />
+      <Route path="/ppe" element={<Navigate to="/dashboard/ppe" replace />} />
+      <Route path="/availability" element={<Navigate to="/dashboard/availability" replace />} />
+      <Route path="/stationery" element={<Navigate to="/dashboard/stationery" replace />} />
+      <Route path="/faulty-returns" element={<Navigate to="/dashboard/faulty-returns" replace />} />
+      <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
       <Route
         path="/dashboard"
         element={

@@ -338,12 +338,22 @@ export default function ProfilePage() {
                           }}
                         />
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-indigo-100 to-purple-100">
-                          {user.display_name.split(' ').map(n => n[0]).join('')}
+                          {(user.display_name || user.email || 'User')
+                            .split(' ')
+                            .filter(Boolean)
+                            .map(n => n[0]?.toUpperCase())
+                            .slice(0, 2)
+                            .join('')}
                         </AvatarFallback>
                       </>
                     ) : (
                       <AvatarFallback className="text-4xl bg-gradient-to-br from-gray-100 to-gray-200">
-                        {user.display_name.split(' ').map(n => n[0]).join('')}
+                        {(user.display_name || user.email || 'User')
+                          .split(' ')
+                          .filter(Boolean)
+                          .map(n => n[0]?.toUpperCase())
+                          .slice(0, 2)
+                          .join('')}
                       </AvatarFallback>
                     )}
                   </Avatar>
