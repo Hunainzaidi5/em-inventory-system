@@ -115,7 +115,7 @@ export function LoginPage() {
           src="/eminventory.png" 
           alt="E&M Inventory Background Logo" 
           className="w-full max-w-4xl object-contain"
-          style={{ height: '421px', width: '1280px' }}
+          style={{ height: '1920px', width: '911px' }}
         />
       </div>
 
