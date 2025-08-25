@@ -517,7 +517,7 @@ export default function ProfilePage() {
               <InfoCard
                 icon={Shield}
                 label="Role"
-                value={roleDisplayNames[userRole] || user.role.replace('_', ' ')}
+                value={roleDisplayNames[userRole] || (user.role ? user.role.replace('_', ' ') : 'Unknown')}
                 color="bg-purple-100"
               />
 
