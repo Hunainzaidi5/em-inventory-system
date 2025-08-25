@@ -672,14 +672,33 @@ useEffect(() => {
               selectedSpareMeta = target || null;
               spareId = target?.id;
             }
+            
+            // If we still don't have a spareId, try to find by name again
+            if (!spareId && data.itemName) {
+              const parts = await spareService.getAllSpareParts();
+              const target = (parts || []).find((p: any) => String(p?.name).toLowerCase() === data.itemName.toLowerCase());
+              if (target) {
+                selectedSpareMeta = target;
+                spareId = target.id;
+              }
+            }
+            
             if (spareId) {
               if (!selectedSpareMeta) {
                 selectedSpareMeta = await spareService.getSparePartById(spareId);
               }
-              const delta = data.requisitionType === 'return' ? qty : -qty;
-              await spareService.updateStock(spareId, delta, `requisition:${created.id}`, data.user_id);
-              // Immediately notify listeners to refresh stats
-              window.dispatchEvent(new Event('inventory-sync'));
+              
+              // Double-check that we found the spare part
+              if (selectedSpareMeta) {
+                const delta = data.requisitionType === 'return' ? qty : -qty;
+                await spareService.updateStock(spareId, delta, `requisition:${created.id}`, data.user_id);
+                // Immediately notify listeners to refresh stats
+                window.dispatchEvent(new Event('inventory-sync'));
+              } else {
+                console.warn(`Spare part not found for ID: ${spareId}`);
+              }
+            } else {
+              console.warn(`Spare part not found for name: ${data.itemName}`);
             }
           } else {
             // Modules stored in localStorage: inventoryItems, toolsItems, generalToolsItems, ppeItems, stationeryItems, faultyReturns
@@ -719,19 +738,23 @@ useEffect(() => {
         try {
           const issuance = await issuanceService.create({
             requisition_id: (created as any).id,
-            issuer_name: data.issuedTo,
-            department: data.department,
+            issuer_name: data.issuedTo || '',
+            department: data.department || '',
             date: new Date().toISOString().split('T')[0],
             tools: [
-              { description: data.itemName, unit: (selectedSpareMeta as any)?.uom || undefined, qty: Number(data.quantity || 0) }
+              { 
+                description: data.itemName || '', 
+                unit: (selectedSpareMeta as any)?.uom || '', 
+                qty: Number(data.quantity || 0) 
+              }
             ],
             receiver: {
-              name: data.receiver_name || data.issuedTo,
-              department: data.receiver_department || data.department,
-              sign: data.receiver_sign,
-              instructionFrom: data.receiver_instruction_from,
-              oltNo: data.receiver_olt_no,
-              contact: data.receiver_contact
+              name: data.receiver_name || data.issuedTo || '',
+              department: data.receiver_department || data.department || '',
+              sign: data.receiver_sign || '',
+              instructionFrom: data.receiver_instruction_from || '',
+              oltNo: data.receiver_olt_no || '',
+              contact: data.receiver_contact || ''
             },
           });
           await notificationService.create({
@@ -749,22 +772,22 @@ useEffect(() => {
         try {
           const gatePass = await gatePassService.create({
             requisition_id: (created as any).id,
-            requesterName: data.issuedTo,
-            department: data.department,
+            requesterName: data.issuedTo || '',
+            department: data.department || '',
             purpose: `${data.requisitionType} - ${data.itemName}`,
-            itemsDescription: data.itemName,
-            quantitySummary: String(data.quantity),
-            notes: data.notes,
-            destination: data.gatepass_destination,
-            expectedReturnDate: data.expected_return_date,
+            itemsDescription: data.itemName || '',
+            quantitySummary: String(data.quantity || 0),
+            notes: data.notes || '',
+            destination: data.gatepass_destination || '',
+            expectedReturnDate: data.expected_return_date || '',
             // Persist receiver-like fields for gate pass as well
             receiver: {
-              name: data.receiver_name || data.issuedTo,
-              department: data.receiver_department || data.department,
-              sign: data.receiver_sign,
-              instructionFrom: data.receiver_instruction_from,
-              oltNo: data.receiver_olt_no,
-              contact: data.receiver_contact,
+              name: data.receiver_name || data.issuedTo || '',
+              department: data.receiver_department || data.department || '',
+              sign: data.receiver_sign || '',
+              instructionFrom: data.receiver_instruction_from || '',
+              oltNo: data.receiver_olt_no || '',
+              contact: data.receiver_contact || '',
             } as any,
           });
           await notificationService.create({

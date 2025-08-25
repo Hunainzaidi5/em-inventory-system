@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using native JavaScript date formatting instead of date-fns
-import { getAvatarUrl } from "@/utils/avatarUtils";
+import { getAvatarUrl, uploadAvatar } from "@/utils/avatarUtils";
 import { toast } from "sonner";
 import { 
   Loader2, 
@@ -198,18 +198,19 @@ export default function ProfilePage() {
       return;
     }
 
-    // Validate file size (2MB max)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Image must be less than 2MB');
+    // Validate file size (1MB max for base64 storage)
+    if (file.size > 1024 * 1024) {
+      toast.error('Image must be less than 1MB');
       return;
     }
 
     try {
       setIsUploading(true);
       
-      // Update the profile with the new avatar
+      // Convert file to base64 and update profile
+      const base64Data = await uploadAvatar(file, user.id);
       await authService.updateProfile(user.id, { 
-        avatar_url: file.name 
+        avatar_url: base64Data 
       });
       
       // Refresh the user data to show the new avatar

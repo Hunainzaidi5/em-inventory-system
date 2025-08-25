@@ -30,7 +30,9 @@ export const spareService = {
   // Get spare part by ID
   async getSparePartById(id: string): Promise<SparePart | null> {
     try {
+      console.log('Looking for spare part with ID:', id);
       const sparePart = await FirebaseService.getById('spareParts', id);
+      console.log('Found spare part:', sparePart);
       return sparePart as SparePart;
     } catch (error) {
       console.error('Error fetching spare part by ID:', error);
@@ -125,15 +127,19 @@ export const spareService = {
   // Update stock quantity
   async updateStock(id: string, quantityChange: number, reason: string, userId: string): Promise<void> {
     try {
+      console.log(`Updating stock for spare part ID: ${id}, change: ${quantityChange}`);
       const sparePart = await this.getSparePartById(id);
       if (!sparePart) {
-        throw new Error('Spare part not found');
+        console.error(`Spare part with ID ${id} not found`);
+        throw new Error(`Spare part with ID ${id} not found`);
       }
 
       const newStock = sparePart.quantity + quantityChange;
       if (newStock < 0) {
         throw new Error('Stock cannot go below 0');
       }
+
+      console.log(`Updating stock from ${sparePart.quantity} to ${newStock}`);
 
       // Update spare part stock
       await this.updateSparePart(id, { quantity: newStock });
@@ -148,6 +154,8 @@ export const spareService = {
         previous_stock: sparePart.quantity,
         new_stock: newStock
       });
+      
+      console.log('Stock update completed successfully');
     } catch (error) {
       console.error('Error updating spare part stock:', error);
       throw error;
