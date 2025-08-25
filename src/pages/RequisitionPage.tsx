@@ -74,6 +74,12 @@ interface RequisitionFormState {
   reason: string;
   notes?: string;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  // Issuer details
+  issuer_designation?: string;
+  issuer_contact?: string;
+  issuer_signature?: string;
+  issuer_olt_no?: string;
+  // Receiver details
   receiver_name?: string;
   receiver_department?: string;
   receiver_instruction_from?: string;
@@ -177,6 +183,12 @@ const RequisitionPage = () => {
     reason: '',
     notes: '',
     priority: 'medium',
+    // Issuer details
+    issuer_designation: '',
+    issuer_contact: '',
+    issuer_signature: '',
+    issuer_olt_no: '',
+    // Receiver details
     receiver_name: '',
     receiver_department: '',
     receiver_instruction_from: '',
@@ -1379,94 +1391,148 @@ useEffect(() => {
                   />
                 </div>
 
-                {/* Issuance & Gate Pass (optional) */}
-                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Name</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_name || ''}
-                      onChange={(e) => handleFormChange('receiver_name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Receiver name"
-                      disabled={isSaving}
-                    />
+                {/* Issuer Details Section */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Issuer Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
+                      <input
+                        type="text"
+                        value={formState.issuer_designation || ''}
+                        onChange={(e) => handleFormChange('issuer_designation', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter designation"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Contact</label>
+                      <input
+                        type="text"
+                        value={formState.issuer_contact || ''}
+                        onChange={(e) => handleFormChange('issuer_contact', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter contact number"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Signature</label>
+                      <input
+                        type="text"
+                        value={formState.issuer_signature || ''}
+                        onChange={(e) => handleFormChange('issuer_signature', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter signature"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">OLT NO.</label>
+                      <input
+                        type="text"
+                        value={formState.issuer_olt_no || ''}
+                        onChange={(e) => handleFormChange('issuer_olt_no', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter OLT number"
+                        disabled={isSaving}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Department</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_department || ''}
-                      onChange={(e) => handleFormChange('receiver_department', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Receiver department"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Instruction From</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_instruction_from || ''}
-                      onChange={(e) => handleFormChange('receiver_instruction_from', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Instruction from"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Contact</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_contact || ''}
-                      onChange={(e) => handleFormChange('receiver_contact', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Receiver contact"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Sign</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_sign || ''}
-                      onChange={(e) => handleFormChange('receiver_sign', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Receiver sign"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Receiver OLT NO.</label>
-                    <input
-                      type="text"
-                      value={formState.receiver_olt_no || ''}
-                      onChange={(e) => handleFormChange('receiver_olt_no', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="OLT number"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Gate Pass Destination</label>
-                    <input
-                      type="text"
-                      value={formState.gatepass_destination || ''}
-                      onChange={(e) => handleFormChange('gatepass_destination', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Destination"
-                      disabled={isSaving}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Expected Return Date</label>
-                    <input
-                      type="date"
-                      value={formState.expected_return_date || ''}
-                      onChange={(e) => handleFormChange('expected_return_date', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      disabled={isSaving}
-                    />
+                </div>
+
+                {/* Receiver Details Section */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Receiver Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Name</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_name || ''}
+                        onChange={(e) => handleFormChange('receiver_name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Receiver name"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Department</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_department || ''}
+                        onChange={(e) => handleFormChange('receiver_department', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Receiver department"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Instruction From</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_instruction_from || ''}
+                        onChange={(e) => handleFormChange('receiver_instruction_from', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Instruction from"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Contact</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_contact || ''}
+                        onChange={(e) => handleFormChange('receiver_contact', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Receiver contact"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Receiver Sign</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_sign || ''}
+                        onChange={(e) => handleFormChange('receiver_sign', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Receiver sign"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Receiver OLT NO.</label>
+                      <input
+                        type="text"
+                        value={formState.receiver_olt_no || ''}
+                        onChange={(e) => handleFormChange('receiver_olt_no', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="OLT number"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Gate Pass Destination</label>
+                      <input
+                        type="text"
+                        value={formState.gatepass_destination || ''}
+                        onChange={(e) => handleFormChange('gatepass_destination', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Destination"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Expected Return Date</label>
+                      <input
+                        type="date"
+                        value={formState.expected_return_date || ''}
+                        onChange={(e) => handleFormChange('expected_return_date', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        disabled={isSaving}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
