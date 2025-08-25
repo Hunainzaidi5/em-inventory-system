@@ -128,11 +128,11 @@ export function AppSidebar({ className }: AppSidebarProps) {
   };
 
   const getNavClassName = (path: string, exact = false) => {
-    const baseClasses = "w-full justify-start transition-all duration-200";
+    const baseClasses = "w-full justify-start transition-all duration-200 rounded-md px-3 py-2";
     if (isActive(path, exact)) {
-      return `${baseClasses} bg-sidebar-accent text-sidebar-accent-foreground font-medium`;
+      return `${baseClasses} bg-sidebar-accent/80 text-sidebar-accent-foreground font-medium border-l-4 border-sidebar-accent-foreground`;
     }
-    return `${baseClasses} hover:bg-sidebar-accent/50`;
+    return `${baseClasses} hover:bg-sidebar-accent/40 text-sidebar-foreground/90`;
   };
 
   // Function to handle avatar refresh
@@ -158,7 +158,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
   return (
     <Sidebar className={className} collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border p-4">
+      <SidebarHeader className="border-b border-sidebar-border p-4 bg-gradient-to-r from-sidebar-accent/10 to-transparent">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
             <img 
@@ -176,7 +176,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-2 space-y-2">
         <SidebarGroup>
           <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -281,7 +281,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-2 border-t">
+      <SidebarFooter className="p-2 border-t bg-gradient-to-r from-transparent to-sidebar-accent/10">
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
