@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiShield } from "react-icons/fi";
+import { FaHelmetSafety } from "react-icons/fa6";
 
 interface IssuedTo {
   name: string;
@@ -196,7 +197,7 @@ const PPEPage = () => {
           <div className="mb-4 md:mb-0">
             <div className="flex items-center mb-2">
               <div className="p-2 bg-emerald-100 rounded-lg mr-3">
-                <FiShield className="w-6 h-6 text-emerald-600" />
+                <FaHelmetSafety className="w-6 h-6 text-emerald-600" />
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 PPE Management
@@ -222,7 +223,7 @@ const PPEPage = () => {
                 <p className="text-3xl font-bold text-slate-800">{ppeItems.length}</p>
               </div>
               <div className="p-3 bg-emerald-100 rounded-xl">
-                <FiShield className="w-6 h-6 text-emerald-600" />
+                <FaHelmetSafety className="w-6 h-6 text-emerald-600" />
               </div>
             </div>
           </div>
