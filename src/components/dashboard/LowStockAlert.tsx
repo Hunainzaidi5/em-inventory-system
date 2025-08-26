@@ -30,8 +30,11 @@ interface EnhancedLowStockItem extends LowStockItem {
   daysUntilStockout: number | null;
 }
 
-const calculateUrgency = (item: LowStockItem): Omit<EnhancedLowStockItem, keyof LowStockItem> => {
-  const percentage = item.currentStock / item.minStock;
+// 🔹 Force percentage = 10% always
+const calculateUrgency = (
+  item: LowStockItem
+): Omit<EnhancedLowStockItem, keyof LowStockItem> => {
+  const percentage = 0.1; // fixed 10%
 
   // Calculate days until stockout if we have usage data
   let daysUntilStockout = null;
@@ -39,60 +42,66 @@ const calculateUrgency = (item: LowStockItem): Omit<EnhancedLowStockItem, keyof 
     daysUntilStockout = Math.floor(item.currentStock / item.averageDailyUsage);
   }
 
-  // Determine urgency level
-  let urgency: UrgencyLevel = 'LOW';
+  // Urgency logic stays the same
+  let urgency: UrgencyLevel = "LOW";
   if (item.currentStock <= 0) {
-    urgency = 'CRITICAL';
+    urgency = "CRITICAL";
   } else if (
-    percentage <= stockThresholds.CRITICAL.percentage || 
+    percentage <= stockThresholds.CRITICAL.percentage ||
     item.currentStock <= stockThresholds.CRITICAL.minItems ||
     (daysUntilStockout !== null && daysUntilStockout <= 7)
   ) {
-    urgency = 'CRITICAL';
+    urgency = "CRITICAL";
   } else if (
-    percentage <= stockThresholds.WARNING.percentage || 
+    percentage <= stockThresholds.WARNING.percentage ||
     item.currentStock <= stockThresholds.WARNING.minItems ||
     (daysUntilStockout !== null && daysUntilStockout <= 14)
   ) {
-    urgency = 'WARNING';
+    urgency = "WARNING";
   }
 
   return {
     urgency,
-    percentage: Math.round(percentage * 100),
-    daysUntilStockout: daysUntilStockout ?? null
+    percentage: 10, // 🔹 always return 10%
+    daysUntilStockout: daysUntilStockout ?? null,
   };
 };
 
 export function LowStockAlert() {
-  const { data: lowStockItems, isLoading, error, refetch } = useQuery<LowStockItem[], Error>({
-    queryKey: ['low-stock-items'],
+  const { data: lowStockItems, isLoading, error, refetch } = useQuery<
+    LowStockItem[],
+    Error
+  >({
+    queryKey: ["low-stock-items"],
     queryFn: getLowStockItems,
-    select: (data) => data.map(item => ({
-      ...item,
-      ...calculateUrgency(item)
-    })) as EnhancedLowStockItem[]
+    select: (data) =>
+      data.map((item) => ({
+        ...item,
+        ...calculateUrgency(item),
+      })) as EnhancedLowStockItem[],
   });
 
   const getUrgencyVariant = (urgency: UrgencyLevel) => {
-    return stockThresholds[urgency]?.color || 'secondary';
+    return stockThresholds[urgency]?.color || "secondary";
   };
 
   const getUrgencyColor = (urgency: UrgencyLevel) => {
     switch (urgency) {
-      case 'CRITICAL':
-        return 'text-error';
-      case 'WARNING':
-        return 'text-warning';
-      case 'LOW':
-        return 'text-info';
+      case "CRITICAL":
+        return "text-error";
+      case "WARNING":
+        return "text-warning";
+      case "LOW":
+        return "text-info";
       default:
-        return 'text-muted-foreground';
+        return "text-muted-foreground";
     }
   };
 
-  const criticalItems = lowStockItems?.filter(item => item.urgency === 'CRITICAL').length || 0;
-  const warningItems = lowStockItems?.filter(item => item.urgency === 'WARNING').length || 0;
+  const criticalItems =
+    lowStockItems?.filter((item) => item.urgency === "CRITICAL").length || 0;
+  const warningItems =
+    lowStockItems?.filter((item) => item.urgency === "WARNING").length || 0;
 
   if (isLoading) {
     return (
@@ -172,10 +181,19 @@ export function LowStockAlert() {
             </div>
           ) : (
             lowStockItems?.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+              <div
+                key={item.id}
+                className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+              >
                 <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-full bg-${getUrgencyVariant(item.urgency)}/10`}>
-                    <AlertTriangle className={`h-5 w-5 ${getUrgencyColor(item.urgency)}`} />
+                  <div
+                    className={`p-2 rounded-full bg-${getUrgencyVariant(
+                      item.urgency
+                    )}/10`}
+                  >
+                    <AlertTriangle
+                      className={`h-5 w-5 ${getUrgencyColor(item.urgency)}`}
+                    />
                   </div>
                   <div>
                     <p className="font-medium text-sm">{item.name}</p>
@@ -185,24 +203,30 @@ export function LowStockAlert() {
                     </p>
                     {item.daysUntilStockout !== null && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        Stockout in ~{item.daysUntilStockout} day{item.daysUntilStockout !== 1 ? 's' : ''}
+                        Stockout in ~{item.daysUntilStockout} day
+                        {item.daysUntilStockout !== 1 ? "s" : ""}
                       </p>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-medium">
-                    {item.currentStock} 
-                    <span className="text-muted-foreground"> / {item.minStock}</span>
+                    {item.currentStock}
+                    <span className="text-muted-foreground">
+                      {" "}
+                      / {item.minStock}
+                    </span>
                   </p>
                   <div className="flex items-center justify-end gap-2">
                     <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className={`h-full ${getUrgencyColor(item.urgency)}`}
-                        style={{ width: `${Math.min(100, item.percentage)}%` }}
+                        style={{ width: `10%` }} // 🔹 fixed at 10%
                       />
                     </div>
-                    <span className={`text-xs ${getUrgencyColor(item.urgency)}`}>
+                    <span
+                      className={`text-xs ${getUrgencyColor(item.urgency)}`}
+                    >
                       {stockThresholds[item.urgency]?.label}
                     </span>
                   </div>
@@ -211,16 +235,20 @@ export function LowStockAlert() {
             ))
           )}
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => refetch()}
               disabled={isLoading}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
-            <Button variant="outline" size="sm">View All</Button>
+            <Button variant="outline" size="sm">
+              View All
+            </Button>
             <button className="text-sm text-primary hover:underline">
               View all low stock items →
             </button>
