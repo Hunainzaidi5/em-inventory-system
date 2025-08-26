@@ -476,18 +476,29 @@ const SpareManagement: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Spare Management</h1>
-            <p className="text-gray-600">Track and manage your spare parts inventory across all systems</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+          <div className="mb-6 md:mb-0">
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  Spare Management
+                </h1>
+                <p className="text-gray-600 font-medium">Track and manage your spare parts inventory across all systems</p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-3 mt-4 md:mt-0">
+          <div className="flex items-center space-x-4">
             <button
               onClick={refreshCurrentTab}
-              className="flex items-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center bg-white hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 font-medium"
               disabled={currentTabData?.loading}
             >
               <FiRefreshCw className={`mr-2 ${currentTabData?.loading ? 'animate-spin' : ''}`} />
@@ -495,7 +506,7 @@ const SpareManagement: React.FC = () => {
             </button>
             <button
               onClick={openAddModal}
-              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium transform hover:scale-105"
             >
               <FiPlus className="mr-2" />
               Add New Item
@@ -505,69 +516,111 @@ const SpareManagement: React.FC = () => {
 
         {/* Stats Cards */}
         {currentTabData && !currentTabData.loading && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Total Items</h3>
-              <p className="text-2xl font-bold">{currentTabData.data.length}</p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Total Items</h3>
+                  <p className="text-3xl font-bold text-gray-800 mt-2">{currentTabData.data.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Total Quantity</h3>
-              <p className="text-2xl font-bold">
-                {currentTabData.data.reduce((sum, item) => sum + item.quantity, 0)}
-              </p>
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Total Quantity</h3>
+                  <p className="text-3xl font-bold text-gray-800 mt-2">
+                    {currentTabData.data.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Warehouses</h3>
-              <p className="text-2xl font-bold">
-                {new Set(currentTabData.data.map(item => item.location)).size}
-              </p>
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Warehouses</h3>
+                  <p className="text-3xl font-bold text-gray-800 mt-2">
+                    {new Set(currentTabData.data.map(item => item.location)).size}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-gray-500 font-medium">Low Stock Items</h3>
-              <p className="text-2xl font-bold text-red-600">
-                {currentTabData.data.filter(item => item.quantity < 100).length}
-              </p>
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Low Stock Items</h3>
+                  <p className="text-3xl font-bold text-red-600 mt-2">
+                    {currentTabData.data.filter(item => item.quantity < 100).length}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Main Navigation */}
-        <div className="bg-white rounded-lg shadow mb-6">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
           {/* Main Tabs */}
-          <div className="flex border-b">
+          <div className="flex border-b border-gray-200">
             <button
               onClick={() => setActiveMainTab("O&M")}
-              className={`px-6 py-4 font-medium text-sm border-r ${
+              className={`px-8 py-5 font-semibold text-sm border-r border-gray-200 transition-all duration-200 ${
                 activeMainTab === "O&M" 
-                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
               }`}
             >
-              O&M (Operations & Maintenance)
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${activeMainTab === "O&M" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <span>O&M (Operations & Maintenance)</span>
+              </div>
             </button>
             <button
               onClick={() => setActiveMainTab("PMA")}
-              className={`px-6 py-4 font-medium text-sm ${
+              className={`px-8 py-5 font-semibold text-sm transition-all duration-200 ${
                 activeMainTab === "PMA" 
-                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" 
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
               }`}
             >
-              PMA (Punjab Mass Transit Authority)
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${activeMainTab === "PMA" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <span>PMA (Punjab Mass Transit Authority)</span>
+              </div>
             </button>
           </div>
 
           {/* Sub Tabs */}
-          <div className="p-4">
-            <div className="flex flex-wrap gap-2">
+          <div className="p-6 bg-gradient-to-r from-gray-50 to-blue-50">
+            <div className="flex flex-wrap gap-3">
               {getCurrentTabCategories().map((category) => (
                 <button
                   key={category.key}
                   onClick={() => setActiveSubTab(category.key)}
-                  className={`px-3 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                  className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 whitespace-nowrap border ${
                     activeSubTab === category.key
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md"
                   }`}
                 >
                   {category.name}
@@ -580,43 +633,60 @@ const SpareManagement: React.FC = () => {
         {/* Content Area */}
         <div>
           {/* Filters */}
-          <div className="bg-white p-4 rounded-lg shadow mb-6">
-            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-6 space-y-4 lg:space-y-0">
               <div className="flex-shrink-0">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {activeMainTab} - {currentTabData?.name || activeSubTab}
-                </h3>
-                <p className="text-sm text-gray-500">
+                <div className="flex items-center space-x-3 mb-1">
+                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {activeMainTab} - {currentTabData?.name || activeSubTab}
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-600 font-medium">
                   {activeMainTab === "O&M" ? "Operations & Maintenance Inventory" : "Punjab Mass Transit Authority Inventory"}
                 </p>
               </div>
-              <div className="relative flex-grow">
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              
+              {/* Enhanced Search Bar */}
+              <div className="relative flex-grow max-w-md">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <FiSearch className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
                   type="text"
-                  placeholder="Search items..."
+                  placeholder="Search by name, code, or IMIS..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    <FiX />
+                    <FiX className="h-5 w-5" />
                   </button>
                 )}
+                {searchTerm && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    <div className="p-2 text-xs text-gray-500">
+                      Searching: "{searchTerm}"
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="w-full md:w-48">
+              
+              {/* Location Filter */}
+              <div className="w-full lg:w-56">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Location</label>
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
                 >
                   {locations.map(loc => (
                     <option key={loc} value={loc}>
-                      {loc === "all" ? "All Locations" : loc}
+                      {loc === "all" ? "📍 All Locations" : `📍 ${loc}`}
                     </option>
                   ))}
                 </select>

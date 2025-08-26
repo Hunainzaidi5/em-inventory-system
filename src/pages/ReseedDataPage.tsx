@@ -482,28 +482,41 @@ export default function ReseedDataPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Reseed Data (Developer Only)</h1>
-        <button 
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" 
-          onClick={() => navigate('/dashboard')}
-        >
-          ← Back to Dashboard
-        </button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                Reseed Data
+              </h1>
+              <p className="text-gray-600 font-medium">Developer Only - Database Refresh & Import Tool</p>
+            </div>
+          </div>
+          <button 
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium transform hover:scale-105" 
+            onClick={() => navigate('/dashboard')}
+          >
+            ← Back to Dashboard
+          </button>
+        </div>
 
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h2 className="text-lg font-semibold text-blue-800 mb-2">Important Notes:</h2>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li>• <strong>Refresh Mode:</strong> This process will clear all existing data before importing new data to prevent duplication</li>
-          <li>• Data is batched ({BATCH_SIZE}/batch) and IDs are auto-generated in the database</li>
-          <li>• <strong>belongsto</strong> field includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
-          <li>• Source tracking added to identify which file and category each item came from</li>
-          <li>• Support for all inventory categories: Spare Parts, Faulty Returns, PPE Items, Stationery Items, Asset Management, Inventory, Tools, and General Tools</li>
-          <li>• <strong>⚠️ Warning:</strong> This will permanently delete existing data. Make sure to backup if needed.</li>
-        </ul>
-      </div>
+        <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-lg">
+          <h2 className="text-lg font-semibold text-blue-800 mb-2">Important Notes:</h2>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li>• <strong>Refresh Mode:</strong> This process will clear all existing data before importing new data to prevent duplication</li>
+            <li>• Data is batched ({BATCH_SIZE}/batch) and IDs are auto-generated in the database</li>
+            <li>• <strong>belongsto</strong> field includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
+            <li>• Source tracking added to identify which file and category each item came from</li>
+            <li>• Support for all inventory categories: Spare Parts, Faulty Returns, PPE Items, Stationery Items, Asset Management, Inventory, Tools, and General Tools</li>
+            <li>• <strong>⚠️ Warning:</strong> This will permanently delete existing data. Make sure to backup if needed.</li>
+          </ul>
+        </div>
 
       {/* Tab Navigation */}
       <div className="mb-6 border-b border-gray-200">
@@ -732,5 +745,6 @@ export default function ReseedDataPage() {
         </div>
       </div>
     </div>
+    </div>
   );
-} 
+}
