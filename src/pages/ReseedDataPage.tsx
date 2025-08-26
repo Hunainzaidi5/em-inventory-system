@@ -236,10 +236,41 @@ export default function ReseedDataPage() {
     let totalInserted = 0;
     let totalInventoryInserted = 0;
 
+    // Clear existing data before importing (refresh mode)
+    try {
+      setLog((l) => [...l, '🔄 Clearing existing data for refresh...']);
+      
+      // Clear spare parts data
+      if (selectedFiles.length > 0) {
+        const existingSpareParts = await FirebaseService.query('spareParts', []);
+        if (existingSpareParts.length > 0) {
+          await Promise.all(existingSpareParts.map((part: any) => 
+            FirebaseService.delete('spareParts', part.id)
+          ));
+          setLog((l) => [...l, `🗑️ Cleared ${existingSpareParts.length} existing spare parts`]);
+        }
+      }
+      
+      // Clear inventory items data
+      if (selectedInventoryFiles.length > 0) {
+        const existingInventoryItems = await FirebaseService.query('inventoryItems', []);
+        if (existingInventoryItems.length > 0) {
+          await Promise.all(existingInventoryItems.map((item: any) => 
+            FirebaseService.delete('inventoryItems', item.id)
+          ));
+          setLog((l) => [...l, `🗑️ Cleared ${existingInventoryItems.length} existing inventory items`]);
+        }
+      }
+      
+      setLog((l) => [...l, '✅ Database cleared successfully']);
+    } catch (error) {
+      setLog((l) => [...l, `⚠️ Warning: Could not clear existing data: ${error}`]);
+    }
+
     // Import spare parts
     for (const file of selectedFiles) {
       try {
-        setLog((l) => [...l, `Fetching ${file}...`]);
+        setLog((l) => [...l, `📥 Fetching ${file}...`]);
         const res = await fetch(`/${file}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
@@ -275,7 +306,7 @@ export default function ReseedDataPage() {
           totalInserted += batch.length;
           setLog((l) => [...l, `✓ ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
         }
-        setLog((l) => [...l, `Finished ${file}: inserted ${fileInserted}`]);
+        setLog((l) => [...l, `✅ Finished ${file}: inserted ${fileInserted}`]);
         setSummary((s) => ({ ...s, inserted: totalInserted, files: s.files + 1 }));
       } catch (e: any) {
         setLog((l) => [...l, `✗ ${file} failed: ${e?.message || e}`]);
@@ -285,7 +316,7 @@ export default function ReseedDataPage() {
     // Import inventory items
     for (const file of selectedInventoryFiles) {
       try {
-        setLog((l) => [...l, `Fetching inventory ${file}...`]);
+        setLog((l) => [...l, `📥 Fetching inventory ${file}...`]);
         const res = await fetch(`/${file}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
@@ -320,13 +351,14 @@ export default function ReseedDataPage() {
           totalInventoryInserted += batch.length;
           setLog((l) => [...l, `✓ Inventory ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
         }
-        setLog((l) => [...l, `Finished inventory ${file}: inserted ${fileInserted}`]);
+        setLog((l) => [...l, `✅ Finished inventory ${file}: inserted ${fileInserted}`]);
         setSummary((s) => ({ ...s, inventoryInserted: totalInventoryInserted }));
       } catch (e: any) {
         setLog((l) => [...l, `✗ Inventory ${file} failed: ${e?.message || e}`]);
       }
     }
 
+    setLog((l) => [...l, `🎉 Import completed! Total: ${totalInserted + totalInventoryInserted} items`]);
     setIsRunning(false);
   };
 
@@ -464,10 +496,12 @@ export default function ReseedDataPage() {
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h2 className="text-lg font-semibold text-blue-800 mb-2">Important Notes:</h2>
         <ul className="text-sm text-blue-700 space-y-1">
+          <li>• <strong>Refresh Mode:</strong> This process will clear all existing data before importing new data to prevent duplication</li>
           <li>• Data is batched ({BATCH_SIZE}/batch) and IDs are auto-generated in the database</li>
-          <li>• <strong>belongsto</strong> field now includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
+          <li>• <strong>belongsto</strong> field includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
           <li>• Source tracking added to identify which file and category each item came from</li>
           <li>• Support for all inventory categories: Spare Parts, Faulty Returns, PPE Items, Stationery Items, Asset Management, Inventory, Tools, and General Tools</li>
+          <li>• <strong>⚠️ Warning:</strong> This will permanently delete existing data. Make sure to backup if needed.</li>
         </ul>
       </div>
 

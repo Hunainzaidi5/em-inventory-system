@@ -116,20 +116,37 @@ const SpareManagement: React.FC = () => {
     }));
 
     try {
-      // First try to load from Firebase
-      const spareParts = await spareService.getSparePartsByCategory(category.name);
+      // Load from Firebase with proper filtering based on belongsto and source tracking
+      let spareParts = await spareService.getSparePartsByCategory(category.name);
       
+      // Filter data based on the main tab (O&M vs PMA) and source tracking
       if (spareParts && spareParts.length > 0) {
-        setTabData(prev => ({
-          ...prev,
-          [tabId]: {
-            name: category.name,
-            data: spareParts,
-            loading: false,
-            error: null
-          }
-        }));
-        return;
+        spareParts = spareParts.filter(part => {
+          // Check if the item belongs to the correct main category
+          const belongsToMainTab = part.belongsto?.includes(mainTab) || 
+                                  part.source_category?.includes(mainTab) ||
+                                  part.belongsto === mainTab;
+          
+          // Additional check for source tracking
+          const sourceMatches = part.source_category === mainTab || 
+                              (mainTab === "O&M" && part.source_category?.includes("O&M")) ||
+                              (mainTab === "PMA" && part.source_category?.includes("PMA"));
+          
+          return belongsToMainTab || sourceMatches;
+        });
+        
+        if (spareParts.length > 0) {
+          setTabData(prev => ({
+            ...prev,
+            [tabId]: {
+              name: category.name,
+              data: spareParts,
+              loading: false,
+              error: null
+            }
+          }));
+          return;
+        }
       }
 
       // Fallback to local JSON files if no data in Firebase
@@ -161,6 +178,11 @@ const SpareManagement: React.FC = () => {
             uom: item["UOM"] || "",
             partNumber: item["Specification"] || "",
             boq_number: item["BOQ_No"]?.toString() || "",
+            belongsto: `${mainTab} - ${category.name}`, // Ensure proper belongsto
+            category: category.name,
+            source_category: mainTab,
+            source_system: category.name,
+            source_file: fileName,
             lastUpdated: new Date().toISOString().split('T')[0]
           }));
       } else {
@@ -208,7 +230,7 @@ const SpareManagement: React.FC = () => {
             return {
               id: Math.random().toString(36).substr(2, 9),
               name: itemName,
-              belongsto: belongsto || mainTab,
+              belongsto: `${mainTab} - ${category.name}`, // Ensure proper belongsto
               quantity: quantity,
               location: item["Location"] || "C&C Warehouse, Depot",
               itemCode: serialNumber?.toString() || "",
@@ -217,6 +239,9 @@ const SpareManagement: React.FC = () => {
               partNumber: partNumber,
               category: category || category.name,
               boq_number: boq_number,
+              source_category: mainTab,
+              source_system: category.name,
+              source_file: fileName,
               lastUpdated: new Date().toISOString().split('T')[0]
             };
           });

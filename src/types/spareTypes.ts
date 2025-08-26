@@ -12,6 +12,9 @@ export interface SparePart {
     boq_number?: string;
     belongsto?: string;
     category?: string;
+    source_file?: string;
+    source_category?: string;
+    source_system?: string;
   }
   
   export interface TabData {
