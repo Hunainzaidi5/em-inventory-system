@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FirebaseService } from '@/lib/firebaseService';
 import { useNavigate } from 'react-router-dom';
 
-// Files organized by main categories and systems
+// Files organized by main categories and systems with unique identifiers
 const FILE_CATEGORIES = {
   'PMA (Punjab Mass Transit Authority)': {
     'BAS': 'pma/bas.json',
@@ -33,24 +33,69 @@ const FILE_CATEGORIES = {
   }
 };
 
+// Additional inventory categories for reseeding
+const INVENTORY_CATEGORIES = {
+  'Faulty Returns': {
+    'FAULTY RETURNS': 'faulty-returns.json',
+  },
+  'PPE Items': {
+    'PPE ITEMS': 'ppe-items.json',
+  },
+  'Stationery Items': {
+    'STATIONERY': 'stationery-items.json',
+  },
+  'Asset Management': {
+    'ASSETS': 'assets.json',
+  },
+  'Inventory': {
+    'INVENTORY': 'inventory.json',
+  },
+  'Tools': {
+    'TOOLS': 'tools.json',
+  },
+  'General Tools': {
+    'GENERAL TOOLS': 'general-tools.json',
+  }
+};
+
 // Flatten for easy access
 const AVAILABLE_FILES = Object.values(FILE_CATEGORIES).flatMap(category => Object.values(category));
+const AVAILABLE_INVENTORY_FILES = Object.values(INVENTORY_CATEGORIES).flatMap(category => Object.values(category));
 
 const BATCH_SIZE = 200;
 
 type SparePartRow = {
   name: string;
-  belongsto?: string;
+  belongsto: string;
   quantity?: number;
   location?: string;
   itemCode?: string;
   imis_code?: string;
   uom?: string;
   partNumber?: string;
-  category?: string;
+  category: string;
   boq_number?: string;
   lastUpdated?: string | null;
   last_updated?: string | null;
+  source_file: string;
+  source_category: string;
+  source_system: string;
+};
+
+type InventoryItemRow = {
+  name: string;
+  category: string;
+  quantity?: number;
+  location?: string;
+  itemCode?: string;
+  description?: string;
+  status?: string;
+  condition?: string;
+  assignedTo?: string;
+  purchaseDate?: string;
+  lastUpdated?: string | null;
+  source_file: string;
+  source_category: string;
 };
 
 function coerceString(value: any): string {
@@ -74,7 +119,7 @@ function coerceDate(value: any): string | null {
   }
 }
 
-function mapToSparePart(row: any, category: string, system: string): SparePartRow {
+function mapToSparePart(row: any, category: string, system: string, sourceFile: string): SparePartRow {
   // Common resolver for BOQ-like fields
   const resolveBoq = () => coerceString(
     row['BOQ #'] ?? row['BOQ'] ?? row['BOQ No'] ?? row['BOQ no'] ?? row['BOQ Number'] ?? row['BOQ number'] ?? row['boq_number'] ?? row['boqNumber'] ?? ''
@@ -84,7 +129,7 @@ function mapToSparePart(row: any, category: string, system: string): SparePartRo
   if (system === 'BAS') {
     return {
       name: coerceString(row['BAS (Spares Inventory)'] ?? row['Item Name'] ?? ''),
-      belongsto: category,
+      belongsto: `${category} - ${system}`, // Unique identifier
       quantity: coerceNumber(row['Quantity'] ?? 0),
       location: coerceString(row['Location'] ?? ''),
       itemCode: coerceString(row['Item Code (Brand)'] ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
@@ -95,11 +140,14 @@ function mapToSparePart(row: any, category: string, system: string): SparePartRo
       boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
+      source_file: sourceFile,
+      source_category: category,
+      source_system: system,
     };
   } else if (system === 'SPARE PARTS OM') {
     return {
       name: coerceString(row['Item Name'] ?? ''),
-      belongsto: category,
+      belongsto: `${category} - ${system}`, // Unique identifier
       quantity: coerceNumber(row['In-stock'] ?? row['Stock Received from Warehouse (20-7/23)'] ?? 0),
       location: coerceString(row['Location'] ?? ''),
       itemCode: coerceString(row['Item Code (Brand)'] ?? row['IMIS CODE'] ?? ''),
@@ -110,12 +158,15 @@ function mapToSparePart(row: any, category: string, system: string): SparePartRo
       boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
+      source_file: sourceFile,
+      source_category: category,
+      source_system: system,
     };
   } else {
     // Generic mapping for other systems
     return {
       name: coerceString(row.name ?? row['Item Name'] ?? row['BAS (Spares Inventory)'] ?? row['Item'] ?? ''),
-      belongsto: category,
+      belongsto: `${category} - ${system}`, // Unique identifier
       quantity: coerceNumber(row.quantity ?? row['Quantity'] ?? row['In-stock'] ?? row['Stock Received from Warehouse (20-7/23)'] ?? 0),
       location: coerceString(row.location ?? row['Location'] ?? ''),
       itemCode: coerceString(row['Item Code (Brand)'] ?? row.itemCode ?? row['IMIS Codes'] ?? row['IMIS CODE'] ?? ''),
@@ -126,8 +177,29 @@ function mapToSparePart(row: any, category: string, system: string): SparePartRo
       boq_number: resolveBoq(),
       lastUpdated: null,
       last_updated: null,
+      source_file: sourceFile,
+      source_category: category,
+      source_system: system,
     };
   }
+}
+
+function mapToInventoryItem(row: any, category: string, sourceFile: string): InventoryItemRow {
+  return {
+    name: coerceString(row.name ?? row['Item Name'] ?? row['Item'] ?? row['Description'] ?? ''),
+    category: category,
+    quantity: coerceNumber(row.quantity ?? row['Quantity'] ?? row['In-stock'] ?? 1),
+    location: coerceString(row.location ?? row['Location'] ?? row['Assigned Location'] ?? ''),
+    itemCode: coerceString(row.itemCode ?? row['Item Code'] ?? row['Asset Tag'] ?? ''),
+    description: coerceString(row.description ?? row['Description'] ?? row['Notes'] ?? ''),
+    status: coerceString(row.status ?? row['Status'] ?? 'Available'),
+    condition: coerceString(row.condition ?? row['Condition'] ?? 'Good'),
+    assignedTo: coerceString(row.assignedTo ?? row['Assigned To'] ?? row['User'] ?? ''),
+    purchaseDate: coerceDate(row.purchaseDate ?? row['Purchase Date'] ?? row['Date'] ?? null),
+    lastUpdated: null,
+    source_file: sourceFile,
+    source_category: category,
+  };
 }
 
 const prettyName = (file: string) => file.replace('.json', '').replace(/[-_]/g, ' ').toUpperCase();
@@ -135,34 +207,47 @@ const prettyName = (file: string) => file.replace('.json', '').replace(/[-_]/g, 
 export default function ReseedDataPage() {
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<string[]>(AVAILABLE_FILES);
+  const [selectedInventoryFiles, setSelectedInventoryFiles] = useState<string[]>(AVAILABLE_INVENTORY_FILES);
   const [isRunning, setIsRunning] = useState(false);
   const [log, setLog] = useState<string[]>([]);
-  const [summary, setSummary] = useState<{inserted: number; files: number}>({ inserted: 0, files: 0 });
+  const [summary, setSummary] = useState<{inserted: number; files: number; inventoryInserted: number}>({ 
+    inserted: 0, 
+    files: 0, 
+    inventoryInserted: 0 
+  });
   const [previewData, setPreviewData] = useState<SparePartRow[]>([]);
+  const [previewInventoryData, setPreviewInventoryData] = useState<InventoryItemRow[]>([]);
   const [showPreview, setShowPreview] = useState(false);
+  const [activeTab, setActiveTab] = useState<'spareParts' | 'inventory'>('spareParts');
 
-  const toggleFile = (f: string) => {
-    setSelectedFiles((prev) => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
+  const toggleFile = (f: string, isInventory: boolean = false) => {
+    if (isInventory) {
+      setSelectedInventoryFiles((prev) => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
+    } else {
+      setSelectedFiles((prev) => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
+    }
   };
 
   const startImport = async () => {
     setIsRunning(true);
     setLog([]);
-    setSummary({ inserted: 0, files: 0 });
+    setSummary({ inserted: 0, files: 0, inventoryInserted: 0 });
 
     let totalInserted = 0;
+    let totalInventoryInserted = 0;
+
+    // Import spare parts
     for (const file of selectedFiles) {
       try {
         setLog((l) => [...l, `Fetching ${file}...`]);
         const res = await fetch(`/${file}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        // Handle different JSON structures
+        
         let items: any[] = [];
         if (Array.isArray(json)) {
-          items = json.filter(item => item !== null); // Filter out null entries
+          items = json.filter(item => item !== null);
         } else if (json && typeof json === 'object') {
-          // Handle files like bas.json that have a wrapper object
           const keys = Object.keys(json);
           if (keys.length > 0 && Array.isArray(json[keys[0]])) {
             items = json[keys[0]].filter((item: any) => item !== null);
@@ -176,15 +261,13 @@ export default function ReseedDataPage() {
 
         const category = getCategoryFromFile(file);
         const system = getSystemFromFile(file);
-        const mapped: SparePartRow[] = items.map((row) => mapToSparePart(row, category, system))
+        const mapped: SparePartRow[] = items.map((row) => mapToSparePart(row, category, system, file))
           .filter((r) => r.name && r.name.length > 0);
 
         // Batch insert
         let fileInserted = 0;
         for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
           const batch = mapped.slice(i, i + BATCH_SIZE);
-          // Note: Firebase doesn't support batch inserts in the same way as Supabase
-          // For now, we'll insert items one by one
           for (const item of batch) {
             await FirebaseService.create('spareParts', item);
           }
@@ -193,9 +276,54 @@ export default function ReseedDataPage() {
           setLog((l) => [...l, `✓ ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
         }
         setLog((l) => [...l, `Finished ${file}: inserted ${fileInserted}`]);
-        setSummary((s) => ({ inserted: totalInserted, files: s.files + 1 }));
+        setSummary((s) => ({ ...s, inserted: totalInserted, files: s.files + 1 }));
       } catch (e: any) {
         setLog((l) => [...l, `✗ ${file} failed: ${e?.message || e}`]);
+      }
+    }
+
+    // Import inventory items
+    for (const file of selectedInventoryFiles) {
+      try {
+        setLog((l) => [...l, `Fetching inventory ${file}...`]);
+        const res = await fetch(`/${file}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        
+        let items: any[] = [];
+        if (Array.isArray(json)) {
+          items = json.filter(item => item !== null);
+        } else if (json && typeof json === 'object') {
+          const keys = Object.keys(json);
+          if (keys.length > 0 && Array.isArray(json[keys[0]])) {
+            items = json[keys[0]].filter((item: any) => item !== null);
+          }
+        }
+        
+        if (!Array.isArray(items) || items.length === 0) {
+          setLog((l) => [...l, `⚠ ${file}: No valid inventory items found`]);
+          continue;
+        }
+
+        const category = getInventoryCategoryFromFile(file);
+        const mapped: InventoryItemRow[] = items.map((row) => mapToInventoryItem(row, category, file))
+          .filter((r) => r.name && r.name.length > 0);
+
+        // Batch insert
+        let fileInserted = 0;
+        for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
+          const batch = mapped.slice(i, i + BATCH_SIZE);
+          for (const item of batch) {
+            await FirebaseService.create('inventoryItems', item);
+          }
+          fileInserted += batch.length;
+          totalInventoryInserted += batch.length;
+          setLog((l) => [...l, `✓ Inventory ${file} batch ${i/BATCH_SIZE + 1}: inserted ${batch.length}`]);
+        }
+        setLog((l) => [...l, `Finished inventory ${file}: inserted ${fileInserted}`]);
+        setSummary((s) => ({ ...s, inventoryInserted: totalInventoryInserted }));
+      } catch (e: any) {
+        setLog((l) => [...l, `✗ Inventory ${file} failed: ${e?.message || e}`]);
       }
     }
 
@@ -205,11 +333,13 @@ export default function ReseedDataPage() {
   const previewImport = async () => {
     setShowPreview(true);
     setPreviewData([]);
+    setPreviewInventoryData([]);
     
     const previewRows: SparePartRow[] = [];
-    let fileCount = 0;
+    const previewInventoryRows: InventoryItemRow[] = [];
     
-    for (const file of selectedFiles.slice(0, 3)) { // Preview first 3 files only
+    // Preview spare parts
+    for (const file of selectedFiles.slice(0, 2)) {
       try {
         const res = await fetch(`/${file}`);
         if (!res.ok) continue;
@@ -228,11 +358,37 @@ export default function ReseedDataPage() {
         if (Array.isArray(items) && items.length > 0) {
           const category = getCategoryFromFile(file);
           const system = getSystemFromFile(file);
-          const fallbackCategory = `${category} - ${system}`;
-          const mapped: SparePartRow[] = items.slice(0, 5).map((row) => mapToSparePart(row, category, system))
+          const mapped: SparePartRow[] = items.slice(0, 3).map((row) => mapToSparePart(row, category, system, file))
             .filter((r) => r.name && r.name.length > 0);
           previewRows.push(...mapped);
-          fileCount++;
+        }
+      } catch (e) {
+        // Skip preview errors
+      }
+    }
+
+    // Preview inventory items
+    for (const file of selectedInventoryFiles.slice(0, 2)) {
+      try {
+        const res = await fetch(`/${file}`);
+        if (!res.ok) continue;
+        const json = await res.json();
+        
+        let items: any[] = [];
+        if (Array.isArray(json)) {
+          items = json.filter(item => item !== null);
+        } else if (json && typeof json === 'object') {
+          const keys = Object.keys(json);
+          if (keys.length > 0 && Array.isArray(json[keys[0]])) {
+            items = json[keys[0]].filter((item: any) => item !== null);
+          }
+        }
+        
+        if (Array.isArray(items) && items.length > 0) {
+          const category = getInventoryCategoryFromFile(file);
+          const mapped: InventoryItemRow[] = items.slice(0, 3).map((row) => mapToInventoryItem(row, category, file))
+            .filter((r) => r.name && r.name.length > 0);
+          previewInventoryRows.push(...mapped);
         }
       } catch (e) {
         // Skip preview errors
@@ -240,13 +396,20 @@ export default function ReseedDataPage() {
     }
     
     setPreviewData(previewRows);
+    setPreviewInventoryData(previewInventoryRows);
   };
 
   const allSelected = useMemo(() => selectedFiles.length === AVAILABLE_FILES.length, [selectedFiles.length]);
+  const allInventorySelected = useMemo(() => selectedInventoryFiles.length === AVAILABLE_INVENTORY_FILES.length, [selectedInventoryFiles.length]);
 
-  const toggleAll = () => {
-    if (allSelected) setSelectedFiles([]);
-    else setSelectedFiles(AVAILABLE_FILES);
+  const toggleAll = (isInventory: boolean = false) => {
+    if (isInventory) {
+      if (allInventorySelected) setSelectedInventoryFiles([]);
+      else setSelectedInventoryFiles(AVAILABLE_INVENTORY_FILES);
+    } else {
+      if (allSelected) setSelectedFiles([]);
+      else setSelectedFiles(AVAILABLE_FILES);
+    }
   };
 
   const getCategoryFromFile = (filePath: string): string => {
@@ -274,66 +437,174 @@ export default function ReseedDataPage() {
     return 'UNKNOWN';
   };
 
+  const getInventoryCategoryFromFile = (filePath: string): string => {
+    const fileName = filePath.split('/').pop() || '';
+    if (fileName === 'faulty-returns.json') return 'Faulty Returns';
+    if (fileName === 'ppe-items.json') return 'PPE Items';
+    if (fileName === 'stationery-items.json') return 'Stationery Items';
+    if (fileName === 'assets.json') return 'Asset Management';
+    if (fileName === 'inventory.json') return 'Inventory';
+    if (fileName === 'tools.json') return 'Tools';
+    if (fileName === 'general-tools.json') return 'General Tools';
+    return 'Unknown';
+  };
+
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Reseed Data (Developer Only)</h1>
-        <button className="text-blue-600 hover:underline" onClick={() => navigate('/dashboard')}>← Back to Dashboard</button>
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Reseed Data (Developer Only)</h1>
+        <button 
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" 
+          onClick={() => navigate('/dashboard')}
+        >
+          ← Back to Dashboard
+        </button>
       </div>
 
-      <p className="text-sm text-gray-600 mb-4">
-        Select JSON files from /public to import into the spare_parts table. Data is batched ({BATCH_SIZE}/batch) and ids are auto-generated in DB.
-        <br />
-        <span className="text-orange-600 font-medium">Note: O&M spare-parts-OM.json file is not present in the om/ directory.</span>
-      </p>
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h2 className="text-lg font-semibold text-blue-800 mb-2">Important Notes:</h2>
+        <ul className="text-sm text-blue-700 space-y-1">
+          <li>• Data is batched ({BATCH_SIZE}/batch) and IDs are auto-generated in the database</li>
+          <li>• <strong>belongsto</strong> field now includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
+          <li>• Source tracking added to identify which file and category each item came from</li>
+          <li>• Support for all inventory categories: Spare Parts, Faulty Returns, PPE Items, Stationery Items, Asset Management, Inventory, Tools, and General Tools</li>
+        </ul>
+      </div>
 
-      <div className="mb-4 p-4 border rounded">
-        <label className="flex items-center gap-2 mb-2">
-          <input type="checkbox" checked={allSelected} onChange={toggleAll} />
-          <span>Select all</span>
-        </label>
-        
-        {Object.entries(FILE_CATEGORIES).map(([mainCategory, systems]) => (
-          <div key={mainCategory} className="mb-4">
-            <h3 className="font-semibold text-gray-700 mb-2">{mainCategory}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 ml-4">
-              {Object.entries(systems).map(([systemName, filePath]) => (
-                <label key={filePath} className="flex items-center gap-2 p-2 border rounded">
-                  <input 
-                    type="checkbox" 
-                    checked={selectedFiles.includes(filePath)} 
-                    onChange={() => toggleFile(filePath)} 
-                  />
-                  <span className="text-sm">{systemName}</span>
-                </label>
-              ))}
-            </div>
+      {/* Tab Navigation */}
+      <div className="mb-6 border-b border-gray-200">
+        <nav className="flex space-x-8">
+          <button
+            onClick={() => setActiveTab('spareParts')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'spareParts'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Spare Parts ({selectedFiles.length}/{AVAILABLE_FILES.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('inventory')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'inventory'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Inventory Items ({selectedInventoryFiles.length}/{AVAILABLE_INVENTORY_FILES.length})
+          </button>
+        </nav>
+      </div>
+
+      {/* Spare Parts Tab */}
+      {activeTab === 'spareParts' && (
+        <div className="mb-6 p-4 border rounded-lg bg-white">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">Spare Parts Files</h3>
+            <label className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                checked={allSelected} 
+                onChange={() => toggleAll(false)}
+                className="rounded"
+              />
+              <span className="text-sm font-medium">Select all</span>
+            </label>
           </div>
-        ))}
-      </div>
+          
+          {Object.entries(FILE_CATEGORIES).map(([mainCategory, systems]) => (
+            <div key={mainCategory} className="mb-4">
+              <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4">
+                {Object.entries(systems).map(([systemName, filePath]) => (
+                  <label key={filePath} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedFiles.includes(filePath)} 
+                      onChange={() => toggleFile(filePath, false)}
+                      className="rounded"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium text-sm text-gray-800">{systemName}</div>
+                      <div className="text-xs text-gray-500">{filePath}</div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      <div className="mb-4 flex gap-2">
+      {/* Inventory Items Tab */}
+      {activeTab === 'inventory' && (
+        <div className="mb-6 p-4 border rounded-lg bg-white">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">Inventory Items Files</h3>
+            <label className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                checked={allInventorySelected} 
+                onChange={() => toggleAll(true)}
+                className="rounded"
+              />
+              <span className="text-sm font-medium">Select all</span>
+            </label>
+          </div>
+          
+          {Object.entries(INVENTORY_CATEGORIES).map(([mainCategory, systems]) => (
+            <div key={mainCategory} className="mb-4">
+              <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4">
+                {Object.entries(systems).map(([systemName, filePath]) => (
+                  <label key={filePath} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedInventoryFiles.includes(filePath)} 
+                      onChange={() => toggleFile(filePath, true)}
+                      className="rounded"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium text-sm text-gray-800">{systemName}</div>
+                      <div className="text-xs text-gray-500">{filePath}</div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="mb-6 flex gap-3">
         <button
-          className={`px-4 py-2 rounded text-white ${isRunning ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-          disabled={isRunning || selectedFiles.length === 0}
+          className={`px-6 py-3 rounded-lg text-white font-medium transition-all ${
+            isRunning 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'
+          }`}
+          disabled={isRunning || (selectedFiles.length === 0 && selectedInventoryFiles.length === 0)}
           onClick={startImport}
         >
           {isRunning ? 'Importing…' : 'Start Import'}
         </button>
         
         <button
-          className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-50"
-          disabled={isRunning || selectedFiles.length === 0}
+          className="px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition-colors"
+          disabled={isRunning || (selectedFiles.length === 0 && selectedInventoryFiles.length === 0)}
           onClick={previewImport}
         >
           Preview Data
         </button>
       </div>
 
-      {showPreview && previewData.length > 0 && (
-        <div className="mb-6 p-4 border rounded bg-gray-50">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold">Preview (First 5 rows from first 3 files)</h3>
+      {/* Preview Section */}
+      {showPreview && (previewData.length > 0 || previewInventoryData.length > 0) && (
+        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-gray-800">Preview Data</h3>
             <button 
               className="text-sm text-gray-500 hover:text-gray-700"
               onClick={() => setShowPreview(false)}
@@ -341,47 +612,88 @@ export default function ReseedDataPage() {
               Hide
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Name</th>
-                  <th className="text-left p-2">Category</th>
-                  <th className="text-left p-2">Quantity</th>
-                  <th className="text-left p-2">Location</th>
-                  <th className="text-left p-2">Item Code</th>
-                  <th className="text-left p-2">IMIS Code</th>
-                  <th className="text-left p-2">BOQ #</th>
-                  <th className="text-left p-2">UOM</th>
-                </tr>
-              </thead>
-              <tbody>
-                {previewData.map((row, idx) => (
-                  <tr key={idx} className="border-b">
-                    <td className="p-2">{row.name}</td>
-                    <td className="p-2">{row.category}</td>
-                    <td className="p-2">{row.quantity}</td>
-                    <td className="p-2">{row.location}</td>
-                    <td className="p-2">{row.itemCode}</td>
-                    <td className="p-2">{row.imis_code}</td>
-                    <td className="p-2">{row.boq_number}</td>
-                    <td className="p-2">{row.uom}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          
+          {/* Spare Parts Preview */}
+          {previewData.length > 0 && (
+            <div className="mb-4">
+              <h4 className="font-medium text-gray-700 mb-2">Spare Parts Preview (First 3 rows from first 2 files)</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm bg-white rounded-lg overflow-hidden">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Name</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Belongs To</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Category</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Quantity</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Location</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previewData.map((row, idx) => (
+                      <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="p-3">{row.name}</td>
+                        <td className="p-3 font-medium text-blue-600">{row.belongsto}</td>
+                        <td className="p-3">{row.category}</td>
+                        <td className="p-3">{row.quantity}</td>
+                        <td className="p-3">{row.location}</td>
+                        <td className="p-3 text-xs text-gray-500">{row.source_file}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Inventory Items Preview */}
+          {previewInventoryData.length > 0 && (
+            <div>
+              <h4 className="font-medium text-gray-700 mb-2">Inventory Items Preview (First 3 rows from first 2 files)</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm bg-white rounded-lg overflow-hidden">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Name</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Category</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Quantity</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Location</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Status</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previewInventoryData.map((row, idx) => (
+                      <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="p-3">{row.name}</td>
+                        <td className="p-3 font-medium text-green-600">{row.category}</td>
+                        <td className="p-3">{row.quantity}</td>
+                        <td className="p-3">{row.location}</td>
+                        <td className="p-3">{row.status}</td>
+                        <td className="p-3 text-xs text-gray-500">{row.source_file}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="mt-6 p-4 border rounded bg-white">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-semibold">Log</h2>
-          <span className="text-sm text-gray-500">Inserted: {summary.inserted} • Files processed: {summary.files}</span>
+      {/* Log Section */}
+      <div className="mt-6 p-4 border rounded-lg bg-white">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-gray-800">Import Log</h2>
+          <div className="text-sm text-gray-600">
+            <span className="mr-4">Spare Parts: {summary.inserted}</span>
+            <span className="mr-4">Inventory: {summary.inventoryInserted}</span>
+            <span>Files: {summary.files}</span>
+          </div>
         </div>
-        <div className="h-64 overflow-auto text-sm whitespace-pre-wrap">
+        <div className="h-64 overflow-auto text-sm whitespace-pre-wrap bg-gray-50 p-3 rounded border">
           {log.map((line, idx) => (
-            <div key={idx}>{line}</div>
+            <div key={idx} className="py-1">{line}</div>
           ))}
         </div>
       </div>
