@@ -22,6 +22,7 @@ interface IssuanceRequisition {
 }
 
 interface IssuanceRequisitionItem {
+  itemCode?: string;
   itemName: string;
   itemDescription: string;
   quantity: number;
@@ -52,6 +53,32 @@ const IssuanceRequisitionPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof IssuanceRequisition; direction: 'asc' | 'desc' } | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const previewRef = React.useRef<HTMLDivElement>(null);
+
+  const addItemRow = () => {
+    setForm({
+      ...form,
+      items: [
+        ...form.items,
+        { itemCode: "", itemName: "", itemDescription: "", unit: "", quantity: 1, priority: "medium", remarks: "" }
+      ]
+    });
+  };
+
+  const removeItemRow = (index: number) => {
+    const next = form.items.filter((_, i) => i !== index);
+    setForm({ ...form, items: next });
+  };
+
+  const updateItemField = (index: number, field: keyof IssuanceRequisitionItem, value: any) => {
+    const next = form.items.map((it, i) => (i === index ? { ...it, [field]: value } : it));
+    setForm({ ...form, items: next });
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -694,16 +721,106 @@ const IssuanceRequisitionPage = () => {
                   />
                 </div>
 
-                {/* Items Section - Placeholder for now */}
+                {/* Items Section */}
                 <div className="border-t border-slate-200 pt-6">
-                  <h4 className="text-md font-medium text-slate-900 mb-4">Requested Items</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Items section will be implemented based on your design requirements.</p>
-                    <p className="text-sm text-gray-500 mt-2">This will include item selection, quantities, and specifications.</p>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-md font-medium text-slate-900">Requested Items</h4>
+                    <button type="button" onClick={addItemRow} className="inline-flex items-center px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                      <FiPlus className="mr-2" /> Add Row
+                    </button>
+                  </div>
+                  <div className="overflow-x-auto rounded-lg border border-slate-200">
+                    <table className="min-w-full bg-white">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Sr. No</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Item Code</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Description</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Unit</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Quantity</th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Remarks</th>
+                          <th className="px-3 py-2" />
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200">
+                        {form.items.length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="px-3 py-4 text-sm text-slate-500">No items added. Use "Add Row" to insert a new item.</td>
+                          </tr>
+                        )}
+                        {form.items.map((row, idx) => (
+                          <tr key={idx}>
+                            <td className="px-3 py-2 text-sm text-slate-600">{idx + 1}</td>
+                            <td className="px-3 py-2">
+                              <input
+                                value={row.itemCode || ""}
+                                onChange={(e) => updateItemField(idx, "itemCode", e.target.value)}
+                                className="w-36 px-2 py-1 border border-slate-200 rounded-md text-sm"
+                                placeholder="Code"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                value={row.itemDescription}
+                                onChange={(e) => updateItemField(idx, "itemDescription", e.target.value)}
+                                className="w-full px-2 py-1 border border-slate-200 rounded-md text-sm"
+                                placeholder="Item description"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                value={row.unit}
+                                onChange={(e) => updateItemField(idx, "unit", e.target.value)}
+                                className="w-24 px-2 py-1 border border-slate-200 rounded-md text-sm"
+                                placeholder="Unit"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                type="number"
+                                min={1}
+                                value={row.quantity}
+                                onChange={(e) => updateItemField(idx, "quantity", parseInt(e.target.value) || 0)}
+                                className="w-24 px-2 py-1 border border-slate-200 rounded-md text-sm"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                value={row.remarks || ""}
+                                onChange={(e) => updateItemField(idx, "remarks", e.target.value)}
+                                className="w-full px-2 py-1 border border-slate-200 rounded-md text-sm"
+                                placeholder="Remarks"
+                              />
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              <button type="button" onClick={() => removeItemRow(idx)} className="text-red-600 hover:text-red-800 text-sm">Remove</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
                 
-                <div className="flex justify-end space-x-4 pt-6 border-t border-slate-200">
+                <div className="flex justify-between items-center pt-6 border-t border-slate-200">
+                  <div className="flex items-center space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="px-4 py-2 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      {showPreview ? 'Hide Preview' : 'Preview'}
+                    </button>
+                    {showPreview && (
+                      <button
+                        type="button"
+                        onClick={handlePrint}
+                        className="px-4 py-2 bg-white border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50"
+                      >
+                        Print
+                      </button>
+                    )}
+                  </div>
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
@@ -718,6 +835,91 @@ const IssuanceRequisitionPage = () => {
                     {editId ? 'Update Requisition' : 'Generate Requisition'}
                   </button>
                 </div>
+
+                {showPreview && (
+                  <div className="mt-6 bg-white border border-slate-200 rounded-xl p-6" ref={previewRef}>
+                    <div className="text-center mb-4">
+                      <div className="font-semibold text-slate-800">NORINCO-GMG-DAEWOO (JV)</div>
+                      <div className="text-sm text-slate-600">Store Issue Requisition Form</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                      <div>
+                        <span className="font-medium">Date:</span> {form.requestDate || ''}
+                      </div>
+                      <div className="text-right">
+                        <span className="font-medium">Issue Request #</span> {form.requisitionNumber || ''}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm mb-4">
+                      <div>
+                        <span className="font-medium">Requested By Sub Department:</span> E & M System
+                      </div>
+                      <div className="text-right">
+                        <span className="font-medium">Department:</span> Equipment & Maintenance
+                      </div>
+                    </div>
+
+                    <table className="w-full text-sm border border-slate-300">
+                      <thead>
+                        <tr className="bg-slate-100">
+                          <th className="border border-slate-300 px-2 py-1 text-left">Sr. No</th>
+                          <th className="border border-slate-300 px-2 py-1 text-left">Item Code</th>
+                          <th className="border border-slate-300 px-2 py-1 text-left">Description</th>
+                          <th className="border border-slate-300 px-2 py-1 text-left">Unit</th>
+                          <th className="border border-slate-300 px-2 py-1 text-left">Quantity</th>
+                          <th className="border border-slate-300 px-2 py-1 text-left">Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {form.items.length === 0 ? (
+                          <tr>
+                            <td className="border border-slate-300 px-2 py-6 text-center" colSpan={6}>No items</td>
+                          </tr>
+                        ) : (
+                          form.items.map((it, i) => (
+                            <tr key={i}>
+                              <td className="border border-slate-300 px-2 py-1">{i + 1}</td>
+                              <td className="border border-slate-300 px-2 py-1">{it.itemCode || ''}</td>
+                              <td className="border border-slate-300 px-2 py-1">{it.itemDescription}</td>
+                              <td className="border border-slate-300 px-2 py-1">{it.unit}</td>
+                              <td className="border border-slate-300 px-2 py-1">{it.quantity}</td>
+                              <td className="border border-slate-300 px-2 py-1">{it.remarks || ''}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+
+                    <div className="text-xs text-slate-600 mt-2">No. Note:</div>
+
+                    <div className="grid grid-cols-2 gap-6 mt-6">
+                      <div>
+                        <div className="h-10 border-b border-slate-400"></div>
+                        <div className="text-sm text-slate-700 mt-1">Requested By:</div>
+                        <div className="text-xs text-slate-500">Date: ____________________________</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="h-10 border-b border-slate-400"></div>
+                        <div className="text-sm text-slate-700 mt-1">Approved by Manager:</div>
+                        <div className="text-xs text-slate-500">Date: ____________________________</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 text-sm font-medium">TO BE FILLED IN BY STORES</div>
+                    <div className="grid grid-cols-2 gap-6 mt-3">
+                      <div>
+                        <div className="h-10 border-b border-slate-400"></div>
+                        <div className="text-sm text-slate-700 mt-1">Received by:</div>
+                        <div className="text-xs text-slate-500">Date: ____________________________</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="h-10 border-b border-slate-400"></div>
+                        <div className="text-sm text-slate-700 mt-1">Issued by:</div>
+                        <div className="text-xs text-slate-500">Date: ____________________________</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </form>
             </div>
           </div>
