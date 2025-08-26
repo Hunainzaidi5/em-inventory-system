@@ -77,6 +77,7 @@ const documentsMenuItems = [
   { title: "Requisition", url: "/dashboard/requisition", icon: ListTodo },
   { title: "Gate Pass", url: "/dashboard/gate-pass", icon: GrDocumentUser },
   { title: "Issuance Form", url: "/dashboard/issuance", icon: FileCheck },
+  { title: "Issuance Requisition", url: "/dashboard/issuance-requisition", icon: FileText },
 ];
 
 interface AppSidebarProps {

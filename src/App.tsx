@@ -28,6 +28,7 @@ import SpareManagement from "./pages/SpareManagement";
 import ToolsPage from "./pages/ToolsPage";
 import GeneralToolsPage from "./pages/GeneralToolsPage";
 import ReseedDataPage from './pages/ReseedDataPage';
+import IssuanceRequisitionPage from './pages/IssuanceRequisitionPage';
 import { AuthDebugger } from './components/auth/AuthDebugger';
 
 const queryClient = new QueryClient({
@@ -140,6 +141,7 @@ const AppRoutes = () => {
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />
         <Route path="gate-pass" element={<GatePassPage />} />
         <Route path="issuance" element={<IssuancePage />} />
+        <Route path="issuance-requisition" element={<IssuanceRequisitionPage />} />
         <Route path="settings" element={<SystemSettingsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="add-user" element={<AddUserPage />} />

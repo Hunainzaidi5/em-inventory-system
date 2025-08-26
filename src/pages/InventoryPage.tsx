@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiBox, FiDatabase } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiBox, FiDatabase, FiRefreshCw } from "react-icons/fi";
 
 interface IssuedTo {
   name: string;
@@ -16,12 +16,14 @@ interface InventoryItem {
   quantity: number;
   issuedTo: IssuedTo;
   lastUpdated?: string;
+  isTagged?: boolean; // New field to distinguish tagged/untagged assets
 }
 
 const InventoryPage = () => {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"tagged" | "untagged">("tagged");
   const [form, setForm] = useState<Omit<InventoryItem, 'id'>>({ 
     itemName: "", 
     itemDescription: "", 
@@ -32,7 +34,8 @@ const InventoryPage = () => {
       olt: "",
       designation: "",
       group: ""
-    }
+    },
+    isTagged: true
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("all");
@@ -43,7 +46,13 @@ const InventoryPage = () => {
     const savedData = localStorage.getItem('inventoryItems');
     if (savedData) {
       try {
-        setInventoryItems(JSON.parse(savedData));
+        const parsedData = JSON.parse(savedData);
+        // Add isTagged field to existing items if not present
+        const updatedData = parsedData.map((item: InventoryItem) => ({
+          ...item,
+          isTagged: item.isTagged !== undefined ? item.isTagged : Math.random() > 0.3 // Randomly assign for demo
+        }));
+        setInventoryItems(updatedData);
       } catch (error) {
         console.error('Error loading Inventory data:', error);
       }
@@ -55,7 +64,14 @@ const InventoryPage = () => {
     const handler = () => {
       const saved = localStorage.getItem('inventoryItems');
       if (saved) {
-        try { setInventoryItems(JSON.parse(saved)); } catch {}
+        try { 
+          const parsedData = JSON.parse(saved);
+          const updatedData = parsedData.map((item: InventoryItem) => ({
+            ...item,
+            isTagged: item.isTagged !== undefined ? item.isTagged : Math.random() > 0.3
+          }));
+          setInventoryItems(updatedData); 
+        } catch {}
       }
     };
     window.addEventListener('inventory-sync', handler as any);
@@ -76,9 +92,18 @@ const InventoryPage = () => {
     setSortConfig({ key, direction });
   };
 
-  // Apply sorting, filtering and searching
+  // Get filtered items based on active tab
   const getFilteredItems = (data: InventoryItem[]) => {
     let filtered = [...data];
+    
+    // Filter by tagged/untagged status
+    filtered = filtered.filter(item => {
+      if (activeTab === "tagged") {
+        return item.isTagged === true;
+      } else {
+        return item.isTagged === false || item.isTagged === undefined;
+      }
+    });
     
     // Apply search
     if (searchTerm) {
@@ -119,6 +144,26 @@ const InventoryPage = () => {
   // Get unique groups for filter dropdown
   const groups = ["all", ...new Set(inventoryItems.map(item => item.issuedTo.group))];
 
+  // Get stats for current tab
+  const getCurrentTabStats = () => {
+    const currentTabItems = inventoryItems.filter(item => {
+      if (activeTab === "tagged") {
+        return item.isTagged === true;
+      } else {
+        return item.isTagged === false || item.isTagged === undefined;
+      }
+    });
+
+    return {
+      totalItems: currentTabItems.length,
+      totalQuantity: currentTabItems.reduce((sum, item) => sum + item.quantity, 0),
+      activeUsers: new Set(currentTabItems.map(item => item.issuedTo.name)).size,
+      locations: new Set(currentTabItems.map(item => item.itemLocation)).size
+    };
+  };
+
+  const currentStats = getCurrentTabStats();
+
   // Modal handlers
   const openAddModal = () => {
     setForm({ 
@@ -131,7 +176,8 @@ const InventoryPage = () => {
         olt: "",
         designation: "",
         group: ""
-      }
+      },
+      isTagged: activeTab === "tagged"
     });
     setEditId(null);
     setShowModal(true);
@@ -150,7 +196,8 @@ const InventoryPage = () => {
           olt: item.issuedTo.olt,
           designation: item.issuedTo.designation,
           group: item.issuedTo.group
-        }
+        },
+        isTagged: item.isTagged
       });
       setEditId(id);
       setShowModal(true);
@@ -188,6 +235,23 @@ const InventoryPage = () => {
     return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
 
+  // Refresh data
+  const refreshData = () => {
+    const savedData = localStorage.getItem('inventoryItems');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        const updatedData = parsedData.map((item: InventoryItem) => ({
+          ...item,
+          isTagged: item.isTagged !== undefined ? item.isTagged : Math.random() > 0.3
+        }));
+        setInventoryItems(updatedData);
+      } catch (error) {
+        console.error('Error refreshing Inventory data:', error);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -204,13 +268,22 @@ const InventoryPage = () => {
             </div>
             <p className="text-slate-600 ml-11">Track and manage all inventory items and their assignments</p>
           </div>
-          <button
-            onClick={openAddModal}
-            className="flex items-center bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-          >
-            <FiPlus className="mr-2 w-5 h-5" />
-            Add New Inventory Item
-          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={refreshData}
+              className="flex items-center bg-white hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 font-medium"
+            >
+              <FiRefreshCw className="mr-2" />
+              Refresh
+            </button>
+            <button
+              onClick={openAddModal}
+              className="flex items-center bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            >
+              <FiPlus className="mr-2 w-5 h-5" />
+              Add New Inventory Item
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -219,7 +292,7 @@ const InventoryPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Total Items</h3>
-                <p className="text-3xl font-bold text-slate-800">{inventoryItems.length}</p>
+                <p className="text-3xl font-bold text-slate-800">{currentStats.totalItems}</p>
               </div>
               <div className="p-3 bg-indigo-100 rounded-xl">
                 <FiDatabase className="w-6 h-6 text-indigo-600" />
@@ -231,7 +304,7 @@ const InventoryPage = () => {
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Total Quantity</h3>
                 <p className="text-3xl font-bold text-emerald-600">
-                  {inventoryItems.reduce((sum, item) => sum + item.quantity, 0)}
+                  {currentStats.totalQuantity.toLocaleString()}
                 </p>
               </div>
               <div className="p-3 bg-emerald-100 rounded-xl">
@@ -244,7 +317,7 @@ const InventoryPage = () => {
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Active Users</h3>
                 <p className="text-3xl font-bold text-purple-600">
-                  {new Set(inventoryItems.map(item => item.issuedTo.name)).size}
+                  {currentStats.activeUsers}
                 </p>
               </div>
               <div className="p-3 bg-purple-100 rounded-xl">
@@ -257,7 +330,7 @@ const InventoryPage = () => {
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Locations</h3>
                 <p className="text-3xl font-bold text-orange-600">
-                  {new Set(inventoryItems.map(item => item.itemLocation)).size}
+                  {currentStats.locations}
                 </p>
               </div>
               <div className="p-3 bg-orange-100 rounded-xl">
@@ -267,36 +340,93 @@ const InventoryPage = () => {
           </div>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab("tagged")}
+              className={`px-8 py-5 font-semibold text-sm border-r border-gray-200 transition-all duration-200 ${
+                activeTab === "tagged" 
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${activeTab === "tagged" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <span>Tagged Assets</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab("untagged")}
+              className={`px-8 py-5 font-semibold text-sm transition-all duration-200 ${
+                activeTab === "untagged" 
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${activeTab === "untagged" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <span>Untagged Assets</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
         {/* Filters */}
         <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
-            <div className="relative flex-grow">
-              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-6 space-y-4 lg:space-y-0">
+            <div className="flex-shrink-0">
+              <div className="flex items-center space-x-3 mb-1">
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                <h3 className="text-xl font-bold text-gray-800">
+                  {activeTab === "tagged" ? "Tagged Assets" : "Untagged Assets"}
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 font-medium">
+                {activeTab === "tagged" ? "Assets with proper identification and tracking" : "Assets requiring identification and tagging"}
+              </p>
+            </div>
+            
+            {/* Enhanced Search Bar */}
+            <div className="relative flex-grow max-w-md">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <FiSearch className="h-5 w-5 text-gray-400" />
+              </div>
               <input
                 type="text"
                 placeholder="Search inventory items, descriptions, locations, or assigned users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all duration-200"
+                className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  <FiX className="w-5 h-5" />
+                  <FiX className="h-5 w-5" />
                 </button>
               )}
+              {searchTerm && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <div className="p-2 text-xs text-gray-500">
+                    Searching: "{searchTerm}"
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="w-full md:w-56">
+            
+            {/* Group Filter */}
+            <div className="w-full lg:w-56">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Group</label>
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all duration-200"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
               >
                 {groups.map(group => (
                   <option key={group} value={group}>
-                    {group === "all" ? "All Groups" : group}
+                    {group === "all" ? "👥 All Groups" : `👥 ${group}`}
                   </option>
                 ))}
               </select>
@@ -350,59 +480,81 @@ const InventoryPage = () => {
                     Assigned To
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white/50 divide-y divide-slate-200/50">
-                {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-slate-900">{item.itemName}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-slate-600 max-w-xs truncate" title={item.itemDescription}>
-                        {item.itemDescription}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <FiMapPin className="w-4 h-4 text-slate-400" />
-                        <span className="text-sm text-slate-600">{item.itemLocation}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                        {item.quantity}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-slate-600">
-                        <div className="font-medium text-slate-900">{item.issuedTo.name}</div>
-                        <div className="text-xs text-slate-500">{item.issuedTo.designation}</div>
-                        <div className="text-xs text-slate-500">{item.issuedTo.group}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => openEditModal(item.id!)}
-                          className="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
-                          title="Edit"
-                        >
-                          <FiEdit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleRemove(item.id!)}
-                          className="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
-                          title="Delete"
-                        >
-                          <FiTrash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-slate-900">{item.itemName}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-slate-600 max-w-xs truncate" title={item.itemDescription}>
+                          {item.itemDescription}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <FiMapPin className="w-4 h-4 text-slate-400" />
+                          <span className="text-sm text-slate-600">{item.itemLocation}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                          {item.quantity}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-slate-600">
+                          <div className="font-medium text-slate-900">{item.issuedTo.name}</div>
+                          <div className="text-xs text-slate-500">{item.issuedTo.designation}</div>
+                          <div className="text-xs text-slate-500">{item.issuedTo.group}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          item.isTagged 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {item.isTagged ? 'Tagged' : 'Untagged'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => openEditModal(item.id!)}
+                            className="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
+                            title="Edit"
+                          >
+                            <FiEdit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleRemove(item.id!)}
+                            className="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
+                            title="Delete"
+                          >
+                            <FiTrash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
+                      {searchTerm || selectedGroup !== "all" 
+                        ? "No items match your filters" 
+                        : `No ${activeTab} assets found in inventory`}
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -472,6 +624,18 @@ const InventoryPage = () => {
                     placeholder="e.g., Warehouse A, Storage Room B"
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Asset Status</label>
+                  <select
+                    value={form.isTagged ? "tagged" : "untagged"}
+                    onChange={(e) => setForm({...form, isTagged: e.target.value === "tagged"})}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  >
+                    <option value="tagged">Tagged Asset</option>
+                    <option value="untagged">Untagged Asset</option>
+                  </select>
                 </div>
                 
                 <div className="border-t border-slate-200 pt-6">
