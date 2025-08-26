@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiBox, FiDatabase, FiRefreshCw, FiFileText, FiCalendar, FiClock, FiTag } from "react-icons/fi";
+import issuanceRequisitionService from '@/services/issuanceRequisitionService';
+import spareService from '@/services/spareService';
+import inventoryService from '@/services/inventoryService';
 
 interface IssuanceRequisition {
   id?: string;
@@ -229,9 +232,9 @@ const IssuanceRequisitionPage = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.requesterName.trim() || !form.department.trim() || !form.reason.trim()) return;
+    if (!form.department.trim()) return;
 
     const updatedItem = {
       ...form,
@@ -239,13 +242,71 @@ const IssuanceRequisitionPage = () => {
       lastUpdated: new Date().toISOString().split('T')[0]
     };
 
-    if (editId) {
-      setIssuanceRequisitions(prev => prev.map(item => item.id === editId ? updatedItem : item));
-    } else {
-      setIssuanceRequisitions(prev => [...prev, updatedItem]);
-    }
+    try {
+      // 1) Persist IR in DB
+      if (editId) {
+        await issuanceRequisitionService.update(editId, updatedItem as any);
+        setIssuanceRequisitions(prev => prev.map(item => item.id === editId ? updatedItem : item));
+      } else {
+        const newId = await issuanceRequisitionService.create({
+          requisitionNumber: updatedItem.requisitionNumber,
+          department: updatedItem.department,
+          requestDate: updatedItem.requestDate,
+          requiredDate: updatedItem.requiredDate,
+          priority: updatedItem.priority,
+          status: updatedItem.status,
+          items: updatedItem.items,
+        });
+        updatedItem.id = newId;
+        setIssuanceRequisitions(prev => [...prev, updatedItem]);
+      }
 
-    setShowModal(false);
+      // 2) For each item, deduct from spares and move to inventory
+      for (const it of updatedItem.items) {
+        const qty = Number(it.quantity) || 0;
+        if (qty <= 0) continue;
+
+        // Try to find matching spare by itemCode or description
+        try {
+          const allSpares = await spareService.getAllSpareParts();
+          const match = allSpares.find(sp => 
+            (it.itemCode && sp.itemCode?.toLowerCase() === it.itemCode.toLowerCase()) ||
+            sp.name?.toLowerCase() === it.itemDescription.toLowerCase()
+          );
+          if (match?.id) {
+            await spareService.updateStock(match.id, -qty, 'Issued via IR', 'system');
+          }
+        } catch (err) {
+          console.warn('Skipping spare deduction for item due to error:', err);
+        }
+
+        // Upsert into inventory (simple create as new record)
+        try {
+          await (inventoryService as any).createItem({
+            name: it.itemDescription,
+            description: it.remarks || '',
+            category: form.department || 'Inventory',
+            current_stock: qty,
+            min_stock: 0,
+            max_stock: qty,
+            unit: it.unit || 'PCS',
+            location: 'Issued to Department',
+            supplier: undefined,
+            cost: undefined,
+          });
+        } catch (err) {
+          console.warn('Skipping inventory insert for item due to error:', err);
+        }
+      }
+
+      // 3) Notify other pages to refresh
+      window.dispatchEvent(new Event('inventory-sync'));
+
+      setShowModal(false);
+    } catch (err) {
+      console.error('Error generating IR:', err);
+      alert('Failed to generate IR. Please try again.');
+    }
   };
 
   // Get sort indicator
@@ -627,100 +688,6 @@ const IssuanceRequisitionPage = () => {
                   </div>
                 </div>
 
-                {/* Requester Details */}
-                <div className="border-t border-slate-200 pt-6">
-                  <h4 className="text-md font-medium text-slate-900 mb-4">Requester Details</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Name *</label>
-                      <input
-                        type="text"
-                        value={form.requesterName}
-                        onChange={(e) => setForm({...form, requesterName: e.target.value})}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Designation</label>
-                      <input
-                        type="text"
-                        value={form.requesterDesignation}
-                        onChange={(e) => setForm({...form, requesterDesignation: e.target.value})}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Contact</label>
-                      <input
-                        type="text"
-                        value={form.requesterContact}
-                        onChange={(e) => setForm({...form, requesterContact: e.target.value})}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">OLT No</label>
-                      <input
-                        type="text"
-                        value={form.requesterOltNo}
-                        onChange={(e) => setForm({...form, requesterOltNo: e.target.value})}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dates and Priority */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Request Date</label>
-                    <input
-                      type="date"
-                      value={form.requestDate}
-                      onChange={(e) => setForm({...form, requestDate: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Required Date</label>
-                    <input
-                      type="date"
-                      value={form.requiredDate}
-                      onChange={(e) => setForm({...form, requiredDate: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Priority</label>
-                    <select
-                      value={form.priority}
-                      onChange={(e) => setForm({...form, priority: e.target.value as any})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Reason */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Reason for Requisition *</label>
-                  <textarea
-                    value={form.reason}
-                    onChange={(e) => setForm({...form, reason: e.target.value})}
-                    rows={3}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                    placeholder="Describe the reason for this requisition..."
-                    required
-                  />
-                </div>
-
                 {/* Items Section */}
                 <div className="border-t border-slate-200 pt-6">
                   <div className="flex items-center justify-between mb-3">
@@ -837,7 +804,7 @@ const IssuanceRequisitionPage = () => {
                 </div>
 
                 {showPreview && (
-                  <div className="mt-6 bg-white border border-slate-200 rounded-xl p-6" ref={previewRef}>
+                  <div className="mt-6 bg-white border border-slate-200 rounded-xl p-6 ir-print-area" ref={previewRef}>
                     <div className="text-center mb-4">
                       <div className="font-semibold text-slate-800">NORINCO-GMG-DAEWOO (JV)</div>
                       <div className="text-sm text-slate-600">Store Issue Requisition Form</div>
@@ -918,6 +885,14 @@ const IssuanceRequisitionPage = () => {
                         <div className="text-xs text-slate-500">Date: ____________________________</div>
                       </div>
                     </div>
+                    <style>{`
+                      @media print {
+                        body * { visibility: hidden; }
+                        .ir-print-area, .ir-print-area * { visibility: visible; }
+                        .ir-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 16px; }
+                        .ir-print-area table { page-break-inside: avoid; }
+                      }
+                    `}</style>
                   </div>
                 )}
               </form>
