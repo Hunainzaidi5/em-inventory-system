@@ -122,7 +122,6 @@ const IssuanceRequisitionPage = () => {
     if (searchTerm) {
       filtered = filtered.filter(item => 
         item.requisitionNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.requesterName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.reason.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -183,9 +182,6 @@ const IssuanceRequisitionPage = () => {
 
   // Modal handlers
   const openAddModal = () => {
-    const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
-    
     setForm({ 
       requisitionNumber: generateRequisitionNumber(),
       requesterName: "",
@@ -193,8 +189,8 @@ const IssuanceRequisitionPage = () => {
       requesterContact: "",
       requesterOltNo: "",
       department: "",
-      requestDate: today.toISOString().split('T')[0],
-      requiredDate: nextWeek.toISOString().split('T')[0],
+      requestDate: new Date().toISOString().split('T')[0],
+      requiredDate: "",
       priority: "medium",
       status: "pending",
       items: [],
@@ -237,8 +233,8 @@ const IssuanceRequisitionPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.department.trim() || !form.requesterName.trim() || !form.requesterDesignation.trim() || !form.requesterContact.trim()) {
-      alert('Please fill in all required fields: Department, Requester Name, Designation, and Contact Number');
+    if (!form.department.trim()) {
+      alert('Please fill in the Department field');
       return;
     }
     
@@ -513,13 +509,13 @@ const IssuanceRequisitionPage = () => {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <FiSearch className="h-5 w-5 text-gray-400" />
               </div>
-              <input
-                type="text"
-                placeholder="Search requisition number, requester, department..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
-              />
+                              <input
+                  type="text"
+                  placeholder="Search requisition number, department..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
+                />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
@@ -547,7 +543,7 @@ const IssuanceRequisitionPage = () => {
               >
                 {departments.map(dept => (
                   <option key={dept} value={dept}>
-                    {dept === "all" ? "🏢 All Departments" : `🏢 ${dept}`}
+                    {dept === "all" ? "📍 All Departments" : `📍 ${dept}`}
                   </option>
                 ))}
               </select>
@@ -570,15 +566,7 @@ const IssuanceRequisitionPage = () => {
                       <span className="text-slate-400">{getSortIndicator('requisitionNumber')}</span>
                     </div>
                   </th>
-                  <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
-                    onClick={() => requestSort('requesterName')}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>Requester</span>
-                      <span className="text-slate-400">{getSortIndicator('requesterName')}</span>
-                    </div>
-                  </th>
+
                   <th 
                     className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
                     onClick={() => requestSort('department')}
@@ -616,11 +604,7 @@ const IssuanceRequisitionPage = () => {
                         <div className="text-sm font-medium text-slate-900">{item.requisitionNumber}</div>
                         <div className="text-xs text-slate-500">{item.items.length} items</div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-slate-900">{item.requesterName}</div>
-                        <div className="text-xs text-slate-500">{item.requesterDesignation}</div>
-                        <div className="text-xs text-slate-500">{item.requesterContact}</div>
-                      </td>
+
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-slate-600">{item.department}</div>
                       </td>
@@ -660,7 +644,7 @@ const IssuanceRequisitionPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
                       {searchTerm || selectedDepartment !== "all" 
                         ? "No requisitions match your filters" 
                         : `No ${activeTab} requisitions found`}
@@ -746,90 +730,7 @@ const IssuanceRequisitionPage = () => {
                   </div>
                 </div>
 
-                {/* Requester Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Requester Name</label>
-                    <input
-                      type="text"
-                      value={form.requesterName}
-                      onChange={(e) => setForm({...form, requesterName: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      placeholder="Enter requester name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Requester Designation</label>
-                    <input
-                      type="text"
-                      value={form.requesterDesignation}
-                      onChange={(e) => setForm({...form, requesterDesignation: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      placeholder="e.g., Engineer, Manager"
-                      required
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Contact Number</label>
-                    <input
-                      type="text"
-                      value={form.requesterContact}
-                      onChange={(e) => setForm({...form, requesterContact: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      placeholder="Enter contact number"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">OLT Number</label>
-                    <input
-                      type="text"
-                      value={form.requesterOltNo}
-                      onChange={(e) => setForm({...form, requesterOltNo: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      placeholder="Enter OLT number"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Request Date</label>
-                    <input
-                      type="date"
-                      value={form.requestDate}
-                      onChange={(e) => setForm({...form, requestDate: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Required Date</label>
-                    <input
-                      type="date"
-                      value={form.requiredDate}
-                      onChange={(e) => setForm({...form, requiredDate: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Reason */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Reason for Requisition</label>
-                  <textarea
-                    value={form.reason}
-                    onChange={(e) => setForm({...form, reason: e.target.value})}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                    placeholder="Please provide a reason for this requisition..."
-                    rows={3}
-                  />
-                </div>
 
                 {/* Items Section */}
                 <div className="border-t border-slate-200 pt-6">
