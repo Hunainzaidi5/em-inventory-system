@@ -108,13 +108,13 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-orange-600">
       {/* Professional background with improved visibility */}
       <div className="absolute inset-0 bg-grid-slate-800/20"></div>
       
       {/* Enhanced background image with better visibility */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-slate-900/80 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-orange-900/70 z-0"></div>
         <img 
           src="/eminventory.png" 
           alt="E&M Inventory Background Logo" 
@@ -125,15 +125,15 @@ export function LoginPage() {
 
       {/* Subtle animated background elements */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
-        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-indigo-500 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-700 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-600 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-blue-900 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob"></div>
       </div>
 
       {/* Enhanced professional login card */}
-      <Card className="w-full max-w-md relative z-10 border border-white/30 shadow-2xl overflow-hidden rounded-xl bg-gradient-to-br from-slate-800/80 via-blue-900/80 to-slate-800/80 backdrop-blur-xl">
+      <Card className="w-full max-w-md relative z-10 border border-white/30 shadow-2xl overflow-hidden rounded-xl bg-gradient-to-br from-blue-950/80 via-orange-900/70 to-blue-950/80 backdrop-blur-xl">
         {/* Decorative top accent */}
-        <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"></div>
+        <div className="h-1 bg-gradient-to-r from-blue-600 via-orange-500 to-blue-600"></div>
         
         <CardHeader className="space-y-4 pb-6 pt-8 px-8">
           <div className="flex justify-center mb-3">
@@ -242,7 +242,7 @@ export function LoginPage() {
           <CardFooter className="flex flex-col px-8 pb-8 pt-6">
             <Button 
               type="submit" 
-              className="w-full h-14 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl rounded-lg disabled:opacity-70 group"
+              className="w-full h-14 bg-gradient-to-r from-blue-700 to-orange-600 hover:from-blue-800 hover:to-orange-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl rounded-lg disabled:opacity-70 group"
               disabled={isLoading}
             >
               {isLoading ? (
