@@ -154,20 +154,7 @@ const useConnectionStatus = () => {
   return isOnline;
 };
 
-const useTheme = () => {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
 
-  const toggleTheme = useCallback(() => {
-    setIsDark(prev => !prev);
-  }, []);
-
-  return { isDark, toggleTheme };
-};
 
 const usePasswordStrength = (password: string) => {
   return useMemo(() => {
@@ -190,9 +177,9 @@ const usePasswordStrength = (password: string) => {
 };
 
 // Enhanced Components
-const AnimatedBackground = ({ isDark }: { isDark: boolean }) => (
+const AnimatedBackground = () => (
   <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
-    <div className={`absolute inset-0 opacity-30 ${isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-orange-50'}`} />
+    <div className="absolute inset-0 opacity-30 bg-gradient-to-br from-blue-50 to-orange-50" />
     
     {/* Animated particles */}
     <div className="absolute inset-0">
@@ -200,7 +187,7 @@ const AnimatedBackground = ({ isDark }: { isDark: boolean }) => (
         <div
           key={i}
           className={`absolute w-1 h-1 rounded-full animate-pulse ${
-            isDark ? 'bg-blue-400' : 'bg-blue-600'
+            false ? 'bg-blue-400' : 'bg-blue-600'
           }`}
           style={{
             left: `${Math.random() * 100}%`,
@@ -214,13 +201,13 @@ const AnimatedBackground = ({ isDark }: { isDark: boolean }) => (
     
     {/* Gradient blobs */}
     <div className={`absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-2000 ${
-      isDark ? 'bg-blue-600' : 'bg-blue-700'
+      false ? 'bg-blue-600' : 'bg-blue-700'
     }`} />
     <div className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000 ${
-      isDark ? 'bg-orange-500' : 'bg-orange-600'
+      false ? 'bg-orange-500' : 'bg-orange-600'
     }`} />
     <div className={`absolute top-1/3 left-1/4 w-64 h-64 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob ${
-      isDark ? 'bg-purple-600' : 'bg-blue-900'
+      false ? 'bg-purple-600' : 'bg-blue-900'
     }`} />
   </div>
 );
@@ -358,16 +345,6 @@ const EnhancedErrorAlert = ({
   </Alert>
 );
 
-const ThemeToggle = ({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) => (
-  <button
-    onClick={onToggle}
-    className="fixed top-4 left-4 z-50 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
-    aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
-  >
-    {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-  </button>
-);
-
 // Main Component
 export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -380,7 +357,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isOnline = useConnectionStatus();
-  const { isDark, toggleTheme } = useTheme();
+  const isDark = false;
   const emailInputRef = useRef<HTMLInputElement>(null);
   
   // Memoized values
@@ -559,17 +536,15 @@ export function LoginPage() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center relative overflow-hidden transition-colors duration-500 ${
-      isDark 
-        ? 'bg-gradient-to-br from-gray-900 via-blue-950 to-orange-900' 
+      false ? 'bg-gradient-to-br from-gray-900 via-blue-950 to-orange-900' 
         : 'bg-gradient-to-br from-blue-950 via-blue-900 to-orange-600'
     }`}>
-      <AnimatedBackground isDark={isDark} />
+      <AnimatedBackground />
       <ConnectionStatus isOnline={isOnline} />
-      <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
 
       {/* Main container */}
       <div className="w-full max-w-7xl mx-auto rounded-3xl shadow-2xl overflow-hidden relative flex flex-col lg:flex-row bg-transparent z-10">
-        <BrandingSection isDark={isDark} />
+        <BrandingSection isDark={false} />
 
         {/* Login section */}
         <div className={`w-full lg:w-1/2 flex items-center justify-center p-8 ${
