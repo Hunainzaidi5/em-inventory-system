@@ -262,8 +262,8 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
         </h1>
         <p className="text-xl text-white/90 leading-relaxed">
         Your all-in-one platform for managing, tracking, and streamlining 
-        E&M inventory with accuracy and efficiency. Stay organized, improve visibility, 
-        and simplify operations all in one place.
+        E&M inventory with accuracy and efficiency. 
+        Stay organized, improve visibility, and simplify operations all in one place.
         </p>
       </div>
 
@@ -556,7 +556,6 @@ export function LoginPage() {
               : 'bg-white border-gray-200'
           }`}>
             {/* Enhanced top accent */}
-            <div className="h-2 bg-gradient-to-r from-blue-600 via-purple-500 via-orange-500 to-orange-600 rounded-t-2xl" />
             
             <CardHeader className="space-y-6 pb-6 pt-8 px-8">
               {/* Enhanced logo section */}
@@ -574,7 +573,6 @@ export function LoginPage() {
               
               {/* Enhanced system badge */}
               <div className="flex justify-center">
-
               </div>
               
               <div className="text-center space-y-3">
