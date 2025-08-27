@@ -183,6 +183,9 @@ const IssuanceRequisitionPage = () => {
 
   // Modal handlers
   const openAddModal = () => {
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+    
     setForm({ 
       requisitionNumber: generateRequisitionNumber(),
       requesterName: "",
@@ -190,8 +193,8 @@ const IssuanceRequisitionPage = () => {
       requesterContact: "",
       requesterOltNo: "",
       department: "",
-      requestDate: new Date().toISOString().split('T')[0],
-      requiredDate: "",
+      requestDate: today.toISOString().split('T')[0],
+      requiredDate: nextWeek.toISOString().split('T')[0],
       priority: "medium",
       status: "pending",
       items: [],
@@ -234,7 +237,28 @@ const IssuanceRequisitionPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.department.trim()) return;
+    if (!form.department.trim() || !form.requesterName.trim() || !form.requesterDesignation.trim() || !form.requesterContact.trim()) {
+      alert('Please fill in all required fields: Department, Requester Name, Designation, and Contact Number');
+      return;
+    }
+    
+    if (form.items.length === 0) {
+      alert('Please add at least one item to the requisition');
+      return;
+    }
+    
+    // Validate items
+    for (let i = 0; i < form.items.length; i++) {
+      const item = form.items[i];
+      if (!item.itemDescription.trim()) {
+        alert(`Please provide a description for item ${i + 1}`);
+        return;
+      }
+      if (item.quantity <= 0) {
+        alert(`Please provide a valid quantity for item ${i + 1}`);
+        return;
+      }
+    }
 
     const updatedItem = {
       ...form,
@@ -282,7 +306,7 @@ const IssuanceRequisitionPage = () => {
 
         // Upsert into inventory (simple create as new record)
         try {
-          await (inventoryService as any).createItem({
+          const inventoryItemData: any = {
             name: it.itemDescription,
             description: it.remarks || '',
             category: form.department || 'Inventory',
@@ -291,9 +315,13 @@ const IssuanceRequisitionPage = () => {
             max_stock: qty,
             unit: it.unit || 'PCS',
             location: 'Issued to Department',
-            supplier: undefined,
-            cost: undefined,
-          });
+          };
+          
+          // Only add supplier and cost if they have values
+          if (it.supplier) inventoryItemData.supplier = it.supplier;
+          if (it.cost) inventoryItemData.cost = it.cost;
+          
+          await (inventoryService as any).createItem(inventoryItemData);
         } catch (err) {
           console.warn('Skipping inventory insert for item due to error:', err);
         }
@@ -686,6 +714,121 @@ const IssuanceRequisitionPage = () => {
                       required
                     />
                   </div>
+                </div>
+
+                {/* Priority and Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Priority</label>
+                    <select
+                      value={form.priority}
+                      onChange={(e) => setForm({...form, priority: e.target.value as "low" | "medium" | "high" | "urgent"})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                    <select
+                      value={form.status}
+                      onChange={(e) => setForm({...form, status: e.target.value as "pending" | "approved" | "rejected" | "completed"})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Requester Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Requester Name</label>
+                    <input
+                      type="text"
+                      value={form.requesterName}
+                      onChange={(e) => setForm({...form, requesterName: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      placeholder="Enter requester name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Requester Designation</label>
+                    <input
+                      type="text"
+                      value={form.requesterDesignation}
+                      onChange={(e) => setForm({...form, requesterDesignation: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      placeholder="e.g., Engineer, Manager"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Contact Number</label>
+                    <input
+                      type="text"
+                      value={form.requesterContact}
+                      onChange={(e) => setForm({...form, requesterContact: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      placeholder="Enter contact number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">OLT Number</label>
+                    <input
+                      type="text"
+                      value={form.requesterOltNo}
+                      onChange={(e) => setForm({...form, requesterOltNo: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      placeholder="Enter OLT number"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Request Date</label>
+                    <input
+                      type="date"
+                      value={form.requestDate}
+                      onChange={(e) => setForm({...form, requestDate: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Required Date</label>
+                    <input
+                      type="date"
+                      value={form.requiredDate}
+                      onChange={(e) => setForm({...form, requiredDate: e.target.value})}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Reason */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Reason for Requisition</label>
+                  <textarea
+                    value={form.reason}
+                    onChange={(e) => setForm({...form, reason: e.target.value})}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    placeholder="Please provide a reason for this requisition..."
+                    rows={3}
+                  />
                 </div>
 
                 {/* Items Section */}
