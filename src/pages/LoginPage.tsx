@@ -280,8 +280,6 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
         </p>
       </div>
 
-
-
       {/* Decorative elements */}
       <div className="flex gap-3 mt-8">
         <div className="w-16 h-3 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full opacity-80" />
