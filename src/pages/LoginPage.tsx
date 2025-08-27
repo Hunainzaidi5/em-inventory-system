@@ -271,29 +271,16 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
       {/* Enhanced welcome message */}
       <div className="space-y-6">
         <h1 className="text-5xl font-extrabold leading-tight bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-          Welcome to the Future of Inventory Management
+          Welcome to the E&M Inventory Management
         </h1>
         <p className="text-xl text-white/90 leading-relaxed">
-          Experience seamless inventory control with our advanced management platform. 
-          Monitor stock levels, track maintenance schedules, and optimize your operations 
-          with intelligent insights.
+        Your all-in-one platform for managing, tracking, and streamlining 
+        E&M inventory with accuracy and efficiency. Stay organized, improve visibility, 
+        and simplify operations all in one place.
         </p>
       </div>
 
-      {/* Feature highlights */}
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        {[
-          { icon: Shield, text: 'Enterprise Security' },
-          { icon: Key, text: 'Role-based Access' },
-          { icon: Warehouse, text: 'Real-time Tracking' },
-          { icon: CheckCircle, text: '99.9% Uptime' },
-        ].map(({ icon: Icon, text }, index) => (
-          <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-            <Icon className="w-5 h-5 text-orange-400" />
-            <span className="text-sm font-medium text-white/90">{text}</span>
-          </div>
-        ))}
-      </div>
+
 
       {/* Decorative elements */}
       <div className="flex gap-3 mt-8">
@@ -617,11 +604,7 @@ export function LoginPage() {
               
               {/* Enhanced system badge */}
               <div className="flex justify-center">
-                <Badge className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold bg-gradient-to-r from-blue-50 to-orange-50 text-blue-900 border border-blue-100 hover:from-blue-100 hover:to-orange-100 transition-colors">
-                  <Warehouse className="h-4 w-4" />
-                  E&M Inventory Management System
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                </Badge>
+
               </div>
               
               <div className="text-center space-y-3">
@@ -834,45 +817,6 @@ export function LoginPage() {
                   </div>
                 </Button>
 
-                {/* Enhanced security section */}
-                <Separator className="my-4" />
-                
-                <div className="space-y-4">
-                  {/* Security badges */}
-                  <div className="flex items-center justify-center space-x-4 text-xs font-medium">
-                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-                      isDark ? 'bg-gray-700/50 text-gray-300' : 'bg-gray-50 text-gray-600'
-                    }`}>
-                      <Shield className="w-4 h-4" />
-                      <span>256-bit SSL</span>
-                    </div>
-                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-                      isDark ? 'bg-gray-700/50 text-gray-300' : 'bg-gray-50 text-gray-600'
-                    }`}>
-                      <Lock className="w-4 h-4" />
-                      <span>Enterprise Security</span>
-                    </div>
-                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-                      isOnline 
-                        ? isDark ? 'bg-green-900/30 text-green-400' : 'bg-green-50 text-green-600'
-                        : isDark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-600'
-                    }`}>
-                      {isOnline ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
-                      <span>{isOnline ? 'Online' : 'Offline'}</span>
-                    </div>
-                  </div>
-
-                  {/* System status */}
-                  <div className="text-center">
-                    <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-medium ${
-                      isDark ? 'bg-green-900/20 text-green-400' : 'bg-green-50 text-green-700'
-                    }`}>
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      <span>All systems operational</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Development test login - Enhanced */}
                 {import.meta.env.DEV && (
                   <div className="mt-6 w-full space-y-3">
@@ -908,38 +852,6 @@ export function LoginPage() {
                     </p>
                   </div>
                 )}
-
-                {/* Additional links */}
-                <div className="flex flex-col space-y-3 pt-4">
-                  <div className="flex items-center justify-center space-x-6 text-sm">
-                    <Link
-                      to="/support"
-                      className={`font-medium transition-colors duration-200 hover:underline ${
-                        isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Need Help?
-                    </Link>
-                    <div className={`w-1 h-1 rounded-full ${isDark ? 'bg-gray-600' : 'bg-gray-400'}`} />
-                    <Link
-                      to="/privacy"
-                      className={`font-medium transition-colors duration-200 hover:underline ${
-                        isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Privacy Policy
-                    </Link>
-                    <div className={`w-1 h-1 rounded-full ${isDark ? 'bg-gray-600' : 'bg-gray-400'}`} />
-                    <Link
-                      to="/terms"
-                      className={`font-medium transition-colors duration-200 hover:underline ${
-                        isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      Terms
-                    </Link>
-                  </div>
-                </div>
               </CardFooter>
             </form>
           </Card>
