@@ -342,10 +342,6 @@ const IssuanceRequisitionPage = () => {
             location: 'Issued to Department',
           };
           
-          // Only add supplier and cost if they have values
-          if (it.supplier) inventoryItemData.supplier = it.supplier;
-          if (it.cost) inventoryItemData.cost = it.cost;
-          
           await (inventoryService as any).createItem(inventoryItemData);
         } catch (err) {
           console.warn('Skipping inventory insert for item due to error:', err);
