@@ -589,7 +589,7 @@ export function LoginPage() {
                 <div className="relative group">
                   <div className="w-40 h-40 rounded-3xl flex items-center justify-center">
                     <img 
-                      src="/logo.png"
+                      src="/eminventory.png"
                       alt="E&M Inventory Logo"
                       className="w-40 h-40"
                     />
