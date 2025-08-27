@@ -554,9 +554,7 @@ export function LoginPage() {
             isDark 
               ? 'bg-gray-900/95 border-gray-700 text-white' 
               : 'bg-white border-gray-200'
-          }`}>
-            {/* Enhanced top accent */}
-            
+          }`}>            
             <CardHeader className="space-y-6 pb-6 pt-8 px-8">
               {/* Enhanced logo section */}
               <div className="flex justify-center mb-4">
