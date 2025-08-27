@@ -6,8 +6,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Lock, Mail, Eye, EyeOff, Warehouse } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signInTestUser } from '@/utils/testAuth';
 
@@ -108,216 +107,149 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-orange-600">
-      {/* Professional background with improved visibility */}
-      <div className="absolute inset-0 bg-grid-slate-800/20"></div>
-      
-      {/* Enhanced background image with better visibility */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-orange-900/70 z-0"></div>
-        <img 
-          src="/eminventory.png" 
-          alt="E&M Inventory Background Logo" 
-          className="w-full max-w-4xl object-contain opacity-25 z-0"
-          style={{ height: '421px', width: '1280px' }}
+    <div className="min-h-screen flex">
+      {/* Left Side - Company Branding */}
+      <div className="hidden lg:flex w-1/2 items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-orange-700 text-white relative overflow-hidden">
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
+
+      <div className="text-center space-y-6 px-10 relative z-10">
+        <img
+          src="/eminventory.png"
+          alt="Company Logo"
+          className="mx-auto w-40 h-40 object-contain drop-shadow-lg"
         />
+        <h1 className="text-4xl font-bold">Welcome to E&M Inventory</h1>
+        <p className="text-blue-100/90 text-lg">
+          Manage your systems and inventory with ease and efficiency.  
+          Sign in to access your dashboard.
+        </p>
       </div>
+    </div>
 
-      {/* Subtle animated background elements */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-700 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-600 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
-        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-blue-900 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob"></div>
-      </div>
+    <style>{`
+      .bg-grid-pattern {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+      }
+    `}</style>
 
-      {/* Enhanced professional login card */}
-      <Card className="w-full max-w-md relative z-10 border border-white/30 shadow-2xl overflow-hidden rounded-xl bg-gradient-to-br from-blue-950/80 via-orange-900/70 to-blue-950/80 backdrop-blur-xl">
-        {/* Decorative top accent */}
-        <div className="h-1 bg-gradient-to-r from-blue-600 via-orange-500 to-blue-600"></div>
-        
-        <CardHeader className="space-y-4 pb-6 pt-8 px-8">
-          <div className="flex justify-center mb-3">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-white/15 p-5 shadow-lg border border-white/30 backdrop-blur-sm">
-              <img 
-                src="/eminventory.png"
-                alt="E&M Inventory Logo"
-                className="w-14 h-14"
-              />
-            </div>
+
+      {/* Right Side - Login Box */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center bg-white px-8">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              User Login
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Please enter your credentials to continue
+            </p>
           </div>
-          
-          <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold bg-white/15 text-blue-100 border border-white/30 backdrop-blur-sm">
-              <Warehouse className="h-4 w-4" /> E&M Inventory Management System
-            </div>
-          </div>
-          
-          <CardTitle className="text-3xl font-bold text-center text-white tracking-tight">
-            Welcome Back
-          </CardTitle>
-          <CardDescription className="text-center text-blue-100/90 text-base font-medium">
-            Sign in to access your E&M Inventory dashboard
-          </CardDescription>
-        </CardHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6 px-8">
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            {/* Error Message */}
             {errors.root && (
-              <div className="bg-red-500/20 border border-red-400/50 text-red-100 p-4 rounded-lg text-sm flex items-start space-x-3 backdrop-blur-sm">
-                <div className="w-5 h-5 bg-red-500/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-2 h-2 bg-red-300 rounded-full"></div>
-                </div>
-                <span className="font-medium">{errors.root.message}</span>
+              <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg text-sm">
+                {errors.root.message}
               </div>
             )}
 
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-sm font-semibold text-blue-100">
-                Email Address
-              </Label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                  <Mail className="h-5 w-5 text-blue-200 group-focus-within:text-white transition-colors" />
-                </div>
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email address"
+                  placeholder="Enter your email"
                   {...register('email')}
-                  className={`h-14 bg-white/15 text-white placeholder-blue-200/70 border-white/30 pl-12 pr-4 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 ${
-                    errors.email ? 'border-red-400/70 focus:ring-red-400 focus:border-red-400' : 'hover:border-white/50'
+                  className={`pl-10 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${
+                    errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
                   }`}
                 />
               </div>
               {errors.email && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-300 rounded-full"></div>
-                  <span>{errors.email.message}</span>
-                </p>
+                <p className="text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-semibold text-blue-100">
-                  Password
-                </Label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm font-medium text-blue-200 hover:text-white transition-colors duration-200 hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                  <Lock className="h-5 w-5 text-blue-200 group-focus-within:text-white transition-colors" />
-                </div>
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   {...register('password')}
-                  className={`h-14 bg-white/15 text-white placeholder-blue-200/70 border-white/30 pl-12 pr-12 rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 ${
-                    errors.password ? 'border-red-400/70 focus:ring-red-400 focus:border-red-400' : 'hover:border-white/50'
+                  className={`pl-10 pr-10 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${
+                    errors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-200 hover:text-white transition-colors duration-200"
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-300 mt-2 flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-300 rounded-full"></div>
-                  <span>{errors.password.message}</span>
-                </p>
+                <p className="text-sm text-red-600">{errors.password.message}</p>
               )}
             </div>
-          </CardContent>
 
-          <CardFooter className="flex flex-col px-8 pb-8 pt-6">
-            <Button 
-              type="submit" 
-              className="w-full h-14 bg-gradient-to-r from-blue-700 to-orange-600 hover:from-blue-800 hover:to-orange-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl rounded-lg disabled:opacity-70 group"
+            {/* Actions */}
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="rounded text-blue-600" />
+                <span className="text-gray-600">Remember me</span>
+              </label>
+              <Link to="/forgot-password" className="text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Login Button */}
+            <Button
+              type="submit"
+              className="w-full h-12 bg-gradient-to-r from-blue-700 to-orange-600 hover:from-blue-800 hover:to-orange-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="flex items-center justify-center space-x-3">
+                <div className="flex items-center justify-center space-x-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <span className="text-base">Signing in...</span>
+                  <span>Signing in...</span>
                 </div>
               ) : (
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-base">Sign In</span>
-                  <div className="w-2 h-2 bg-white rounded-full group-hover:animate-pulse"></div>
-                </div>
+                'Login'
               )}
             </Button>
 
-            {/* Security badge */}
-            <div className="mt-6 flex items-center justify-center space-x-2 text-blue-200 text-xs font-medium">
-              <Lock className="w-4 h-4" />
-              <span>256-bit SSL encryption • Enterprise-grade security</span>
-            </div>
-
             {/* Test Login Button - Only in development */}
             {import.meta.env.DEV && (
-              <div className="mt-6 w-full">
+              <div className="mt-4">
                 <div className="relative flex items-center py-3">
-                  <div className="flex-grow border-t border-white/30"></div>
-                  <span className="flex-shrink mx-4 text-blue-200 text-sm">Development</span>
-                  <div className="flex-grow border-t border-white/30"></div>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="flex-shrink mx-4 text-gray-500 text-sm">Development</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
                 </div>
                 
                 <Button
                   type="button"
                   onClick={handleTestLogin}
-                  className="w-full h-12 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 font-medium transition-all duration-300 mt-3 rounded-lg border border-amber-400/30 shadow-sm hover:shadow-md"
+                  className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white font-medium transition-all duration-300"
                   disabled={isLoading}
                 >
                   🧪 Test Login (Dev Only)
                 </Button>
               </div>
             )}
-          </CardFooter>
-        </form>
-      </Card>
-
-      {/* Add the blob animation keyframes */}
-      <style>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        
-        /* Grid background pattern */
-        .bg-grid-slate-800\/20 {
-          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(30 41 59 / 0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-        }
-      `}</style>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
