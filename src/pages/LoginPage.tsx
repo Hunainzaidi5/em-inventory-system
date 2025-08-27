@@ -556,7 +556,7 @@ export function LoginPage() {
               : 'bg-white border-gray-200'
           }`}>
             {/* Enhanced top accent */}
-            <div className="h-2 bg-gradient-to-r from-blue-600 via-purple-500 via-orange-500 to-blue-600 rounded-t-2xl" />
+            <div className="h-2 bg-gradient-to-r from-blue-600 via-purple-500 via-orange-500 to-orange-600 rounded-t-2xl" />
             
             <CardHeader className="space-y-6 pb-6 pt-8 px-8">
               {/* Enhanced logo section */}
