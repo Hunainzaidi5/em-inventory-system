@@ -58,6 +58,7 @@ const IssuanceRequisitionPage = () => {
   const [sortConfig, setSortConfig] = useState<{ key: keyof IssuanceRequisition; direction: 'asc' | 'desc' } | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const previewRef = React.useRef<HTMLDivElement>(null);
+  const [spareParts, setSpareParts] = useState<any[]>([]);
 
   const addItemRow = () => {
     setForm({
@@ -79,6 +80,21 @@ const IssuanceRequisitionPage = () => {
     setForm({ ...form, items: next });
   };
 
+  const handleItemSelection = (index: number, sparePart: any) => {
+    const next = form.items.map((it, i) => {
+      if (i === index) {
+        return {
+          ...it,
+          itemCode: sparePart.itemCode || sparePart.imis_code || '',
+          itemDescription: sparePart.name || '',
+          unit: sparePart.uom || ''
+        };
+      }
+      return it;
+    });
+    setForm({ ...form, items: next });
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -93,6 +109,19 @@ const IssuanceRequisitionPage = () => {
         console.error('Error loading Issuance Requisition data:', error);
       }
     }
+  }, []);
+
+  // Load spare parts for item code dropdown
+  useEffect(() => {
+    const loadSpareParts = async () => {
+      try {
+        const allSpares = await spareService.getAllSpareParts();
+        setSpareParts(allSpares || []);
+      } catch (error) {
+        console.error('Error loading spare parts:', error);
+      }
+    };
+    loadSpareParts();
   }, []);
 
   // Save data to localStorage whenever data changes
@@ -535,7 +564,7 @@ const IssuanceRequisitionPage = () => {
             
             {/* Department Filter */}
             <div className="w-full lg:w-56">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Department</label>
+              <div className="h-5"></div> {/* Spacer to align with search bar */}
               <select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
@@ -745,7 +774,7 @@ const IssuanceRequisitionPage = () => {
                       <thead className="bg-slate-50">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Sr. No</th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Item Code</th>
+                                                     <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Item Code (Brand/IMIS)</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Description</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Unit</th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Quantity</th>
@@ -763,12 +792,30 @@ const IssuanceRequisitionPage = () => {
                           <tr key={idx}>
                             <td className="px-3 py-2 text-sm text-slate-600">{idx + 1}</td>
                             <td className="px-3 py-2">
-                              <input
+                              <select
                                 value={row.itemCode || ""}
-                                onChange={(e) => updateItemField(idx, "itemCode", e.target.value)}
+                                onChange={(e) => {
+                                  const selectedSpare = spareParts.find(sp => 
+                                    (sp.itemCode === e.target.value) || (sp.imis_code === e.target.value)
+                                  );
+                                  if (selectedSpare) {
+                                    handleItemSelection(idx, selectedSpare);
+                                  } else {
+                                    updateItemField(idx, "itemCode", e.target.value);
+                                  }
+                                }}
                                 className="w-36 px-2 py-1 border border-slate-200 rounded-md text-sm"
-                                placeholder="Code"
-                              />
+                              >
+                                <option value="">Select Item</option>
+                                {spareParts.map((spare, spareIdx) => (
+                                  <option 
+                                    key={spareIdx} 
+                                    value={spare.itemCode || spare.imis_code || ''}
+                                  >
+                                    {spare.itemCode || spare.imis_code || ''} - {spare.name}
+                                  </option>
+                                ))}
+                              </select>
                             </td>
                             <td className="px-3 py-2">
                               <input

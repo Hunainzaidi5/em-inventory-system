@@ -676,21 +676,21 @@ const SpareManagement: React.FC = () => {
                 )}
               </div>
               
-              {/* Location Filter */}
-              <div className="w-full lg:w-56">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Location</label>
-                <select
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
-                >
-                  {locations.map(loc => (
-                    <option key={loc} value={loc}>
-                      {loc === "all" ? "📍 All Locations" : `📍 ${loc}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                          {/* Location Filter */}
+            <div className="w-full lg:w-56">
+              <div className="h-5"></div> {/* Spacer to align with search bar */}
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
+              >
+                {locations.map(loc => (
+                  <option key={loc} value={loc}>
+                    {loc === "all" ? "📍 All Locations" : `📍 ${loc}`}
+                  </option>
+                ))}
+              </select>
+            </div>
             </div>
           </div>
 
