@@ -587,15 +587,12 @@ export function LoginPage() {
               {/* Enhanced logo section */}
               <div className="flex justify-center mb-4">
                 <div className="relative group">
-                  <div className="w-28 h-28 rounded-3xl flex items-center justify-center bg-gradient-to-br from-blue-700 to-orange-500 p-6 shadow-2xl border border-white/10 group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-40 h-40 rounded-3xl flex items-center justify-center">
                     <img 
-                      src="/eminventory.png"
+                      src="/logo.png"
                       alt="E&M Inventory Logo"
-                      className="w-16 h-16"
+                      className="w-40 h-40"
                     />
-                  </div>
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
-                    <CheckCircle className="w-4 h-4 text-white" />
                   </div>
                 </div>
               </div>
