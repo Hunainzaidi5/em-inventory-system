@@ -516,7 +516,7 @@ const IssuanceRequisitionPage = () => {
 
         {/* Filters */}
         <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-6 space-y-4 lg:space-y-0">
+          <div className="flex flex-col space-y-4">
             <div className="flex-shrink-0">
               <div className="flex items-center space-x-3 mb-1">
                 <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
@@ -529,50 +529,57 @@ const IssuanceRequisitionPage = () => {
               </p>
             </div>
             
-            {/* Enhanced Search Bar */}
-            <div className="relative flex-grow max-w-md">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FiSearch className="h-5 w-5 text-gray-400" />
-              </div>
-                              <input
-                  type="text"
-                  placeholder="Search requisition number, department..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
-                />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <FiX className="h-5 w-5" />
-                </button>
-              )}
-              {searchTerm && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  <div className="p-2 text-xs text-gray-500">
-                    Searching: "{searchTerm}"
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Enhanced Search Bar */}
+              <div className="flex-grow">
+                <label htmlFor="search-requisitions" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiSearch className="h-5 w-5 text-gray-400" />
                   </div>
+                  <input
+                    id="search-requisitions"
+                    type="text"
+                    placeholder="Search requisition number, department..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm("")}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <FiX className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
+              
+              {/* Department Filter */}
+              <div className="w-full lg:w-64">
+                <label htmlFor="department-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Department</label>
+                <select
+                  id="department-filter"
+                  value={selectedDepartment}
+                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
+                >
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>
+                      {dept === "all" ? "All Departments" : dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             
-            {/* Department Filter */}
-            <div className="w-full lg:w-56">
-              <div className="h-5"></div> {/* Spacer to align with search bar */}
-              <select
-                value={selectedDepartment}
-                onChange={(e) => setSelectedDepartment(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
-              >
-                {departments.map(dept => (
-                  <option key={dept} value={dept}>
-                    {dept === "all" ? "📍 All Departments" : `📍 ${dept}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {searchTerm && (
+              <div className="mt-1 text-sm text-gray-600">
+                Searching for: <span className="font-medium">"{searchTerm}"</span>
+              </div>
+            )}
           </div>
         </div>
 
