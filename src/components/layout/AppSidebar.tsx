@@ -84,6 +84,19 @@ interface AppSidebarProps {
   className?: string;
 }
 
+// Grid pattern style for the overlay
+const gridPatternStyle: React.CSSProperties = {
+  backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\' width=\'32\' height=\'32\' fill=\'none\' stroke=\'rgba(255,255,255,0.2)\'>%3cpath d=\'M0 .5H31.5V32\'/%3e%3c/svg>")',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  opacity: 0.2,
+  pointerEvents: 'none',
+  zIndex: 1
+};
+
 export function AppSidebar({ className }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -158,8 +171,24 @@ export function AppSidebar({ className }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar className={className} collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border p-4 bg-gradient-to-r from-sidebar-accent/10 to-transparent">
+    <Sidebar 
+      className={`${className} w-72 flex flex-col bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900`} 
+      style={{
+        '--sidebar-background': 'radial-gradient(circle, #1e3a8a 0%, #1e40af 50%, #ea580c 100%)',
+        height: '100vh',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 50
+      } as React.CSSProperties}
+      collapsible="icon"
+    >
+      {/* Grid Pattern Overlay */}
+      <div style={gridPatternStyle}></div>
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+      <SidebarHeader className="border-b border-sidebar-border p-4 bg-gradient-to-r from-sidebar-accent/10 to-transparent relative z-10">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
             <img 
@@ -177,7 +206,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 space-y-2">
+      <SidebarContent className="px-2 space-y-2 relative z-10">
         <SidebarGroup>
           <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -282,7 +311,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-2 border-t bg-gradient-to-r from-transparent to-sidebar-accent/10">
+      <SidebarFooter className="p-2 border-t bg-gradient-to-r from-transparent to-sidebar-accent/10 relative z-10">
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -380,6 +409,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
           </div>
         )}
       </SidebarFooter>
+      </div>
     </Sidebar>
   );
 }

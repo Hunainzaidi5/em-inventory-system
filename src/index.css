@@ -75,7 +75,7 @@
     --sidebar-foreground: 0 0% 95%; /* Light text */
     --sidebar-primary: 25 99% 44%; /* #E55604 - Orange accent */
     --sidebar-primary-foreground: 0 0% 100%; /* White text on orange */
-    --sidebar-accent: 210 100% 25%; /* Lighter blue for hover */
+    --sidebar-accent: 25 100% 40%; /* Orange-700 for hover */
     --sidebar-accent-foreground: 0 0% 95%; /* Light text on hover */
     --sidebar-border: 210 100% 30%; /* Border color */
     --sidebar-ring: 25 99% 44%; /* #E55604 */

@@ -204,14 +204,23 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
       <div className="space-y-6">
-        {/* Premium Welcome Section with Advanced Gradient */}
-        <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
+        {/* Welcome Section with Gradient and Grid Pattern */}
+        <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
+          {/* Grid Pattern Overlay */}
+          <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
           <div className="absolute top-0 left-0 w-full h-full">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full animate-pulse"></div>
             <div className="absolute bottom-10 right-20 w-24 h-24 bg-white/5 rounded-full animate-pulse delay-1000"></div>
             <div className="absolute top-1/2 right-10 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500"></div>
           </div>
+          
+          {/* Grid Pattern Style */}
+          <style>
+            {`.bg-grid-pattern {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+              }`}
+          </style>
           
           <div className="relative z-10 flex items-center justify-between">
             <div className="space-y-4">

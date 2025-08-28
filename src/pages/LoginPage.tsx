@@ -215,8 +215,8 @@ const AnimatedBackground = () => (
 const BrandingSection = ({ isDark }: { isDark: boolean }) => (
   <div className={`hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden ${
     isDark 
-      ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-orange-800' 
-      : 'bg-gradient-to-br from-blue-900 via-blue-800 to-orange-700'
+      ? 'bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900' 
+      : 'bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900'
   } text-white`}>
     {/* Enhanced background overlay */}
     <div className={`absolute inset-0 ${
@@ -224,6 +224,9 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
         ? 'bg-gradient-to-br from-gray-900/80 to-orange-900/80' 
         : 'bg-gradient-to-br from-blue-900/70 to-orange-900/70'
     }`} />
+    
+    {/* Grid Pattern Overlay */}
+    <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
     
     {/* Animated background logo */}
     <div className="absolute inset-0 flex items-center justify-center opacity-5">
@@ -947,5 +950,15 @@ export function LoginPage() {
     </div>
   );
 }
+
+// Grid Pattern Style
+const gridStyle = `
+  .bg-grid-pattern {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+`;
+
+// Add global styles
+document.head.insertAdjacentHTML('beforeend', `<style>${gridStyle}</style>`);
 
 export default LoginPage;
