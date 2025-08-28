@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, Area, AreaChart } from "recharts";
 import { Package, AlertTriangle, Shield, TrendingUp, Eye, Filter } from "lucide-react";
 import statsService from '@/services/statsService';
@@ -154,8 +155,8 @@ const AvailabilityOverview = () => {
   const healthScore = totalItems > 0 ? Math.max(0, Math.round(((totalItems - faultyCount) / totalItems) * 100)) : 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-7xl mx-auto">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+      <div className="w-full">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -424,7 +425,7 @@ const AvailabilityOverview = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

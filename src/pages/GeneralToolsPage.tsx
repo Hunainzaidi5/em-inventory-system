@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiPackage, FiMapPin, FiTool, FiUser, FiUsers, FiBriefcase, FiBox, FiSettings } from "react-icons/fi";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 interface IssuedTo {
   name: string;
@@ -189,8 +190,8 @@ const GeneralToolsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+      <div className="w-full">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div className="mb-4 md:mb-0">
@@ -536,7 +537,7 @@ const GeneralToolsPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

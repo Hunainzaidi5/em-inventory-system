@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiChevronDown, FiChevronRight, FiRefreshCw } from "react-icons/fi";
+import { PageContainer } from "@/components/layout/PageContainer";
 import spareService from "../services/spareService";
 import { toast } from "../components/ui/use-toast";
 import { SparePart, TabData, SystemCategory } from "../types/spareTypes";
@@ -476,8 +477,8 @@ const SpareManagement: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <PageContainer className="min-h-screen bg-gray-50 py-8">
+      <div className="w-full">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div className="mb-6 md:mb-0">
@@ -1032,7 +1033,7 @@ const SpareManagement: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 export default SpareManagement;  

@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useSearchParams } from 'react-router-dom';
 import { gatePassService } from '@/services/gatePassService';
+import { PageContainer } from "@/components/layout/PageContainer";
 
 const GatePassPage = () => {
   const [formData, setFormData] = useState({
@@ -320,8 +321,8 @@ const GatePassPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
-      <div className="max-w-7xl mx-auto p-6">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+      <div className="w-full p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Gate Pass Management</h1>
@@ -887,7 +888,7 @@ const GatePassPage = () => {
       <div ref={containerRef} className="hidden">
         {/* This is used for maintaining compatibility if needed */}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

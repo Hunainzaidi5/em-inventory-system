@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import { useSearchParams } from 'react-router-dom';
 import { issuanceService } from '@/services/issuanceService';
 import SignaturePad from '@/components/SignaturePad';
+import { PageContainer } from "@/components/layout/PageContainer";
 
 interface Tool {
   description: string;
@@ -359,8 +360,8 @@ const IssuancePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-7xl mx-auto p-6">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+      <div className="w-full p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Issuance Management</h1>
@@ -958,12 +959,12 @@ const IssuancePage: React.FC = () => {
           </div>
         </div>
       </div>
-
+      
       {/* Hidden container for Excel export reference */}
       <div ref={containerRef} className="hidden">
         {/* This is used for maintaining compatibility if needed */}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

@@ -33,7 +33,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
           {/* Main Content */}
           <main className="flex-1 overflow-auto">
-            <div className="container mx-auto p-6">
+            <div className="max-w-[1800px] mx-auto p-6 w-full">
               {children}
             </div>
           </main>
