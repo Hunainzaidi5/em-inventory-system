@@ -854,45 +854,45 @@ useEffect(() => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-sm font-medium text-gray-300">Total</p>
+              <p className="text-2xl font-bold text-white">{stats.total}</p>
             </div>
-            <Package className="h-8 w-8 text-blue-500" />
+            <Package className="h-8 w-8 text-white" />
           </div>
         </div>
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
+              <p className="text-sm font-medium text-gray-300">Completed</p>
+              <p className="text-2xl font-bold text-emerald-300">{stats.completed}</p>
             </div>
-            <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-green-500 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
-            </div>
-            <div className="h-8 w-8 bg-yellow-100 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-yellow-500 rounded-full"></div>
+            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
+              <div className="h-4 w-4 bg-emerald-400 rounded-full"></div>
             </div>
           </div>
         </div>
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Overdue</p>
-              <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
+              <p className="text-sm font-medium text-gray-300">Pending</p>
+              <p className="text-2xl font-bold text-yellow-300">{stats.pending}</p>
             </div>
-            <div className="h-8 w-8 bg-red-100 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-red-500 rounded-full"></div>
+            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
+              <div className="h-4 w-4 bg-yellow-400 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-300">Overdue</p>
+              <p className="text-2xl font-bold text-red-300">{stats.overdue}</p>
+            </div>
+            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
+              <div className="h-4 w-4 bg-red-400 rounded-full"></div>
             </div>
           </div>
         </div>
