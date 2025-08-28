@@ -214,6 +214,25 @@
 }
 
 @layer components {
+  /* Dark card surface with subtle grid and gradient */
+  .card-surface-dark {
+    @apply relative overflow-hidden rounded-2xl border border-gray-700/40 text-white shadow-xl bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900;
+  }
+
+  .card-surface-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3e%3cpath d='M0 .5H31.5V32' fill='none' stroke='rgba(255,255,255,0.12)'/%3e%3c/svg%3e");
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .card-surface-dark .card-inner {
+    position: relative;
+    z-index: 1;
+  }
+
   /* Professional Sidebar Styles */
   .sidebar {
     background-color: hsl(var(--sidebar-background));

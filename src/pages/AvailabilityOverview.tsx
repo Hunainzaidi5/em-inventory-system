@@ -43,7 +43,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color, trend }: {
   }, [value]);
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br ${color} p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
+    <div className={`relative overflow-hidden rounded-2xl border border-gray-700/40 card-surface-dark p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
       <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-700"></div>
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
@@ -76,10 +76,10 @@ const ChartCard = ({ title, children, actions }: {
   children: React.ReactNode;
   actions?: React.ReactNode;
 }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-    <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+  <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="p-6 border-b border-white/10 bg-white/5">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-xl font-semibold text-white">{title}</h3>
         {actions && (
           <div className="flex items-center space-x-2">
             {actions}
@@ -87,7 +87,7 @@ const ChartCard = ({ title, children, actions }: {
         )}
       </div>
     </div>
-    <div className="p-6">
+    <div className="p-6 text-white">
       {children}
     </div>
   </div>
@@ -361,65 +361,65 @@ const AvailabilityOverview = () => {
 
         {/* Enhanced Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+          <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                <Package className="w-6 h-6 text-blue-600" />
+              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                <Package className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">98.1%</div>
-                <div className="text-sm text-gray-500">Availability</div>
+                <div className="text-2xl font-bold text-white">98.1%</div>
+                <div className="text-sm text-gray-300">Availability</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total Items</span>
-                <span className="font-semibold">2,156</span>
+                <span className="text-gray-300">Total Items</span>
+                <span className="font-semibold text-white">2,156</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full transition-all duration-1000" style={{width: '98.1%'}}></div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div className="bg-blue-400 h-2 rounded-full transition-all duration-1000" style={{width: '98.1%'}}></div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+          <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors">
-                <Shield className="w-6 h-6 text-emerald-600" />
+              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                <Shield className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">92.8%</div>
-                <div className="text-sm text-gray-500">PPE Ready</div>
+                <div className="text-2xl font-bold text-white">92.8%</div>
+                <div className="text-sm text-gray-300">PPE Ready</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">PPE Items</span>
-                <span className="font-semibold">320</span>
+                <span className="text-gray-300">PPE Items</span>
+                <span className="font-semibold text-white">320</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-emerald-600 h-2 rounded-full transition-all duration-1000" style={{width: '92.8%'}}></div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div className="bg-emerald-400 h-2 rounded-full transition-all duration-1000" style={{width: '92.8%'}}></div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
+          <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-red-50 group-hover:bg-red-100 transition-colors">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                <AlertTriangle className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-900">2.4%</div>
-                <div className="text-sm text-gray-500">Faulty Rate</div>
+                <div className="text-2xl font-bold text-white">2.4%</div>
+                <div className="text-sm text-gray-300">Faulty Rate</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Issues</span>
-                <span className="font-semibold text-red-600">60</span>
+                <span className="text-gray-300">Issues</span>
+                <span className="font-semibold text-red-200">60</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-red-600 h-2 rounded-full transition-all duration-1000" style={{width: '2.4%'}}></div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div className="bg-red-400 h-2 rounded-full transition-all duration-1000" style={{width: '2.4%'}}></div>
               </div>
             </div>
           </div>

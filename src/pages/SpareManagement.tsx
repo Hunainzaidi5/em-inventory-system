@@ -518,7 +518,7 @@ const SpareManagement: React.FC = () => {
         {/* Stats Cards */}
         {currentTabData && !currentTabData.loading && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Total Items</h3>
@@ -531,7 +531,7 @@ const SpareManagement: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Total Quantity</h3>
@@ -546,7 +546,7 @@ const SpareManagement: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Warehouses</h3>
@@ -561,7 +561,7 @@ const SpareManagement: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wide">Low Stock Items</h3>

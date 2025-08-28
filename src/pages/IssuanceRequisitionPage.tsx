@@ -435,7 +435,7 @@ const IssuanceRequisitionPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Total Requisitions</h3>
@@ -446,7 +446,7 @@ const IssuanceRequisitionPage = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Pending</h3>
@@ -459,7 +459,7 @@ const IssuanceRequisitionPage = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Approved</h3>
@@ -472,7 +472,7 @@ const IssuanceRequisitionPage = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 hover:bg-white/80 transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-slate-500 font-medium text-sm">Completed</h3>

@@ -205,9 +205,7 @@ export default function Dashboard() {
     <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
       <div className="space-y-6">
         {/* Welcome Section with Gradient and Grid Pattern */}
-        <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
-          {/* Grid Pattern Overlay */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
+        <div className="relative card-surface-dark rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
           <div className="absolute top-0 left-0 w-full h-full">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full animate-pulse"></div>
@@ -215,12 +213,7 @@ export default function Dashboard() {
             <div className="absolute top-1/2 right-10 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500"></div>
           </div>
           
-          {/* Grid Pattern Style */}
-          <style>
-            {`.bg-grid-pattern {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-              }`}
-          </style>
+          
           
           <div className="relative z-10 flex items-center justify-between">
             <div className="space-y-4">
@@ -289,23 +282,23 @@ export default function Dashboard() {
           return (
             <button
               key={index}
-              className="group relative bg-white/80 backdrop-blur-xl rounded-2xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 p-8 text-left transform hover:scale-105 hover:-translate-y-2 overflow-hidden"
+              className="group relative card-surface-dark rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 p-8 text-left transform hover:scale-105 hover:-translate-y-2 overflow-hidden"
               onClick={() => handleNavigation(card.route)}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-100 transition-all duration-500`}></div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/20 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <div className={`p-4 rounded-2xl ${card.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
-                    <IconComponent size={28} />
+                  <div className={`p-4 rounded-2xl ${card.color.replace('text-', 'text-')} shadow-lg group-hover:shadow-xl transition-all duration-300 bg-white/10` }>
+                    <IconComponent size={28} className="text-white" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <TrendingUp size={14} className={card.trendUp ? 'text-emerald-500' : 'text-red-500'} />
+                    <TrendingUp size={14} className={card.trendUp ? 'text-emerald-400' : 'text-red-400'} />
                     <span className={`text-sm font-bold px-3 py-1 rounded-full ${
                       card.trendUp 
-                        ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' 
-                        : 'text-red-600 bg-red-50 border border-red-200'
+                        ? 'text-emerald-200 bg-emerald-600/20 border border-emerald-500/40' 
+                        : 'text-red-200 bg-red-600/20 border border-red-500/40'
                     }`}>
                       {card.trend}
                     </span>
@@ -313,19 +306,19 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-gray-600 group-hover:text-gray-700 transition-colors">
+                  <h3 className="text-sm font-semibold text-gray-200 group-hover:text-white transition-colors">
                     {card.title}
                   </h3>
-                  <p className="text-3xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors">
+                  <p className="text-3xl font-bold text-white group-hover:text-gray-100 transition-colors">
                     {card.value}
                   </p>
-                  <p className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors">
+                  <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
                     {card.subtitle}
                   </p>
                 </div>
                 
                 <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <ArrowUpRight size={20} className="text-gray-400" />
+                  <ArrowUpRight size={20} className="text-gray-200" />
                 </div>
               </div>
             </button>
@@ -336,10 +329,10 @@ export default function Dashboard() {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Enhanced Quick Actions */}
         <div className="lg:col-span-1">
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-8 h-full">
+          <div className="card-surface-dark rounded-2xl shadow-xl p-8 h-full">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
-              <Zap size={20} className="text-yellow-500" />
+              <h2 className="text-xl font-bold text-white">Quick Actions</h2>
+              <Zap size={20} className="text-yellow-300" />
             </div>
             <div className="space-y-4">
               {quickActions.map((action, index) => {
@@ -347,21 +340,21 @@ export default function Dashboard() {
                 return (
                   <button
                     key={index}
-                    className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-2 border-transparent hover:border-gray-100 hover:shadow-lg"
+                    className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition-all duration-300 border-2 border-transparent hover:border-white/10 hover:shadow-lg"
                     onClick={() => action.route && handleNavigation(action.route)}
                   >
                     <div className={`p-3 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
                       <IconComponent size={20} />
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="font-semibold text-gray-900 group-hover:text-gray-800 transition-colors">
+                      <p className="font-semibold text-white group-hover:text-gray-100 transition-colors">
                         {action.title}
                       </p>
-                      <p className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors">
+                      <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
                         {action.description}
                       </p>
                     </div>
-                    <ArrowUpRight size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <ArrowUpRight size={16} className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300" />
                   </button>
                 );
               })}
@@ -371,29 +364,29 @@ export default function Dashboard() {
 
         {/* Enhanced Recent Activity */}
         <div className="lg:col-span-2">
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-8 h-full">
+          <div className="card-surface-dark rounded-2xl shadow-xl p-8 h-full">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
+                <h2 className="text-xl font-bold text-white">Recent Activity</h2>
                 <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-gray-500 font-medium">LIVE</span>
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-gray-300 font-medium">LIVE</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Filter size={16} className="text-gray-400" />
+                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <Filter size={16} className="text-gray-200" />
                 </button>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Search size={16} className="text-gray-400" />
+                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <Search size={16} className="text-gray-200" />
                 </button>
-                <button onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Bell size={16} className="text-gray-400" />
+                <button onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <Bell size={16} className="text-gray-200" />
                   {notifications.length > 0 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">{notifications.length}</span>
                   )}
                 </button>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-semibold px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300">
+                <button className="text-sm text-white font-semibold px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300">
                   View all
                 </button>
               </div>
@@ -401,21 +394,21 @@ export default function Dashboard() {
             
             <div className="space-y-4">
               {recentActivity.map((activity, index) => (
-                <div key={index} className="group flex items-start gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 border-l-4 border-transparent hover:border-blue-300 hover:shadow-md">
+                <div key={index} className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-all duration-300 border-l-4 border-transparent hover:border-blue-400/50 hover:shadow-md">
                   <div className={`w-3 h-3 ${activity.color} rounded-full mt-2 shadow-lg`}></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-semibold text-gray-900 group-hover:text-gray-800 transition-colors">
-                        <span className="capitalize bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      <p className="text-sm font-semibold text-white group-hover:text-gray-100 transition-colors">
+                        <span className="capitalize bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
                           {activity.action}
                         </span>
                         : {activity.item}
                       </p>
-                      <span className="text-xs text-gray-500 whitespace-nowrap ml-2 font-medium">
+                      <span className="text-xs text-gray-300 whitespace-nowrap ml-2 font-medium">
                         {activity.time}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
+                    <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
                       {activity.user && (
                         <span className="inline-flex items-center gap-1">
                           <Users size={12} />
@@ -426,7 +419,7 @@ export default function Dashboard() {
                       {/* no location field in activity shape */}
                     </p>
                   </div>
-                  <Eye size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1" />
+                  <Eye size={16} className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1" />
                 </div>
               ))}
             </div>
