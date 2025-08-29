@@ -233,6 +233,33 @@
     z-index: 1;
   }
 
+  /* Plain card variant to override dark surface (e.g., Login box) */
+  .card-plain {
+    @apply bg-white border border-gray-200 text-gray-900;
+  }
+  .card-plain::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Card dark text hierarchy */
+  .card-text-primary { @apply text-white; }
+  .card-text-secondary { @apply text-gray-200; }
+  .card-text-tertiary { @apply text-gray-400; }
+  .card-value { @apply text-3xl font-bold card-text-primary; }
+  .card-label { @apply text-sm font-medium card-text-secondary; }
+
+  /* Icon chip and accent helpers for dark cards */
+  .icon-chip { @apply p-3 rounded-xl bg-white/10 flex items-center justify-center; }
+  .icon-accent-blue { @apply text-blue-300; }
+  .icon-accent-indigo { @apply text-indigo-300; }
+  .icon-accent-purple { @apply text-purple-300; }
+  .icon-accent-emerald { @apply text-emerald-300; }
+  .icon-accent-amber { @apply text-amber-300; }
+  .icon-accent-red { @apply text-red-300; }
+  .icon-accent-cyan { @apply text-cyan-300; }
+  .icon-accent-pink { @apply text-pink-300; }
+
   /* Professional Sidebar Styles */
   .sidebar {
     background-color: hsl(var(--sidebar-background));

@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { userService } from '@/services/userService';
 import { User, UserRole } from '@/types/auth';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 // Helper function to format role names for display
 const formatRoleName = (role: string): string => {
@@ -68,7 +69,8 @@ const UsersPage = () => {
   }
 
   return (
-  <div className="p-8">
+    <PageContainer>
+      <div className="py-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">User Management (Developer Only)</h1>
         <button
@@ -146,8 +148,9 @@ const UsersPage = () => {
           </table>
         </div>
       )}
-  </div>
-);
+      </div>
+    </PageContainer>
+  );
 };
 
 export default UsersPage; 

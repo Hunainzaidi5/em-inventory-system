@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageContainer } from "@/components/layout/PageContainer";
 // Using native JavaScript date formatting instead of date-fns
 import { getAvatarUrl, uploadAvatar } from "@/utils/avatarUtils";
 import { toast } from "sonner";
@@ -26,6 +27,8 @@ import {
 } from "lucide-react";
 
 import { authService } from "@/services/authService";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const roleDisplayNames = {
   dev: 'Developer (Admin)',
@@ -64,21 +67,21 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color }: {
   }, [value]);
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br ${color} p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
+    <div className={`relative overflow-hidden card-surface-dark p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
       <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-700"></div>
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className={`p-3 rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-colors duration-300`}>
+          <div className={`icon-chip group-hover:bg-white/20 transition-colors duration-300`}>
             <Icon className="w-6 h-6 text-white" />
           </div>
         </div>
-        <div className="text-white">
-          <div className="text-2xl font-bold mb-1">
+        <div>
+          <div className="card-value mb-1">
             {animatedValue}
           </div>
-          <div className="text-white/80 font-medium">{title}</div>
+          <div className="card-label">{title}</div>
           {subtitle && (
-            <div className="text-white/60 text-sm mt-1">{subtitle}</div>
+            <div className="text-sm card-text-tertiary mt-1">{subtitle}</div>
           )}
         </div>
       </div>
@@ -92,14 +95,14 @@ const InfoCard = ({ icon: Icon, label, value, color = "bg-gray-100" }: {
   value: string;
   color?: string;
 }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 p-6 group hover:scale-105">
+  <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group hover:scale-105">
     <div className="flex items-center space-x-4">
-      <div className={`p-3 rounded-xl ${color} group-hover:scale-110 transition-transform duration-300`}>
-        <Icon className="w-5 h-5 text-gray-600" />
+      <div className={`icon-chip group-hover:scale-110 transition-transform duration-300`}>
+        <Icon className="w-5 h-5 text-white" />
       </div>
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-500 mb-1">{label}</p>
-        <p className="text-lg font-semibold text-gray-900">{value}</p>
+        <p className="text-sm font-medium card-text-tertiary mb-1">{label}</p>
+        <p className="text-lg font-semibold card-text-primary">{value}</p>
       </div>
     </div>
   </div>
@@ -109,15 +112,15 @@ const ProfileCard = ({ title, children }: {
   title: string;
   children: React.ReactNode;
 }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-    <div className="p-6 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+  <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="p-6 border-b border-white/10 bg-white/5">
       <div className="flex items-center space-x-3">
-        <div className="p-2 rounded-lg bg-indigo-100">
-          <Sparkles className="w-5 h-5 text-indigo-600" />
+        <div className="icon-chip">
+          <Sparkles className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
-          <p className="text-gray-500 text-sm">Manage your personal details and preferences</p>
+          <h3 className="text-xl font-semibold text-white">{title}</h3>
+          <p className="text-gray-300 text-sm">Manage your personal details and preferences</p>
         </div>
       </div>
     </div>
@@ -126,9 +129,6 @@ const ProfileCard = ({ title, children }: {
     </div>
   </div>
 );
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 // Define form schema
 const profileFormSchema = z.object({
@@ -175,7 +175,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">Loading user data...</p>
@@ -247,8 +247,8 @@ export default function ProfilePage() {
   const userRole = user.role as keyof typeof roleColors;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-7xl mx-auto">
+    <PageContainer>
+      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-8 mx-auto" style={{ maxWidth: '99rem' }}>
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -274,8 +274,8 @@ export default function ProfilePage() {
               <h3 className="text-lg font-semibold text-yellow-800">Debug Information</h3>
             </div>
             <div className="space-y-2 text-sm text-yellow-800">
-                              <p><span className="font-medium">Avatar URL:</span> {user.avatar_url || 'No avatar set'}</p>
-                <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar_url ? getAvatarUrl(user.id, user.avatar_url) : 'No avatar set'}</p>
+              <p><span className="font-medium">Avatar URL:</span> {user.avatar_url || 'No avatar set'}</p>
+              <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar_url ? getAvatarUrl(user.id, user.avatar_url) : 'No avatar set'}</p>
               <p><span className="font-medium">User ID:</span> {user.id}</p>
             </div>
           </div>
@@ -377,7 +377,7 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="text-center space-y-2">
-                  <p className="text-sm font-medium text-gray-700">Profile Picture</p>
+                  <p className="text-sm font-medium text-white">Profile Picture</p>
                   <p className="text-xs text-gray-500">Click to upload or change</p>
                   {isUploading && (
                     <div className="flex items-center justify-center space-x-2 text-blue-600">
@@ -387,59 +387,57 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
-
-              {/* Form Fields Section */}
+              
+              {/* Form Fields */}
               <div className="flex-1 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <User className="h-4 w-4 text-indigo-600" />
-                      Full Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="name"
-                      {...form.register("name")}
-                      disabled={isUpdating}
-                      className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors ${
-                        form.formState.errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                      }`}
-                      placeholder="Enter your full name"
-                    />
-                    {form.formState.errors.name && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                        {form.formState.errors.name.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-white">
+                    <User className="h-4 w-4 text-indigo-600" />
+                    Full Name <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="name"
+                    {...form.register("name")}
+                    disabled={isUpdating}
+                    className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400 ${
+                      form.formState.errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                    }`}
+                    placeholder="Enter your full name"
+                  />
+                  {form.formState.errors.name && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                      {form.formState.errors.name.message}
+                    </p>
+                  )}
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <Mail className="h-4 w-4 text-indigo-600" />
-                      Email Address <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...form.register("email")}
-                      disabled={isUpdating}
-                      className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors ${
-                        form.formState.errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                      }`}
-                      placeholder="Enter your email address"
-                    />
-                    {form.formState.errors.email && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                        {form.formState.errors.email.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-white">
+                    <Mail className="h-4 w-4 text-indigo-600" />
+                    Email Address <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...form.register("email")}
+                    disabled={isUpdating}
+                    className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400 ${
+                      form.formState.errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                    }`}
+                    placeholder="Enter your email address"
+                  />
+                  {form.formState.errors.email && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                      {form.formState.errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="department" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Label htmlFor="department" className="flex items-center gap-2 text-sm font-medium text-white">
                       <Building className="h-4 w-4 text-indigo-600" />
                       Department
                     </Label>
@@ -447,13 +445,13 @@ export default function ProfilePage() {
                       id="department"
                       {...form.register("department")}
                       disabled={isUpdating}
-                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400"
                       placeholder="Enter your department"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="employee_id" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Label htmlFor="employee_id" className="flex items-center gap-2 text-sm font-medium text-white">
                       <CreditCard className="h-4 w-4 text-indigo-600" />
                       Employee ID
                     </Label>
@@ -461,7 +459,7 @@ export default function ProfilePage() {
                       id="employee_id"
                       {...form.register("employee_id")}
                       disabled={isUpdating}
-                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400"
                       placeholder="Enter your employee ID"
                     />
                   </div>
@@ -502,7 +500,7 @@ export default function ProfilePage() {
 
           {/* Information Grid */}
           <div className="mt-12 pt-8 border-t border-gray-100">
-            <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
               <Activity className="h-5 w-5 text-indigo-600" />
               Account Information
             </h4>
@@ -556,6 +554,6 @@ export default function ProfilePage() {
           </div>
         </ProfileCard>
       </div>
-    </div>
+    </PageContainer>
   );
 }

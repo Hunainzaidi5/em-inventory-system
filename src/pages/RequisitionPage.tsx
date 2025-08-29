@@ -834,7 +834,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -867,7 +867,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-300">Completed</p>
-              <p className="text-2xl font-bold text-emerald-300">{stats.completed}</p>
+              <p className="text-2xl font-bold text-white">{stats.completed}</p>
             </div>
             <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
               <div className="h-4 w-4 bg-emerald-400 rounded-full"></div>
@@ -878,7 +878,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-300">Pending</p>
-              <p className="text-2xl font-bold text-yellow-300">{stats.pending}</p>
+              <p className="text-2xl font-bold text-white">{stats.pending}</p>
             </div>
             <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
               <div className="h-4 w-4 bg-yellow-400 rounded-full"></div>
@@ -889,10 +889,10 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-300">Overdue</p>
-              <p className="text-2xl font-bold text-red-300">{stats.overdue}</p>
+              <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
             </div>
             <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-red-400 rounded-full"></div>
+              <div className="h-4 w-4 bg-red-600 rounded-full"></div>
             </div>
           </div>
         </div>

@@ -400,7 +400,7 @@ const IssuanceRequisitionPage = () => {
   };
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8">
       <div className="w-full p-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -438,8 +438,8 @@ const IssuanceRequisitionPage = () => {
           <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Total Requisitions</h3>
-                <p className="text-3xl font-bold text-slate-800">{currentStats.totalRequisitions}</p>
+                <h3 className="text-sm font-medium text-gray-300">Total Requisitions</h3>
+                <p className="text-3xl font-bold text-white">{currentStats.totalRequisitions}</p>
               </div>
               <div className="p-3 bg-indigo-100 rounded-xl">
                 <FiFileText className="w-6 h-6 text-indigo-600" />
@@ -449,8 +449,8 @@ const IssuanceRequisitionPage = () => {
           <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Pending</h3>
-                <p className="text-3xl font-bold text-yellow-600">
+                <h3 className="text-sm font-medium text-gray-300">Pending</h3>
+                <p className="text-3xl font-bold text-white">
                   {currentStats.pendingCount}
                 </p>
               </div>
@@ -462,8 +462,8 @@ const IssuanceRequisitionPage = () => {
           <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Approved</h3>
-                <p className="text-3xl font-bold text-blue-600">
+                <h3 className="text-sm font-medium text-gray-300">Approved</h3>
+                <p className="text-3xl font-bold text-white">
                   {currentStats.approvedCount}
                 </p>
               </div>
@@ -475,8 +475,8 @@ const IssuanceRequisitionPage = () => {
           <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Completed</h3>
-                <p className="text-3xl font-bold text-green-600">
+                <h3 className="text-sm font-medium text-gray-300">Completed</h3>
+                <p className="text-3xl font-bold text-white">
                   {currentStats.completedCount}
                 </p>
               </div>

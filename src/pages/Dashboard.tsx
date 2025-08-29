@@ -202,7 +202,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
+    <div className="space-y-8 p-6 bg-gradient-to-br from-white via-white to-white min-h-screen">
       <div className="space-y-6">
         {/* Welcome Section with Gradient and Grid Pattern */}
         <div className="relative card-surface-dark rounded-2xl shadow-2xl p-10 text-white overflow-hidden">
@@ -279,6 +279,13 @@ export default function Dashboard() {
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {statsCards.map((card, index) => {
           const IconComponent = card.icon;
+          const accent = index === 0
+            ? 'icon-accent-indigo'
+            : index === 1
+            ? 'icon-accent-emerald'
+            : index === 2
+            ? 'icon-accent-purple'
+            : 'icon-accent-red';
           return (
             <button
               key={index}
@@ -290,8 +297,8 @@ export default function Dashboard() {
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <div className={`p-4 rounded-2xl ${card.color.replace('text-', 'text-')} shadow-lg group-hover:shadow-xl transition-all duration-300 bg-white/10` }>
-                    <IconComponent size={28} className="text-white" />
+                  <div className="icon-chip group-hover:bg-white/20 transition-colors">
+                    <IconComponent size={28} className={accent} />
                   </div>
                   <div className="flex items-center gap-1">
                     <TrendingUp size={14} className={card.trendUp ? 'text-emerald-400' : 'text-red-400'} />
@@ -306,15 +313,13 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-gray-200 group-hover:text-white transition-colors">
+                  <h3 className="text-sm font-semibold card-text-secondary group-hover:text-white transition-colors">
                     {card.title}
                   </h3>
-                  <p className="text-3xl font-bold text-white group-hover:text-gray-100 transition-colors">
-                    {card.value}
-                  </p>
-                  <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
-                    {card.subtitle}
-                  </p>
+                  <div>
+                    <div className="card-value mb-1">{card.value}</div>
+                    <div className="card-label">{card.subtitle}</div>
+                  </div>
                 </div>
                 
                 <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">

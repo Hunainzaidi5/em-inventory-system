@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, Download, Trash2, AlertTriangle, CheckCircle, FileText, Database, Shield, Bell } from 'lucide-react';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 const SystemSettingsPage = () => {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
@@ -86,20 +87,21 @@ const SystemSettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      {/* Notification */}
-      {notification && (
+    <PageContainer>
+      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-8 mx-auto" style={{ maxWidth: '125rem' }}>
+        {/* Notification */}
+        {notification && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 ${
           notification.type === 'success' ? 'bg-green-500 text-white' : 
           notification.type === 'warning' ? 'bg-amber-500 text-white' : 'bg-red-500 text-white'
         }`}>
           {notification.type === 'success' && <CheckCircle size={20} />}
           {notification.type === 'warning' && <AlertTriangle size={20} />}
-          <span>{notification.message}</span>
-        </div>
-      )}
+            <span>{notification.message}</span>
+          </div>
+        )}
 
-      <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -113,19 +115,19 @@ const SystemSettingsPage = () => {
 
         <div className="grid gap-6">
           {/* Report Generator Section */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+          <div className="card-surface-dark rounded-2xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10 bg-white/5">
               <div className="flex items-center gap-3">
-                <FileText className="w-6 h-6 text-white" />
+                <div className="icon-chip"><FileText className="w-6 h-6 text-white" /></div>
                 <h2 className="text-xl font-semibold text-white">Report Generator</h2>
               </div>
-              <p className="text-blue-100 mt-1">Generate comprehensive system reports</p>
+              <p className="text-gray-300 mt-1">Generate comprehensive system reports</p>
             </div>
             
             <div className="p-6 space-y-6">
               {/* Report Type Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Report Type</label>
+                <label className="block text-sm font-medium text-gray-200 mb-3">Report Type</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { value: 'full', label: 'Full Report', desc: 'Complete system overview' },
@@ -137,14 +139,14 @@ const SystemSettingsPage = () => {
                       onClick={() => setReportType(type.value)}
                       className={`p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                         reportType === type.value
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                          ? 'border-indigo-400 bg-white/5'
+                          : 'border-white/10 hover:border-white/20'
+                      } text-white`}
                     >
-                      <div className={`font-medium ${reportType === type.value ? 'text-blue-700' : 'text-gray-900'}`}>
+                      <div className={`font-medium ${reportType === type.value ? 'text-white' : 'text-gray-200'}`}>
                         {type.label}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">{type.desc}</div>
+                      <div className="text-sm text-gray-400 mt-1">{type.desc}</div>
                     </div>
                   ))}
                 </div>
@@ -156,8 +158,8 @@ const SystemSettingsPage = () => {
                 disabled={isGeneratingReport}
                 className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-3 ${
                   isGeneratingReport
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5'
+                    ? 'bg-white/20 cursor-not-allowed'
+                    : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5'
                 } text-white`}
               >
                 {isGeneratingReport ? (
@@ -176,26 +178,26 @@ const SystemSettingsPage = () => {
           </div>
 
           {/* System Maintenance Section */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-4">
+          <div className="card-surface-dark rounded-2xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10 bg-white/5">
               <div className="flex items-center gap-3">
-                <Shield className="w-6 h-6 text-white" />
+                <div className="icon-chip"><Shield className="w-6 h-6 text-white" /></div>
                 <h2 className="text-xl font-semibold text-white">System Maintenance</h2>
               </div>
-              <p className="text-purple-100 mt-1">Optimize performance and manage resources</p>
+              <p className="text-gray-300 mt-1">Optimize performance and manage resources</p>
             </div>
             
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Cache Optimization */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                <div className="card-surface-dark p-6 rounded-2xl">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <Database className="w-5 h-5 text-green-600" />
+                    <div className="icon-chip">
+                      <Database className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="font-semibold text-green-800">Cache Optimization</h3>
+                    <h3 className="font-semibold text-white">Cache Optimization</h3>
                   </div>
-                  <p className="text-green-700 text-sm mb-4">Clear temporary files and optimize system cache for better performance</p>
+                  <p className="text-gray-300 text-sm mb-4">Clear temporary files and optimize system cache for better performance</p>
                   <button
                     onClick={() => {
                       setIsGeneratingReport(true);
@@ -205,21 +207,21 @@ const SystemSettingsPage = () => {
                       }, 1500);
                     }}
                     disabled={isGeneratingReport}
-                    className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
+                    className="w-full py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
                   >
                     Optimize Cache
                   </button>
                 </div>
 
                 {/* System Cleanup */}
-                <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-6 rounded-xl border border-blue-200">
+                <div className="card-surface-dark p-6 rounded-2xl">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Bell className="w-5 h-5 text-blue-600" />
+                    <div className="icon-chip">
+                      <Bell className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="font-semibold text-blue-800">System Cleanup</h3>
+                    <h3 className="font-semibold text-white">System Cleanup</h3>
                   </div>
-                  <p className="text-blue-700 text-sm mb-4">Remove old logs and unused files to free up storage space</p>
+                  <p className="text-gray-300 text-sm mb-4">Remove old logs and unused files to free up storage space</p>
                   <button
                     onClick={() => {
                       setIsGeneratingReport(true);
@@ -229,7 +231,7 @@ const SystemSettingsPage = () => {
                       }, 2000);
                     }}
                     disabled={isGeneratingReport}
-                    className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
+                    className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
                   >
                     Run Cleanup
                   </button>
@@ -237,15 +239,13 @@ const SystemSettingsPage = () => {
               </div>
 
               {/* Advanced Maintenance */}
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200">
+              <div className="card-surface-dark p-6 rounded-2xl">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 rounded-lg">
-                      <AlertTriangle className="w-5 h-5 text-amber-600" />
-                    </div>
+                    <div className="icon-chip"><AlertTriangle className="w-5 h-5 text-white" /></div>
                     <div>
-                      <h3 className="font-semibold text-amber-800">Complete System Reset</h3>
-                      <p className="text-amber-700 text-sm mt-1">Reset all system settings to factory defaults</p>
+                      <h3 className="font-semibold text-white">Complete System Reset</h3>
+                      <p className="text-gray-300 text-sm mt-1">Reset all system settings to factory defaults</p>
                     </div>
                   </div>
                   <button
@@ -261,25 +261,24 @@ const SystemSettingsPage = () => {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Confirmation Modal */}
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+          <div className="card-surface-dark rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Confirm System Reset</h3>
+              <div className="icon-chip"><AlertTriangle className="w-6 h-6 text-red-300" /></div>
+              <h3 className="text-xl font-bold text-white">Confirm System Reset</h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-300 mb-6">
               This will reset all system settings to factory defaults and clear all configuration data. This action cannot be undone.
             </p>
             
-            <div className="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
-              <p className="text-sm font-medium text-red-800 mb-2">This will reset:</p>
-              <ul className="list-disc list-inside space-y-1 text-sm text-red-700">
+            <div className="mb-6 p-4 bg-white/5 rounded-lg border border-white/10">
+              <p className="text-sm font-medium text-white mb-2">This will reset:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm text-gray-300">
                 <li>System preferences and configurations</li>
                 <li>User interface customizations</li>
                 <li>Application settings and cache</li>
@@ -290,7 +289,7 @@ const SystemSettingsPage = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowClearConfirm(false)}
-                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2 px-4 border border-white/20 rounded-lg font-medium text-white hover:bg-white/10 transition-colors"
               >
                 Cancel
               </button>
@@ -304,7 +303,7 @@ const SystemSettingsPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };
 

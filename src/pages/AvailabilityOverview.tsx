@@ -155,7 +155,7 @@ const AvailabilityOverview = () => {
   const healthScore = totalItems > 0 ? Math.max(0, Math.round(((totalItems - faultyCount) / totalItems) * 100)) : 100;
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8">
       <div className="w-full">
         {/* Header */}
         <div className="mb-8">

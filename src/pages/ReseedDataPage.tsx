@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { FirebaseService } from '@/lib/firebaseService';
 import { useNavigate } from 'react-router-dom';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 // Files organized by main categories and systems with unique identifiers
 const FILE_CATEGORIES = {
@@ -482,8 +483,8 @@ export default function ReseedDataPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-6xl mx-auto">
+    <PageContainer>
+      <div className="min-h-screen py-6">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -492,23 +493,23 @@ export default function ReseedDataPage() {
               </svg>
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent">
                 Reseed Data
               </h1>
-              <p className="text-gray-600 font-medium">Developer Only - Database Refresh & Import Tool</p>
+              <p className="text-gray-300 font-medium">Developer Only - Database Refresh & Import Tool</p>
             </div>
           </div>
           <button 
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium transform hover:scale-105" 
+            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium transform hover:scale-105" 
             onClick={() => navigate('/dashboard')}
           >
             ← Back to Dashboard
           </button>
         </div>
 
-        <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-lg">
-          <h2 className="text-lg font-semibold text-blue-800 mb-2">Important Notes:</h2>
-          <ul className="text-sm text-blue-700 space-y-1">
+        <div className="mb-6 p-6 card-surface-dark rounded-2xl border border-white/10 shadow-lg">
+          <h2 className="text-lg font-semibold text-white mb-2">Important Notes:</h2>
+          <ul className="text-sm text-gray-300 space-y-1">
             <li>• <strong>Refresh Mode:</strong> This process will clear all existing data before importing new data to prevent duplication</li>
             <li>• Data is batched ({BATCH_SIZE}/batch) and IDs are auto-generated in the database</li>
             <li>• <strong>belongsto</strong> field includes both category and system (e.g., "PMA - BAS", "O&M - HVAC") to prevent mixing</li>
@@ -519,14 +520,14 @@ export default function ReseedDataPage() {
         </div>
 
       {/* Tab Navigation */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-white/10">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('spareParts')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'spareParts'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-indigo-400 text-white'
+                : 'border-transparent text-gray-300 hover:text-white hover:border-white/20'
             }`}
           >
             Spare Parts ({selectedFiles.length}/{AVAILABLE_FILES.length})
@@ -535,8 +536,8 @@ export default function ReseedDataPage() {
             onClick={() => setActiveTab('inventory')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'inventory'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-indigo-400 text-white'
+                : 'border-transparent text-gray-300 hover:text-white hover:border-white/20'
             }`}
           >
             Inventory Items ({selectedInventoryFiles.length}/{AVAILABLE_INVENTORY_FILES.length})
@@ -546,10 +547,10 @@ export default function ReseedDataPage() {
 
       {/* Spare Parts Tab */}
       {activeTab === 'spareParts' && (
-        <div className="mb-6 p-4 border rounded-lg bg-white">
+        <div className="mb-6 p-4 card-surface-dark rounded-2xl border border-white/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Spare Parts Files</h3>
-            <label className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white">Spare Parts Files</h3>
+            <label className="flex items-center gap-2 text-gray-200">
               <input 
                 type="checkbox" 
                 checked={allSelected} 
@@ -559,13 +560,12 @@ export default function ReseedDataPage() {
               <span className="text-sm font-medium">Select all</span>
             </label>
           </div>
-          
           {Object.entries(FILE_CATEGORIES).map(([mainCategory, systems]) => (
             <div key={mainCategory} className="mb-4">
-              <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
+              <h4 className="font-semibold text-gray-300 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4">
                 {Object.entries(systems).map(([systemName, filePath]) => (
-                  <label key={filePath} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label key={filePath} className="flex items-center gap-3 p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer">
                     <input 
                       type="checkbox" 
                       checked={selectedFiles.includes(filePath)} 
@@ -573,8 +573,8 @@ export default function ReseedDataPage() {
                       className="rounded"
                     />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-800">{systemName}</div>
-                      <div className="text-xs text-gray-500">{filePath}</div>
+                      <div className="font-medium text-sm text-white">{systemName}</div>
+                      <div className="text-xs text-gray-400">{filePath}</div>
                     </div>
                   </label>
                 ))}
@@ -586,10 +586,10 @@ export default function ReseedDataPage() {
 
       {/* Inventory Items Tab */}
       {activeTab === 'inventory' && (
-        <div className="mb-6 p-4 border rounded-lg bg-white">
+        <div className="mb-6 p-4 card-surface-dark rounded-2xl border border-white/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Inventory Items Files</h3>
-            <label className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white">Inventory Items Files</h3>
+            <label className="flex items-center gap-2 text-gray-200">
               <input 
                 type="checkbox" 
                 checked={allInventorySelected} 
@@ -599,13 +599,12 @@ export default function ReseedDataPage() {
               <span className="text-sm font-medium">Select all</span>
             </label>
           </div>
-          
           {Object.entries(INVENTORY_CATEGORIES).map(([mainCategory, systems]) => (
             <div key={mainCategory} className="mb-4">
-              <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
+              <h4 className="font-semibold text-gray-300 mb-3 text-sm uppercase tracking-wide">{mainCategory}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4">
                 {Object.entries(systems).map(([systemName, filePath]) => (
-                  <label key={filePath} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label key={filePath} className="flex items-center gap-3 p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer">
                     <input 
                       type="checkbox" 
                       checked={selectedInventoryFiles.includes(filePath)} 
@@ -613,8 +612,8 @@ export default function ReseedDataPage() {
                       className="rounded"
                     />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-800">{systemName}</div>
-                      <div className="text-xs text-gray-500">{filePath}</div>
+                      <div className="font-medium text-sm text-white">{systemName}</div>
+                      <div className="text-xs text-gray-400">{filePath}</div>
                     </div>
                   </label>
                 ))}
@@ -629,8 +628,8 @@ export default function ReseedDataPage() {
         <button
           className={`px-6 py-3 rounded-lg text-white font-medium transition-all ${
             isRunning 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'
+              ? 'bg-white/20 cursor-not-allowed' 
+              : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg'
           }`}
           disabled={isRunning || (selectedFiles.length === 0 && selectedInventoryFiles.length === 0)}
           onClick={startImport}
@@ -639,7 +638,7 @@ export default function ReseedDataPage() {
         </button>
         
         <button
-          className="px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition-colors"
+          className="px-6 py-3 rounded-lg border border-white/20 hover:bg-white/10 text-white font-medium transition-colors"
           disabled={isRunning || (selectedFiles.length === 0 && selectedInventoryFiles.length === 0)}
           onClick={previewImport}
         >
@@ -649,11 +648,11 @@ export default function ReseedDataPage() {
 
       {/* Preview Section */}
       {showPreview && (previewData.length > 0 || previewInventoryData.length > 0) && (
-        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+        <div className="mb-6 p-4 card-surface-dark rounded-2xl border border-white/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800">Preview Data</h3>
+            <h3 className="font-semibold text-white">Preview Data</h3>
             <button 
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-gray-300 hover:text-white"
               onClick={() => setShowPreview(false)}
             >
               Hide
@@ -663,28 +662,28 @@ export default function ReseedDataPage() {
           {/* Spare Parts Preview */}
           {previewData.length > 0 && (
             <div className="mb-4">
-              <h4 className="font-medium text-gray-700 mb-2">Spare Parts Preview (First 3 rows from first 2 files)</h4>
+              <h4 className="font-medium text-gray-300 mb-2">Spare Parts Preview (First 3 rows from first 2 files)</h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm bg-white rounded-lg overflow-hidden">
-                  <thead className="bg-gray-100">
+                <table className="w-full text-sm bg-white/5 rounded-lg overflow-hidden">
+                  <thead className="bg-white/10">
                     <tr>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Belongs To</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Quantity</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Location</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Source</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Name</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Belongs To</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Category</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Quantity</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Location</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Source</th>
                     </tr>
                   </thead>
                   <tbody>
                     {previewData.map((row, idx) => (
-                      <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="p-3">{row.name}</td>
-                        <td className="p-3 font-medium text-blue-600">{row.belongsto}</td>
-                        <td className="p-3">{row.category}</td>
-                        <td className="p-3">{row.quantity}</td>
-                        <td className="p-3">{row.location}</td>
-                        <td className="p-3 text-xs text-gray-500">{row.source_file}</td>
+                      <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
+                        <td className="p-3 text-white">{row.name}</td>
+                        <td className="p-3 font-medium text-indigo-300">{row.belongsto}</td>
+                        <td className="p-3 text-gray-200">{row.category}</td>
+                        <td className="p-3 text-gray-200">{row.quantity}</td>
+                        <td className="p-3 text-gray-200">{row.location}</td>
+                        <td className="p-3 text-xs text-gray-400">{row.source_file}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -696,28 +695,28 @@ export default function ReseedDataPage() {
           {/* Inventory Items Preview */}
           {previewInventoryData.length > 0 && (
             <div>
-              <h4 className="font-medium text-gray-700 mb-2">Inventory Items Preview (First 3 rows from first 2 files)</h4>
+              <h4 className="font-medium text-gray-300 mb-2">Inventory Items Preview (First 3 rows from first 2 files)</h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm bg-white rounded-lg overflow-hidden">
-                  <thead className="bg-gray-100">
+                <table className="w-full text-sm bg-white/5 rounded-lg overflow-hidden">
+                  <thead className="bg-white/10">
                     <tr>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Quantity</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Location</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600 uppercase tracking-wide">Source</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Name</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Category</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Quantity</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Location</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Status</th>
+                      <th className="text-left p-3 text-xs font-medium text-gray-200 uppercase tracking-wide">Source</th>
                     </tr>
                   </thead>
                   <tbody>
                     {previewInventoryData.map((row, idx) => (
-                      <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="p-3">{row.name}</td>
-                        <td className="p-3 font-medium text-green-600">{row.category}</td>
-                        <td className="p-3">{row.quantity}</td>
-                        <td className="p-3">{row.location}</td>
-                        <td className="p-3">{row.status}</td>
-                        <td className="p-3 text-xs text-gray-500">{row.source_file}</td>
+                      <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
+                        <td className="p-3 text-white">{row.name}</td>
+                        <td className="p-3 font-medium text-emerald-300">{row.category}</td>
+                        <td className="p-3 text-gray-200">{row.quantity}</td>
+                        <td className="p-3 text-gray-200">{row.location}</td>
+                        <td className="p-3 text-gray-200">{row.status}</td>
+                        <td className="p-3 text-xs text-gray-400">{row.source_file}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -729,22 +728,22 @@ export default function ReseedDataPage() {
       )}
 
       {/* Log Section */}
-      <div className="mt-6 p-4 border rounded-lg bg-white">
+      <div className="mt-6 p-4 card-surface-dark rounded-2xl border border-white/10">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-800">Import Log</h2>
-          <div className="text-sm text-gray-600">
+          <h2 className="font-semibold text-white">Import Log</h2>
+          <div className="text-sm text-gray-300">
             <span className="mr-4">Spare Parts: {summary.inserted}</span>
             <span className="mr-4">Inventory: {summary.inventoryInserted}</span>
             <span>Files: {summary.files}</span>
           </div>
         </div>
-        <div className="h-64 overflow-auto text-sm whitespace-pre-wrap bg-gray-50 p-3 rounded border">
+        <div className="h-64 overflow-auto text-sm whitespace-pre-wrap bg-white/5 p-3 rounded border border-white/10 text-gray-200">
           {log.map((line, idx) => (
             <div key={idx} className="py-1">{line}</div>
           ))}
         </div>
       </div>
     </div>
-    </div>
+    </PageContainer>
   );
 }

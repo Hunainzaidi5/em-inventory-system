@@ -202,7 +202,7 @@ const StationeryItemsPage = () => {
   };
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8">
       <div className="w-full">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -228,53 +228,53 @@ const StationeryItemsPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Total Items</h3>
-                <p className="text-3xl font-bold text-slate-800">{stationeryItems.length}</p>
+                <p className="text-sm font-medium text-gray-300">Total Stationery</p>
+                <p className="text-3xl font-bold text-white mt-2">{stationeryItems.length}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <FiBookOpen className="w-6 h-6 text-blue-600" />
+              <div className="p-3 rounded-xl bg-white/10">
+                <FiBookOpen className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Total Quantity</h3>
-                <p className="text-3xl font-bold text-emerald-600">
+                <p className="text-sm font-medium text-gray-300">Total Quantity</p>
+                <p className="text-3xl font-bold text-white mt-2">
                   {stationeryItems.reduce((sum, item) => sum + item.quantity, 0)}
                 </p>
               </div>
-              <div className="p-3 bg-emerald-100 rounded-xl">
-                <FiPackage className="w-6 h-6 text-emerald-600" />
+              <div className="p-3 rounded-xl bg-white/10">
+                <FiPackage className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Item Types</h3>
-                <p className="text-3xl font-bold text-purple-600">
-                  {new Set(stationeryItems.map(item => item.itemType)).size}
+                <p className="text-sm font-medium text-gray-300">Active Users</p>
+                <p className="text-3xl font-bold text-white mt-2">
+                  {new Set(stationeryItems.map(item => item.issuedTo.name)).size}
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <FiType className="w-6 h-6 text-purple-600" />
+              <div className="p-3 rounded-xl bg-white/10">
+                <FiUsers className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-slate-500 font-medium text-sm">Locations</h3>
-                <p className="text-3xl font-bold text-orange-600">
+                <p className="text-sm font-medium text-gray-300">Locations</p>
+                <p className="text-3xl font-bold text-white mt-2">
                   {new Set(stationeryItems.map(item => item.itemLocation)).size}
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-xl">
-                <FiMapPin className="w-6 h-6 text-orange-600" />
+              <div className="p-3 rounded-xl bg-white/10">
+                <FiMapPin className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>

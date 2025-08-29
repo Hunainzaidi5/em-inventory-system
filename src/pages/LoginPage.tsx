@@ -550,14 +550,8 @@ export function LoginPage() {
         <BrandingSection isDark={false} />
 
         {/* Login section */}
-        <div className={`w-full lg:w-1/2 flex items-center justify-center p-8 ${
-          isDark ? 'bg-gray-800/90' : 'bg-white'
-        } backdrop-blur-sm`}>
-          <Card className={`w-full max-w-md border shadow-2xl rounded-2xl transition-colors duration-300 ${
-            isDark 
-              ? 'bg-gray-900/95 border-gray-700 text-white' 
-              : 'bg-white border-gray-200'
-          }`}>            
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+          <Card className="w-full max-w-md border shadow-2xl rounded-2xl bg-white border-gray-200 text-gray-900 card-plain">
             <CardHeader className="space-y-6 pb-6 pt-8 px-8">
               {/* Enhanced logo section */}
               <div className="flex justify-center mb-4">

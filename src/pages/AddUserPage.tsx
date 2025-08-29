@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, UserPlus, Upload, X } from 'lucide-react';
+import { ArrowLeft, UserPlus, Upload, X, Check } from 'lucide-react';
 import { UserRole } from '@/types/auth';
 import { getAvatarUrl, uploadAvatar } from '@/utils/avatarUtils';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 // Form validation schema
 const userSchema = z.object({
@@ -198,8 +199,8 @@ const AddUserPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+    <PageContainer>
+      <div className="py-4">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button
@@ -223,11 +224,11 @@ const AddUserPage: React.FC = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-white">
+              <UserPlus className="h-5 w-5 icon-accent-indigo" />
               {isEditing ? 'Edit User' : 'New User Details'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-gray-300">
               {isEditing ? 'Update the user information below' : 'Fill in the details to create a new user account'}
             </CardDescription>
           </CardHeader>
@@ -235,7 +236,7 @@ const AddUserPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Avatar Section */}
               <div className="space-y-4">
-                <Label>Profile Picture</Label>
+                <Label className="text-gray-200">Profile Picture</Label>
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src={avatarPreview} />
@@ -243,13 +244,33 @@ const AddUserPage: React.FC = () => {
                       {formData.displayName ? formData.displayName.charAt(0).toUpperCase() : 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="space-y-2">
-                    <Input
+                  <div className="space-y-3">
+                    <input
+                      id="avatar"
                       type="file"
                       accept="image/*"
                       onChange={handleAvatarChange}
-                      className="max-w-xs"
+                      className="sr-only"
                     />
+                    <label
+                      htmlFor="avatar"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl 
+                                bg-gradient-to-r from-slate-900 to-slate-700 text-white 
+                                font-medium shadow-md hover:from-slate-800 hover:to-slate-600 
+                                active:scale-95 transition-all duration-200 cursor-pointer
+                                focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                    >
+                      <Upload className="h-5 w-5" />
+                      <span>Upload Image</span>
+                    </label>
+
+                    {avatarFile && (
+                      <p className="text-sm text-gray-500 font-medium">
+                        {avatarFile.name}
+                      </p>
+                    )}
+                  </div>
+                    
                     {avatarPreview && (
                       <Button
                         type="button"
@@ -262,7 +283,6 @@ const AddUserPage: React.FC = () => {
                         Remove
                       </Button>
                     )}
-                  </div>
                 </div>
               </div>
 
@@ -271,7 +291,7 @@ const AddUserPage: React.FC = () => {
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address *</Label>
+                  <Label htmlFor="email" className="text-gray-200">Email Address *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -283,7 +303,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="displayName">Display Name *</Label>
+                  <Label htmlFor="displayName" className="text-gray-200">Display Name *</Label>
                   <Input
                     id="displayName"
                     value={formData.displayName}
@@ -293,7 +313,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role *</Label>
+                  <Label htmlFor="role" className="text-gray-200">Role *</Label>
                   <Select
                     value={formData.role}
                     onValueChange={(value) => handleInputChange('role', value)}
@@ -320,7 +340,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="department">Department *</Label>
+                  <Label htmlFor="department" className="text-gray-200">Department *</Label>
                   <Input
                     id="department"
                     value={formData.department}
@@ -330,7 +350,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="employee_id">Employee ID *</Label>
+                  <Label htmlFor="employee_id" className="text-gray-200">Employee ID *</Label>
                   <Input
                     id="employee_id"
                     value={formData.employee_id}
@@ -345,7 +365,7 @@ const AddUserPage: React.FC = () => {
                 <Separator />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password">{isEditing ? 'New Password (optional)' : 'Password *'}</Label>
+                    <Label htmlFor="password" className="text-gray-200">{isEditing ? 'New Password (optional)' : 'Password *'}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -356,7 +376,7 @@ const AddUserPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">{isEditing ? 'Confirm New Password (optional)' : 'Confirm Password *'}</Label>
+                    <Label htmlFor="confirmPassword" className="text-gray-200">{isEditing ? 'Confirm New Password (optional)' : 'Confirm Password *'}</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -386,7 +406,7 @@ const AddUserPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
