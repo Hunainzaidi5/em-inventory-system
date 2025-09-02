@@ -29,6 +29,10 @@ const UsersPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof User | ''; direction: 'asc' | 'desc' }>({ 
+    key: '', 
+    direction: 'asc' 
+  });
 
   // Fetch all users from Firebase
   const fetchUsers = async () => {
@@ -59,6 +63,42 @@ const UsersPage = () => {
       console.error('Error deleting user:', error);
       alert('Failed to delete user');
     }
+  };
+
+  // Handle sorting when sortConfig changes
+  const sortedUsers = React.useMemo(() => {
+    const sortableUsers = [...users];
+    if (sortConfig.key) {
+      sortableUsers.sort((a, b) => {
+        // Handle potential undefined values
+        const aValue = a[sortConfig.key as keyof User] || '';
+        const bValue = b[sortConfig.key as keyof User] || '';
+        
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableUsers;
+  }, [users, sortConfig]);
+
+  // Request sort function
+  const requestSort = (key: keyof User) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Get sort indicator for a column
+  const getSortIndicator = (key: keyof User) => {
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
 
   if (isLoading) {
@@ -100,17 +140,59 @@ const UsersPage = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('display_name')}
+                >
+                  <div className="flex items-center">
+                    Name {getSortIndicator('display_name')}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('email')}
+                >
+                  <div className="flex items-center">
+                    Email {getSortIndicator('email')}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('role')}
+                >
+                  <div className="flex items-center">
+                    Role {getSortIndicator('role')}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('department')}
+                >
+                  <div className="flex items-center">
+                    Department {getSortIndicator('department')}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('employee_id')}
+                >
+                  <div className="flex items-center">
+                    Employee ID {getSortIndicator('employee_id')}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => requestSort('is_active')}
+                >
+                  <div className="flex items-center">
+                    Status {getSortIndicator('is_active')}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+              {sortedUsers.map((user) => (
                 <tr key={user.id}>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.display_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
