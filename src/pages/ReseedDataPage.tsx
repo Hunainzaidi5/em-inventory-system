@@ -493,10 +493,10 @@ export default function ReseedDataPage() {
               </svg>
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-gray-800 bg-clip-text text-transparent">
                 Reseed Data
               </h1>
-              <p className="text-gray-300 font-medium">Developer Only - Database Refresh & Import Tool</p>
+              <p className="text-gray-800 font-medium">Developer Only - Database Refresh & Import Tool</p>
             </div>
           </div>
           <button 
@@ -526,8 +526,8 @@ export default function ReseedDataPage() {
             onClick={() => setActiveTab('spareParts')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'spareParts'
-                ? 'border-indigo-400 text-white'
-                : 'border-transparent text-gray-300 hover:text-white hover:border-white/20'
+                ? 'border-indigo-400 text-blue-500'
+                : 'border-transparent text-gray-400 hover:text-blue-500 hover:border-blue-500'
             }`}
           >
             Spare Parts ({selectedFiles.length}/{AVAILABLE_FILES.length})
@@ -536,8 +536,8 @@ export default function ReseedDataPage() {
             onClick={() => setActiveTab('inventory')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'inventory'
-                ? 'border-indigo-400 text-white'
-                : 'border-transparent text-gray-300 hover:text-white hover:border-white/20'
+                ? 'border-indigo-400 text-blue-500'
+                : 'border-transparent text-gray-400 hover:text-blue-500 hover:border-blue-500'
             }`}
           >
             Inventory Items ({selectedInventoryFiles.length}/{AVAILABLE_INVENTORY_FILES.length})
@@ -638,7 +638,7 @@ export default function ReseedDataPage() {
         </button>
         
         <button
-          className="px-6 py-3 rounded-lg border border-white/20 hover:bg-white/10 text-white font-medium transition-colors"
+          className="px-6 py-3 rounded-lg bg-indigo-600 border-white/20 hover:bg-indigo-700 hover:shadow-lg text-white font-medium transition-colors"
           disabled={isRunning || (selectedFiles.length === 0 && selectedInventoryFiles.length === 0)}
           onClick={previewImport}
         >
