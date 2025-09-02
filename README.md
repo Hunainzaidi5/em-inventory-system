@@ -12,7 +12,7 @@ A modern inventory management system built with React, TypeScript, and Tailwind 
 - 🔐 **Authentication**
   - User registration and login (powered by Firebase)
   - Protected routes
-  - Role-based access control (coming soon)
+  - Role-based access control
 
 - 📦 **Inventory Management**
   - Track products and stock levels
@@ -36,8 +36,6 @@ A modern inventory management system built with React, TypeScript, and Tailwind 
 - **Build Tool**: Vite
 - **Deployment**: Vercel
 
-## 🚀 Getting Started
-
 ### Prerequisites
 
 - Node.js (v18 or later)
@@ -57,24 +55,4 @@ A modern inventory management system built with React, TypeScript, and Tailwind 
    npm install
    # or
    yarn install
-   ```
-
-3. Create a `.env` file in the root directory and add your Firebase environment variables:
-   ```env
-   VITE_FIREBASE_API_KEY=your_api_key_here
-   VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your_project_id_here
-   VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id_here
-   VITE_FIREBASE_APP_ID=your_app_id_here
-   VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id_here
-   ```
-
-   **To get these values:**
-   1. Go to Firebase Console → Project Settings
-   2. Scroll down to "Your apps"
-   3. Click the web app icon (</>)
-   4. Copy the configuration object
-
-4. Start the development server:
    ```

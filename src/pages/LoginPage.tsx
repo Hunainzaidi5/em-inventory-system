@@ -231,7 +231,7 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
     {/* Animated background logo */}
     <div className="absolute inset-0 flex items-center justify-center opacity-5">
       <img 
-        src="/eminventory.png" 
+        src="/logo.png" 
         alt=""
         className="w-full max-w-2xl object-contain animate-pulse"
         aria-hidden="true"
