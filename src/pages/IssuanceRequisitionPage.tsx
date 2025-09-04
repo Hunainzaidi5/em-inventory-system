@@ -409,11 +409,11 @@ const IssuanceRequisitionPage = () => {
               <div className="p-2 bg-indigo-100 rounded-lg mr-3">
                 <FiFileText className="w-6 h-6 text-indigo-600" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                 Issuance Requisition
               </h1>
             </div>
-            <p className="text-slate-600 ml-11">Manage and track issuance requisitions for inventory items</p>
+            <p className="text-gray-600 ml-11">Manage and track issuance requisitions for inventory items</p>
           </div>
           <div className="flex items-center space-x-4">
             <button
@@ -435,61 +435,68 @@ const IssuanceRequisitionPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+          {/* Total Requisitions Card */}
+          <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-300">Total Requisitions</h3>
+                <h3 className="text-sm font-medium text-white/80">Total Requisitions</h3>
                 <p className="text-3xl font-bold text-white">{currentStats.totalRequisitions}</p>
               </div>
-              <div className="p-3 bg-indigo-100 rounded-xl">
-                <FiFileText className="w-6 h-6 text-indigo-600" />
+              <div className="p-3 bg-white/20 rounded-xl">
+                <FiFileText className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+
+          {/* Pending Card */}
+          <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-300">Pending</h3>
+                <h3 className="text-sm font-medium text-white/80">Pending</h3>
                 <p className="text-3xl font-bold text-white">
                   {currentStats.pendingCount}
                 </p>
               </div>
-              <div className="p-3 bg-yellow-100 rounded-xl">
-                <FiClock className="w-6 h-6 text-yellow-600" />
+              <div className="p-3 bg-white/20 rounded-xl">
+                <FiClock className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+
+          {/* Approved Card */}
+          <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-300">Approved</h3>
+                <h3 className="text-sm font-medium text-white/80">Approved</h3>
                 <p className="text-3xl font-bold text-white">
                   {currentStats.approvedCount}
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <FiCheck className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-white/20 rounded-xl">
+                <FiCheck className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+
+          {/* Completed Card */}
+          <div className="bg-gradient-to-br from-red-600 to-red-600 p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-300">Completed</h3>
+                <h3 className="text-sm font-medium text-white/80">Completed</h3>
                 <p className="text-3xl font-bold text-white">
                   {currentStats.completedCount}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-xl">
-                <FiPackage className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-white/20 rounded-xl">
+                <FiPackage className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
-          <div className="flex border-b border-gray-200">
+        <div className="bg-[#f8f5ee] rounded-2xl shadow-lg border border-[#e1d4b1] mb-8 overflow-hidden">
+          <div className="flex border-b border-[#e1d4b1]">
             {[
               { key: "all", label: "All Requisitions" },
               { key: "pending", label: "Pending" },
@@ -500,14 +507,14 @@ const IssuanceRequisitionPage = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as any)}
-                className={`px-6 py-4 font-semibold text-sm border-r border-gray-200 transition-all duration-200 ${
+                className={`px-6 py-4 font-medium text-sm border-r border-[#e1d4b1] transition-all duration-200 ${
                   activeTab === tab.key 
-                    ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                    ? "bg-gradient-to-r from-[#e1d4b1] to-[#d8c8a0] text-[#5c4a2a] border-b-2 border-[#8c7a5c]" 
+                    : "text-[#7a6b4f] hover:text-[#5c4a2a] hover:bg-[#e1d4b1]/50"
                 }`}
               >
                 <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${activeTab === tab.key ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                  <div className={`w-2 h-2 rounded-full ${activeTab === tab.key ? 'bg-[#8c7a5c]' : 'bg-[#d8c8a0]'}`}></div>
                   <span>{tab.label}</span>
                 </div>
               </button>
@@ -516,16 +523,16 @@ const IssuanceRequisitionPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
+        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-[#e1d4b1] mb-8">
           <div className="flex flex-col space-y-4">
             <div className="flex-shrink-0">
               <div className="flex items-center space-x-3 mb-1">
-                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
-                <h3 className="text-xl font-bold text-gray-800">
+                <div className="w-3 h-3 bg-gradient-to-r from-[#8c7a5c] to-[#b39b6e] rounded-full"></div>
+                <h3 className="text-xl font-bold text-[#5c4a2a]">
                   {activeTab === "all" ? "All Requisitions" : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Requisitions`}
                 </h3>
               </div>
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-[#7a6b4f] font-medium">
                 {activeTab === "all" ? "View and manage all issuance requisitions" : `View ${activeTab} issuance requisitions`}
               </p>
             </div>
@@ -533,10 +540,10 @@ const IssuanceRequisitionPage = () => {
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Enhanced Search Bar */}
               <div className="flex-grow">
-                <label htmlFor="search-requisitions" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <label htmlFor="search-requisitions" className="block text-sm font-medium text-[#5c4a2a] mb-1">Search</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiSearch className="h-5 w-5 text-gray-400" />
+                    <FiSearch className="h-5 w-5 text-[#b39b6e]" />
                   </div>
                   <input
                     id="search-requisitions"
@@ -544,13 +551,13 @@ const IssuanceRequisitionPage = () => {
                     placeholder="Search requisition number, department..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white/80 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a] placeholder-[#b39b6e]"
                   />
                   {searchTerm && (
                     <button
                       type="button"
                       onClick={() => setSearchTerm("")}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#b39b6e] hover:text-[#8c7a5c] transition-colors"
                     >
                       <FiX className="h-5 w-5" />
                     </button>
@@ -560,12 +567,12 @@ const IssuanceRequisitionPage = () => {
               
               {/* Department Filter */}
               <div className="w-full lg:w-64">
-                <label htmlFor="department-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Department</label>
+                <label htmlFor="department-filter" className="block text-sm font-medium text-[#5c4a2a] mb-1">Filter by Department</label>
                 <select
                   id="department-filter"
                   value={selectedDepartment}
                   onChange={(e) => setSelectedDepartment(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-700"
+                  className="w-full px-4 py-2.5 bg-white/80 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a]"
                 >
                   {departments.map(dept => (
                     <option key={dept} value={dept}>
@@ -591,40 +598,27 @@ const IssuanceRequisitionPage = () => {
               <thead className="bg-slate-50/80">
                 <tr>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
                     onClick={() => requestSort('requisitionNumber')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Requisition #</span>
-                      <span className="text-slate-400">{getSortIndicator('requisitionNumber')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('requisitionNumber')}</span>
                     </div>
                   </th>
-
-                  <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
-                    onClick={() => requestSort('department')}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>Department</span>
-                      <span className="text-slate-400">{getSortIndicator('department')}</span>
-                    </div>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
+                    Department
                   </th>
-                  <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
-                    onClick={() => requestSort('requestDate')}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>Request Date</span>
-                      <span className="text-slate-400">{getSortIndicator('requestDate')}</span>
-                    </div>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
+                    Request Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-4 text-right text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>

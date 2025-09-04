@@ -754,33 +754,33 @@ const SpareManagement: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                         onClick={() => requestSort('name')}
                       >
                         <div className="flex items-center">
                           Item Name {getSortIndicator('name')}
                         </div>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         Belongs To
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         IMIS Code
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         BOQ Number
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         Part Number
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         UOM
                       </th>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                         onClick={() => requestSort('quantity')}
                       >
                         <div className="flex items-center">
@@ -788,14 +788,14 @@ const SpareManagement: React.FC = () => {
                         </div>
                       </th>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                         onClick={() => requestSort('location')}
                       >
                         <div className="flex items-center">
                           Location {getSortIndicator('location')}
                         </div>
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
