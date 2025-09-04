@@ -248,7 +248,7 @@ export default function ProfilePage() {
 
   return (
     <PageContainer>
-      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-8 mx-auto" style={{ maxWidth: '99rem' }}>
+      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white p-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
