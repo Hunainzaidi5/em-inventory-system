@@ -100,9 +100,9 @@ const ChartCard = ({ title, children, actions }: {
   actions?: React.ReactNode;
 }) => (
   <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-    <div className="p-6 border-b border-white/10 bg-white/5">
+    <div className="p-6 border-b border-gray-200 bg-white/50">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-white">{title}</h3>
+        <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
         {actions && (
           <div className="flex items-center space-x-2">
             {actions}
@@ -110,7 +110,7 @@ const ChartCard = ({ title, children, actions }: {
         )}
       </div>
     </div>
-    <div className="p-6 text-white">
+    <div className="p-6 text-gray-700">
       {children}
     </div>
   </div>
@@ -195,7 +195,7 @@ const AvailabilityOverview = () => {
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   selectedView === 'overview' 
                     ? 'bg-indigo-600 text-white shadow-lg' 
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 <Eye className="w-4 h-4 inline mr-2" />
@@ -206,7 +206,7 @@ const AvailabilityOverview = () => {
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   selectedView === 'trends' 
                     ? 'bg-indigo-600 text-white shadow-lg' 
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 <TrendingUp className="w-4 h-4 inline mr-2" />
@@ -226,8 +226,8 @@ const AvailabilityOverview = () => {
             color="from-blue-600 to-blue-800"
             iconColor="text-blue-100"
             iconBg="bg-blue-500/20"
-            textColor="text-gray-900"
-            subtitleColor="text-gray-400"
+            textColor="text-white"
+            subtitleColor="text-gray-200"
             trend="+5.2%"
             trendUp={true}
           />
@@ -239,8 +239,8 @@ const AvailabilityOverview = () => {
             color="from-emerald-600 to-emerald-800"
             iconColor="text-emerald-100"
             iconBg="bg-emerald-500/20"
-            textColor="text-gray-900"
-            subtitleColor="text-gray-400"
+            textColor="text-white"
+            subtitleColor="text-gray-200"
             trend="+2.1%"
             trendUp={true}
           />
@@ -252,8 +252,8 @@ const AvailabilityOverview = () => {
             color="from-amber-500 to-amber-700"
             iconColor="text-amber-100"
             iconBg="bg-amber-500/20"
-            textColor="text-gray-900"
-            subtitleColor="text-gray-400"
+            textColor="text-white"
+            subtitleColor="text-gray-200"
             trend="-1.3%"
             trendUp={false}
           />
@@ -263,23 +263,23 @@ const AvailabilityOverview = () => {
             value={healthScore}
             subtitle="System efficiency"
             color="from-red-600 to-red-600"
-            iconColor="text-indigo-100"
-            iconBg="bg-indigo-500/20"
-            textColor="text-gray-900"
-            subtitleColor="text-gray-400"
+            iconColor="text-red-100"
+            iconBg="bg-red-500/20"
+            textColor="text-white"
+            subtitleColor="text-gray-200"
             trend="+0.8%"
             trendUp={true}
           />
         </div>
 
         {selectedView === 'overview' && (
-          <div key={`overview-${animationKey}`} className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+          <div key={`overview-${animationKey}`} className="text-gray-700 grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
             {/* Pie Chart */}
             <ChartCard 
               title="Inventory Distribution"
               actions={[
                 <button key="filter" className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                  <Filter className="w-5 h-5 text-gray-500" />
+                  <Filter className="w-5 h-5 text-gray-700" />
                 </button>
               ]}
             >
@@ -406,62 +406,62 @@ const AvailabilityOverview = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                <Package className="w-6 h-6 text-white" />
+              <div className="p-3 rounded-xl bg-transparent group-hover:bg-blue-600 transition-colors">
+                <Package className="w-6 h-6 text-gray-700" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">98.1%</div>
-                <div className="text-sm text-gray-300">Availability</div>
+                <div className="text-2xl font-bold text-gray-900">98.1%</div>
+                <div className="text-sm text-gray-600">Availability</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">Total Items</span>
-                <span className="font-semibold text-white">2,156</span>
+                <span className="text-gray-600">Total Items</span>
+                <span className="font-semibold text-gray-900">2,156</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
-                <div className="bg-blue-400 h-2 rounded-full transition-all duration-1000" style={{width: '98.1%'}}></div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full transition-all duration-1000" style={{width: '98.1%'}}></div>
               </div>
             </div>
           </div>
 
           <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="p-3 rounded-xl bg-transparent group-hover:bg-yellow-500 transition-colors">
+                <Shield className="w-6 h-6 text-gray-700" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">92.8%</div>
-                <div className="text-sm text-gray-300">PPE Ready</div>
+                <div className="text-2xl font-bold text-gray-900">92.8%</div>
+                <div className="text-sm text-gray-600">PPE Ready</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">PPE Items</span>
-                <span className="font-semibold text-white">320</span>
+                <span className="text-gray-600">PPE Items</span>
+                <span className="font-semibold text-gray-900">320</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
-                <div className="bg-emerald-400 h-2 rounded-full transition-all duration-1000" style={{width: '92.8%'}}></div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-emerald-600 h-2 rounded-full transition-all duration-1000" style={{width: '92.8%'}}></div>
               </div>
             </div>
           </div>
 
           <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                <AlertTriangle className="w-6 h-6 text-white" />
+              <div className="p-3 rounded-xl bg-transparent group-hover:bg-red-600 transition-colors">
+                <AlertTriangle className="w-6 h-6 text-gray-700" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">2.4%</div>
-                <div className="text-sm text-gray-300">Faulty Rate</div>
+                <div className="text-2xl font-bold text-gray-900">2.4%</div>
+                <div className="text-sm text-gray-600">Faulty Rate</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">Issues</span>
-                <span className="font-semibold text-red-200">60</span>
+                <span className="text-gray-600">Issues</span>
+                <span className="font-semibold text-red-600">6</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-red-600 h-2 rounded-full transition-all duration-1000" style={{width: '2.4%'}}></div>
               </div>
             </div>

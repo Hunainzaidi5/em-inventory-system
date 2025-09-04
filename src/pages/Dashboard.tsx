@@ -302,16 +302,16 @@ export default function Dashboard() {
           return (
             <button
               key={index}
-              className="group relative card-surface-dark rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 p-8 text-left transform hover:scale-105 hover:-translate-y-2 overflow-hidden"
+              className="group relative rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 p-8 text-left transform hover:scale-105 hover:-translate-y-2 overflow-hidden"
               onClick={() => handleNavigation(card.route)}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-100 transition-all duration-500`}></div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-700/20 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
+              <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-100 transition-all duration-500`}></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110">
-                    <IconComponent size={28} className={card.iconColor || 'text-gray-600 group-hover:text-gray-500'} />
+                  <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:scale-110">
+                    <IconComponent size={28} className="text-white" />
                   </div>
                   <div className="flex items-center gap-1">
                     <TrendingUp size={14} className={card.trendUp ? 'text-emerald-600' : 'text-red-600'} />
@@ -326,12 +326,12 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-black group-hover:text-black transition-colors">
+                  <h3 className="text-sm font-semibold text-white transition-colors">
                     {card.title}
                   </h3>
                   <div>
-                    <div className="card-value mb-1">{card.value}</div>
-                    <div className="card-label">{card.subtitle}</div>
+                    <div className="text-2xl font-bold text-white mb-1">{card.value}</div>
+                    <div className="text-sm text-white/80">{card.subtitle}</div>
                   </div>
                 </div>
                 
@@ -347,28 +347,30 @@ export default function Dashboard() {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Enhanced Quick Actions */}
         <div className="lg:col-span-1">
-          <div className="card-surface-dark rounded-2xl shadow-xl p-8 h-full">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-white/50 rounded-2xl shadow-xl p-6 h-full border border-gray-200/50 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200/50">
               <h2 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">Quick Actions</h2>
-              <Zap size={20} className="text-yellow-300" />
+              <div className="p-2 rounded-full bg-orange-100/50">
+                <Zap size={18} className="text-orange-500" />
+              </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {quickActions.map((action, index) => {
                 const IconComponent = action.icon;
                 return (
                   <button
                     key={index}
-                    className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gray-700/5 transition-all duration-300 border-2 border-transparent hover:border-gray-700/10 hover:shadow-lg"
+                    className="w-full group flex items-center gap-4 p-3.5 rounded-xl hover:bg-white/80 transition-all duration-300 border border-gray-200/60 hover:border-orange-400/40 hover:shadow-md"
                     onClick={() => action.route && handleNavigation(action.route)}
                   >
-                    <div className={`p-3 bg-gradient-to-r ${action.color} text-gray-700 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                    <div className={`p-2.5 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105`}>
                       <IconComponent size={20} />
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="font-semibold text-black group-hover:text-gray-100 transition-colors">
+                      <p className="font-semibold text-gray-800 group-hover:text-gray-900 transition-colors">
                         {action.title}
                       </p>
-                      <p className="text-gray-700 group-hover:text-gray-200 transition-colors">
+                      <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
                         {action.description}
                       </p>
                     </div>
