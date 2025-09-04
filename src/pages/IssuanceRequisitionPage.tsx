@@ -593,7 +593,7 @@ const IssuanceRequisitionPage = () => {
 
         {/* Requisitions Table */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="max-h-[70vh] overflow-x-auto overflow-y-auto">
             <table className="w-full">
               <thead className="bg-[#f0e9db]">
                 <tr>

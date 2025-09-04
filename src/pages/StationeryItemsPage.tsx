@@ -228,52 +228,52 @@ const StationeryItemsPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Stationery</p>
+                <p className="text-sm font-medium text-white/80">Total Stationery</p>
                 <p className="text-3xl font-bold text-white mt-2">{stationeryItems.length}</p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiBookOpen className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Quantity</p>
+                <p className="text-sm font-medium text-white/80">Total Quantity</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {stationeryItems.reduce((sum, item) => sum + item.quantity, 0)}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiPackage className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Active Users</p>
+                <p className="text-sm font-medium text-white/80">Active Users</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(stationeryItems.map(item => item.issuedTo.name)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiUsers className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-red-600 to-red-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Locations</p>
+                <p className="text-sm font-medium text-white/80">Locations</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(stationeryItems.map(item => item.itemLocation)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiMapPin className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -281,21 +281,21 @@ const StationeryItemsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
+        <div className="bg-[#f8f5ee] p-6 rounded-2xl shadow-lg border border-[#e1d4b1] mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
             <div className="relative flex-grow">
-              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#b39b6e] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search stationery items, descriptions, locations, or assigned users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full pl-12 pr-12 py-3 bg-white/90 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a] placeholder-[#b39b6e]"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#b39b6e] hover:text-[#8c7a5c] transition-colors"
                 >
                   <FiX className="w-5 h-5" />
                 </button>
@@ -305,7 +305,7 @@ const StationeryItemsPage = () => {
               <select
                 value={selectedItemType}
                 onChange={(e) => setSelectedItemType(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full px-4 py-3 bg-white/90 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a]"
               >
                 {itemTypes.map(type => (
                   <option key={type} value={type}>
@@ -318,7 +318,7 @@ const StationeryItemsPage = () => {
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full px-4 py-3 bg-white/90 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a]"
               >
                 {groups.map(group => (
                   <option key={group} value={group}>
@@ -331,60 +331,60 @@ const StationeryItemsPage = () => {
         </div>
 
         {/* Stationery Items Table */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#e1d4b1] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50/80">
+              <thead className="bg-[#f0e9db]">
                 <tr>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemName')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Item Name</span>
-                      <span className="text-slate-400">{getSortIndicator('itemName')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemName')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemType')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Type</span>
-                      <span className="text-slate-400">{getSortIndicator('itemType')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemType')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemDescription')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Description</span>
-                      <span className="text-slate-400">{getSortIndicator('itemDescription')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemDescription')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemLocation')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Location</span>
-                      <span className="text-slate-400">{getSortIndicator('itemLocation')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemLocation')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('quantity')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Quantity</span>
-                      <span className="text-slate-400">{getSortIndicator('quantity')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('quantity')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
