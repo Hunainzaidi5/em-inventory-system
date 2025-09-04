@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Package, Wrench, Shield, AlertTriangle, TrendingUp, Clock, Users, BarChart3, Bell, Search, Filter, Download, RefreshCw, ArrowUpRight, Activity, Zap, Eye } from "lucide-react";
+import { Package, Wrench, Shield, AlertTriangle, TrendingUp, Users, BarChart3, Bell, Search, Filter, Download, RefreshCw, ArrowUpRight, Activity, Zap, Eye } from "lucide-react";
 import statsService from '@/services/statsService';
 import requisitionService from '@/services/requisitionService';
 import userService from '@/services/userService';
@@ -222,13 +222,13 @@ export default function Dashboard() {
                   <BarChart3 size={32} className="text-white" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold mb-2">E&M Inventory Management System</h2>
-                  <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">E&M Inventory Management System</h2>
+                  <div className="w-24 h-1 bg-gradient-to-r from-blue-900 to-orange-400 rounded-full"></div>
                 </div>
               </div>
               
               <div className="space-y-4">
-                <p className="text-blue-100 text-xl font-medium leading-relaxed max-w-2xl">
+                <p className="text-blue-100 text-xl font-medium leading-relaxed max-w-2xl text-gray-600">
                   Your comprehensive solution for managing inventory, tools, PPE, and maintenance items 
                   with real-time insights and intelligent automation.
                 </p>
@@ -247,16 +247,6 @@ export default function Dashboard() {
                     <Bell size={18} className="text-yellow-400" />
                     <span className="text-blue-50 font-medium">Alerts: <span className="font-bold">{alertsCount}</span></span>
                   </div>
-                  <button 
-                    onClick={handleRefresh}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white transition-colors rounded-xl border border-gray-200 text-gray-700 hover:text-gray-900 font-medium shadow-sm"
-                  >
-                    <RefreshCw size={16} className={`${isRefreshing ? 'animate-spin' : ''}`} />
-                    <Clock size={16} />
-                    <span className="font-medium">
-                      {currentTime.toLocaleTimeString()}
-                    </span>
-                  </button>
                 </div>
               </div>
             </div>

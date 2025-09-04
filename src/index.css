@@ -216,7 +216,7 @@
 @layer components {
   /* Dark card surface with subtle grid and gradient */
   .card-surface-dark {
-    @apply relative overflow-hidden rounded-2xl border border-gray-700/40 text-white shadow-xl bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900;
+    @apply relative overflow-hidden rounded-2xl border border-gray-200 text-gray-900 shadow-xl bg-gradient-to-br from-[#e1d4b1] via-[#e1d4b1] to-[#e1d4b1];
   }
 
   .card-surface-dark::before {

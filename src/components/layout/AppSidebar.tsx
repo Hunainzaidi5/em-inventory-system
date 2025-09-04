@@ -199,8 +199,8 @@ export function AppSidebar({ className }: AppSidebarProps) {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <h1 className="text-sm font-semibold text-black">E&M Inventory</h1>
-              <p className="text-xs text-black/60">Management System</p>
+              <h1 className="text-sm font-semibold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">E&M Inventory</h1>
+              <p className="text-xs bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">Management System</p>
             </div>
           )}
         </div>
