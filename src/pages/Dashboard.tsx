@@ -345,72 +345,132 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Enhanced Quick Actions */}
-        <div className="lg:col-span-1">
-          <div className="bg-white/50 rounded-2xl shadow-xl p-6 h-full border border-gray-200/50 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200/50">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">Quick Actions</h2>
-              <div className="p-2 rounded-full bg-orange-100/50">
-                <Zap size={18} className="text-orange-500" />
-              </div>
-            </div>
-            <div className="space-y-3">
-              {quickActions.map((action, index) => {
-                const IconComponent = action.icon;
-                return (
-                  <button
-                    key={index}
-                    className="w-full group flex items-center gap-4 p-3.5 rounded-xl hover:bg-white/80 transition-all duration-300 border border-gray-200/60 hover:border-orange-400/40 hover:shadow-md"
-                    onClick={() => action.route && handleNavigation(action.route)}
-                  >
-                    <div className={`p-2.5 bg-gradient-to-r ${action.color} text-white rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105`}>
-                      <IconComponent size={20} />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <p className="font-semibold text-gray-800 group-hover:text-gray-900 transition-colors">
-                        {action.title}
-                      </p>
-                      <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
-                        {action.description}
-                      </p>
-                    </div>
-                    <ArrowUpRight size={16} className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+  {/* Enhanced Quick Actions */}
+  <div className="lg:col-span-1">
+    <div className="card-surface-dark rounded-2xl shadow-xl h-full overflow-hidden">
+      
+      {/* 🔹 Header section (like ChartCard) */}
+      <div className="px-6 py-4 bg-white/50 border-b border-gray-200 flex items-center justify-between">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
+          Quick Actions
+        </h2>
+        <Zap size={20} className="text-orange-500" />
+      </div>
 
-        {/* Enhanced Recent Activity */}
-        <div className="lg:col-span-2">
-          <div className="card-surface-dark rounded-2xl shadow-xl p-8 h-full">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">Recent Activity</h2>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-gray-700 font-medium">LIVE</span>
+      {/* 🔹 Body section */}
+      <div className="p-8">
+        <div className="space-y-4">
+          {quickActions.map((action, index) => {
+            const IconComponent = action.icon;
+            return (
+              <button
+                key={index}
+                className="w-full group flex items-center gap-4 p-4 rounded-xl hover:bg-gray-700/5 transition-all duration-300 border-2 border-transparent hover:border-gray-700/10 hover:shadow-lg"
+                onClick={() => action.route && handleNavigation(action.route)}
+              >
+                <div
+                  className={`p-3 bg-gradient-to-r ${action.color} text-gray-700 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
+                >
+                  <IconComponent size={20} />
                 </div>
+                <div className="flex-1 text-left">
+                  <p className="font-semibold text-black group-hover:text-gray-100 transition-colors">
+                    {action.title}
+                  </p>
+                  <p className="text-gray-700 group-hover:text-gray-200 transition-colors">
+                    {action.description}
+                  </p>
+                </div>
+                <ArrowUpRight
+                  size={16}
+                  className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{/* Enhanced Recent Activity */}
+<div className="lg:col-span-2">
+  <div className="card-surface-dark rounded-2xl shadow-xl h-full overflow-hidden">
+    
+    {/* 🔹 Header section */}
+    <div className="px-6 py-4 bg-white/50 border-b border-gray-200 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
+          Recent Activity
+        </h2>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-xs text-gray-700 font-medium">LIVE</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
+          <Filter size={16} className="text-black" />
+        </button>
+        <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
+          <Search size={16} className="text-black" />
+        </button>
+        <button
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="relative p-2 hover:bg-gray-700/10 rounded-lg transition-colors"
+        >
+          <Bell size={16} className="text-black" />
+          {notifications.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-gray-700 text-[10px] rounded-full flex items-center justify-center">
+              {notifications.length}
+            </span>
+          )}
+        </button>
+        <button className="text-sm text-gray-700 font-semibold px-4 py-2 bg-gray-700/10 hover:bg-gray-700/20 rounded-lg transition-all duration-300">
+          View all
+        </button>
+      </div>
+    </div>
+
+    {/* 🔹 Body section */}
+    <div className="p-8">
+      <div className="space-y-4">
+        {recentActivity.map((activity, index) => (
+          <div
+            key={index}
+            className="group flex items-start gap-4 p-4 rounded-xl hover:bg-gray-700/5 transition-all duration-300 border-l-4 border-transparent hover:border-blue-400/50 hover:shadow-md"
+          >
+            <div className={`w-3 h-3 ${activity.color} rounded-full mt-2 shadow-lg`}></div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm font-semibold text-black group-hover:text-gray-100 transition-colors">
+                  <span className="capitalize bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
+                    {activity.action}
+                  </span>
+                  : {activity.item}
+                </p>
+                <span className="text-xs text-gray-700 whitespace-nowrap ml-2 font-medium">
+                  {activity.time}
+                </span>
               </div>
-              <div className="flex items-center gap-3">
-                <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
-                  <Filter size={16} className="text-black" />
-                </button>
-                <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
-                  <Search size={16} className="text-black" />
-                </button>
-                <button onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
-                  <Bell size={16} className="text-black" />
-                  {notifications.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-gray-700 text-[10px] rounded-full flex items-center justify-center">{notifications.length}</span>
-                  )}
-                </button>
-                <button className="text-sm text-gray-700 font-semibold px-4 py-2 bg-gray-700/10 hover:bg-gray-700/20 rounded-lg transition-all duration-300">
-                  View all
-                </button>
-              </div>
+              <p className="text-sm text-gray-700 group-hover:text-gray-200 transition-colors">
+                {activity.user && (
+                  <span className="inline-flex items-center gap-1">
+                    <Users size={12} />
+                    By {activity.user}
+                  </span>
+                )}
+                {activity.quantity && `Quantity: ${activity.quantity}`}
+              </p>
             </div>
+            <Eye
+              size={16}
+              className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
             
             <div className="space-y-4">
               {recentActivity.map((activity, index) => (
@@ -446,6 +506,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
       {showNotifications && (
         <div className="bg-[#e1d4b1] backdrop-blur-xl rounded-2xl shadow-xl p-6">
           <div className="flex items-center justify-between mb-4">
