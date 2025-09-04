@@ -25,13 +25,30 @@ const trendData = [
   { month: "Apr", inventory: 2156, ppe: 320 },
 ];
 
-const StatCard = ({ icon: Icon, title, value, subtitle, color, trend }: {
+const StatCard = ({
+  icon: Icon,
+  title,
+  value,
+  subtitle,
+  color,
+  iconColor = 'text-white',
+  iconBg = 'bg-white/20',
+  textColor = 'text-white',
+  subtitleColor = 'text-white/80',
+  trend,
+  trendUp = true
+}: {
   icon: React.ComponentType<any>;
   title: string;
   value: number;
   subtitle?: string;
   color: string;
+  iconColor?: string;
+  iconBg?: string;
+  textColor?: string;
+  subtitleColor?: string;
   trend?: string;
+  trendUp?: boolean;
 }) => {
   const [animatedValue, setAnimatedValue] = useState(0);
   
@@ -43,27 +60,33 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color, trend }: {
   }, [value]);
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-gray-700/40 card-surface-dark p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
-      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-700"></div>
+    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${color} p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className={`p-3 rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-colors duration-300`}>
-            <Icon className="w-6 h-6 text-white" />
+          <div className={`p-3 rounded-xl ${iconBg} backdrop-blur-sm group-hover:opacity-90 transition-all duration-300`}>
+            <Icon className={`w-6 h-6 ${iconColor}`} />
           </div>
           {trend && (
-            <div className="flex items-center space-x-1 text-white/80">
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm font-medium">{trend}</span>
-            </div>
+            <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${
+              trendUp 
+                ? 'bg-green-500/20 text-green-100' 
+                : 'bg-red-500/20 text-red-100'
+            }`}>
+              <TrendingUp className={`w-3 h-3 ${trendUp ? 'text-green-300' : 'text-red-300 rotate-180'}`} />
+              {trend}
+            </span>
           )}
         </div>
-        <div className="text-white">
+        <div className={textColor}>
           <div className="text-3xl font-bold mb-1">
             {animatedValue.toLocaleString()}
           </div>
-          <div className="text-white/80 font-medium">{title}</div>
+          <div className={`font-medium ${textColor}`}>{title}</div>
           {subtitle && (
-            <div className="text-white/60 text-sm mt-1">{subtitle}</div>
+            <div className={`text-sm mt-1 ${subtitleColor}`}>
+              {subtitle}
+            </div>
           )}
         </div>
       </div>
@@ -161,7 +184,7 @@ const AvailabilityOverview = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                 Inventory Dashboard
               </h1>
               <p className="text-gray-600 text-lg">Real-time availability and performance metrics</p>
@@ -200,32 +223,52 @@ const AvailabilityOverview = () => {
             title="Total Inventory"
             value={inventoryData.find(i => i.name === 'Inventory Items')?.value || 0}
             subtitle="Items in stock"
-            color="from-indigo-600 to-indigo-700"
+            color="from-blue-600 to-blue-800"
+            iconColor="text-blue-100"
+            iconBg="bg-blue-500/20"
+            textColor="text-gray-900"
+            subtitleColor="text-gray-400"
             trend="+5.2%"
+            trendUp={true}
           />
           <StatCard
             icon={Shield}
             title="PPE Equipment"
             value={inventoryData.find(i => i.name === 'PPE Items')?.value || 0}
             subtitle="Safety items"
-            color="from-emerald-600 to-emerald-700"
+            color="from-emerald-600 to-emerald-800"
+            iconColor="text-emerald-100"
+            iconBg="bg-emerald-500/20"
+            textColor="text-gray-900"
+            subtitleColor="text-gray-400"
             trend="+2.1%"
+            trendUp={true}
           />
           <StatCard
             icon={AlertTriangle}
             title="Faulty Items"
             value={faultyCount}
             subtitle="Needs attention"
-            color="from-red-500 to-red-600"
+            color="from-amber-500 to-amber-700"
+            iconColor="text-amber-100"
+            iconBg="bg-amber-500/20"
+            textColor="text-gray-900"
+            subtitleColor="text-gray-400"
             trend="-1.3%"
+            trendUp={false}
           />
           <StatCard
             icon={TrendingUp}
             title="Health Score"
             value={healthScore}
             subtitle="System efficiency"
-            color="from-purple-600 to-purple-700"
+            color="from-red-600 to-red-600"
+            iconColor="text-indigo-100"
+            iconBg="bg-indigo-500/20"
+            textColor="text-gray-900"
+            subtitleColor="text-gray-400"
             trend="+0.8%"
+            trendUp={true}
           />
         </div>
 
@@ -419,7 +462,7 @@ const AvailabilityOverview = () => {
                 <span className="font-semibold text-red-200">60</span>
               </div>
               <div className="w-full bg-white/10 rounded-full h-2">
-                <div className="bg-red-400 h-2 rounded-full transition-all duration-1000" style={{width: '2.4%'}}></div>
+                <div className="bg-red-600 h-2 rounded-full transition-all duration-1000" style={{width: '2.4%'}}></div>
               </div>
             </div>
           </div>
