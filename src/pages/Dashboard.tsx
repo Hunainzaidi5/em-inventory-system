@@ -251,7 +251,7 @@ export default function Dashboard() {
               </div>
               
               <div className="space-y-4">
-                <p className="text-blue-100 text-xl font-medium leading-relaxed max-w-2xl text-gray-600">
+                <p className="text-xl font-medium leading-relaxed max-w-2xl text-gray-600">
                   Your comprehensive solution for managing inventory, tools, PPE, and maintenance items 
                   with real-time insights and intelligent automation.
                 </p>

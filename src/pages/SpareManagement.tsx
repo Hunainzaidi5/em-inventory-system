@@ -489,7 +489,7 @@ const SpareManagement: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                   Spare Management
                 </h1>
                 <p className="text-gray-600 font-medium">Track and manage your spare parts inventory across all systems</p>
@@ -587,19 +587,19 @@ const SpareManagement: React.FC = () => {
         )}
 
         {/* Main Navigation */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
+        <div className="bg-[#f8f5ee] rounded-2xl shadow-lg border border-[#e1d4b1] mb-8 overflow-hidden">
           {/* Main Tabs */}
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-[#e1d4b1]">
             <button
               onClick={() => setActiveMainTab("O&M")}
-              className={`px-8 py-5 font-semibold text-sm border-r border-gray-200 transition-all duration-200 ${
+              className={`px-8 py-5 font-semibold text-sm border-r border-[#e1d4b1] transition-all duration-200 ${
                 activeMainTab === "O&M" 
-                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-[#e1d4b1] to-[#d8c8a0] text-[#5c4a2a] border-b-2 border-[#b39b6e]" 
+                  : "text-[#7a6b4f] hover:text-[#5c4a2a] hover:bg-[#e1d4b1]/50"
               }`}
             >
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${activeMainTab === "O&M" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${activeMainTab === "O&M" ? 'bg-[#8c7a5c]' : 'bg-[#d8c8a0]'}`}></div>
                 <span>O&M (Operations & Maintenance)</span>
               </div>
             </button>
@@ -607,19 +607,19 @@ const SpareManagement: React.FC = () => {
               onClick={() => setActiveMainTab("PMA")}
               className={`px-8 py-5 font-semibold text-sm transition-all duration-200 ${
                 activeMainTab === "PMA" 
-                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-b-2 border-blue-600" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-[#e1d4b1] to-[#d8c8a0] text-[#5c4a2a] border-b-2 border-[#b39b6e]" 
+                  : "text-[#7a6b4f] hover:text-[#5c4a2a] hover:bg-[#e1d4b1]/50"
               }`}
             >
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${activeMainTab === "PMA" ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${activeMainTab === "PMA" ? 'bg-[#8c7a5c]' : 'bg-[#d8c8a0]'}`}></div>
                 <span>PMA (Punjab Mass Transit Authority)</span>
               </div>
             </button>
           </div>
 
           {/* Sub Tabs */}
-          <div className="p-6 bg-gradient-to-r from-gray-50 to-blue-50">
+          <div className="p-6 bg-gradient-to-r from-[#f0e9db] to-[#e1d4b1]">
             <div className="flex flex-wrap gap-3">
               {getCurrentTabCategories().map((category) => (
                 <button
@@ -627,8 +627,8 @@ const SpareManagement: React.FC = () => {
                   onClick={() => setActiveSubTab(category.key)}
                   className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 whitespace-nowrap border ${
                     activeSubTab === category.key
-                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105"
-                      : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md"
+                      ? "bg-gradient-to-r from-[#8c7a5c] to-[#6b5d45] text-white shadow-lg transform scale-105 border-[#b39b6e]"
+                      : "bg-white/80 text-[#5c4a2a] hover:bg-[#e1d4b1] border-[#e1d4b1] hover:border-[#b39b6e] hover:shadow-md"
                   }`}
                 >
                   {category.name}
@@ -641,12 +641,12 @@ const SpareManagement: React.FC = () => {
         {/* Content Area */}
         <div>
           {/* Filters */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-8">
+          <div className="bg-white/90 p-6 rounded-2xl shadow-lg border border-[#e1d4b1] mb-8 backdrop-blur-sm">
             <div className="flex flex-col space-y-4">
               <div className="flex-shrink-0">
                 <div className="flex items-center space-x-3 mb-1">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
-                  <h3 className="text-xl font-bold text-gray-800">
+                  <div className="w-3 h-3 bg-gradient-to-r from-[#8c7a5c] to-[#b39b6e] rounded-full"></div>
+                  <h3 className="text-xl font-bold text-[#5c4a2a]">
                     {activeMainTab} - {currentTabData?.name || activeSubTab}
                   </h3>
                 </div>

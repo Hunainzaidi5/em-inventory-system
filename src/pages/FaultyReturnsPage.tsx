@@ -373,7 +373,7 @@ const FaultyReturnsPage = () => {
                         <div className="text-sm text-slate-600 font-mono">{item.partNumber}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-blue-50 text-blue-700 px-2 py-1 rounded-lg inline-block font-medium">{item.uom}</div>
+                        <div className="text-sm text-slate-600 bg-blue-50 px-2 py-1 rounded-lg inline-block font-medium">{item.uom}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className={`text-sm font-bold px-3 py-1 rounded-full inline-block ${
@@ -390,13 +390,13 @@ const FaultyReturnsPage = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-orange-50 text-orange-700 px-2 py-1 rounded-lg inline-flex items-center">
+                        <div className="text-sm text-slate-600 bg-orange-50 px-2 py-1 rounded-lg inline-flex items-center">
                           <FiMapPin className="w-3 h-3 mr-1" />
                           {item.pickUpLocation}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-purple-50 text-purple-700 px-2 py-1 rounded-lg inline-flex items-center">
+                        <div className="text-sm text-slate-600 bg-purple-50 px-2 py-1 rounded-lg inline-flex items-center">
                           <FiMapPin className="w-3 h-3 mr-1" />
                           {item.storageLocation}
                         </div>
