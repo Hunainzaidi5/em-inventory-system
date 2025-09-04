@@ -194,7 +194,7 @@ const AvailabilityOverview = () => {
                 onClick={() => setSelectedView('overview')}
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   selectedView === 'overview' 
-                    ? 'bg-indigo-600 text-white shadow-lg' 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -205,7 +205,7 @@ const AvailabilityOverview = () => {
                 onClick={() => setSelectedView('trends')}
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   selectedView === 'trends' 
-                    ? 'bg-indigo-600 text-white shadow-lg' 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >

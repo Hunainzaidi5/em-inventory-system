@@ -595,7 +595,7 @@ const IssuanceRequisitionPage = () => {
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50/80">
+              <thead className="bg-[#f0e9db]">
                 <tr>
                   <th 
                     className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"

@@ -751,7 +751,7 @@ const SpareManagement: React.FC = () => {
                 onScroll={handleTableScroll}
               >
                 <table ref={tableRef} className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <thead className="bg-[#f0e9db]">
                     <tr>
                       <th 
                         className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"

@@ -193,11 +193,11 @@ const FaultyReturnsPage = () => {
               <div className="p-2 bg-red-100 rounded-lg mr-3">
                 <FiTool className="w-6 h-6 text-red-600" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                 Faulty Returns Management
               </h1>
             </div>
-            <p className="text-slate-600 ml-11">Track and manage faulty returns and their locations</p>
+            <p className="text-gray-600 ml-11">Track and manage faulty returns and their locations</p>
           </div>
           <button
             onClick={openAddModal}
@@ -210,52 +210,52 @@ const FaultyReturnsPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Faulty Items</p>
+                <p className="text-sm font-medium text-white/90">Total Faulty Items</p>
                 <p className="text-3xl font-bold text-white mt-2">{faultyReturns.length}</p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiTool className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Quantity</p>
+                <p className="text-sm font-medium text-white/90">Total Quantity</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {faultyReturns.reduce((sum, item) => sum + item.quantity, 0)}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiPackage className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Locations</p>
+                <p className="text-sm font-medium text-white/90">Locations</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(faultyReturns.map(item => item.pickUpLocation)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiMapPin className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-red-600 to-red-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Storage Locations</p>
+                <p className="text-sm font-medium text-white/90">Storage Locations</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(faultyReturns.map(item => item.storageLocation)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiMapPin className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -263,21 +263,21 @@ const FaultyReturnsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
+        <div className="bg-[#f8f5ee] p-6 rounded-2xl shadow-lg border border-[#e1d4b1] mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
             <div className="relative flex-grow">
-              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#b39b6e] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search items, BOQ numbers, part numbers, or fault descriptions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full pl-12 pr-12 py-3 bg-white/80 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a] placeholder-[#b39b6e]"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#b39b6e] hover:text-[#8c7a5c] transition-colors"
                 >
                   <FiX className="w-5 h-5" />
                 </button>
@@ -287,10 +287,10 @@ const FaultyReturnsPage = () => {
               <select
                 value={selectedPickUpLocation}
                 onChange={(e) => setSelectedPickUpLocation(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full px-4 py-3 bg-white/80 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a]"
               >
                 {pickUpLocations.map(loc => (
-                  <option key={loc} value={loc}>
+                  <option key={loc} value={loc} className="text-[#5c4a2a]">
                     {loc === "all" ? "All Pick-up Locations" : loc}
                   </option>
                 ))}
@@ -300,10 +300,10 @@ const FaultyReturnsPage = () => {
               <select
                 value={selectedStorageLocation}
                 onChange={(e) => setSelectedStorageLocation(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+                className="w-full px-4 py-3 bg-white/80 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#8c7a5c] focus:border-[#8c7a5c] focus:bg-white transition-all duration-200 text-[#5c4a2a]"
               >
                 {storageLocations.map(loc => (
-                  <option key={loc} value={loc}>
+                  <option key={loc} value={loc} className="text-[#5c4a2a]">
                     {loc === "all" ? "All Storage Locations" : loc}
                   </option>
                 ))}
@@ -313,67 +313,67 @@ const FaultyReturnsPage = () => {
         </div>
 
         {/* Faulty Returns Table */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#e1d4b1] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
+            <table className="min-w-full divide-y divide-[#e1d4b1]/50">
+              <thead className="bg-[#f0e9db]">
                 <tr>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors whitespace-nowrap"
                     onClick={() => requestSort('itemName')}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <span>Item Name</span>
-                      <span className="text-blue-600">{getSortIndicator('itemName')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemName')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     BOQ Number
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     Part Number
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     UOM
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors whitespace-nowrap"
                     onClick={() => requestSort('quantity')}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <span>Quantity</span>
-                      <span className="text-blue-600">{getSortIndicator('quantity')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('quantity')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     Used Against (Fault/Ticket)
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     Pick-up Location
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     Storage Location
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#5c4a2a] uppercase tracking-wider whitespace-nowrap">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white/50 divide-y divide-slate-100">
+              <tbody className="bg-white/50 divide-y divide-[#e1d4b1]/30">
                 {filteredItems.length > 0 ? (
                   filteredItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-white/80 transition-all duration-200">
+                    <tr key={item.id} className="hover:bg-[#f8f5ee] transition-all duration-200">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-semibold text-slate-900">{item.itemName}</div>
+                        <div className="text-sm font-medium text-[#5c4a2a]">{item.itemName}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-slate-100 px-2 py-1 rounded-lg inline-block">{item.boq_number}</div>
+                        <div className="text-sm text-[#5c4a2a] bg-[#f0e9db] px-2 py-1 rounded-lg inline-block">{item.boq_number}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 font-mono">{item.partNumber}</div>
+                        <div className="text-sm text-[#5c4a2a] font-mono">{item.partNumber}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-blue-50 px-2 py-1 rounded-lg inline-block font-medium">{item.uom}</div>
+                        <div className="text-sm text-[#5c4a2a] bg-[#e1d4b1]/30 px-2 py-1 rounded-lg inline-block font-medium">{item.uom}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className={`text-sm font-bold px-3 py-1 rounded-full inline-block ${
@@ -385,53 +385,51 @@ const FaultyReturnsPage = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-slate-600 max-w-xs truncate bg-yellow-50 px-2 py-1 rounded-lg" title={item.usedAgainst}>
+                        <div className="text-sm text-[#5c4a2a] max-w-xs truncate bg-[#f0e9db] px-2 py-1 rounded-lg" title={item.usedAgainst}>
                           {item.usedAgainst}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-orange-50 px-2 py-1 rounded-lg inline-flex items-center">
-                          <FiMapPin className="w-3 h-3 mr-1" />
+                        <div className="text-sm text-[#5c4a2a] bg-[#e1d4b1]/30 px-2 py-1 rounded-lg inline-flex items-center">
+                          <FiMapPin className="w-3 h-3 mr-1 text-[#b39b6e]" />
                           {item.pickUpLocation}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-600 bg-purple-50 px-2 py-1 rounded-lg inline-flex items-center">
-                          <FiMapPin className="w-3 h-3 mr-1" />
+                        <div className="text-sm text-[#5c4a2a] bg-[#e1d4b1]/30 px-2 py-1 rounded-lg inline-flex items-center">
+                          <FiMapPin className="w-3 h-3 mr-1 text-[#b39b6e]" />
                           {item.storageLocation}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => openEditModal(item.id!)}
-                            className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                            title="Edit"
-                          >
-                            <FiEdit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleRemove(item.id!)}
-                            className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
-                            title="Delete"
-                          >
-                            <FiTrash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button
+                          onClick={() => openEditModal(item.id!)}
+                          className="text-[#5c4a2a] hover:text-[#8c7a5c] transition-colors p-1.5 rounded-lg hover:bg-[#e1d4b1]/30"
+                          title="Edit"
+                        >
+                          <FiEdit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleRemove(item.id!)}
+                          className="text-red-600 hover:text-red-800 transition-colors p-1.5 rounded-lg hover:bg-red-100"
+                          title="Delete"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center">
-                        <FiPackage className="w-12 h-12 text-slate-300 mb-4" />
-                        <p className="text-slate-500 text-lg font-medium">
+                    <td colSpan={9} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <FiTool className="w-12 h-12 text-[#b39b6e] mb-4" />
+                        <h3 className="text-lg font-medium text-[#5c4a2a] mb-2">
                           {searchTerm || selectedPickUpLocation !== "all" || selectedStorageLocation !== "all"
                             ? "No faulty returns match your filters" 
                             : "No faulty returns recorded"}
-                        </p>
-                        <p className="text-slate-400 text-sm mt-2">
+                        </h3>
+                        <p className="text-[#8c7a5c] text-sm">
                           {!searchTerm && selectedPickUpLocation === "all" && selectedStorageLocation === "all"
                             ? "Click 'Add New Faulty Return' to get started"
                             : "Try adjusting your search or filters"}
