@@ -41,13 +41,13 @@ const roleDisplayNames = {
 };
 
 const roleColors = {
-  dev: 'from-purple-600 to-purple-700',
+  dev: 'from-purple-600 to-purple-800',
   manager: 'from-blue-600 to-blue-800',
   deputy_manager: 'from-indigo-600 to-indigo-700',
   engineer: 'from-green-600 to-green-700',
   assistant_engineer: 'from-emerald-600 to-emerald-800',
   master_technician: 'from-amber-500 to-amber-700',
-  technician: 'from-gray-600 to-gray-700'
+  technician: 'from-red-600 to-red-600'
 };
 
 const StatCard = ({ icon: Icon, title, value, subtitle, color }: {
@@ -67,8 +67,8 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color }: {
   }, [value]);
 
   return (
-    <div className={`relative overflow-hidden card-surface-dark p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer`}>
-      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-700"></div>
+    <div className={`relative overflow-hidden p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 group cursor-pointer bg-gradient-to-br ${color}`}>
+      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-opacity duration-300"></div>
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className={`icon-chip group-hover:bg-white/20 transition-colors duration-300`}>
@@ -95,24 +95,28 @@ const InfoCard = ({ icon: Icon, label, value, color = "bg-gray-100" }: {
   value: string;
   color?: string;
 }) => (
-  <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group hover:scale-105">
-    <div className="flex items-center space-x-4">
-      <div className={`icon-chip group-hover:scale-110 transition-transform duration-300`}>
-        <Icon className="w-5 h-5 text-white" />
-      </div>
-      <div className="flex-1">
-        <p className="text-sm font-medium card-text-tertiary mb-1">{label}</p>
-        <p className="text-lg font-semibold card-text-primary">{value}</p>
+  <div className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group hover:scale-105 bg-gradient-to-br ${color} hover:brightness-110`}>
+    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-opacity duration-300"></div>
+    <div className="relative z-10">
+      <div className="flex items-center space-x-4">
+        <div className={`p-2 rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300`}>
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-white/80 mb-1">{label}</p>
+          <p className="text-lg font-semibold text-white">{value}</p>
+        </div>
       </div>
     </div>
   </div>
 );
 
-const ProfileCard = ({ title, children }: {
+const ProfileCard = ({ title, children, className = '' }: {
   title: string;
   children: React.ReactNode;
+  className?: string;
 }) => (
-  <div className="card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+  <div className={`card-surface-dark rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${className}`}>
     <div className="p-6 border-b border-white/10 bg-white/5">
       <div className="flex items-center space-x-3">
         <div className="icon-chip">
@@ -264,23 +268,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Debug information - only show in development */}
-        {import.meta.env.DEV && (
-          <div className="mb-8 p-6 rounded-2xl bg-yellow-50 border border-yellow-200 shadow-lg">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 rounded-lg bg-yellow-100">
-                <Activity className="w-5 h-5 text-yellow-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-yellow-800">Debug Information</h3>
-            </div>
-            <div className="space-y-2 text-sm text-yellow-800">
-              <p><span className="font-medium">Avatar URL:</span> {user.avatar_url || 'No avatar set'}</p>
-              <p><span className="font-medium">Formatted Avatar URL:</span> {user.avatar_url ? getAvatarUrl(user.id, user.avatar_url) : 'No avatar set'}</p>
-              <p><span className="font-medium">User ID:</span> {user.id}</p>
-            </div>
-          </div>
-        )}
-
         {/* Profile Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -288,56 +275,69 @@ export default function ProfilePage() {
             title="Profile Status"
             value="Active"
             subtitle="Account verified"
-            color="from-emerald-600 to-emerald-800"
+            color="from-blue-600 to-blue-800"
           />
           <StatCard
             icon={Shield}
             title="Role Level"
             value={roleDisplayNames[userRole] || user.role}
             subtitle="Access permissions"
-            color={roleColors[userRole] || 'from-gray-600 to-gray-700'}
+            color={roleColors[userRole] || 'from-emerald-600 to-emerald-800'}
           />
           <StatCard
             icon={Calendar}
             title="Member Since"
             value={memberSince}
             subtitle="Account created"
-            color="from-blue-600 to-blue-800"
+            color="from-amber-500 to-amber-700"
           />
           <StatCard
             icon={TrendingUp}
             title="Profile Score"
             value="98%"
             subtitle="Completion rate"
-            color="from-amber-500 to-amber-700"
+            color="from-lime-500 to-lime-700"
           />
         </div>
 
-        {/* Profile Information Card */}
-        <ProfileCard title="Profile Information">
+{/* Profile Information Card */}
+<ProfileCard title="Profile Information">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {/* Avatar and Form Section */}
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Avatar Section */}
               <div className="flex flex-col items-center space-y-4 lg:w-1/3">
-                <div className="relative group">
-                  <Avatar 
-                    className="h-40 w-40 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
-                    onClick={handleAvatarClick}
-                  >
-                    {user.avatar_url ? (
-                      <>
-                        <AvatarImage 
-                          src={getAvatarUrl(user.id, user.avatar_url)}
-                          alt={user.display_name} 
-                          className="object-cover"
-                          onError={(e) => {
-                            console.error('Error loading avatar:', e);
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                        <AvatarFallback className="text-4xl bg-gradient-to-br from-indigo-100 to-purple-100">
+                <div 
+                  className="flex flex-col items-center space-y-3 cursor-pointer group transition-all duration-300"
+                  onClick={handleAvatarClick}
+                >
+                  <div className="relative">
+                    <Avatar 
+                      className="h-40 w-40 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl ring-4 ring-amber-100 group-hover:ring-amber-200"
+                    >
+                      {user.avatar_url ? (
+                        <>
+                          <AvatarImage 
+                            src={getAvatarUrl(user.id, user.avatar_url)}
+                            alt={user.display_name} 
+                            className="object-cover"
+                            onError={(e) => {
+                              console.error('Error loading avatar:', e);
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                          <AvatarFallback className="text-4xl bg-gradient-to-br from-amber-50 to-orange-100 text-amber-800">
+                            {(user.display_name || user.email || 'User')
+                              .split(' ')
+                              .filter(Boolean)
+                              .map(n => n[0]?.toUpperCase())
+                              .slice(0, 2)
+                              .join('')}
+                          </AvatarFallback>
+                        </>
+                      ) : (
+                        <AvatarFallback className="text-4xl bg-gradient-to-br from-amber-50 to-yellow-100 text-amber-800">
                           {(user.display_name || user.email || 'User')
                             .split(' ')
                             .filter(Boolean)
@@ -345,91 +345,86 @@ export default function ProfilePage() {
                             .slice(0, 2)
                             .join('')}
                         </AvatarFallback>
-                      </>
-                    ) : (
-                      <AvatarFallback className="text-4xl bg-gradient-to-br from-gray-100 to-gray-200">
-                        {(user.display_name || user.email || 'User')
-                          .split(' ')
-                          .filter(Boolean)
-                          .map(n => n[0]?.toUpperCase())
-                          .slice(0, 2)
-                          .join('')}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    {isUploading ? (
-                      <Loader2 className="h-10 w-10 animate-spin text-white" />
-                    ) : (
-                      <Camera className="h-10 w-10 text-white" />
-                    )}
+                      )}
+                    </Avatar>
+                    
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-900/60 to-orange-900/60 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      {isUploading ? (
+                        <Loader2 className="h-10 w-10 animate-spin text-amber-100" />
+                      ) : (
+                        <Camera className="h-10 w-10 text-amber-100" />
+                      )}
+                    </div>
                   </div>
                   
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="hidden"
-                    disabled={isUploading}
-                  />
+                  <div className="text-center space-y-1 group-hover:text-amber-700 transition-colors duration-200">
+                    <p className="text-sm font-medium text-amber-900 group-hover:text-amber-800">Profile Picture</p>
+                    <p className="text-xs text-amber-700/70 group-hover:text-amber-600 flex items-center justify-center gap-1">
+                      <Camera className="h-3 w-3" />
+                      Click to upload or change
+                    </p>
+                  </div>
                 </div>
                 
-                <div className="text-center space-y-2">
-                  <p className="text-sm font-medium text-white">Profile Picture</p>
-                  <p className="text-xs text-gray-500">Click to upload or change</p>
-                  {isUploading && (
-                    <div className="flex items-center justify-center space-x-2 text-blue-600">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm">Uploading...</span>
-                    </div>
-                  )}
-                </div>
+                {isUploading && (
+                  <div className="flex items-center justify-center space-x-2 text-amber-600">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Uploading...</span>
+                  </div>
+                )}
+                
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="hidden"
+                  disabled={isUploading}
+                />
               </div>
               
               {/* Form Fields */}
               <div className="flex-1 space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-white">
-                    <User className="h-4 w-4 text-indigo-600" />
-                    Full Name <span className="text-red-500">*</span>
+                  <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                    <User className="h-4 w-4 text-amber-600" />
+                    Full Name <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="name"
                     {...form.register("name")}
                     disabled={isUpdating}
-                    className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400 ${
-                      form.formState.errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                    className={`h-11 rounded-xl border-amber-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/30 transition-all duration-200 placeholder-amber-400 shadow-sm hover:shadow-md ${
+                      form.formState.errors.name ? "border-red-400 focus:border-red-400 focus:ring-red-400/30" : ""
                     }`}
                     placeholder="Enter your full name"
                   />
                   {form.formState.errors.name && (
-                    <p className="text-sm text-red-500 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                       {form.formState.errors.name.message}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-white">
-                    <Mail className="h-4 w-4 text-indigo-600" />
-                    Email Address <span className="text-red-500">*</span>
+                  <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                    <Mail className="h-4 w-4 text-amber-600" />
+                    Email Address <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="email"
                     type="email"
                     {...form.register("email")}
                     disabled={isUpdating}
-                    className={`h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400 ${
-                      form.formState.errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                    className={`h-11 rounded-xl border-amber-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/30 transition-all duration-200 placeholder-amber-400 shadow-sm hover:shadow-md ${
+                      form.formState.errors.email ? "border-red-400 focus:border-red-400 focus:ring-red-400/30" : ""
                     }`}
                     placeholder="Enter your email address"
                   />
                   {form.formState.errors.email && (
-                    <p className="text-sm text-red-500 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                       {form.formState.errors.email.message}
                     </p>
                   )}
@@ -437,29 +432,29 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="department" className="flex items-center gap-2 text-sm font-medium text-white">
-                      <Building className="h-4 w-4 text-indigo-600" />
+                    <Label htmlFor="department" className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                      <Building className="h-4 w-4 text-amber-600" />
                       Department
                     </Label>
                     <Input
                       id="department"
                       {...form.register("department")}
                       disabled={isUpdating}
-                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400"
+                      className="h-11 rounded-xl border-amber-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/30 transition-all duration-200 placeholder-amber-400 shadow-sm hover:shadow-md"
                       placeholder="Enter your department"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="employee_id" className="flex items-center gap-2 text-sm font-medium text-white">
-                      <CreditCard className="h-4 w-4 text-indigo-600" />
+                    <Label htmlFor="employee_id" className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                      <CreditCard className="h-4 w-4 text-amber-600" />
                       Employee ID
                     </Label>
                     <Input
                       id="employee_id"
                       {...form.register("employee_id")}
                       disabled={isUpdating}
-                      className="h-11 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors placeholder-gray-400"
+                      className="h-11 rounded-xl border-amber-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/30 transition-all duration-200 placeholder-amber-400 shadow-sm hover:shadow-md"
                       placeholder="Enter your employee ID"
                     />
                   </div>
@@ -472,14 +467,14 @@ export default function ProfilePage() {
                     variant="outline"
                     onClick={() => form.reset()}
                     disabled={isUpdating}
-                    className="h-11 px-6 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="h-11 px-6 rounded-xl border-amber-300 bg-white/60 text-amber-800 hover:bg-amber-50/80 hover:border-amber-400 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     Reset Changes
                   </Button>
                   <Button 
                     type="submit" 
                     disabled={isUpdating || !form.formState.isDirty}
-                    className="h-11 px-8 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="h-11 px-8 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ring-2 ring-transparent hover:ring-amber-300/30"
                   >
                     {isUpdating ? (
                       <>
@@ -509,14 +504,14 @@ export default function ProfilePage() {
                 icon={Mail}
                 label="Email Address"
                 value={user.email}
-                color="bg-blue-100"
+                color="from-stone-700 to-stone-500"
               />
               
               <InfoCard
                 icon={Shield}
                 label="Role"
                 value={roleDisplayNames[userRole] || (user.role ? user.role.replace('_', ' ') : 'Unknown')}
-                color="bg-purple-100"
+                color={roleColors[userRole] || 'from-stone-700 to-stone-500'}
               />
 
               {user.department && (
@@ -524,7 +519,7 @@ export default function ProfilePage() {
                   icon={Building}
                   label="Department"
                   value={user.department}
-                  color="bg-green-100"
+                  color="from-stone-700 to-stone-500"
                 />
               )}
 
@@ -533,7 +528,7 @@ export default function ProfilePage() {
                   icon={CreditCard}
                   label="Employee ID"
                   value={user.employee_id}
-                  color="bg-orange-100"
+                  color="from-stone-700 to-stone-500"
                 />
               )}
 
@@ -541,14 +536,14 @@ export default function ProfilePage() {
                 icon={Calendar}
                 label="Member Since"
                 value={memberSince}
-                color="bg-indigo-100"
+                color="from-stone-700 to-stone-500"
               />
 
               <InfoCard
                 icon={User}
                 label="Account Status"
                 value="Active & Verified"
-                color="bg-emerald-100"
+                color="from-stone-700 to-stone-500"
               />
             </div>
           </div>
