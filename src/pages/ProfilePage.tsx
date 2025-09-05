@@ -42,11 +42,11 @@ const roleDisplayNames = {
 
 const roleColors = {
   dev: 'from-purple-600 to-purple-700',
-  manager: 'from-blue-600 to-blue-700',
+  manager: 'from-blue-600 to-blue-800',
   deputy_manager: 'from-indigo-600 to-indigo-700',
   engineer: 'from-green-600 to-green-700',
-  assistant_engineer: 'from-emerald-600 to-emerald-700',
-  master_technician: 'from-orange-600 to-orange-700',
+  assistant_engineer: 'from-emerald-600 to-emerald-800',
+  master_technician: 'from-amber-500 to-amber-700',
   technician: 'from-gray-600 to-gray-700'
 };
 
@@ -253,7 +253,7 @@ export default function ProfilePage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                 My Profile
               </h1>
               <p className="text-gray-600 text-lg">View and manage your account details</p>
@@ -288,7 +288,7 @@ export default function ProfilePage() {
             title="Profile Status"
             value="Active"
             subtitle="Account verified"
-            color="from-emerald-600 to-emerald-700"
+            color="from-emerald-600 to-emerald-800"
           />
           <StatCard
             icon={Shield}
@@ -302,14 +302,14 @@ export default function ProfilePage() {
             title="Member Since"
             value={memberSince}
             subtitle="Account created"
-            color="from-blue-600 to-blue-700"
+            color="from-blue-600 to-blue-800"
           />
           <StatCard
             icon={TrendingUp}
             title="Profile Score"
             value="98%"
             subtitle="Completion rate"
-            color="from-purple-600 to-purple-700"
+            color="from-amber-500 to-amber-700"
           />
         </div>
 
