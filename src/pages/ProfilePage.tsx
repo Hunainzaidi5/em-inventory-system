@@ -124,7 +124,7 @@ const ProfileCard = ({ title, children, className = '' }: {
         </div>
         <div>
           <h3 className="text-xl font-semibold text-white">{title}</h3>
-          <p className="text-gray-300 text-sm">Manage your personal details and preferences</p>
+          <p className="text-gray-600 text-sm">Manage your personal details and preferences</p>
         </div>
       </div>
     </div>
@@ -301,7 +301,7 @@ export default function ProfilePage() {
         </div>
 
 {/* Profile Information Card */}
-<ProfileCard title="Profile Information">
+<ProfileCard title="Profile Information" className="[&_h2]:text-amber-900 [&_h3]:text-amber-900 [&_.title]:text-amber-900">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {/* Avatar and Form Section */}
             <div className="flex flex-col lg:flex-row gap-8">
@@ -494,12 +494,12 @@ export default function ProfilePage() {
           </form>
 
           {/* Information Grid */}
-          <div className="mt-12 pt-8 border-t border-gray-100">
-            <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-              <Activity className="h-5 w-5 text-indigo-600" />
-              Account Information
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mt-12 pt-8 border-t border-amber-200">
+                  <h4 className="text-lg font-semibold text-amber-900 mb-6 flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-amber-600" />
+                    Account Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <InfoCard
                 icon={Mail}
                 label="Email Address"
