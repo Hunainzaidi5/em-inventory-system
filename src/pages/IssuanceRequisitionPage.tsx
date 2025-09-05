@@ -598,7 +598,7 @@ const IssuanceRequisitionPage = () => {
               <thead className="bg-[#f0e9db]">
                 <tr>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1] transition-colors"
                     onClick={() => requestSort('requisitionNumber')}
                   >
                     <div className="flex items-center space-x-1">

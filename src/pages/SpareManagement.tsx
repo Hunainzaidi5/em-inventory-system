@@ -754,7 +754,7 @@ const SpareManagement: React.FC = () => {
                 <thead className="bg-[#f0e9db]">
                     <tr>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]"
                         onClick={() => requestSort('name')}
                       >
                         <div className="flex items-center">
@@ -780,7 +780,7 @@ const SpareManagement: React.FC = () => {
                         UOM
                       </th>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]"
                         onClick={() => requestSort('quantity')}
                       >
                         <div className="flex items-center">
@@ -788,7 +788,7 @@ const SpareManagement: React.FC = () => {
                         </div>
                       </th>
                       <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]"
                         onClick={() => requestSort('location')}
                       >
                         <div className="flex items-center">
