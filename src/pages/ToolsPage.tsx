@@ -199,11 +199,11 @@ const ToolsPage = () => {
               <div className="p-2 bg-orange-100 rounded-lg mr-3">
                 <FiTool className="w-6 h-6 text-orange-600" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">
                 Tools Management
               </h1>
             </div>
-            <p className="text-slate-600 ml-11">Track and manage all tools and equipment assignments</p>
+            <p className="text-gray-600 ml-11">Track and manage all tools and equipment assignments</p>
           </div>
           <button
             onClick={openAddModal}
@@ -216,52 +216,52 @@ const ToolsPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Tools</p>
+                <p className="text-sm font-medium text-white/80">Total Tools</p>
                 <p className="text-3xl font-bold text-white mt-2">{toolsItems.length}</p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiTool className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Quantity</p>
+                <p className="text-sm font-medium text-white/80">Total Quantity</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {toolsItems.reduce((sum, item) => sum + item.quantity, 0)}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiPackage className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Active Users</p>
+                <p className="text-sm font-medium text-white/80">Active Users</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(toolsItems.map(item => item.issuedTo.name)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiUsers className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
-          <div className="card-surface-dark p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-red-600 to-red-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Locations</p>
+                <p className="text-sm font-medium text-white/80">Locations</p>
                 <p className="text-3xl font-bold text-white mt-2">
                   {new Set(toolsItems.map(item => item.itemLocation)).size}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10">
+              <div className="p-3 rounded-xl bg-white/20">
                 <FiMapPin className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -269,38 +269,45 @@ const ToolsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50 mb-8">
+        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-[#e1d4b1]/30 mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
             <div className="relative flex-grow">
-              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#8c7a5c] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search tools, descriptions, locations, or assigned users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition-all duration-200"
+                className="w-full pl-12 pr-12 py-3 bg-white/90 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] focus:bg-white transition-all duration-200 text-[#5c4a2a] placeholder-[#b39b6e]/70"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#8c7a5c] hover:text-[#5c4a2a] transition-colors"
                 >
                   <FiX className="w-5 h-5" />
                 </button>
               )}
             </div>
             <div className="w-full md:w-56">
-              <select
-                value={selectedGroup}
-                onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition-all duration-200"
-              >
-                {groups.map(group => (
-                  <option key={group} value={group}>
-                    {group === "all" ? "All Groups" : group}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedGroup}
+                  onChange={(e) => setSelectedGroup(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3 bg-white/90 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] focus:bg-white transition-all duration-200 appearance-none text-[#5c4a2a]"
+                >
+                  {groups.map(group => (
+                    <option key={group} value={group}>
+                      {group === "all" ? "All Groups" : group}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#8c7a5c]">
+                  <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -309,48 +316,48 @@ const ToolsPage = () => {
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50/80">
-                <tr>
+              <thead className="bg-[#f0e9db]">
+                <tr className="border-b border-[#e1d4b1]">
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemName')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Tool Name</span>
-                      <span className="text-slate-400">{getSortIndicator('itemName')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemName')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemDescription')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Description</span>
-                      <span className="text-slate-400">{getSortIndicator('itemDescription')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemDescription')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('itemLocation')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Location</span>
-                      <span className="text-slate-400">{getSortIndicator('itemLocation')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('itemLocation')}</span>
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100/80 transition-colors"
+                    className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/50 transition-colors"
                     onClick={() => requestSort('quantity')}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Quantity</span>
-                      <span className="text-slate-400">{getSortIndicator('quantity')}</span>
+                      <span className="text-[#b39b6e]">{getSortIndicator('quantity')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider hover:bg-[#e1d4b1]/50 transition-colors">
                     Assigned To
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider hover:bg-[#e1d4b1]/50 transition-colors">
                     Actions
                   </th>
                 </tr>
