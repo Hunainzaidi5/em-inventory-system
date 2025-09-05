@@ -127,7 +127,23 @@ const IssuancePage: React.FC = () => {
     return () => { isMounted = false; };
   }, [searchParams]);
 
-  // Add proper type for the handleToolChange parameters
+  // Add a new tool to the tools list
+  const addTool = useCallback((): void => {
+    setFormData(prev => ({
+      ...prev,
+      tools: [...prev.tools, { description: "", unit: "", qty: "", remarks: "" }]
+    }));
+  }, []);
+
+  // Remove a tool from the tools list
+  const removeTool = useCallback((index: number): void => {
+    setFormData(prev => ({
+      ...prev,
+      tools: prev.tools.filter((_, i) => i !== index)
+    }));
+  }, []);
+
+  // Update a specific field of a tool
   const handleToolChange = useCallback((index: number, field: keyof Tool, value: string): void => {
     setFormData(prev => ({
       ...prev,
@@ -360,41 +376,46 @@ const IssuancePage: React.FC = () => {
   };
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8">
-      <div className="w-full p-6">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-[#f8f5ee] to-[#f0e9db] py-8 px-4 sm:px-6">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Issuance Management</h1>
+        <div className="mb-8 text-center sm:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent mb-2">Issuance Management</h1>
           <p className="text-gray-600">Create and manage issuance forms with digital signatures</p>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl mb-8 overflow-hidden border border-[#e1d4b1]/50">
+          <div className="bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] p-1">
             <nav className="flex space-x-1 p-1">
               <button
                 onClick={() => setActiveTab('form')}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
                   activeTab === 'form'
-                    ? 'bg-white text-blue-600 shadow-lg'
+                    ? 'bg-white text-[#5c4a2a] shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
               >
                 <span className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">📝</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
                   <span>Edit Form</span>
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
                   activeTab === 'preview'
-                    ? 'bg-white text-purple-600 shadow-lg'
+                    ? 'bg-white text-[#5c4a2a] shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
               >
                 <span className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">👁️</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
                   <span>Preview</span>
                 </span>
               </button>
@@ -404,95 +425,150 @@ const IssuancePage: React.FC = () => {
                  {/* Tab Content */}
          {activeTab === 'form' && (
            <div className="p-8">
-             <div className="flex justify-between items-center mb-8">
+             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                <div>
-                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Issuance Form</h2>
-                 <p className="text-gray-600">Fill in the details below to create an issuance form</p>
+                 <h2 className="text-2xl font-bold text-[#5c4a2a] mb-1">Issuance Form</h2>
+                 <p className="text-[#8c7a5c]">Fill in the details below to create an issuance form</p>
                </div>
-               <button
-                 onClick={clearForm}
-                 className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-               >
-                 <span className="flex items-center space-x-2">
-                   <span>🗑️</span>
-                   <span>Clear Form</span>
-                 </span>
-               </button>
+               <div className="flex flex-wrap gap-4 mt-8">
+                <button
+                  onClick={exportToExcel}
+                  disabled={isExporting}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] hover:from-[#a08d63] hover:to-[#7a6a4f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b39b6e] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {isExporting ? 'Exporting...' : 'Export to Excel'}
+                </button>
+                <button
+                  onClick={exportToPDF}
+                  disabled={isExporting}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-[#8c7a5c] to-[#6d5e47] hover:from-[#7a6a4f] hover:to-[#5c4f3b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8c7a5c] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                  </svg>
+                  {isExporting ? 'Exporting...' : 'Export to PDF'}
+                </button>
+              </div>
+              <button
+                onClick={clearForm}
+                className="px-5 py-2.5 bg-gradient-to-r from-[#d4b17a] to-[#b39b6e] text-white rounded-xl hover:from-[#c2a26d] hover:to-[#9c8a5f] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <span className="flex items-center space-x-2 text-sm sm:text-base">
+                  <span>🗑️</span>
+                  <span>Clear Form</span>
+                </span>
+              </button>
              </div>
 
+             {/* Status Indicators */}
+        <div className="mt-8 pt-6 pb-8 border-t border-gray-200 mb-8">
+          <h4 className="text-left text-sm font-semibold text-gray-700 mb-2">Form Completion Status</h4>
+          <div className="flex justify-start space-x-8">
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.issuerName && formData.date 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.issuerName && formData.date ? '✔' : '✗'}</span>
+              <span className="font-medium">Basic Info</span>
+            </div>
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.tools.some(t => t.description) 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.tools.some(t => t.description) ? '✔' : '✗'}</span>
+              <span className="font-medium">Tools Added</span>
+            </div>
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+              formData.receiver.name 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <span className="text-lg">{formData.receiver.name ? '✔' : '✗'}</span>
+              <span className="font-medium">Receiver Info</span>
+            </div>
+          </div>
+        </div>
+
                          {/* Issuer Information */}
-             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
-               <div className="flex items-center mb-6">
-                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
-                   <span className="text-white text-xl">👤</span>
+             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4">
+                 <div className="w-12 h-12 bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] rounded-xl flex items-center justify-center flex-shrink-0">
+                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                   </svg>
                  </div>
                  <div>
-                   <h3 className="text-xl font-bold text-gray-800">Issuer Information</h3>
-                   <p className="text-gray-600">Enter the details of the person issuing the items</p>
+                   <h3 className="text-xl font-bold text-[#5c4a2a]">Issuer Information</h3>
+                   <p className="text-[#8c7a5c]">Enter the details of the person issuing the items</p>
                  </div>
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Issuer Name *</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Issuer Name <span className="text-red-500">*</span></label>
                    <input 
                      type="text"
                      value={formData.issuerName}
                      onChange={e => setFormData({ ...formData, issuerName: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none"
                      placeholder="Enter issuer name"
                    />
                  </div>
                                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Date *</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Date <span className="text-red-500">*</span></label>
                    <input 
                      type="date"
                      value={formData.date}
                      onChange={e => setFormData({ ...formData, date: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none text-[#5c4a2a]"
                    />
                  </div>
                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Department</label>
                    <input 
                      type="text"
                      value={formData.department}
                      onChange={e => setFormData({ ...formData, department: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none"
                      placeholder="Enter department"
                    />
                  </div>
                                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Designation</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Designation</label>
                    <input 
                      type="text"
                      value={formData.designation}
                      onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none"
                      placeholder="Enter designation"
                    />
                  </div>
                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Contact</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Contact</label>
                    <input 
                      type="text"
                      value={formData.contact}
                      onChange={e => setFormData({ ...formData, contact: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none"
                      placeholder="Enter contact number"
                    />
                  </div>
                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">OLT NO.</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">OLT NO.</label>
                    <input 
                      type="text"
                      value={formData.oltNo}
                      onChange={e => setFormData({ ...formData, oltNo: e.target.value })}
-                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                     className="w-full p-3 border border-[#e1d4b1] rounded-lg focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] transition-all duration-200 bg-white/80 hover:bg-white focus:bg-white shadow-sm focus:outline-none"
                      placeholder="Enter OLT number"
                    />
                  </div>
                                  <div>
-                   <label className="block text-sm font-semibold text-gray-700 mb-2">Signature</label>
+                   <label className="block text-sm font-medium text-[#5c4a2a] mb-1.5">Signature</label>
                    <SignaturePad
                      value={formData.signature}
                      onChange={(value) => setFormData({ ...formData, signature: value })}
@@ -504,79 +580,114 @@ const IssuancePage: React.FC = () => {
              </div>
 
              {/* Tools Section */}
-             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl mb-8 border border-green-100">
-               <div className="flex items-center mb-6">
-                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
-                   <span className="text-white text-xl">🔧</span>
+             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4">
+                 <div className="w-12 h-12 bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] rounded-xl flex items-center justify-center flex-shrink-0">
+                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                   </svg>
                  </div>
                  <div>
-                   <h3 className="text-xl font-bold text-gray-800">Tools Information</h3>
-                   <p className="text-gray-600">Add the tools and equipment being issued</p>
+                   <h3 className="text-xl font-bold text-[#5c4a2a]">Tools Information</h3>
+                   <p className="text-[#8c7a5c]">Add the tools and equipment being issued</p>
                  </div>
                </div>
                <div className="overflow-x-auto">
-                                 <table className="w-full border-collapse border-2 border-gray-200 bg-white rounded-xl overflow-hidden shadow-lg">
+                 <table className="min-w-full divide-y divide-[#e1d4b1] rounded-lg overflow-hidden">
                    <thead>
-                     <tr className="bg-gradient-to-r from-green-500 to-emerald-600">
-                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-16">SR. No.</th>
-                       <th className="border border-gray-300 p-4 text-center font-bold text-white">Tools Description</th>
-                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-20">M/U</th>
-                       <th className="border border-gray-300 p-4 text-center font-bold text-white w-20">QTY.</th>
-                       <th className="border border-gray-300 p-4 text-center font-bold text-white">Remarks</th>
+                     <tr className="bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c]">
+                       <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
+                       <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Unit</th>
+                       <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Quantity</th>
+                       <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Remarks</th>
+                       <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
                      </tr>
                    </thead>
-                                     <tbody>
+                   <tbody>
                      {formData.tools.slice(0, 15).map((tool, i) => (
                        <tr key={i} className={`hover:bg-green-50 transition-colors duration-200 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                         <td className="border border-gray-200 p-3 text-center font-semibold text-gray-700 bg-gray-100">{i + 1}</td>
-                         <td className="border border-gray-200 p-2">
-                           <input 
+                         <td className="px-4 py-3 whitespace-nowrap">
+                           <input
                              type="text"
                              value={tool.description}
-                             onChange={e => handleToolChange(i, "description", e.target.value)}
-                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none focus:bg-green-50 focus:border-green-300 transition-all duration-200"
-                             placeholder="Enter tool description"
+                             onChange={(e) => handleToolChange(i, 'description', e.target.value)}
+                             className="w-full p-2 border border-[#e1d4b1] rounded-md focus:ring-[#b39b6e] focus:border-[#b39b6e] bg-white/80 focus:bg-white transition-colors"
+                             placeholder="Tool description"
                            />
                          </td>
-                         <td className="border border-gray-200 p-2">
-                           <input 
+                         <td className="px-4 py-3 whitespace-nowrap">
+                           <input
                              type="text"
                              value={tool.unit}
-                             onChange={e => handleToolChange(i, "unit", e.target.value)}
-                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none text-center focus:bg-green-50 focus:border-green-300 transition-all duration-200"
+                             onChange={(e) => handleToolChange(i, 'unit', e.target.value)}
+                             className="w-20 p-2 border border-[#e1d4b1] rounded-md focus:ring-[#b39b6e] focus:border-[#b39b6e] bg-white/80 focus:bg-white transition-colors text-center"
                              placeholder="Unit"
                            />
                          </td>
-                         <td className="border border-gray-200 p-2">
-                           <input 
+                         <td className="px-4 py-3 whitespace-nowrap">
+                           <input
                              type="text"
                              value={tool.qty}
-                             onChange={e => handleToolChange(i, "qty", e.target.value)}
-                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none text-center focus:bg-green-50 focus:border-green-300 transition-all duration-200"
-                             placeholder="Qty"
+                             onChange={(e) => handleToolChange(i, 'qty', e.target.value)}
+                             className="w-20 p-2 border border-[#e1d4b1] rounded-md focus:ring-[#b39b6e] focus:border-[#b39b6e] bg-white/80 focus:bg-white transition-colors text-center"
+                             placeholder="Quantity"
                            />
                          </td>
-                         <td className="border border-gray-200 p-2">
-                           <input 
+                         <td className="px-4 py-3 whitespace-nowrap">
+                           <input
                              type="text"
                              value={tool.remarks}
-                             onChange={e => handleToolChange(i, "remarks", e.target.value)}
-                             className="w-full p-3 border-2 border-transparent rounded-lg outline-none focus:bg-green-50 focus:border-green-300 transition-all duration-200"
-                             placeholder="Enter remarks"
+                             onChange={(e) => handleToolChange(i, 'remarks', e.target.value)}
+                             className="w-full p-2 border border-[#e1d4b1] rounded-md focus:ring-[#b39b6e] focus:border-[#b39b6e] bg-white/80 focus:bg-white transition-colors"
+                             placeholder="Any remarks"
                            />
+                         </td>
+                         <td className="px-4 py-3 whitespace-nowrap text-right">
+                           <button
+                             type="button"
+                             onClick={() => removeTool(i)}
+                             className="flex items-center justify-center w-8 h-8 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-200"
+                             title="Remove tool"
+                           >
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 22H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                             </svg>
+                           </button>
                          </td>
                        </tr>
                      ))}
                    </tbody>
-                </table>
-              </div>
-                             <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                 <div className="flex items-center space-x-2">
-                   <span className="text-blue-600 text-lg">💡</span>
-                   <p className="text-sm text-blue-800 font-medium">Showing first 15 rows for editing. All 30 rows will be included in exports.</p>
+                 </table>
+               </div>
+               <div className="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                 <div className="flex items-start space-x-3">
+                   <div className="flex-shrink-0 mt-0.5">
+                     <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center">
+                       <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                       </svg>
+                     </div>
+                   </div>
+                   <p className="text-sm text-amber-800">
+                     <span className="font-medium">Note:</span> Showing first 15 rows for editing. All {formData.tools.length} rows will be included in exports.
+                   </p>
                  </div>
                </div>
-            </div>
+               <div className="flex justify-end mt-4">
+                  <button
+                    type="button"
+                    onClick={addTool}
+                    disabled={formData.tools.length >= 30}
+                    className="inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] text-white font-medium rounded-lg hover:from-[#a08d63] hover:to-[#7a6a4f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b39b6e] transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Tool
+                  </button>
+                </div>
+             </div>
 
                          {/* Receiver Information */}
              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl mb-8 border border-purple-100">
@@ -864,69 +975,6 @@ const IssuancePage: React.FC = () => {
         )}
       </div>
     </div>
-
-      {/* Action Buttons - Always Visible */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mt-8">
-        <div className="text-center mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">Export & Actions</h3>
-          <p className="text-gray-600">Export your issuance form or switch between edit and preview modes</p>
-        </div>
-        
-        <div className="flex flex-wrap justify-center gap-6">
-          <button 
-            onClick={exportToExcel} 
-            disabled={isExporting}
-            className={`px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
-              isExporting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
-            }`}
-          >
-            {isExporting ? (
-              <span className="flex items-center space-x-2">
-                <span className="inline-block animate-spin">⏳</span>
-                <span>Exporting...</span>
-              </span>
-            ) : (
-              <span className="flex items-center space-x-2">
-                <span className="text-lg">📊</span>
-                <span>Export to Excel</span>
-              </span>
-            )}
-          </button>
-          
-          <button 
-            onClick={exportToPDF} 
-            disabled={isExporting}
-            className={`px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
-              isExporting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
-            }`}
-          >
-            {isExporting ? (
-              <span className="flex items-center space-x-2">
-                <span className="inline-block animate-spin">⏳</span>
-                <span>Exporting...</span>
-              </span>
-            ) : (
-              <span className="flex items-center space-x-2">
-                <span className="text-lg">📄</span>
-                <span>Export to PDF</span>
-              </span>
-            )}
-          </button>
-
-          <button 
-            onClick={() => setActiveTab(activeTab === 'form' ? 'preview' : 'form')}
-            className="px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            <span className="flex items-center space-x-2">
-              <span className="text-lg">{activeTab === 'form' ? '👁️' : '📝'}</span>
-              <span>{activeTab === 'form' ? 'Preview' : 'Edit'}</span>
-            </span>
-          </button>
-        </div>
         
         {/* Status Indicators */}
         <div className="mt-8 pt-6 border-t border-gray-200">
@@ -958,7 +1006,6 @@ const IssuancePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
       
       {/* Hidden container for Excel export reference */}
       <div ref={containerRef} className="hidden">

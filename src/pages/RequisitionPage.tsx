@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Package, Save, AlertCircle } from "lucide-react";
+import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Package, Save, AlertCircle, CheckCheck, CircleDashed, FileText } from "lucide-react";
 import requisitionService from '@/services/requisitionService';
 import type { Requisition as ServiceRequisition } from '@/services/requisitionService';
 
@@ -17,7 +17,6 @@ const mapToServiceStatus = (status: StatusType): ServiceStatusType => {
   return status as ServiceStatusType;
 };
 import { useToast } from "@/components/ui/use-toast";
-import itemQuantityService from '@/services/itemQuantityService';
 import spareService from '@/services/spareService';
 import issuanceService from '@/services/issuanceService';
 import gatePassService from '@/services/gatePassService';
@@ -103,6 +102,49 @@ const RequisitionPage = () => {
   const { toast } = useToast();
   const [requisitions, setRequisitions] = useState<Requisition[]>([]);
   const navigate = useNavigate();
+  
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Requisition;
+    direction: 'asc' | 'desc';
+  }>({ key: 'created_at', direction: 'desc' });
+
+  // Handle sorting
+  const handleSort = (key: keyof Requisition) => {
+    setSortConfig(prevConfig => {
+      if (prevConfig.key === key) {
+        return {
+          key,
+          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
+        };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  // Apply sorting to requisitions
+  const sortedRequisitions = useMemo(() => {
+    const sortableRequisitions = [...requisitions];
+    if (sortConfig.key) {
+      sortableRequisitions.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+        
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableRequisitions;
+  }, [requisitions, sortConfig]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -838,7 +880,7 @@ useEffect(() => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Requisition</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">Requisition</h1>
           <p className="text-sm text-gray-600 mt-1">
             View and manage all inventory requisition
           </p>
@@ -854,59 +896,61 @@ useEffect(() => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-300">Total</p>
+              <p className="text-sm font-medium text-white/80">Total</p>
               <p className="text-2xl font-bold text-white">{stats.total}</p>
             </div>
-            <Package className="h-8 w-8 text-white" />
+            <div className="p-2 rounded-xl bg-white/20">
+              <Package className="h-6 w-6 text-white" />
+            </div>
           </div>
         </div>
-        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+        <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 p-6 rounded-2xl shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-300">Completed</p>
+              <p className="text-sm font-medium text-white/80">Completed</p>
               <p className="text-2xl font-bold text-white">{stats.completed}</p>
             </div>
-            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-emerald-400 rounded-full"></div>
+            <div className="p-2 rounded-xl bg-white/20">
+            <CheckCheck className="h-6 w-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+        <div className="bg-gradient-to-r from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-300">Pending</p>
+              <p className="text-sm font-medium text-white/80">Pending</p>
               <p className="text-2xl font-bold text-white">{stats.pending}</p>
             </div>
-            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-yellow-400 rounded-full"></div>
+            <div className="p-2 rounded-xl bg-white/20">
+              <CircleDashed className="h-6 w-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="card-surface-dark p-6 rounded-2xl shadow-lg transition-all duration-200">
+        <div className="bg-gradient-to-r from-red-600 to-red-600 p-6 rounded-2xl shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-300">Overdue</p>
-              <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
+              <p className="text-sm font-medium text-white/80">Overdue</p>
+              <p className="text-2xl font-bold text-white">{stats.overdue}</p>
             </div>
-            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center">
-              <div className="h-4 w-4 bg-red-600 rounded-full"></div>
+            <div className="p-2 rounded-xl bg-white/20">
+              <AlertCircle className="h-6 w-6 text-white" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Search and Controls */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white/90 p-4 rounded-2xl shadow-sm border border-[#e1d4b1]/30">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8c7a5c]" />
             <input
               type="search"
               placeholder="Search requisition..."
-              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-9 pr-4 py-2.5 border border-[#e1d4b1] rounded-xl focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] focus:bg-white transition-all duration-200 text-[#5c4a2a] placeholder-[#b39b6e]/70 bg-white/90"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -914,61 +958,75 @@ useEffect(() => {
           
           {/* Location Dropdown */}
           <div className="w-full md:w-48">
-            <select
-              value={filters.location}
-              onChange={(e) => {
-                const value = e.target.value as Requisition['location'];
-                setFilters(prev => ({
-                  ...prev,
-                  location: value || 'all'
-                }));
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Locations</option>
-              {locationOptions.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={filters.location}
+                onChange={(e) => {
+                  const value = e.target.value as Requisition['location'];
+                  setFilters(prev => ({
+                    ...prev,
+                    location: value || 'all'
+                  }));
+                }}
+                className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#5c4a2a] text-sm focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] appearance-none"
+              >
+                <option value="all">All Locations</option>
+                {locationOptions.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#8c7a5c]">
+                <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
           
           {/* Department Dropdown */}
           <div className="w-full md:w-48">
-            <select
-              value={filters.department}
-              onChange={(e) => {
-                const value = e.target.value as Requisition['department'];
-                setFilters(prev => ({
-                  ...prev,
-                  department: value || 'all'
-                }));
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Departments</option>
-              {departmentOptions.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={filters.department}
+                onChange={(e) => {
+                  const value = e.target.value as Requisition['department'];
+                  setFilters(prev => ({
+                    ...prev,
+                    department: value || 'all'
+                  }));
+                }}
+                className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#5c4a2a] text-sm focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] appearance-none"
+              >
+                <option value="all">All Departments</option>
+                {departmentOptions.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#8c7a5c]">
+                <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
           
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2.5 border border-[#e1d4b1] rounded-xl hover:bg-[#f0e9db] transition-colors text-sm text-[#5c4a2a] bg-white/90"
             >
-              <Filter className="h-4 w-4" />
+              <Filter className="h-4 w-4 text-[#8c7a5c]" />
               <span className="hidden sm:inline">Filters</span>
             </button>
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2.5 border border-[#e1d4b1] rounded-xl hover:bg-[#f0e9db] transition-colors text-sm text-[#5c4a2a] bg-white/90"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 text-[#8c7a5c]" />
               <span className="hidden sm:inline">Export</span>
             </button>
           </div>
@@ -976,112 +1034,147 @@ useEffect(() => {
 
         {/* Filters Panel */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+          <div className="mt-4 p-6 bg-white/90 rounded-2xl border border-[#e1d4b1]/30">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Requisition Type</label>
-                <select
-                  value={filters.requisitionType}
-                  onChange={(e) => setFilters(prev => ({...prev, requisitionType: e.target.value as any}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Types</option>
-                  <option value="issue">Issue</option>
-                  <option value="return">Return</option>
-                  <option value="consume">Consume</option>
-                </select>
+                <label className="block text-sm font-medium text-[#e1d4b1] mb-2">Requisition Type</label>
+                <div className="relative">
+                  <select
+                    value={filters.requisitionType}
+                    onChange={(e) => setFilters(prev => ({...prev, requisitionType: e.target.value as any}))}
+                    className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#e1d4b1] text-sm focus:ring-2 focus:ring-[#ffd7be] focus:border-[#ffd7be] appearance-none"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="issue">Issue</option>
+                    <option value="return">Return</option>
+                    <option value="consume">Consume</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#e1d4b1]">
+                    <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Item Type</label>
-                <select
-                  value={filters.itemType}
-                  onChange={(e) => setFilters(prev => ({...prev, itemType: e.target.value as any}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Items</option>
-                  <option value="spare_management">Spare Parts</option>
-                  <option value="ppe">PPE</option>
-                  <option value="stationery">Stationery</option>
-                  <option value="faulty_return">Faulty Return</option>
-                  <option value="inventory">Inventory</option>
-                  <option value="tool">Tools</option>
-                  <option value="general_tools">General Tools</option>
-                </select>
+                <label className="block text-sm font-medium text-[#e1d4b1] mb-2">Item Type</label>
+                <div className="relative">
+                  <select
+                    value={filters.itemType}
+                    onChange={(e) => setFilters(prev => ({...prev, itemType: e.target.value as any}))}
+                    className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#e1d4b1] text-sm focus:ring-2 focus:ring-[#ffd7be] focus:border-[#ffd7be] appearance-none"
+                  >
+                    <option value="all">All Items</option>
+                    <option value="spare_management">Spare Parts</option>
+                    <option value="ppe">PPE</option>
+                    <option value="stationery">Stationery</option>
+                    <option value="faulty_return">Faulty Return</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="tool">Tools</option>
+                    <option value="general_tools">General Tools</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#e1d4b1]">
+                    <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <select
-                  value={filters.location}
-                  onChange={(e) => setFilters(prev => ({...prev, location: e.target.value as any}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Locations</option>
-                  <option value="Depot">Depot</option>
-                  <option value="Station 1">Station 1</option>
-                  <option value="Station 2">Station 2</option>
-                  <option value="Station 3">Station 3</option>
-                  <option value="Station 4">Station 4</option>
-                  <option value="Station 5">Station 5</option>
-                  <option value="Station 6">Station 6</option>
-                  <option value="Station 7">Station 7</option>
-                  <option value="Station 8">Station 8</option>
-                  <option value="Station 9">Station 9</option>
-                  <option value="Station 10">Station 10</option>
-                  <option value="Station 11">Station 11</option>
-                  <option value="Station 12">Station 12</option>
-                  <option value="Station 13">Station 13</option>
-                  <option value="Station 14">Station 14</option>
-                  <option value="Station 15">Station 15</option>
-                  <option value="Station 16">Station 16</option>
-                  <option value="Station 17">Station 17</option>
-                  <option value="Station 18">Station 18</option>
-                  <option value="Station 19">Station 19</option>
-                  <option value="Station 20">Station 20</option>
-                  <option value="Station 21">Station 21</option>
-                  <option value="Station 22">Station 22</option>
-                  <option value="Station 23">Station 23</option>
-                  <option value="Station 24">Station 24</option>
-                  <option value="Station 25">Station 25</option>
-                  <option value="Station 26">Station 26</option>
-                  <option value="Stabling Yard">Stabling Yard</option>                 
-                </select>
+                <label className="block text-sm font-medium text-[#e1d4b1] mb-2">Location</label>
+                <div className="relative">
+                  <select
+                    value={filters.location}
+                    onChange={(e) => setFilters(prev => ({...prev, location: e.target.value as any}))}
+                    className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#5c4a2a] text-sm focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] appearance-none"
+                  >
+                    <option value="all">All Locations</option>
+                    <option value="Depot">Depot</option>
+                    <option value="Station 1">Station 1</option>
+                    <option value="Station 2">Station 2</option>
+                    <option value="Station 3">Station 3</option>
+                    <option value="Station 4">Station 4</option>
+                    <option value="Station 5">Station 5</option>
+                    <option value="Station 6">Station 6</option>
+                    <option value="Station 7">Station 7</option>
+                    <option value="Station 8">Station 8</option>
+                    <option value="Station 9">Station 9</option>
+                    <option value="Station 10">Station 10</option>
+                    <option value="Station 11">Station 11</option>
+                    <option value="Station 12">Station 12</option>
+                    <option value="Station 13">Station 13</option>
+                    <option value="Station 14">Station 14</option>
+                    <option value="Station 15">Station 15</option>
+                    <option value="Station 16">Station 16</option>
+                    <option value="Station 17">Station 17</option>
+                    <option value="Station 18">Station 18</option>
+                    <option value="Station 19">Station 19</option>
+                    <option value="Station 20">Station 20</option>
+                    <option value="Station 21">Station 21</option>
+                    <option value="Station 22">Station 22</option>
+                    <option value="Station 23">Station 23</option>
+                    <option value="Station 24">Station 24</option>
+                    <option value="Station 25">Station 25</option>
+                    <option value="Station 26">Station 26</option>
+                    <option value="Stabling Yard">Stabling Yard</option>                 
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#8c7a5c]">
+                    <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                <select
-                  value={filters.department}
-                  onChange={(e) => setFilters(prev => ({...prev, department: e.target.value as any}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Departments</option>
-                  <option value="em_systems">E&M Systems</option>
-                  <option value="em_track">E&M Track</option>
-                  <option value="em_power">E&M Power</option>
-                  <option value="em_signalling">E&M Signalling</option>
-                  <option value="em_communication">E&M Communication</option>
-                  <option value="em_third_rail">E&M Third Rail</option>
-                  <option value="em_safety_quality">E&M Safety & Quality</option>
-                </select>
+                <label className="block text-sm font-medium text-[#5c4a2a] mb-2">Department</label>
+                <div className="relative">
+                  <select
+                    value={filters.department}
+                    onChange={(e) => setFilters(prev => ({...prev, department: e.target.value as any}))}
+                    className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#5c4a2a] text-sm focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] appearance-none"
+                  >
+                    <option value="all">All Departments</option>
+                    <option value="em_systems">E&M Systems</option>
+                    <option value="em_track">E&M Track</option>
+                    <option value="em_power">E&M Power</option>
+                    <option value="em_signalling">E&M Signalling</option>
+                    <option value="em_communication">E&M Communication</option>
+                    <option value="em_third_rail">E&M Third Rail</option>
+                    <option value="em_safety_quality">E&M Safety & Quality</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#8c7a5c]">
+                    <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select
-                  value={filters.status}
-                  onChange={(e) => setFilters(prev => ({...prev, status: e.target.value as any}))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Status</option>
-                  <option value="completed">Completed</option>
-                  <option value="pending">Pending</option>
-                  <option value="overdue">Overdue</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
+                <label className="block text-sm font-medium text-[#5c4a2a] mb-2">Status</label>
+                <div className="relative">
+                  <select
+                    value={filters.status}
+                    onChange={(e) => setFilters(prev => ({...prev, status: e.target.value as any}))}
+                    className="w-full pl-3 pr-8 py-2.5 border border-[#e1d4b1] rounded-xl bg-white/90 text-[#5c4a2a] text-sm focus:ring-2 focus:ring-[#b39b6e] focus:border-[#b39b6e] appearance-none"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#8c7a5c]">
+                    <svg className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-end">
                 <button
                   onClick={clearFilters}
-                  className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm text-[#5c4a2a] border border-[#e1d4b1] rounded-xl hover:bg-[#f0e9db] transition-colors bg-white/90"
                 >
                   Clear Filters
                 </button>
@@ -1092,41 +1185,167 @@ useEffect(() => {
       </div>
 
       {/* Requisition Table */}
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-[#e1d4b1]/30 overflow-hidden mt-6">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-[#f0e9db] border-b border-[#e1d4b1]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requisition</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issued To</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('referenceNumber')}
+                >
+                  <div className="flex items-center">
+                    Reference #
+                    {sortConfig.key === 'referenceNumber' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('itemName')}
+                >
+                  <div className="flex items-center">
+                    Item
+                    {sortConfig.key === 'itemName' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('requisitionType')}
+                >
+                  <div className="flex items-center">
+                    Requisition
+                    {sortConfig.key === 'requisitionType' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('itemType')}
+                >
+                  <div className="flex items-center">
+                    Type
+                    {sortConfig.key === 'itemType' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('quantity')}
+                >
+                  <div className="flex items-center">
+                    Quantity
+                    {sortConfig.key === 'quantity' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('issuedTo')}
+                >
+                  <div className="flex items-center">
+                    Issued To
+                    {sortConfig.key === 'issuedTo' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('location')}
+                >
+                  <div className="flex items-center">
+                    Location
+                    {sortConfig.key === 'location' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('department')}
+                >
+                  <div className="flex items-center">
+                    Department
+                    {sortConfig.key === 'department' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('created_at')}
+                >
+                  <div className="flex items-center">
+                    Date
+                    {sortConfig.key === 'created_at' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[#5c4a2a] uppercase tracking-wider cursor-pointer hover:bg-[#e1d4b1]/30 transition-colors duration-200"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center">
+                    Status
+                    {sortConfig.key === 'status' && (
+                      <span className="ml-1 text-[#b39b6e]">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-medium text-[#5c4a2a] uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-[#e1d4b1]/30">
               {isLoading ? (
                 <tr>
-                  <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
-                    <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
-                    Loading requisition...
+                  <td colSpan={11} className="px-6 py-12 text-center">
+                    <div className="animate-spin h-6 w-6 border-2 border-[#b39b6e] border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <p className="text-[#5c4a2a]/70">Loading requisition...</p>
                   </td>
                 </tr>
               ) : filteredRequisition.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
-                    No requisition found.
+                  <td colSpan={11} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center bg-white/90 p-8 rounded-2xl border border-[#e1d4b1]/30 shadow-sm">
+                      <FileText className="h-12 w-12 text-[#b39b6e] mb-4" />
+                      <p className="text-lg font-medium text-[#5c4a2a]">No requisition found</p>
+                      <p className="text-sm text-[#5c4a2a]/70 mt-1">Try adjusting your search or filter criteria</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredRequisition.map((txn) => (
-                  <tr key={txn.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={txn.id} className="hover:bg-[#f9f7f2] transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{txn.referenceNumber}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{txn.itemName}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{getRequisitionTypeBadge(txn.requisitionType)}</td>
