@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import { 
   Loader2, 
   Lock, 
@@ -18,21 +17,15 @@ import {
   Eye, 
   EyeOff, 
   Warehouse, 
-  Shield, 
   AlertCircle,
   CheckCircle,
   XCircle,
-  Wifi,
   WifiOff,
-  Moon,
-  Sun,
   ArrowRight,
-  Key,
   User,
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { signInTestUser } from '@/utils/testAuth';
 
 // Enhanced validation with password strength
 const passwordStrengthRegex = {
@@ -154,8 +147,6 @@ const useConnectionStatus = () => {
   return isOnline;
 };
 
-
-
 const usePasswordStrength = (password: string) => {
   return useMemo(() => {
     if (!password) return { strength: 0, level: 'none', color: 'bg-gray-200' };
@@ -179,51 +170,97 @@ const usePasswordStrength = (password: string) => {
 // Enhanced Components
 const AnimatedBackground = () => (
   <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
-    <div className="absolute inset-0 opacity-30 bg-gradient-to-br from-blue-50 to-orange-50" />
+    <div className="absolute inset-0 opacity-50 bg-gradient-to-br from-orange-100 via-blue-50 to-orange-200" />
     
-    {/* Animated particles */}
+    {/* Small floating particles */}
     <div className="absolute inset-0">
-      {[...Array(20)].map((_, i) => (
+      {[...Array(30)].map((_, i) => (
         <div
           key={i}
-          className={`absolute w-1 h-1 rounded-full animate-pulse ${
-            false ? 'bg-blue-400' : 'bg-blue-600'
+          className={`absolute w-1 h-1 rounded-full animate-float ${
+            i % 4 === 0 ? 'bg-orange-400' : 
+            i % 4 === 1 ? 'bg-blue-400' : 
+            i % 4 === 2 ? 'bg-amber-400' : 'bg-orange-300'
           }`}
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${2 + Math.random() * 3}s`,
+            animationDelay: `${Math.random() * 6}s`,
+            animationDuration: `${6 + Math.random() * 4}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Medium drifting particles */}
+    <div className="absolute inset-0">
+      {[...Array(15)].map((_, i) => (
+        <div
+          key={`medium-${i}`}
+          className={`absolute w-2 h-2 rounded-full animate-drift opacity-50 ${
+            i % 3 === 0 ? 'bg-orange-300' : 
+            i % 3 === 1 ? 'bg-blue-300' : 'bg-amber-300'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 8}s`,
+            animationDuration: `${8 + Math.random() * 5}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Large pulsing particles */}
+    <div className="absolute inset-0">
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={`large-${i}`}
+          className={`absolute w-3 h-3 rounded-full animate-pulse opacity-30 ${
+            i % 2 === 0 ? 'bg-orange-500' : 'bg-blue-500'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 4}s`,
+            animationDuration: `${3 + Math.random() * 3}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Micro particles for subtle movement */}
+    <div className="absolute inset-0">
+      {[...Array(50)].map((_, i) => (
+        <div
+          key={`micro-${i}`}
+          className={`absolute w-0.5 h-0.5 rounded-full animate-pulse opacity-60 ${
+            i % 3 === 0 ? 'bg-orange-400' : 
+            i % 3 === 1 ? 'bg-blue-400' : 'bg-amber-400'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 2}s`,
+            animationDuration: `${2 + Math.random() * 2}s`,
           }}
         />
       ))}
     </div>
     
     {/* Gradient blobs */}
-    <div className={`absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-2000 ${
-      false ? 'bg-blue-600' : 'bg-blue-700'
-    }`} />
-    <div className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000 ${
-      false ? 'bg-orange-500' : 'bg-orange-600'
-    }`} />
-    <div className={`absolute top-1/3 left-1/4 w-64 h-64 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob ${
-      false ? 'bg-purple-600' : 'bg-blue-900'
-    }`} />
+    <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-2000 bg-amber-300" />
+    <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-4000 bg-orange-300" />
+    <div className="absolute top-1/3 left-1/4 w-64 h-64 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob bg-blue-300" />
+    <div className="absolute top-2/3 right-1/3 w-48 h-48 rounded-full mix-blend-soft-light filter blur-xl opacity-15 animate-blob bg-orange-400" />
+    <div className="absolute bottom-1/4 left-1/3 w-56 h-56 rounded-full mix-blend-soft-light filter blur-xl opacity-18 animate-blob bg-amber-400" />
   </div>
 );
 
 const BrandingSection = ({ isDark }: { isDark: boolean }) => (
-  <div className={`hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden ${
-    isDark 
-      ? 'bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900' 
-      : 'bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900'
-  } text-white`}>
+  <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-orange-400 text-white">
     {/* Enhanced background overlay */}
-    <div className={`absolute inset-0 ${
-      isDark 
-        ? 'bg-gradient-to-br from-gray-900/80 to-orange-900/80' 
-        : 'bg-gradient-to-br from-blue-900/70 to-orange-900/70'
-    }`} />
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 to-orange-500/80" />
     
     {/* Grid Pattern Overlay */}
     <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
@@ -243,27 +280,27 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
       {/* Enhanced logo section */}
       <div className="flex items-center gap-4 mb-8">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 backdrop-blur-sm">
-            <Warehouse className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-orange-300/30 backdrop-blur-sm">
+            <Warehouse className="w-8 h-8 text-orange-100" />
           </div>
-          <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-            <Sparkles className="w-3 h-3 text-white" />
+          <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-400 rounded-full flex items-center justify-center">
+            <Sparkles className="w-3 h-3 text-blue-900" />
           </div>
         </div>
         <div>
-          <div className="text-lg font-bold uppercase tracking-wide text-white">
+          <div className="text-lg font-bold uppercase tracking-wide text-orange-50">
             E&M Inventory
           </div>
-          <div className="text-sm text-white/70">Management System</div>
+          <div className="text-sm text-orange-200/80">Management System</div>
         </div>
       </div>
 
       {/* Enhanced welcome message */}
       <div className="space-y-6">
-        <h1 className="text-5xl font-extrabold leading-tight bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-extrabold leading-tight bg-gradient-to-r from-orange-400 to-indigo-400 bg-clip-text text-transparent">
           Welcome to the E&M Inventory Management
         </h1>
-        <p className="text-xl text-white/90 leading-relaxed">
+        <p className="text-xl text-orange-100/90 leading-relaxed">
         Your all-in-one platform for managing, tracking, and streamlining 
         E&M inventory with accuracy and efficiency. 
         Stay organized, improve visibility, and simplify operations all in one place.
@@ -273,8 +310,8 @@ const BrandingSection = ({ isDark }: { isDark: boolean }) => (
       {/* Decorative elements */}
       <div className="flex gap-3 mt-8">
         <div className="w-16 h-3 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full opacity-80" />
-        <div className="w-12 h-3 bg-gradient-to-r from-orange-300 to-orange-400 rounded-full opacity-70" />
-        <div className="w-8 h-3 bg-gradient-to-r from-orange-200 to-orange-300 rounded-full opacity-60" />
+        <div className="w-12 h-3 bg-gradient-to-r from-blue-400 to-orange-400 rounded-full opacity-70" />
+        <div className="w-8 h-3 bg-gradient-to-r from-blue-300 to-orange-300 rounded-full opacity-60" />
       </div>
     </div>
   </div>
@@ -297,7 +334,7 @@ const PasswordStrengthIndicator = ({ password, show }: { password: string; show:
   return (
     <div className="mt-2 space-y-2">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-600">Password strength</span>
+        <span className="text-amber-600">Password strength</span>
         <span className={`font-medium capitalize ${
           strength >= 80 ? 'text-green-600' : 
           strength >= 60 ? 'text-yellow-600' : 
@@ -473,39 +510,6 @@ export function LoginPage() {
     }
   }, [login, navigate, redirectPath, classifyError, isOnline, isRateLimited, loginAttempts]);
 
-  // Enhanced test login
-  const handleTestLogin = useCallback(async () => {
-    if (!import.meta.env.DEV) return;
-    
-    try {
-      setIsLoading(true);
-      setLoginError(null);
-      
-      const result = await signInTestUser();
-      
-      if (result.success) {
-        navigate(redirectPath, { replace: true, state: { testLogin: true } });
-      } else {
-        setLoginError({
-          title: 'Test Login Failed',
-          message: result.error || 'Unable to authenticate with test account',
-          type: 'error',
-          action: 'Try again',
-          recoverable: true,
-        });
-      }
-    } catch (error) {
-      setLoginError({
-        title: 'Test Login Error',
-        message: 'Development authentication service is unavailable',
-        type: 'error',
-        recoverable: false,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [navigate, redirectPath]);
-
   // Error recovery actions
   const handleErrorAction = useCallback(() => {
     if (!loginError) return;
@@ -538,10 +542,7 @@ export function LoginPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen flex items-center justify-center relative overflow-hidden transition-colors duration-500 ${
-      false ? 'bg-gradient-to-br from-gray-900 via-blue-950 to-orange-900' 
-        : 'bg-gradient-to-br from-blue-950 via-blue-900 to-orange-600'
-    }`}>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden transition-colors duration-500 bg-gradient-to-br from-orange-100 via-blue-50 to-orange-200">
       <AnimatedBackground />
       <ConnectionStatus isOnline={isOnline} />
 
@@ -550,9 +551,61 @@ export function LoginPage() {
         <BrandingSection isDark={false} />
 
         {/* Login section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
-          <Card className="w-full max-w-md border shadow-2xl rounded-2xl bg-white border-gray-200 text-gray-900 card-plain">
-            <CardHeader className="space-y-6 pb-6 pt-8 px-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-orange-50 to-blue-50">
+          <Card className="w-full max-w-md border shadow-2xl rounded-2xl bg-gradient-to-br from-orange-50/90 to-blue-50/90 backdrop-blur-sm border-orange-200/50 text-orange-900 card-plain relative overflow-hidden">
+            {/* Animated particles for card */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`absolute w-1 h-1 rounded-full animate-float ${
+                    i % 3 === 0 ? 'bg-orange-400' : 
+                    i % 3 === 1 ? 'bg-blue-400' : 'bg-amber-400'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 4}s`,
+                    animationDuration: `${6 + Math.random() * 3}s`,
+                  }}
+                />
+              ))}
+              {/* Larger floating particles */}
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={`large-${i}`}
+                  className={`absolute w-2 h-2 rounded-full animate-drift opacity-60 ${
+                    i % 2 === 0 ? 'bg-orange-300' : 'bg-blue-300'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 5}s`,
+                    animationDuration: `${8 + Math.random() * 4}s`,
+                  }}
+                />
+              ))}
+              {/* Medium particles with pulse */}
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={`medium-${i}`}
+                  className={`absolute w-1.5 h-1.5 rounded-full animate-pulse opacity-40 ${
+                    i % 2 === 0 ? 'bg-orange-500' : 'bg-blue-500'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`,
+                  }}
+                />
+              ))}
+              {/* Subtle gradient orbs */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob bg-orange-300" />
+              <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full mix-blend-soft-light filter blur-xl opacity-15 animate-blob bg-blue-300" />
+              <div className="absolute top-1/2 right-1/4 w-24 h-24 rounded-full mix-blend-soft-light filter blur-xl opacity-10 animate-blob bg-amber-300" />
+            </div>
+            <CardHeader className="space-y-6 pb-6 pt-8 px-8 relative z-10">
               {/* Enhanced logo section */}
               <div className="flex justify-center mb-4">
                 <div className="relative group">
@@ -566,26 +619,19 @@ export function LoginPage() {
                 </div>
               </div>
               
-              {/* Enhanced system badge */}
-              <div className="flex justify-center">
-              </div>
               
               <div className="text-center space-y-3">
-                <CardTitle className={`text-4xl font-bold tracking-tight ${
-                  isDark ? 'text-white' : 'text-gray-900'
-                }`}>
+                <CardTitle className="text-4xl font-bold tracking-tight text-orange-900">
                   Welcome Back
                 </CardTitle>
-                <CardDescription className={`text-base font-medium ${
-                  isDark ? 'text-gray-300' : 'text-gray-600'
-                }`}>
+                <CardDescription className="text-base font-medium text-orange-700">
                   Sign in to access your comprehensive inventory dashboard
                 </CardDescription>
               </div>
             </CardHeader>
 
             <form onSubmit={form.handleSubmit(handleSubmit)} noValidate className="space-y-0">
-              <CardContent className="space-y-6 px-8">
+              <CardContent className="space-y-6 px-8 relative z-10">
                 {/* Enhanced error display */}
                 {loginError && (
                   <EnhancedErrorAlert 
@@ -607,9 +653,7 @@ export function LoginPage() {
 
                 {/* Enhanced email field */}
                 <div className="space-y-3">
-                  <Label htmlFor="email" className={`text-sm font-semibold ${
-                    isDark ? 'text-gray-200' : 'text-gray-700'
-                  }`}>
+                  <Label htmlFor="email" className="text-sm font-semibold text-orange-800">
                     Email Address *
                   </Label>
                   <div className="relative group">
@@ -617,7 +661,7 @@ export function LoginPage() {
                       <Mail className={`h-5 w-5 transition-colors ${
                         form.formState.errors.email 
                           ? 'text-red-500' 
-                          : 'text-blue-500 group-focus-within:text-orange-600'
+                          : 'text-orange-600 group-focus-within:text-blue-600'
                       }`} />
                     </div>
                     <Input
@@ -628,14 +672,10 @@ export function LoginPage() {
                       autoComplete="email"
                       aria-describedby={form.formState.errors.email ? 'email-error' : undefined}
                       {...form.register('email')}
-                      className={`h-14 text-gray-900 placeholder-gray-400 border pl-12 pr-4 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-orange-200 focus:border-orange-300 ${
-                        isDark 
-                          ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500' 
-                          : 'bg-white border-gray-200'
-                      } ${
+                      className={`h-14 text-orange-900 placeholder-orange-400 border pl-12 pr-4 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-orange-50/50 ${
                         form.formState.errors.email 
                           ? 'border-red-400/70 focus:ring-red-200 focus:border-red-400' 
-                          : 'hover:border-gray-300'
+                          : 'hover:border-orange-300'
                       }`}
                     />
                     {form.formState.errors.email ? (
@@ -659,14 +699,12 @@ export function LoginPage() {
                 {/* Enhanced password field */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className={`text-sm font-semibold ${
-                      isDark ? 'text-gray-200' : 'text-gray-700'
-                    }`}>
+                    <Label htmlFor="password" className="text-sm font-semibold text-orange-800">
                       Password *
                     </Label>
                     <Link
                       to="/forgot-password"
-                      className="text-sm font-medium text-blue-600 hover:text-orange-600 transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-orange-200 rounded px-1 py-0.5"
+                      className="text-sm font-medium text-orange-600 hover:text-blue-600 transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-orange-200 rounded px-1 py-0.5"
                     >
                       Forgot password?
                     </Link>
@@ -676,7 +714,7 @@ export function LoginPage() {
                       <Lock className={`h-5 w-5 transition-colors ${
                         form.formState.errors.password 
                           ? 'text-red-500' 
-                          : 'text-blue-500 group-focus-within:text-orange-600'
+                          : 'text-orange-600 group-focus-within:text-blue-600'
                       }`} />
                     </div>
                     <Input
@@ -686,14 +724,10 @@ export function LoginPage() {
                       autoComplete="current-password"
                       aria-describedby={form.formState.errors.password ? 'password-error' : undefined}
                       {...form.register('password')}
-                      className={`h-14 text-gray-900 placeholder-gray-400 border pl-12 pr-20 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-orange-200 focus:border-orange-300 ${
-                        isDark 
-                          ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500' 
-                          : 'bg-white border-gray-200'
-                      } ${
+                      className={`h-14 text-orange-900 placeholder-orange-400 border pl-12 pr-20 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-orange-50/50 ${
                         form.formState.errors.password 
                           ? 'border-red-400/70 focus:ring-red-200 focus:border-red-400' 
-                          : 'hover:border-gray-300'
+                          : 'hover:border-orange-300'
                       }`}
                     />
                     
@@ -708,9 +742,7 @@ export function LoginPage() {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className={`p-1 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-200 ${
-                            isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
-                          }`}
+                          className="p-1 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-orange-500 hover:text-orange-700"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -736,28 +768,26 @@ export function LoginPage() {
                     id="rememberMe"
                     type="checkbox"
                     {...form.register('rememberMe')}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-colors"
+                    className="w-4 h-4 text-orange-600 bg-orange-50 border-orange-300 rounded focus:ring-orange-500 focus:ring-2 transition-colors"
                   />
                   <Label 
                     htmlFor="rememberMe" 
-                    className={`text-sm font-medium cursor-pointer select-none ${
-                      isDark ? 'text-gray-300' : 'text-gray-700'
-                    }`}
+                    className="text-sm font-medium cursor-pointer select-none text-orange-800"
                   >
                     Keep me signed in for 30 days
                   </Label>
                 </div>
               </CardContent>
 
-              <CardFooter className="flex flex-col px-8 pb-8 pt-6 space-y-4">
+              <CardFooter className="flex flex-col px-8 pb-8 pt-6 space-y-4 relative z-10">
                 {/* Enhanced submit button */}
                 <Button 
                   type="submit" 
-                  className="w-full h-16 bg-gradient-to-r from-blue-700 via-purple-600 to-orange-600 hover:from-blue-800 hover:via-purple-700 hover:to-orange-700 text-white font-bold transition-all duration-500 shadow-2xl hover:shadow-3xl rounded-xl disabled:opacity-70 group relative overflow-hidden"
+                  className="w-full h-16 bg-gradient-to-r from-orange-600 via-blue-500 to-orange-700 hover:from-orange-700 hover:via-blue-600 hover:to-orange-800 text-white font-bold transition-all duration-500 shadow-2xl hover:shadow-3xl rounded-xl disabled:opacity-70 group relative overflow-hidden"
                   disabled={isLoading || isRateLimited || !form.formState.isValid}
                 >
                   {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-blue-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   <div className="relative z-10 flex items-center justify-center space-x-3">
                     {isLoading ? (
@@ -780,41 +810,6 @@ export function LoginPage() {
                   </div>
                 </Button>
 
-                {/* Development test login - Enhanced */}
-                {import.meta.env.DEV && (
-                  <div className="mt-6 w-full space-y-3">
-                    <div className="relative flex items-center py-3">
-                      <div className={`flex-grow border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`} />
-                      <span className="flex-shrink mx-4 text-blue-600 text-sm font-medium bg-blue-50 px-3 py-1 rounded-full">
-                        Development Mode
-                      </span>
-                      <div className={`flex-grow border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`} />
-                    </div>
-                    
-                    <Button
-                      type="button"
-                      onClick={handleTestLogin}
-                      className={`w-full h-12 font-medium transition-all duration-300 rounded-xl border shadow-sm hover:shadow-md focus:ring-2 focus:ring-orange-200 focus:ring-offset-2 ${
-                        isDark 
-                          ? 'bg-orange-900/20 hover:bg-orange-900/30 text-orange-400 border-orange-700/30' 
-                          : 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-700 border-orange-400/30'
-                      }`}
-                      disabled={isLoading}
-                    >
-                      <div className="flex items-center justify-center space-x-2">
-                        <span className="text-lg">🧪</span>
-                        <span>Quick Test Login</span>
-                        <Badge variant="secondary" className="ml-2 text-xs">Dev</Badge>
-                      </div>
-                    </Button>
-                    
-                    <p className={`text-xs text-center ${
-                      isDark ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      Uses pre-configured test credentials for development
-                    </p>
-                  </div>
-                )}
               </CardFooter>
             </form>
           </Card>
@@ -862,6 +857,33 @@ export function LoginPage() {
           }
         }
         
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px); 
+          }
+          25% { 
+            transform: translateY(-10px) translateX(5px); 
+          }
+          50% { 
+            transform: translateY(-5px) translateX(-3px); 
+          }
+          75% { 
+            transform: translateY(-15px) translateX(8px); 
+          }
+        }
+        
+        @keyframes drift {
+          0%, 100% { 
+            transform: translateX(0px) translateY(0px); 
+          }
+          33% { 
+            transform: translateX(20px) translateY(-10px); 
+          }
+          66% { 
+            transform: translateX(-15px) translateY(5px); 
+          }
+        }
+        
         .animate-blob {
           animation: blob 7s infinite;
         }
@@ -876,6 +898,14 @@ export function LoginPage() {
         
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-drift {
+          animation: drift 8s ease-in-out infinite;
         }
         
         .animation-delay-100 {
@@ -900,13 +930,13 @@ export function LoginPage() {
         }
         
         /* Custom focus styles */
-        .focus-visible\\:ring-orange-500:focus-visible {
-          --tw-ring-color: rgb(249 115 22);
+        .focus-visible\\:ring-amber-500:focus-visible {
+          --tw-ring-color: rgb(245 158 11);
         }
         
         /* Gradient text utilities */
         .text-gradient {
-          background: linear-gradient(135deg, #3b82f6, #f97316);
+          background: linear-gradient(135deg, #f59e0b, #f97316);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
