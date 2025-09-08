@@ -131,6 +131,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
     }
   }, [user]);
   const navigate = useNavigate();
+  const [mainOpen, setMainOpen] = useState(true);
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [assetOpen, setAssetOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
@@ -152,7 +153,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
   };
 
   const getNavClassName = (path: string, exact = false) => {
-    const baseClasses = "w-full justify-start transition-all duration-200 rounded-md px-3 py-2";
+    const baseClasses = `w-full justify-${collapsed ? 'center' : 'start'} transition-all duration-200 rounded-md px-3 py-2`;
     if (isActive(path, exact)) {
       return `${baseClasses} bg-sidebar-accent/80 text-black font-medium border-l-4 border-sidebar-accent-foreground`;
     }
@@ -233,107 +234,196 @@ export function AppSidebar({ className }: AppSidebarProps) {
         </SidebarHeader>
         
         <SidebarContent className="px-2 space-y-2 relative z-10">
+        {/* Main Menu Items */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-black">Main</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClassName(item.url, item.exact)}>
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+          {collapsed ? (
+            // When collapsed, show all items as individual icons with tooltips
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mainMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClassName(item.url, item.exact)} title={item.title}>
+                        <item.icon className="h-4 w-4" />
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          ) : (
+            // When expanded, show collapsible group
+            <Collapsible open={mainOpen} onOpenChange={setMainOpen}>
+              <CollapsibleTrigger asChild>
+                <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                  Main
+                  <ChevronDown className={`h-4 w-4 transition-transform ${mainOpen ? 'rotate-180' : ''}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {mainMenuItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavClassName(item.url, item.exact)}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </SidebarGroup>
 
+        {/* Spare Management Section */}
         <SidebarGroup>
-          <Collapsible open={inventoryOpen} onOpenChange={setInventoryOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Spare Management
-                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />}
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {inventoryMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavClassName(item.url)}>
-                          <item.icon className="h-4 w-4" />
-                          {!collapsed && <span>{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
+          {collapsed ? (
+            // When collapsed, show all items as individual icons with tooltips
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {inventoryMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClassName(item.url)} title={item.title}>
+                        <item.icon className="h-4 w-4" />
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          ) : (
+            // When expanded, show collapsible group
+            <Collapsible open={inventoryOpen} onOpenChange={setInventoryOpen}>
+              <CollapsibleTrigger asChild>
+                <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                  Spare Management
+                  <ChevronDown className={`h-4 w-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {inventoryMenuItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavClassName(item.url)}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </SidebarGroup>
 
+        {/* Asset Management Section */}
         <SidebarGroup>
-          <Collapsible open={assetOpen} onOpenChange={setAssetOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Asset Management
-                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${assetOpen ? 'rotate-180' : ''}`} />}
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {[
-                    { title: "Inventory", url: "/dashboard/inventory", icon: MdOutlineInventory2 },
-                    { title: "Tools", url: "/dashboard/tools", icon: BsTools },
-                    { title: "General Tools", url: "/dashboard/general-tools", icon: TbTools }
-                  ].map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavClassName(item.url)}>
-                          <item.icon className="h-4 w-4" />
-                          {!collapsed && <span>{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
+          {collapsed ? (
+            // When collapsed, show all items as individual icons with tooltips
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {[
+                  { title: "Inventory", url: "/dashboard/inventory", icon: MdOutlineInventory2 },
+                  { title: "Tools", url: "/dashboard/tools", icon: BsTools },
+                  { title: "General Tools", url: "/dashboard/general-tools", icon: TbTools }
+                ].map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClassName(item.url)} title={item.title}>
+                        <item.icon className="h-4 w-4" />
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          ) : (
+            // When expanded, show collapsible group
+            <Collapsible open={assetOpen} onOpenChange={setAssetOpen}>
+              <CollapsibleTrigger asChild>
+                <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                  Asset Management
+                  <ChevronDown className={`h-4 w-4 transition-transform ${assetOpen ? 'rotate-180' : ''}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {[
+                      { title: "Inventory", url: "/dashboard/inventory", icon: MdOutlineInventory2 },
+                      { title: "Tools", url: "/dashboard/tools", icon: BsTools },
+                      { title: "General Tools", url: "/dashboard/general-tools", icon: TbTools }
+                    ].map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavClassName(item.url)}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </SidebarGroup>
 
+        {/* Documents & Reports Section */}
         <SidebarGroup>
-          <Collapsible open={documentsOpen} onOpenChange={setDocumentsOpen}>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                Documents & Reports
-                {!collapsed && <ChevronDown className={`h-4 w-4 transition-transform ${documentsOpen ? 'rotate-180' : ''}`} />}
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {documentsMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavClassName(item.url)}>
-                          <item.icon className="h-4 w-4" />
-                          {!collapsed && <span>{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </Collapsible>
+          {collapsed ? (
+            // When collapsed, show all items as individual icons with tooltips
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {documentsMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClassName(item.url)} title={item.title}>
+                        <item.icon className="h-4 w-4" />
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          ) : (
+            // When expanded, show collapsible group
+            <Collapsible open={documentsOpen} onOpenChange={setDocumentsOpen}>
+              <CollapsibleTrigger asChild>
+                <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
+                  Documents & Reports
+                  <ChevronDown className={`h-4 w-4 transition-transform ${documentsOpen ? 'rotate-180' : ''}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {documentsMenuItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavClassName(item.url)}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </SidebarGroup>
       </SidebarContent>
 
@@ -343,7 +433,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`w-full justify-start h-16 ${collapsed ? 'px-3' : 'px-4'} group hover:bg-accent/20 transition-all duration-500 ease-out rounded-2xl border border-border/20 hover:border-primary/30 hover:shadow-lg active:scale-[0.98] bg-gradient-to-r from-background/50 to-accent/5`}
+                className={`w-full justify-center h-16 ${collapsed ? 'px-3' : 'px-4'} group hover:bg-accent/20 transition-all duration-500 ease-out rounded-2xl border border-border/20 hover:border-primary/30 hover:shadow-lg active:scale-[0.98] bg-gradient-to-r from-background/50 to-accent/5`}
               >
                 <div className={`flex items-center ${collapsed ? 'justify-center w-full' : 'space-x-3 w-full'}`}>
                   <div className="relative">
@@ -375,15 +465,17 @@ export function AppSidebar({ className }: AppSidebarProps) {
                       )}
                     </Avatar>
                     
-                    {/* Refresh button */}
-                    <button 
-                      type="button"
-                      className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-background border-2 border-border shadow-xl p-0 opacity-0 group-hover:opacity-100 transition-all duration-500 hover:bg-accent hover:scale-110 active:scale-95 flex items-center justify-center hover:border-primary/50"
-                      onClick={handleRefreshAvatar}
-                      title="Refresh avatar"
-                    >
-                      <RotateCcw className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors duration-300" />
-                    </button>
+                    {/* Refresh button - only show when not collapsed */}
+                    {!collapsed && (
+                      <button 
+                        type="button"
+                        className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-background border-2 border-border shadow-xl p-0 opacity-0 group-hover:opacity-100 transition-all duration-500 hover:bg-accent hover:scale-110 active:scale-95 flex items-center justify-center hover:border-primary/50"
+                        onClick={handleRefreshAvatar}
+                        title="Refresh avatar"
+                      >
+                        <RotateCcw className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors duration-300" />
+                      </button>
+                    )}
                   </div>
                   
                   {!collapsed && (
@@ -447,22 +539,24 @@ export function AppSidebar({ className }: AppSidebarProps) {
           <div className="space-y-3 w-full">
             <Button 
               variant="outline" 
-              className="w-full h-12 rounded-xl border-2 border-border/40 hover:border-primary/50 bg-background/60 hover:bg-accent/20 transition-all duration-500 group hover:shadow-lg active:scale-[0.98] font-semibold"
+              className="w-full h-12 rounded-xl border-2 border-border/40 hover:border-primary/50 bg-background/60 hover:bg-accent/20 transition-all duration-500 group hover:shadow-lg active:scale-[0.98] font-semibold justify-center"
               size="sm"
               onClick={() => navigate('/login')}
+              title={collapsed ? 'Sign In' : undefined}
             >
-              <LogIn className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-primary transition-all duration-500" />
-              {!collapsed && <span>Sign In</span>}
+              <LogIn className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-all duration-500" />
+              {!collapsed && <span className="ml-3">Sign In</span>}
             </Button>
             
             <Button 
               variant="default" 
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:from-primary hover:to-primary/90 shadow-xl hover:shadow-2xl transition-all duration-500 group active:scale-[0.98] border-0 font-bold"
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:from-primary hover:to-primary/90 shadow-xl hover:shadow-2xl transition-all duration-500 group active:scale-[0.98] border-0 font-bold justify-center"
               size="sm"
               onClick={() => navigate('/register')}
+              title={collapsed ? 'Get Started' : undefined}
             >
-              <UserPlus className="mr-3 h-4 w-4 transition-all duration-500 group-hover:scale-110" />
-              {!collapsed && <span>Get Started</span>}
+              <UserPlus className="h-4 w-4 transition-all duration-500 group-hover:scale-110" />
+              {!collapsed && <span className="ml-3">Get Started</span>}
             </Button>
           </div>
         )}

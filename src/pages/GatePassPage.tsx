@@ -353,7 +353,7 @@ const GatePassPage = () => {
   };
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-br from-[#f8f5ee] to-[#f0e9db] py-8 px-4 sm:px-6">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8 px-4 sm:px-6">
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 text-center sm:text-left">
