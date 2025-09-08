@@ -18,7 +18,6 @@ import GatePassPage from "./pages/GatePassPage";
 import SystemSettingsPage from "./pages/SystemSettingsPage";
 import IssuancePage from "./pages/IssuancePage";
 import LoginPage from "./pages/LoginPage";
-import { RegisterPage } from "./pages/RegisterPage";
 import { DevOnlyRoute } from './components/auth/ProtectedRoute';
 import AddUserPage from './pages/AddUserPage';
 import UsersPage from './pages/UsersPage';
@@ -103,7 +102,6 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       {/* Top-level aliases to avoid 404s when users navigate directly */}
       <Route path="/users" element={<Navigate to="/dashboard/users" replace />} />
