@@ -1,7 +1,8 @@
 import { ReactNode, useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Bell, Settings, User, ChevronRight } from "lucide-react";
+import { Bell, Settings, User, ChevronRight, Home } from "lucide-react";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -22,6 +23,45 @@ export function AppLayout({ children }: AppLayoutProps) {
       clearInterval(timer);
     };
   }, []);
+  
+  // Get current location
+  const location = useLocation();
+  
+  // Generate breadcrumb items based on the current path
+  const generateBreadcrumbs = () => {
+    const pathnames = location.pathname.split('/').filter((x) => x);
+    const breadcrumbs = [];
+    
+    // Add Home as the first breadcrumb
+    breadcrumbs.push({
+      name: 'Home',
+      path: '/dashboard',
+      isCurrent: pathnames.length === 0
+    });
+    
+    // Generate breadcrumbs from path
+    let currentPath = '';
+    pathnames.forEach((name, index) => {
+      currentPath += `/${name}`;
+      
+      // Skip 'dashboard' from breadcrumb
+      if (name === 'dashboard') return;
+      
+      // Format name for display
+      const displayName = name
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      breadcrumbs.push({
+        name: displayName,
+        path: currentPath,
+        isCurrent: index === pathnames.length - 1
+      });
+    });
+    
+    return breadcrumbs;
+  };
   
   // Format time and date
   const formattedTime = currentTime.toLocaleTimeString([], {
@@ -70,14 +110,26 @@ export function AppLayout({ children }: AppLayoutProps) {
                     </div>
                   </div>
                   
-                  {/* Professional Breadcrumb */}
+                  {/* Dynamic Breadcrumb */}
                   <nav className="hidden lg:flex items-center text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 px-4 py-2 rounded-full border border-slate-200/60 dark:border-slate-700/60">
-                    <ol className="flex items-center space-x-3">
-                      <li className="font-medium text-slate-900 dark:text-slate-100">Dashboard</li>
-                      <ChevronRight className="h-3 w-3 text-slate-400" />
-                      <li className="font-medium text-slate-900 dark:text-slate-100">Inventory</li>
-                      <ChevronRight className="h-3 w-3 text-slate-400" />
-                      <li className="text-slate-500 dark:text-slate-400">Overview</li>
+                    <ol className="flex items-center space-x-2">
+                      {generateBreadcrumbs().map((breadcrumb, index) => (
+                        <li key={breadcrumb.path} className="flex items-center">
+                          {index > 0 && <ChevronRight className="h-3.5 w-3.5 text-slate-400 mx-1" />}
+                          {breadcrumb.isCurrent ? (
+                            <span className={`${index === 0 ? 'text-primary' : 'text-slate-500 dark:text-slate-400'}`}>
+                              {index === 0 ? <Home className="h-3.5 w-3.5" /> : breadcrumb.name}
+                            </span>
+                          ) : (
+                            <Link 
+                              to={breadcrumb.path}
+                              className="text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary transition-colors"
+                            >
+                              {index === 0 ? <Home className="h-3.5 w-3.5" /> : breadcrumb.name}
+                            </Link>
+                          )}
+                        </li>
+                      ))}
                     </ol>
                   </nav>
                 </div>
@@ -92,7 +144,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shadow-lg shadow-emerald-500/50"></div>
                       <div className="absolute inset-0 h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></div>
                     </div>
-                    <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">System Operational</span>
+                    <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Running</span>
                   </div>
                 </div>
 
