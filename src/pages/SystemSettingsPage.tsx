@@ -150,7 +150,7 @@ const SystemSettingsPage = () => {
             <div className="p-6 space-y-6">
               {/* Report Type Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-3">Report Type</label>
+                <label className="block text-sm font-bold text-gray-600 mb-3">Report Type</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {[
                     { value: 'full', label: 'Full Report', desc: 'Complete system overview', color: 'from-blue-600 to-blue-800' },

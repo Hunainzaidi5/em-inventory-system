@@ -131,7 +131,6 @@ export function AppSidebar({ className }: AppSidebarProps) {
     }
   }, [user]);
   const navigate = useNavigate();
-  const [mainOpen, setMainOpen] = useState(true);
   const [inventoryOpen, setInventoryOpen] = useState(true);
   const [assetOpen, setAssetOpen] = useState(true);
   const [documentsOpen, setDocumentsOpen] = useState(true);
@@ -236,48 +235,21 @@ export function AppSidebar({ className }: AppSidebarProps) {
         <SidebarContent className="px-2 space-y-2 relative z-10">
         {/* Main Menu Items */}
         <SidebarGroup>
-          {collapsed ? (
-            // When collapsed, show all items as individual icons with tooltips
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {mainMenuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClassName(item.url, item.exact)} title={item.title}>
-                        <item.icon className="h-4 w-4" />
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          ) : (
-            // When expanded, show collapsible group
-            <Collapsible open={mainOpen} onOpenChange={setMainOpen}>
-              <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="flex cursor-pointer text-black items-center justify-between hover:bg-sidebar-accent/30 px-2 py-1 rounded">
-                  Main
-                  <ChevronDown className={`h-4 w-4 transition-transform ${mainOpen ? 'rotate-180' : ''}`} />
-                </SidebarGroupLabel>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {mainMenuItems.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <NavLink to={item.url} className={getNavClassName(item.url, item.exact)}>
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
+          {!collapsed && <SidebarGroupLabel className="text-black">Main</SidebarGroupLabel>}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {mainMenuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} className={getNavClassName(item.url, item.exact)} title={collapsed ? item.title : undefined}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Spare Management Section */}
@@ -514,6 +486,14 @@ export function AppSidebar({ className }: AppSidebarProps) {
               >
                 <User className="mr-3 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
                 <span>Profile</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => navigate('/dashboard/users')}
+                className="mx-1 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 hover:bg-accent/30 focus:bg-accent/30 group hover:shadow-sm"
+              >
+                <Users className="mr-3 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+                <span>User Management</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
