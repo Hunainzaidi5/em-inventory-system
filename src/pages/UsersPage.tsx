@@ -110,13 +110,19 @@ const UsersPage = () => {
 
   return (
     <PageContainer>
-      <div className="py-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">User Management (Developer Only)</h1>
+      <div className="py-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#4a4539]">User Management</h1>
+          <p className="text-sm text-[#6b6557] mt-1">Manage system users and their permissions</p>
+        </div>
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-[#8b7c5a] text-white rounded-md hover:bg-[#6b6149] transition-colors duration-200 flex items-center gap-2 shadow-sm"
           onClick={() => navigate('/dashboard/add-user')}
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
           Add User
         </button>
       </div>
@@ -124,32 +130,42 @@ const UsersPage = () => {
       {loadingUsers ? (
         <div className="text-center py-8">Loading users...</div>
       ) : users.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">
-            No users found. Add your first user to get started.
+        <div className="text-center py-12 bg-[#f8f5ed] rounded-lg border border-[#e1d4b1] p-8">
+          <svg className="mx-auto h-12 w-12 text-[#8b7c5a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <h3 className="mt-2 text-lg font-medium text-[#4a4539]">No users found</h3>
+          <p className="mt-1 text-sm text-[#6b6557]">
+            Get started by adding a new user to the system.
           </p>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            onClick={() => navigate('/dashboard/add-user')}
-          >
-            Add User
-          </button>
+          <div className="mt-6">
+            <button
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#8b7c5a] hover:bg-[#6b6149] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8b7c5a] transition-colors duration-200"
+              onClick={() => navigate('/dashboard/add-user')}
+            >
+              <svg className="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              Add User
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden border border-[#e1d4b1]">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-[#e1d4b1]">
+            <thead className="bg-[#f8f5ed]">
               <tr>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-[#6b6557] uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('display_name')}
                 >
                   <div className="flex items-center">
-                    Name {getSortIndicator('display_name')}
+                    <span className="mr-1">Name</span> {getSortIndicator('display_name')}
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('email')}
                 >
                   <div className="flex items-center">
@@ -157,7 +173,7 @@ const UsersPage = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('role')}
                 >
                   <div className="flex items-center">
@@ -165,7 +181,7 @@ const UsersPage = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('department')}
                 >
                   <div className="flex items-center">
@@ -173,7 +189,7 @@ const UsersPage = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('employee_id')}
                 >
                   <div className="flex items-center">
@@ -181,28 +197,36 @@ const UsersPage = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-[#f0e9d9] transition-colors duration-150"
                   onClick={() => requestSort('is_active')}
                 >
                   <div className="flex items-center">
                     Status {getSortIndicator('is_active')}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6557] uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-[#f0e9d9]">
               {sortedUsers.map((user) => (
                 <tr key={user.id}>
-                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.display_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#4a4539]">{user.display_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6b6557]">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      user.role === 'dev' ? 'bg-purple-100 text-purple-800' :
+                      user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
+                      user.role === 'deputy_manager' ? 'bg-indigo-100 text-indigo-800' :
+                      user.role === 'engineer' ? 'bg-green-100 text-green-800' :
+                      user.role === 'assistant_engineer' ? 'bg-emerald-100 text-emerald-800' :
+                      user.role === 'master_technician' ? 'bg-amber-100 text-amber-800' :
+                      'bg-red-100 text-red-800' // Default for technician and others
+                    }`}>
                       {formatRoleName(user.role as UserRole)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.department}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.employee_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6b6557]">{user.department}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6b6557] font-mono">{user.employee_id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -212,15 +236,21 @@ const UsersPage = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      className="text-[#8b7c5a] hover:text-[#6b6149] mr-4 transition-colors duration-150 flex items-center"
                       onClick={() => navigate(`/dashboard/edit-user/${user.id}`)}
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
                       Edit
                     </button>
                     <button
-                      className="text-red-600 hover:text-red-900"
+                      className="text-[#c53030] hover:text-[#9b2c2c] transition-colors duration-150 flex items-center"
                       onClick={() => handleDeleteUser(user.id)}
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
                       Delete
                     </button>
                   </td>
@@ -228,6 +258,7 @@ const UsersPage = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
       </div>
