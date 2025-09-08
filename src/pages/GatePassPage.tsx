@@ -211,7 +211,7 @@ const GatePassPage = () => {
       const link = document.createElement('a');
       link.href = url;
       
-      const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = new Date().toISOString().split('T')[0];
       link.download = `GatePass_${currentDate}_${Date.now()}.xls`;
       
       document.body.appendChild(link);
@@ -450,7 +450,7 @@ const GatePassPage = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.issuerName && formData.date ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.issuerName && formData.date ? '🟢' : '🔴'}</span>
               <span className="font-medium">Basic Info</span>
             </div>
             <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
@@ -458,7 +458,7 @@ const GatePassPage = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.tools.some(t => t.description) ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.tools.some(t => t.description) ? '🟢' : '🔴'}</span>
               <span className="font-medium">Tools Added</span>
             </div>
             <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
@@ -466,14 +466,14 @@ const GatePassPage = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.receiver.name ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.receiver.name ? '🟢' : '🔴'}</span>
               <span className="font-medium">Receiver Info</span>
             </div>
           </div>
         </div>
 
             {/* Issuer Information */}
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
+            <div className="bg-gradient-to-br from-[#f5f1e8] to-[#e9e0d0] p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
               <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] rounded-xl flex items-center justify-center mr-4 mb-3 sm:mb-0 flex-shrink-0">
                   <span className="text-white text-xl">👤</span>
@@ -579,8 +579,8 @@ const GatePassPage = () => {
             </div>
 
             {/* Tools Section */}
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
-              <div className="mb-6">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-[#e1d4b1]/30 overflow-hidden mb-8">
+              <div className="p-6 border-b border-[#e1d4b1]/30">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                   <div className="flex items-center mb-4 md:mb-0">
                     <div className="w-12 h-12 bg-gradient-to-r from-[#8c7a5c] to-[#6b5d45] rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
@@ -720,7 +720,7 @@ const GatePassPage = () => {
             </div>
 
             {/* Receiver Information */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl mb-8 border border-purple-100">
+            <div className="bg-gradient-to-br from-[#f0e9db] to-[#e5dcc7] p-6 rounded-2xl mb-8 border border-[#e1d4b1] shadow-sm">
               <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-[#8c7a5c] to-[#6b5d45] rounded-xl flex items-center justify-center mr-4 mb-3 sm:mb-0 flex-shrink-0">
                   <span className="text-white text-xl">👥</span>

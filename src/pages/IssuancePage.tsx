@@ -472,7 +472,7 @@ const IssuancePage: React.FC = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.issuerName && formData.date ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.issuerName && formData.date ? '🟢' : '🔴'}</span>
               <span className="font-medium">Basic Info</span>
             </div>
             <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
@@ -480,7 +480,7 @@ const IssuancePage: React.FC = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.tools.some(t => t.description) ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.tools.some(t => t.description) ? '🟢' : '🔴'}</span>
               <span className="font-medium">Tools Added</span>
             </div>
             <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
@@ -488,7 +488,7 @@ const IssuancePage: React.FC = () => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              <span className="text-lg">{formData.receiver.name ? '✔' : '✗'}</span>
+              <span className="text-lg">{formData.receiver.name ? '🟢' : '🔴'}</span>
               <span className="font-medium">Receiver Info</span>
             </div>
           </div>
