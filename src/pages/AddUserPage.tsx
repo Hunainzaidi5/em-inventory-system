@@ -200,35 +200,37 @@ const AddUserPage: React.FC = () => {
 
   return (
     <PageContainer>
-      <div className="py-4">
+      <div className="py-6 px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/dashboard/users')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Users
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">
-              {isEditing ? 'Edit User' : 'Add New User'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEditing ? 'Update user information' : 'Create a new user account'}
-            </p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dashboard/users')}
+              className="flex items-center gap-2 text-[#6b6557] hover:bg-[#f0e9d9] hover:text-[#4a4539]"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Users
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-[#4a4539]">
+                {isEditing ? 'Edit User' : 'Add New User'}
+              </h1>
+              <p className="text-sm text-[#6b6557]">
+                {isEditing ? 'Update user information' : 'Create a new user account'}
+              </p>
+            </div>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <UserPlus className="h-5 w-5 icon-accent-indigo" />
+        <Card className="border border-[#e1d4b1] bg-white">
+          <CardHeader className="bg-[#f8f5ed] border-b border-[#e1d4b1]">
+            <CardTitle className="flex items-center gap-2 text-[#4a4539]">
+              <UserPlus className="h-5 w-5 text-[#8b7c5a]" />
               {isEditing ? 'Edit User' : 'New User Details'}
             </CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardDescription className="text-[#6b6557]">
               {isEditing ? 'Update the user information below' : 'Fill in the details to create a new user account'}
             </CardDescription>
           </CardHeader>
@@ -236,14 +238,26 @@ const AddUserPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Avatar Section */}
               <div className="space-y-4">
-                <Label className="text-gray-200">Profile Picture</Label>
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-20 w-20">
-                    <AvatarImage src={avatarPreview} />
-                    <AvatarFallback className="text-lg">
-                      {formData.displayName ? formData.displayName.charAt(0).toUpperCase() : 'U'}
-                    </AvatarFallback>
-                  </Avatar>
+                <Label className="text-[#4a4539] font-medium">Profile Picture</Label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                  <div className="relative">
+                    <Avatar className="h-20 w-20 border-2 border-[#e1d4b1]">
+                      <AvatarImage src={avatarPreview} />
+                      <AvatarFallback className="text-lg bg-[#f8f5ed] text-[#6b6557]">
+                        {formData.displayName ? formData.displayName.charAt(0).toUpperCase() : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    {avatarPreview && (
+                      <button
+                        type="button"
+                        onClick={removeAvatar}
+                        className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md text-[#c53030] hover:bg-[#f0e9d9] transition-colors"
+                        title="Remove image"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                   <div className="space-y-3">
                     <input
                       id="avatar"
@@ -254,44 +268,29 @@ const AddUserPage: React.FC = () => {
                     />
                     <label
                       htmlFor="avatar"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl 
-                                bg-gradient-to-r from-slate-900 to-slate-700 text-white 
-                                font-medium shadow-md hover:from-slate-800 hover:to-slate-600 
-                                active:scale-95 transition-all duration-200 cursor-pointer
-                                focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#8b7c5a] text-white 
+                                font-medium shadow-sm hover:bg-[#6b6149] transition-colors duration-200 cursor-pointer
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8b7c5a]"
                     >
-                      <Upload className="h-5 w-5" />
+                      <Upload className="h-4 w-4" />
                       <span>Upload Image</span>
                     </label>
 
                     {avatarFile && (
-                      <p className="text-sm text-gray-500 font-medium">
+                      <p className="text-sm text-[#6b6557] font-medium">
                         {avatarFile.name}
                       </p>
                     )}
                   </div>
-                    
-                    {avatarPreview && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={removeAvatar}
-                        className="flex items-center gap-2"
-                      >
-                        <X className="h-4 w-4" />
-                        Remove
-                      </Button>
-                    )}
                 </div>
               </div>
 
               <Separator />
 
               {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-200">Email Address *</Label>
+                  <Label htmlFor="email" className="text-[#4a4539] font-medium">Email Address *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -303,7 +302,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="displayName" className="text-gray-200">Display Name *</Label>
+                  <Label htmlFor="displayName" className="text-[#4a4539] font-medium">Display Name *</Label>
                   <Input
                     id="displayName"
                     value={formData.displayName}
@@ -313,15 +312,15 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="text-gray-200">Role *</Label>
+                  <Label htmlFor="role" className="text-[#4a4539] font-medium">Role *</Label>
                   <Select
                     value={formData.role}
                     onValueChange={(value) => handleInputChange('role', value)}
                   >
-                    <SelectTrigger>
-                      <SelectValue />
+                    <SelectTrigger className="hover:border-[#8b7c5a] focus:ring-1 focus:ring-[#8b7c5a]">
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-[#e1d4b1]">
                       {Object.entries({
                         dev: 'Developer/Administrator',
                         manager: 'Department Manager',
@@ -331,7 +330,11 @@ const AddUserPage: React.FC = () => {
                         master_technician: 'Master Technician',
                         technician: 'Technician'
                       }).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
+                        <SelectItem 
+                          key={value} 
+                          value={value}
+                          className="hover:bg-[#f0e9d9] focus:bg-[#f0e9d9]"
+                        >
                           {label}
                         </SelectItem>
                       ))}
@@ -340,7 +343,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="department" className="text-gray-200">Department *</Label>
+                  <Label htmlFor="department" className="text-[#4a4539] font-medium">Department *</Label>
                   <Input
                     id="department"
                     value={formData.department}
@@ -350,7 +353,7 @@ const AddUserPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="employee_id" className="text-gray-200">Employee ID *</Label>
+                  <Label htmlFor="employee_id" className="text-[#4a4539] font-medium">Employee ID *</Label>
                   <Input
                     id="employee_id"
                     value={formData.employee_id}
@@ -365,7 +368,7 @@ const AddUserPage: React.FC = () => {
                 <Separator />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-gray-200">{isEditing ? 'New Password (optional)' : 'Password *'}</Label>
+                    <Label htmlFor="password" className="text-[#4a4539] font-medium">{isEditing ? 'New Password (optional)' : 'Password *'}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -376,7 +379,7 @@ const AddUserPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-gray-200">{isEditing ? 'Confirm New Password (optional)' : 'Confirm Password *'}</Label>
+                    <Label htmlFor="confirmPassword" className="text-[#4a4539] font-medium">{isEditing ? 'Confirm New Password (optional)' : 'Confirm Password *'}</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -389,17 +392,30 @@ const AddUserPage: React.FC = () => {
               </>
 
               {/* Submit Button */}
-              <div className="flex justify-end gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-[#e1d4b1]">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/dashboard/users')}
                   disabled={loading}
+                  className="text-[#6b6557] border-[#d1c4a3] hover:bg-[#f0e9d9] hover:text-[#4a4539] hover:border-[#8b7c5a]"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Saving...' : (isEditing ? 'Update User' : 'Create User')}
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="bg-[#8b7c5a] hover:bg-[#6b6149] text-white transition-colors duration-200"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {isEditing ? 'Updating...' : 'Creating...'}
+                    </>
+                  ) : isEditing ? 'Update User' : 'Create User'}
                 </Button>
               </div>
             </form>
