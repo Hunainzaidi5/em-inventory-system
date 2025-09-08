@@ -138,8 +138,8 @@ const AppRoutes = () => {
         <Route path="stationery" element={<StationeryItemsPage />} />
         <Route path="faulty-returns" element={<FaultyReturnsPage />} />
         <Route path="gate-pass" element={<GatePassPage />} />
-        <Route path="issuance" element={<IssuancePage />} />
         <Route path="issuance-requisition" element={<IssuanceRequisitionPage />} />
+        <Route path="issuance" element={<IssuancePage />} />
         <Route path="settings" element={<SystemSettingsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="add-user" element={<AddUserPage />} />
