@@ -29,7 +29,7 @@ import GeneralToolsPage from "./pages/GeneralToolsPage";
 import ReseedDataPage from './pages/ReseedDataPage';
 import IssuanceRequisitionPage from './pages/IssuanceRequisitionPage';
 import { AuthDebugger } from './components/auth/AuthDebugger';
-import { NotificationsPage } from "./pages/NotificationsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {

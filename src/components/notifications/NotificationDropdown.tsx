@@ -165,26 +165,27 @@ export function NotificationDropdown() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
+        <button
         onClick={() => setIsOpen(!isOpen)}
         className={`relative p-2.5 rounded-xl transition-all duration-200 ease-in-out transform hover:scale-105 ${
-          isOpen 
+            isOpen 
             ? 'bg-[#e1d4b1] shadow-lg' 
             : 'hover:bg-[#e1d4b1]/20 hover:shadow-md'
         }`}
         aria-label="Notifications"
-      >
-        <Bell className={`h-5 w-5 transition-colors duration-200 ${
-          unreadCount > 0 
-            ? 'text-amber-600' 
-            : 'text-slate-600 dark:text-slate-400'
-        }`} />
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold shadow-lg animate-pulse">
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
-        )}
-      </button>
+        >
+        <div className="relative">
+            <div className="p-2 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 shadow-md ring-2 ring-white/70">
+            <Bell className={`h-5 w-5 text-white transition-colors duration-200`} />
+            </div>
+
+            {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold shadow-lg animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+            )}
+        </div>
+        </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-3 w-96 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden z-50 border border-[#e1d4b1]/30 dark:bg-slate-900/95 dark:border-slate-700/50">
