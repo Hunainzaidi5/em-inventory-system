@@ -975,38 +975,6 @@ const IssuancePage: React.FC = () => {
         )}
       </div>
     </div>
-        
-        {/* Status Indicators */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h4 className="text-center text-sm font-semibold text-gray-700 mb-4">Form Completion Status</h4>
-          <div className="flex justify-center space-x-8">
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-              formData.issuerName && formData.date 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
-              <span className="text-lg">{formData.issuerName && formData.date ? '✅' : '❌'}</span>
-              <span className="font-medium">Basic Info</span>
-            </div>
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-              formData.tools.some(t => t.description) 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
-              <span className="text-lg">{formData.tools.some(t => t.description) ? '✅' : '❌'}</span>
-              <span className="font-medium">Tools Added</span>
-            </div>
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-              formData.receiver.name 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
-              <span className="text-lg">{formData.receiver.name ? '✅' : '❌'}</span>
-              <span className="font-medium">Receiver Info</span>
-            </div>
-          </div>
-        </div>
-      
       {/* Hidden container for Excel export reference */}
       <div ref={containerRef} className="hidden">
         {/* This is used for maintaining compatibility if needed */}

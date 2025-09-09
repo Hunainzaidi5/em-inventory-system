@@ -2,7 +2,8 @@ import { ReactNode, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Bell, Settings, User, ChevronRight, Home } from "lucide-react";
+import { Settings, User, ChevronRight, Home } from "lucide-react";
+import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -148,6 +149,11 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </div>
                 </div>
 
+                {/* Notification Dropdown */}
+                <div className="relative">
+                  <NotificationDropdown />
+                </div>
+                
                 {/* Live Time & Date Display */}
                 <div className="flex flex-col items-end">
                   <div className="text-2xl font-bold text-slate-900 dark:text-white">

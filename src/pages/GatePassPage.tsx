@@ -355,55 +355,50 @@ const GatePassPage = () => {
   return (
     <PageContainer className="min-h-screen bg-gradient-to-br from-white via-white to-white py-8 px-4 sm:px-6">
       <div className="w-full max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 text-center sm:text-left">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent mb-2">Gate Pass Management</h1>
-          <p className="text-gray-600">Create and manage gate pass with digital signatures</p>
-        </div>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl mb-8 overflow-hidden border border-[#e1d4b1]/50">
-                <div className="bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] p-1">
-                  <nav className="flex space-x-1 p-1">
-                    <button
-                      onClick={() => setActiveTab('form')}
-                      className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                        activeTab === 'form'
-                          ? 'bg-white text-[#5c4a2a] shadow-lg'
-                          : 'text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <span className="flex items-center justify-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        <span>Edit Form</span>
-                      </span>
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('preview')}
-                      className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                        activeTab === 'preview'
-                          ? 'bg-white text-[#5c4a2a] shadow-lg'
-                          : 'text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <span className="flex items-center justify-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span>Preview</span>
-                      </span>
-                    </button>
-                  </nav>
-                </div>
-                </div>
+        {/* Navigation Tabs */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl mb-8 overflow-hidden border border-[#e1d4b1]/50">
+          <div className="bg-gradient-to-r from-[#b39b6e] to-[#8c7a5c] p-1">
+            <nav className="flex space-x-1 p-1">
+              <button
+                onClick={() => setActiveTab('form')}
+                className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  activeTab === 'form'
+                    ? 'bg-white text-[#5c4a2a] shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span>Edit Form</span>
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab('preview')}
+                className={`flex-1 py-3 px-4 sm:px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  activeTab === 'preview'
+                    ? 'bg-white text-[#5c4a2a] shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>Preview</span>
+                </span>
+              </button>
+            </nav>
+          </div>
+          </div>
 
-        {/* Tab Content */}
-         {activeTab === 'form' && (
-           <div className="p-8">
-             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          {/* Tab Content */}
+          {activeTab === 'form' && (
+            <div className="p-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                <div>
                  <h2 className="text-2xl font-bold text-[#5c4a2a] mb-1">Gate Pass</h2>
                  <p className="text-[#8c7a5c]">Fill in the details below to create a Gate Pass</p>

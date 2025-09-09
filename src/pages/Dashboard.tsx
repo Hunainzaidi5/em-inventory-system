@@ -6,6 +6,7 @@ import userService from '@/services/userService';
 import { spareService } from '@/services/spareService';
 import notificationService from '@/services/notificationService';
 import { useNavigate } from 'react-router-dom';
+import { FirebaseService } from '@/lib/firebaseService';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -86,8 +87,53 @@ export default function Dashboard() {
   const loadRecentActivity = async () => {
     try {
       const reqs = await requisitionService.getAllRequisitions();
-      const sorted = (reqs || []).sort((a: any, b: any) => new Date(b.requested_at || b.created_at || 0).getTime() - new Date(a.requested_at || a.created_at || 0).getTime());
-      const top = sorted.slice(0, 8).map((r: any) => {
+      const seen = new Set();
+      
+      // First, get item details for all requisitions
+      const requisitionsWithDetails = await Promise.all(
+        (reqs || []).map(async (req) => {
+          try {
+            type Item = { name: string; };
+            type User = { displayName: string; };
+            
+            const item = await FirebaseService.getById<Item>('items', req.item_id);
+            const user = await FirebaseService.getById<User>('users', req.user_id);
+            
+            return {
+              ...req,
+              itemName: item?.name || 'Unknown Item',
+              userName: user?.displayName || 'Unknown User'
+            };
+          } catch (error) {
+            console.error('Error fetching item or user details:', error);
+            return {
+              ...req,
+              itemName: 'Unknown Item',
+              userName: 'Unknown User'
+            };
+          }
+        })
+      );
+      
+      const sorted = requisitionsWithDetails
+        // Create a unique key for each activity to detect duplicates
+        .map(r => ({
+          ...r,
+          _activityKey: `${r.type?.toLowerCase()}_${r.item_id}_${r.user_id}_${r.requested_at}_${r.quantity}`
+        }))
+        // Filter out duplicates
+        .filter(r => {
+          if (seen.has(r._activityKey)) return false;
+          seen.add(r._activityKey);
+          return true;
+        })
+        // Sort by date
+        .sort((a, b) => 
+          new Date(b.requested_at || 0).getTime() - 
+          new Date(a.requested_at || 0).getTime()
+        );
+
+      const top = sorted.slice(0, 8).map(r => {
         const type = r.type?.toLowerCase() || '';
         const typeConfig = {
           issue: { color: 'bg-blue-500', text: 'text-blue-600', bg: 'bg-blue-50' },
@@ -99,9 +145,9 @@ export default function Dashboard() {
         
         return {
           action: type,
-          item: r.item_name,
-          user: r.issued_to,
-          time: timeAgo(r.requested_at || r.created_at),
+          item: r.itemName,
+          user: r.userName,
+          time: timeAgo(r.requested_at),
           quantity: Number(r.quantity || 0),
           color: config.color,
           textColor: config.text,
@@ -109,6 +155,7 @@ export default function Dashboard() {
           formattedAction: type === 'issue' ? 'issued' : type === 'return' ? 'returned' : type
         };
       });
+      
       setRecentActivity(top);
     } catch {
       setRecentActivity([]);
@@ -130,6 +177,106 @@ export default function Dashboard() {
       setNotifications([]);
     }
   };
+
+  // Enhanced Components
+const AnimatedBackground = () => (
+  <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
+    <div className="absolute inset-0 opacity-50 bg-gradient-to-br from-orange-100 via-blue-50 to-orange-200" />
+    
+    {/* Small particles with subtle movement */}
+    <div className="absolute inset-0">
+      {[...Array(30)].map((_, i) => {
+        const size = 1 + Math.random() * 2;
+        return (
+          <div
+            key={`small-${i}`}
+            className={`absolute rounded-full animate-float ${
+              i % 3 === 0 ? 'bg-blue-900/40' : 
+              i % 3 === 1 ? 'bg-orange-300/40' : 'bg-amber-300/40'
+            }`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${8 + Math.random() * 8}s`,
+              animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: 'translateZ(0)',
+              willChange: 'transform, opacity',
+              opacity: 0.4 + (Math.random() * 0.4),
+              filter: 'blur(0.5px)'
+            }}
+          />
+        );
+      })}
+    </div>
+    
+    {/* Medium particles with more pronounced movement */}
+    <div className="absolute inset-0">
+      {[...Array(15)].map((_, i) => {
+        const size = 2 + Math.random() * 2;
+        return (
+          <div
+            key={`medium-${i}`}
+            className={`absolute rounded-full animate-float ${
+              i % 3 === 0 ? 'bg-orange-300/50' : 
+              i % 3 === 1 ? 'bg-blue-900/50' : 'bg-amber-300/50'
+            }`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${10 + Math.random() * 10}s`,
+              animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: 'translateZ(0)',
+              willChange: 'transform, opacity',
+              opacity: 0.5 + (Math.random() * 0.3),
+              filter: 'blur(0.5px)'
+            }}
+          />
+        );
+      })}
+    </div>
+    
+    {/* Large particles - more visible movement */}
+    <div className="absolute inset-0">
+      {[...Array(8)].map((_, i) => {
+        const size = 3 + Math.random() * 2;
+        return (
+          <div
+            key={`large-${i}`}
+            className={`absolute rounded-full animate-float ${
+              i % 2 === 0 ? 'bg-orange-500/60' : 'bg-blue-900/60'
+            }`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${12 + Math.random() * 10}s`,
+              animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: 'translateZ(0)',
+              willChange: 'transform, opacity',
+              opacity: 0.6 + (Math.random() * 0.2),
+              filter: 'blur(0.5px)'
+            }}
+          />
+        );
+      })}
+    </div>
+    
+    {/* Gradient blobs */}
+    <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-2000 bg-amber-300" />
+    <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-4000 bg-orange-300" />
+    <div className="absolute top-1/3 left-1/4 w-64 h-64 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob bg-blue-300" />
+    <div className="absolute top-2/3 right-1/3 w-48 h-48 rounded-full mix-blend-soft-light filter blur-xl opacity-15 animate-blob bg-orange-400" />
+    <div className="absolute bottom-1/4 left-1/3 w-56 h-56 rounded-full mix-blend-soft-light filter blur-xl opacity-18 animate-blob bg-amber-400" />
+  </div>
+);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -231,12 +378,81 @@ export default function Dashboard() {
       <div className="space-y-6">
         {/* Welcome Section with Gradient and Grid Pattern */}
         <div className="relative card-surface-dark rounded-2xl shadow-2xl p-10 text-gray-700 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-gray-700/10 rounded-full animate-pulse"></div>
-            <div className="absolute bottom-10 right-20 w-24 h-24 bg-gray-700/5 rounded-full animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 right-10 w-16 h-16 bg-gray-700/10 rounded-full animate-pulse delay-500"></div>
-          </div>
+                     {/* Static particles for card */}
+                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* Small particles */}
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={`card-small-${i}`}
+                  className={`absolute w-1 h-1 rounded-full animate-flicker ${
+                    i % 3 === 0 ? 'bg-orange-400' : 
+                    i % 3 === 1 ? 'bg-blue-900' : 'bg-amber-400'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: '3s',
+                    opacity: '0.4',
+                    transform: 'translateZ(0)',
+                    willChange: 'opacity',
+                  }}
+                />
+              ))}
+              
+              {/* Medium particles */}
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={`card-medium-${i}`}
+                  className={`absolute w-1.5 h-1.5 rounded-full animate-flicker ${
+                    i % 2 === 0 ? 'bg-orange-500' : 'bg-blue-900'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 4}s`,
+                    animationDuration: '4s',
+                    opacity: '0.6',
+                    transform: 'translateZ(0)',
+                    willChange: 'opacity',
+                  }}
+                />
+              ))}
+              
+              {/* Large particles */}
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={`card-large-${i}`}
+                  className={`absolute w-2 h-2 rounded-full animate-flicker ${
+                    i % 2 === 0 ? 'bg-orange-300' : 'bg-blue-900/80'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 5}s`,
+                    animationDuration: '5s',
+                    opacity: '0.3',
+                    transform: 'translateZ(0)',
+                    willChange: 'opacity',
+                  }}
+                />
+              ))}
+              
+              {/* Static gradient orbs */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full mix-blend-soft-light filter blur-xl opacity-20 bg-orange-300" />
+              <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full mix-blend-soft-light filter blur-xl opacity-15 bg-blue-900/70" />
+              <div className="absolute top-1/2 right-1/4 w-24 h-24 rounded-full mix-blend-soft-light filter blur-xl opacity-10 bg-amber-300/50" />
+            </div>
+            
+            {/* Background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-100/50 via-transparent to-orange-200/50"></div>
+            
+            {/* Static circles */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+              <div className="absolute top-10 left-10 w-32 h-32 bg-gray-700/5 rounded-full"></div>
+              <div className="absolute bottom-10 right-20 w-24 h-24 bg-gray-700/5 rounded-full"></div>
+              <div className="absolute top-1/2 right-10 w-16 h-16 bg-gray-700/5 rounded-full"></div>
+            </div>
           
           <div className="relative z-10 flex items-center justify-between">
             <div className="space-y-4">
@@ -246,7 +462,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-400 bg-clip-text text-transparent">E&M Inventory Management System</h2>
-                  <div className="w-24 h-1 bg-gradient-to-r from-blue-900 to-orange-400 rounded-full"></div>
+                  <div className="w-52 h-1 bg-gradient-to-r from-blue-900 to-orange-400 rounded-full"></div>
                 </div>
               </div>
               
@@ -280,9 +496,17 @@ export default function Dashboard() {
                   <BarChart3 size={48} className="text-gray-700/90" />
                 </div>
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center animate-bounce">
-                <Bell size={16} className="text-gray-700" />
-              </div>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-full flex items-center justify-center hover:shadow-lg transition-all duration-300"
+              >
+                <Bell size={16} className="text-gray-600" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -314,11 +538,11 @@ export default function Dashboard() {
                     <IconComponent size={28} className="text-white" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <TrendingUp size={14} className={card.trendUp ? 'text-emerald-600' : 'text-red-600'} />
+                    <TrendingUp size={14} className={card.trendUp ? 'text-white' : 'text-orange-200'} />
                     <span className={`text-sm font-bold px-3 py-1 rounded-full ${
                       card.trendUp 
-                        ? 'text-emerald-200 bg-emerald-600/20 border border-emerald-500/40' 
-                        : 'text-red-200 bg-red-600/20 border border-red-500/40'
+                        ? 'text-white bg-white/20 border border-white/40' 
+                        : 'text-orange-200 bg-orange-600/20 border border-orange-500/40'
                     }`}>
                       {card.trend}
                     </span>
@@ -515,7 +739,7 @@ export default function Dashboard() {
           </div>
           <div className="divide-y">
             {notifications.length === 0 ? (
-              <div className="text-sm text-white py-4">No notifications</div>
+              <div className="text-sm text-gray-600 py-4">No notifications</div>
             ) : notifications.map(n => (
               <div key={n.id} className="py-3 flex items-start justify-between gap-4">
                 <div>
@@ -538,4 +762,162 @@ export default function Dashboard() {
       )}
     </div>
   );
+  <div>
+       {/* Enhanced CSS with additional animations */}
+       <style>{`
+        @keyframes blob {
+          0%, 100% { 
+            transform: translate(0px, 0px) scale(1) rotate(0deg); 
+          }
+          33% { 
+            transform: translate(30px, -50px) scale(1.1) rotate(120deg); 
+          }
+          66% { 
+            transform: translate(-20px, 20px) scale(0.9) rotate(240deg); 
+          }
+        }
+        
+        @keyframes bounce {
+          0%, 100% { 
+            transform: translateY(0); 
+            animation-timing-function: cubic-bezier(0.8, 0, 1, 1); 
+          }
+          50% { 
+            transform: translateY(-25%); 
+            animation-timing-function: cubic-bezier(0, 0, 0.2, 1); 
+          }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        
+        @keyframes fadeIn {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px); 
+          }
+          25% { 
+            transform: translateY(-10px) translateX(5px); 
+          }
+          50% { 
+            transform: translateY(-5px) translateX(-3px); 
+          }
+          75% { 
+            transform: translateY(-15px) translateX(8px); 
+          }
+        }
+        
+        @keyframes drift {
+          0%, 100% { 
+            transform: translateX(0px) translateY(0px); 
+          }
+          33% { 
+            transform: translateX(20px) translateY(-10px); 
+          }
+          66% { 
+            transform: translateX(-15px) translateY(5px); 
+          }
+        }
+        
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        
+        .animate-bounce {
+          animation: bounce 1s infinite;
+        }
+        
+        .animate-pulse {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-drift {
+          animation: drift 8s ease-in-out infinite;
+        }
+        
+        .animation-delay-100 {
+          animation-delay: 0.1s;
+        }
+        
+        .animation-delay-200 {
+          animation-delay: 0.2s;
+        }
+        
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        
+        /* Enhanced shadow utilities */
+        .shadow-3xl {
+          box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Custom focus styles */
+        .focus-visible\\:ring-amber-500:focus-visible {
+          --tw-ring-color: rgb(245 158 11);
+        }
+        
+        /* Gradient text utilities */
+        .text-gradient {
+          background: linear-gradient(135deg, #f59e0b, #f97316);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        /* Enhanced transitions */
+        .transition-all-slow {
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Backdrop blur support */
+        .backdrop-blur-xs {
+          backdrop-filter: blur(2px);
+        }
+        
+        /* Custom scrollbar */
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: rgb(156 163 175) transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background-color: rgb(156 163 175);
+          border-radius: 3px;
+        }
+      `}</style>
+    </div>
+  
 }
