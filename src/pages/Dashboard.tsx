@@ -349,17 +349,6 @@ export default function Dashboard() {
         <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
           <Search size={16} className="text-black" />
         </button>
-        <button
-          onClick={() => setShowNotifications(!showNotifications)}
-          className="relative p-2 hover:bg-gray-700/10 rounded-lg transition-colors"
-        >
-          <Bell size={16} className="text-black" />
-          {notifications.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-gray-700 text-[10px] rounded-full flex items-center justify-center">
-              {notifications.length}
-            </span>
-          )}
-        </button>
         <button className="text-sm text-gray-700 font-semibold px-4 py-2 bg-gray-700/10 hover:bg-gray-700/20 rounded-lg transition-all duration-300">
           View all
         </button>
@@ -401,43 +390,13 @@ export default function Dashboard() {
               size={16}
               className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1"
             />
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-      {showNotifications && (
-        <div className="bg-[#e1d4b1] backdrop-blur-xl rounded-2xl shadow-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Notifications</h3>
-            <button className="text-sm text-blue-600" onClick={loadNotifications}>Refresh</button>
-          </div>
-          <div className="divide-y">
-            {notifications.length === 0 ? (
-              <div className="text-sm text-white py-4">No notifications</div>
-            ) : notifications.map(n => (
-              <div key={n.id} className="py-3 flex items-start justify-between gap-4">
-                <div>
-                  <div className="font-medium text-gray-900">{n.title}</div>
-                  <div className="text-sm text-gray-700">{n.message}</div>
-                  <div className="text-xs text-gray-500 mt-1">{new Date(n.created_at).toLocaleString()}</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {n.data?.issuanceId && (
-                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation(`/dashboard/issuance?id=${encodeURIComponent(n.data.issuanceId)}`)}>View Issuance</button>
-                  )}
-                  {n.data?.gatePassId && (
-                    <button className="text-sm text-blue-600 hover:underline" onClick={() => handleNavigation(`/dashboard/gate-pass?id=${encodeURIComponent(n.data.gatePassId)}`)}>View Gate Pass</button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
   );
 }
