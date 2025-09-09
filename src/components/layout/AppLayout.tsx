@@ -20,6 +20,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('degraded');
   const [isChecking, setIsChecking] = useState(true);
+  const [lastChecked, setLastChecked] = useState<Date | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     system: false,
     network: false,
@@ -109,6 +110,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         database: false
       });
     } finally {
+      setLastChecked(new Date());
       setIsChecking(false);
     }
   };
@@ -382,7 +384,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     
                     <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-xs text-slate-500 dark:text-slate-400">
-                        Last checked: {new Date().toLocaleTimeString()}
+                        {lastChecked ? `Last checked: ${lastChecked.toLocaleTimeString()}` : 'Not checked yet'}
                       </div>
                     </div>
                   </div>

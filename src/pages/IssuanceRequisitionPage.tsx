@@ -716,14 +716,21 @@ const IssuanceRequisitionPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Department</label>
-                    <input
-                      type="text"
+                    <select
                       value={form.department}
                       onChange={(e) => setForm({...form, department: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      placeholder="e.g., Operations, Maintenance"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
                       required
-                    />
+                    >
+                      <option value="">Select Department</option>
+                      <option value="E&M Systems">E&M Systems</option>
+                      <option value="E&M Power">E&M Power</option>
+                      <option value="E&M Third Rail">E&M Third Rail</option>
+                      <option value="E&M Communication">E&M Communication</option>
+                      <option value="E&M Signalling">E&M Signalling</option>
+                      <option value="E&M Track">E&M Track</option>
+                      <option value="E&M Safety and Quality">E&M Safety and Quality</option>
+                    </select>
                   </div>
                 </div>
 

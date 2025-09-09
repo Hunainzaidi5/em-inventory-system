@@ -908,13 +908,17 @@ const SpareManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Item Belongs To *
                   </label>
-                  <input
+                  <select
                     name="belongsto"
                     value={form.belongsto}
                     onChange={(e) => setForm({ ...form, belongsto: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                     required
-                  />
+                  >
+                    <option value="">Select an option</option>
+                    <option value="O&M">O&M</option>
+                    <option value="PMA">PMA</option>
+                  </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -999,26 +1003,46 @@ const SpareManagement: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Category
                     </label>
-                    <input
+                    <select
                       name="category"
                       value={form.category}
                       onChange={(e) => setForm({ ...form, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Category"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                      disabled={!form.belongsto}
+                      required
+                    >
+                      <option value="">Select a category</option>
+                      {systemCategories
+                        .filter(cat => {
+                          if (!form.belongsto) return false;
+                          const selectedType = form.belongsto === 'O&M' ? 'om' : 'pma';
+                          return cat.type === selectedType;
+                        })
+                        .map((category) => (
+                          <option key={category.key} value={category.name}>
+                            {category.name}
+                          </option>
+                        ))}
+                    </select>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Location *
                   </label>
-                  <input
+                  <select
                     name="location"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                     required
-                  />
+                  >
+                    <option value="">Select a location</option>
+                    <option value="C&C Warehouse Depot">C&C Warehouse Depot</option>
+                    <option value="C&C Warehouse Stabling Yard">C&C Warehouse Stabling Yard</option>
+                    <option value="CMC Ground Floor Store">CMC Ground Floor Store</option>
+                    <option value="CMC 2nd Floor Store">CMC 2nd Floor Store</option>
+                  </select>
                 </div>
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
