@@ -9,52 +9,108 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
+interface SystemHealth {
+  system: boolean;
+  network: boolean;
+  database: boolean;
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   // State for live clock
   const [currentTime, setCurrentTime] = useState(new Date());
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('degraded');
   const [isChecking, setIsChecking] = useState(true);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth>({
+    system: false,
+    network: false,
+    database: false
+  });
+  
+  // Mock health check functions - replace with actual API calls
+  const checkSystemHealth = async (): Promise<boolean> => {
+    try {
+      // Replace this with actual system health endpoint
+      // Example: const response = await fetch('/api/health/system');
+      // return response.ok;
+      
+      // Simulate API call with random success/failure for demo
+      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+      return Math.random() > 0.2; // 80% success rate for demo
+    } catch (error) {
+      console.error('System health check failed:', error);
+      return false;
+    }
+  };
+  
+  const checkNetworkHealth = async (): Promise<boolean> => {
+    try {
+      // Replace this with actual network health check
+      // Example: const response = await fetch('/api/health/network');
+      // return response.ok;
+      
+      // Simulate network check
+      await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
+      return Math.random() > 0.15; // 85% success rate for demo
+    } catch (error) {
+      console.error('Network health check failed:', error);
+      return false;
+    }
+  };
+  
+  const checkDatabaseHealth = async (): Promise<boolean> => {
+    try {
+      // Replace this with actual database health check
+      // Example: const response = await fetch('/api/health/database');
+      // return response.ok;
+      
+      // Simulate database check
+      await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 800));
+      return Math.random() > 0.1; // 90% success rate for demo
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      return false;
+    }
+  };
   
   // Check system status
   const checkSystemStatus = async () => {
     try {
       setIsChecking(true);
-      // Simulate API calls to check system health
+      
+      // Run all health checks concurrently
       const [systemOk, networkOk, dbOk] = await Promise.all([
         checkSystemHealth(),
         checkNetworkHealth(),
         checkDatabaseHealth()
       ]);
       
+      // Update individual health states
+      setSystemHealth({
+        system: systemOk,
+        network: networkOk,
+        database: dbOk
+      });
+      
+      // Determine overall system status
       if (systemOk && networkOk && dbOk) {
         setSystemStatus('healthy');
-      } else if (!systemOk || !networkOk || !dbOk) {
-        setSystemStatus('degraded');
-      } else {
+      } else if (!systemOk || (!networkOk && !dbOk)) {
         setSystemStatus('offline');
+      } else {
+        setSystemStatus('degraded');
       }
+      
     } catch (error) {
       console.error('Error checking system status:', error);
       setSystemStatus('offline');
+      setSystemHealth({
+        system: false,
+        network: false,
+        database: false
+      });
     } finally {
       setIsChecking(false);
     }
-  };
-  
-  // Mock health check functions - replace with actual API calls
-  const checkSystemHealth = async (): Promise<boolean> => {
-    // Replace with actual system health check
-    return new Promise(resolve => setTimeout(() => resolve(true), 500));
-  };
-  
-  const checkNetworkHealth = async (): Promise<boolean> => {
-    // Replace with actual network health check
-    return new Promise(resolve => setTimeout(() => resolve(true), 500));
-  };
-  
-  const checkDatabaseHealth = async (): Promise<boolean> => {
-    // Replace with actual database health check
-    return new Promise(resolve => setTimeout(() => resolve(true), 500));
   };
   
   // Update time every second and check system status periodically
@@ -129,6 +185,46 @@ export function AppLayout({ children }: AppLayoutProps) {
     day: 'numeric' 
   });
 
+  // Get status colors and animations
+  const getStatusStyles = () => {
+    if (isChecking) {
+      return {
+        containerClass: 'bg-amber-100/60 dark:bg-amber-900/40 border-amber-300/60 dark:border-amber-700/50',
+        dotClass: 'bg-amber-500 animate-pulse',
+        pingClass: 'bg-amber-400 animate-ping'
+      };
+    }
+    
+    switch (systemStatus) {
+      case 'healthy':
+        return {
+          containerClass: 'bg-emerald-100/60 dark:bg-emerald-900/40 border-emerald-300/60 dark:border-emerald-700/50',
+          dotClass: 'bg-emerald-500 animate-pulse',
+          pingClass: 'bg-emerald-400 animate-pulse'
+        };
+      case 'degraded':
+        return {
+          containerClass: 'bg-amber-100/60 dark:bg-amber-900/40 border-amber-300/60 dark:border-amber-700/50',
+          dotClass: 'bg-amber-500 animate-pulse',
+          pingClass: 'bg-amber-400 animate-ping'
+        };
+      case 'offline':
+        return {
+          containerClass: 'bg-red-100/60 dark:bg-red-900/40 border-red-300/60 dark:border-red-700/50',
+          dotClass: 'bg-red-500 animate-bounce',
+          pingClass: 'bg-red-400 animate-ping'
+        };
+      default:
+        return {
+          containerClass: 'bg-gray-100/60 dark:bg-gray-900/40 border-gray-300/60 dark:border-gray-700/50',
+          dotClass: 'bg-gray-500',
+          pingClass: 'bg-gray-400'
+        };
+    }
+  };
+
+  const statusStyles = getStatusStyles();
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
@@ -188,87 +284,107 @@ export function AppLayout({ children }: AppLayoutProps) {
               </div>
 
               <div className="flex items-center gap-6">
-              {/* Live Time & Date Display */}
-              <div className="flex flex-col items-end">
-                <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {formattedTime}
+                {/* Live Time & Date Display */}
+                <div className="flex flex-col items-end">
+                  <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {formattedTime}
+                  </div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                    {formattedDate}
+                  </div>
                 </div>
-                <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                  {formattedDate}
-                </div>
-              </div>
 
                 {/* Notifications */}
                 <div className="relative">
                   <NotificationDropdown />
                 </div>
-              </div>
-            </div>
 
-            {/* System Status Indicator */}
-            <div className="hidden md:flex items-center group relative">
-              <div 
-                className={`relative flex items-center justify-center h-6 w-6 rounded-full 
-                  backdrop-blur-md shadow-md border transition-all duration-300 ${
-                    isChecking 
-                      ? 'bg-amber-100/60 dark:bg-amber-900/40 border-amber-300/60 dark:border-amber-700/50'
+                {/* System Status Indicator */}
+                <div className="hidden md:flex items-center group relative">
+                  <button
+                    onClick={() => checkSystemStatus()}
+                    className={`relative flex items-center justify-center h-8 w-8 rounded-full 
+                      backdrop-blur-md shadow-md border transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900 ${statusStyles.containerClass} ${
+                        systemStatus === 'healthy' ? 'focus:ring-emerald-500' : 
+                        systemStatus === 'degraded' ? 'focus:ring-amber-500' : 
+                        'focus:ring-red-500'
+                      }`}
+                    title={isChecking 
+                      ? 'Checking system status...' 
                       : systemStatus === 'healthy' 
-                        ? 'bg-emerald-100/60 dark:bg-emerald-900/40 border-emerald-300/60 dark:border-emerald-700/50'
+                        ? 'All systems operational - Click to refresh' 
                         : systemStatus === 'degraded'
-                          ? 'bg-amber-100/60 dark:bg-amber-900/40 border-amber-300/60 dark:border-amber-700/50'
-                          : 'bg-red-100/60 dark:bg-red-900/40 border-red-300/60 dark:border-red-700/50'
-                  }`}
-                title={isChecking 
-                  ? 'Checking system status...' 
-                  : systemStatus === 'healthy' 
-                    ? 'All systems operational' 
-                    : systemStatus === 'degraded'
-                      ? 'System degraded - some services may be affected'
-                      : 'System offline - critical failure'}
-              >
-                {/* Status indicator dot */}
-                <div 
-                  className={`h-3 w-3 rounded-full shadow-lg ${
-                    isChecking 
-                      ? 'bg-amber-500 animate-pulse' 
-                      : systemStatus === 'healthy' 
-                        ? 'bg-emerald-500 animate-pulse' 
-                        : systemStatus === 'degraded'
-                          ? 'bg-amber-500 animate-pulse'
-                          : 'bg-red-500 animate-pulse'
-                  }`}
-                />
-                {/* Ping effect */}
-                <div 
-                  className={`absolute h-3 w-3 rounded-full ${
-                    isChecking 
-                      ? 'bg-amber-400 animate-ping' 
-                      : systemStatus === 'healthy' 
-                        ? 'bg-emerald-400' 
-                        : systemStatus === 'degraded'
-                          ? 'bg-amber-400'
-                          : 'bg-red-400'
-                  }`}
-                />
-              </div>
-              
-              {/* Status tooltip */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl p-3 text-sm text-slate-700 dark:text-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-200 dark:border-slate-700">
-                <div className="font-medium mb-2">System Status</div>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <div className={`h-2 w-2 rounded-full mr-2 ${
-                      isChecking ? 'bg-amber-500' : systemStatus === 'healthy' ? 'bg-emerald-500' : 'bg-red-500'
-                    }`}></div>
-                    <span>System: {isChecking ? 'Checking...' : systemStatus === 'healthy' ? 'Operational' : 'Issues Detected'}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div>
-                    <span>Network: {isChecking ? 'Checking...' : 'Stable'}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div>
-                    <span>Database: {isChecking ? 'Checking...' : 'Connected'}</span>
+                          ? 'System degraded - some services may be affected - Click to refresh'
+                          : 'System offline - critical failure - Click to refresh'}
+                  >
+                    {/* Status indicator dot */}
+                    <div className={`h-4 w-4 rounded-full shadow-lg ${statusStyles.dotClass}`} />
+                    
+                    {/* Ping effect */}
+                    <div className={`absolute h-4 w-4 rounded-full ${statusStyles.pingClass}`} />
+                  </button>
+                  
+                  {/* Enhanced Status tooltip */}
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-xl p-4 text-sm text-slate-700 dark:text-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-200 dark:border-slate-700">
+                    <div className="font-semibold mb-3 text-base">System Status</div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center">
+                          <div className={`h-2.5 w-2.5 rounded-full mr-3 ${
+                            isChecking ? 'bg-amber-500 animate-pulse' : 
+                            systemHealth.system ? 'bg-emerald-500' : 'bg-red-500 animate-pulse'
+                          }`}></div>
+                          System
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          isChecking ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                          systemHealth.system ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                          {isChecking ? 'Checking...' : systemHealth.system ? 'OK' : 'Error'}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center">
+                          <div className={`h-2.5 w-2.5 rounded-full mr-3 ${
+                            isChecking ? 'bg-amber-500 animate-pulse' : 
+                            systemHealth.network ? 'bg-emerald-500' : 'bg-red-500 animate-pulse'
+                          }`}></div>
+                          Network
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          isChecking ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                          systemHealth.network ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                          {isChecking ? 'Checking...' : systemHealth.network ? 'Stable' : 'Issues'}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center">
+                          <div className={`h-2.5 w-2.5 rounded-full mr-3 ${
+                            isChecking ? 'bg-amber-500 animate-pulse' : 
+                            systemHealth.database ? 'bg-emerald-500' : 'bg-red-500 animate-pulse'
+                          }`}></div>
+                          Database
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          isChecking ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                          systemHealth.database ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                          {isChecking ? 'Checking...' : systemHealth.database ? 'Connected' : 'Offline'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        Last checked: {new Date().toLocaleTimeString()}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
