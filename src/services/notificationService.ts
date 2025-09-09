@@ -35,20 +35,6 @@ export const notificationService = {
     return (rows || [])
       .sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
       .slice(0, limitCount);
-  },
-
-  async markAllAsRead(): Promise<void> {
-    const notifications = await FirebaseService.query<NotificationRecord>('notifications');
-    const batch = FirebaseService.getBatch();
-    
-    notifications
-      .filter(n => !n.is_read)
-      .forEach(notification => {
-        const ref = FirebaseService.getDocRef('notifications', notification.id);
-        batch.update(ref, { is_read: true });
-      });
-      
-    await batch.commit();
   }
 };
 

@@ -14,9 +14,7 @@ import {
   QueryConstraint,
   DocumentData,
   QueryDocumentSnapshot,
-  setDoc,
-  writeBatch,
-  WriteBatch
+  setDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -150,7 +148,7 @@ export class FirebaseService {
   }
 
   // Real-time listeners (for future use)
-  static async subscribeToCollection<T>(
+  static subscribeToCollection<T>(
     collectionName: string,
     callback: (data: T[]) => void,
     constraints: QueryConstraint[] = []
@@ -158,14 +156,5 @@ export class FirebaseService {
     // This would be implemented with onSnapshot for real-time updates
     // For now, we'll use the basic query method
     return this.query<T>(collectionName, constraints).then(callback);
-  }
-
-  // Batch operations
-  static getBatch() {
-    return writeBatch(db);
-  }
-
-  static getDocRef(collectionName: string, id: string) {
-    return doc(db, collectionName, id);
   }
 }

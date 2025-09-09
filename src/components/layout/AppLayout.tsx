@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Settings, User, ChevronRight, Home } from "lucide-react";
+import { Bell, Settings, User, ChevronRight, Home } from "lucide-react";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 
 interface AppLayoutProps {
@@ -136,8 +136,13 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </div>
               </div>
               
-              {/* Right side with status and clock */}
+              {/* Right side with status, notifications and clock */}
               <div className="flex items-center gap-6">
+                {/* Notifications */}
+                <div className="relative">
+                  <NotificationDropdown />
+                </div>
+
                 {/* System Status Indicator */}
                 <div className="hidden md:flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-950/30 dark:to-emerald-900/20 rounded-xl border border-emerald-200/60 dark:border-emerald-800/40">
                   <div className="flex items-center gap-2">
@@ -149,11 +154,6 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </div>
                 </div>
 
-                {/* Notification Dropdown */}
-                <div className="relative">
-                  <NotificationDropdown />
-                </div>
-                
                 {/* Live Time & Date Display */}
                 <div className="flex flex-col items-end">
                   <div className="text-2xl font-bold text-slate-900 dark:text-white">
