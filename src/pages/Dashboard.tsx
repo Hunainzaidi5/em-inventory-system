@@ -19,7 +19,56 @@ export default function Dashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Array<{ id: string; title: string; message: string; created_at: string; data?: any }>>([]);
 
- 
+  // Load live counts and animate them
+  const loadAndAnimateStats = async () => {
+    try {
+      const counts = await statsService.getDashboardCounts();
+      const targets = [
+        counts.sparePartsTotalQuantity,
+        counts.toolsTotalQuantity + counts.generalToolsTotalQuantity,
+        counts.ppeTotalQuantity,
+        counts.faultyItemsCount,
+      ];
+      const total = targets[0] + targets[1] + targets[2];
+      const faulty = targets[3];
+      setSystemHealth(total > 0 ? Math.max(0, Math.round(((total - faulty) / total) * 100)) : 100);
+
+      try {
+        const lowStock = await spareService.getLowStockSpareParts();
+        setAlertsCount((lowStock?.length || 0) + (counts.faultyItemsCount || 0));
+      } catch {
+        setAlertsCount(counts.faultyItemsCount || 0);
+      }
+      targets.forEach((target, index) => {
+        let current = 0;
+        const increment = Math.max(1, Math.floor((target || 0) / 50));
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= (target || 0)) {
+            current = target || 0;
+            clearInterval(timer);
+          }
+          setAnimatedStats(prev => {
+            const newStats = [...prev];
+            newStats[index] = Math.floor(current);
+            return newStats;
+          });
+        }, 20);
+      });
+    } catch (e) {
+      // noop, keep zeros
+    }
+  };
+
+  const loadActiveUsers = async () => {
+    try {
+      const users = await userService.getActiveUsers();
+      setActiveUsers(users.length || 0);
+    } catch {
+      setActiveUsers(0);
+    }
+  };
+
   const timeAgo = (iso?: string) => {
     if (!iso) return '';
     const then = new Date(iso).getTime();
@@ -82,6 +131,95 @@ export default function Dashboard() {
     }
   };
 
+  // Enhanced Components
+const AnimatedBackground = () => (
+  <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
+    <div className="absolute inset-0 opacity-50 bg-gradient-to-br from-orange-100 via-blue-50 to-orange-200" />
+    
+    {/* Small particles */}
+    <div className="absolute inset-0">
+      {[...Array(30)].map((_, i) => (
+        <div
+          key={`small-${i}`}
+          className={`absolute w-1 h-1 rounded-full animate-flicker opacity-40 ${
+            i % 3 === 0 ? 'bg-blue-300' : 
+            i % 3 === 1 ? 'bg-orange-300' : 'bg-amber-300'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 2}s`,
+            animationDuration: `${3 + Math.random() * 2}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Medium particles */}
+    <div className="absolute inset-0">
+      {[...Array(15)].map((_, i) => (
+        <div
+          key={`medium-${i}`}
+          className={`absolute w-2 h-2 rounded-full animate-flicker opacity-50 ${
+            i % 3 === 0 ? 'bg-orange-300' : 
+            i % 3 === 1 ? 'bg-blue-300' : 'bg-amber-300'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${4 + Math.random() * 3}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Large particles */}
+    <div className="absolute inset-0">
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={`large-${i}`}
+          className={`absolute w-3 h-3 rounded-full animate-flicker opacity-30 ${
+            i % 2 === 0 ? 'bg-orange-500' : 'bg-blue-500'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 4}s`,
+            animationDuration: `${5 + Math.random() * 2}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Micro particles */}
+    <div className="absolute inset-0">
+      {[...Array(30)].map((_, i) => (
+        <div
+          key={`micro-${i}`}
+          className={`absolute w-0.5 h-0.5 rounded-full animate-flicker opacity-60 ${
+            i % 3 === 0 ? 'bg-orange-400' : 
+            i % 3 === 1 ? 'bg-blue-400' : 'bg-amber-400'
+          }`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 1}s`,
+            animationDuration: `${2 + Math.random() * 1.5}s`,
+          }}
+        />
+      ))}
+    </div>
+    
+    {/* Gradient blobs */}
+    <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-2000 bg-amber-300" />
+    <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-soft-light filter blur-xl opacity-25 animate-blob animation-delay-4000 bg-orange-300" />
+    <div className="absolute top-1/3 left-1/4 w-64 h-64 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob bg-blue-300" />
+    <div className="absolute top-2/3 right-1/3 w-48 h-48 rounded-full mix-blend-soft-light filter blur-xl opacity-15 animate-blob bg-orange-400" />
+    <div className="absolute bottom-1/4 left-1/3 w-56 h-56 rounded-full mix-blend-soft-light filter blur-xl opacity-18 animate-blob bg-amber-400" />
+  </div>
+);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -89,9 +227,26 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    loadAndAnimateStats();
+    loadActiveUsers();
+    loadRecentActivity();
+    loadNotifications();
+    const handler = () => loadAndAnimateStats();
+    window.addEventListener('inventory-sync', handler as any);
+    return () => window.removeEventListener('inventory-sync', handler as any);
+  }, []);
+
   const handleNavigation = (route: string) => {
     if (!route) return;
     navigate(route);
+  };
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    loadAndAnimateStats()
+      .then(() => window.dispatchEvent(new Event('inventory-sync')))
+      .finally(() => setTimeout(() => setIsRefreshing(false), 800));
   };
 
   const statsCards = [
@@ -165,6 +320,58 @@ export default function Dashboard() {
       <div className="space-y-6">
         {/* Welcome Section with Gradient and Grid Pattern */}
         <div className="relative card-surface-dark rounded-2xl shadow-2xl p-10 text-gray-700 overflow-hidden">
+                     {/* Animated particles for card */}
+                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`absolute w-1 h-1 rounded-full animate-float ${
+                    i % 3 === 0 ? 'bg-orange-400' : 
+                    i % 3 === 1 ? 'bg-blue-400' : 'bg-amber-400'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 4}s`,
+                    animationDuration: `${6 + Math.random() * 3}s`,
+                  }}
+                />
+              ))}
+              {/* Larger floating particles */}
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={`large-${i}`}
+                  className={`absolute w-2 h-2 rounded-full animate-drift opacity-60 ${
+                    i % 2 === 0 ? 'bg-orange-300' : 'bg-blue-300'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 5}s`,
+                    animationDuration: `${8 + Math.random() * 4}s`,
+                  }}
+                />
+              ))}
+              {/* Medium particles with pulse */}
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={`medium-${i}`}
+                  className={`absolute w-1.5 h-1.5 rounded-full animate-pulse opacity-40 ${
+                    i % 2 === 0 ? 'bg-orange-500' : 'bg-blue-500'
+                  }`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`,
+                  }}
+                />
+              ))}
+              {/* Subtle gradient orbs */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full mix-blend-soft-light filter blur-xl opacity-20 animate-blob bg-orange-300" />
+              <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full mix-blend-soft-light filter blur-xl opacity-15 animate-blob bg-blue-300" />
+              <div className="absolute top-1/2 right-1/4 w-24 h-24 rounded-full mix-blend-soft-light filter blur-xl opacity-10 animate-blob bg-amber-300" />
+            </div>
           <div className="absolute inset-0 bg-gradient-to-r from-orange-100 via-transparent to-orange-200"></div>
           <div className="absolute top-0 left-0 w-full h-full">
             <div className="absolute top-10 left-10 w-32 h-32 bg-gray-700/10 rounded-full animate-pulse"></div>
@@ -349,9 +556,6 @@ export default function Dashboard() {
         <button className="p-2 hover:bg-gray-700/10 rounded-lg transition-colors">
           <Search size={16} className="text-black" />
         </button>
-        <button className="text-sm text-gray-700 font-semibold px-4 py-2 bg-gray-700/10 hover:bg-gray-700/20 rounded-lg transition-all duration-300">
-          View all
-        </button>
       </div>
     </div>
 
@@ -367,7 +571,7 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm font-semibold text-black group-hover:text-gray-100 transition-colors">
-                  <span className="capitalize bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
+                  <span className="capitalize bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
                     {activity.action}
                   </span>
                   : {activity.item}
@@ -390,8 +594,8 @@ export default function Dashboard() {
               size={16}
               className="text-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-1"
             />
-              </div>
-            ))}
+            </div>
+          ))}
           </div>
         </div>
       </div>

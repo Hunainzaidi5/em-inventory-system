@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bell, Check, X, Loader2 } from "lucide-react";
+import { Bell, Check, X, Loader2, ChevronRight, Clock, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import notificationService, { NotificationRecord } from "@/services/notificationService";
 
@@ -102,6 +102,34 @@ export function NotificationDropdown() {
     setIsOpen(false);
   };
 
+  // Get notification type icon
+  const getNotificationIcon = (notification: Notification) => {
+    if (notification.data?.issuanceId) {
+      return <AlertCircle className="h-4 w-4 text-amber-600" />;
+    } else if (notification.data?.gatePassId) {
+      return <Check className="h-4 w-4 text-green-600" />;
+    }
+    return <Bell className="h-4 w-4 text-blue-600" />;
+  };
+
+  // Format relative time
+  const formatRelativeTime = (date: string) => {
+    const now = new Date();
+    const notificationDate = new Date(date);
+    const diffInMinutes = Math.floor((now.getTime() - notificationDate.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    
+    return notificationDate.toLocaleDateString();
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -139,79 +167,154 @@ export function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className={`relative p-2.5 rounded-xl transition-all duration-200 ease-in-out transform hover:scale-105 ${
+          isOpen 
+            ? 'bg-[#e1d4b1] shadow-lg' 
+            : 'hover:bg-[#e1d4b1]/20 hover:shadow-md'
+        }`}
         aria-label="Notifications"
       >
-        <Bell className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+        <Bell className={`h-5 w-5 transition-colors duration-200 ${
+          unreadCount > 0 
+            ? 'text-amber-600' 
+            : 'text-slate-600 dark:text-slate-400'
+        }`} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold">
+          <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold shadow-lg animate-pulse">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-[#e1d4b1] rounded-xl shadow-xl overflow-hidden z-50 border border-slate-200 dark:border-slate-700">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-            <h3 className="font-semibold text-slate-800 dark:text-slate-200">Notifications</h3>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={markAllAsRead}
-                disabled={unreadCount === 0 || isLoading}
-                className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50"
-              >
-                Mark all as read
-              </button>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                aria-label="Close notifications"
-              >
-                <X className="h-4 w-4" />
-              </button>
+        <div className="absolute right-0 mt-3 w-96 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden z-50 border border-[#e1d4b1]/30 dark:bg-slate-900/95 dark:border-slate-700/50">
+          {/* Header */}
+          <div className="relative px-6 py-4 bg-gradient-to-r from-[#e1d4b1]/20 to-[#e1d4b1]/10 border-b border-[#e1d4b1]/20">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200">
+                  Notifications
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    disabled={isLoading}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200 transform hover:scale-105 shadow-md"
+                  >
+                    Mark all read
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 transition-all duration-200"
+                  aria-label="Close notifications"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
           
-          <div className="max-h-96 overflow-y-auto">
+          {/* Content */}
+          <div className="max-h-[420px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#e1d4b1]/30 scrollbar-track-transparent">
             {isLoading ? (
-              <div className="p-4 flex justify-center">
-                <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+              <div className="p-8 flex flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#e1d4b1] mb-3" />
+                <p className="text-sm text-slate-500 dark:text-slate-400">Loading notifications...</p>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="p-4 text-center text-sm text-slate-500">
-                No notifications
+              <div className="p-12 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-full bg-[#e1d4b1]/20 flex items-center justify-center mb-4">
+                  <Bell className="h-8 w-8 text-[#e1d4b1]" />
+                </div>
+                <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  No notifications yet
+                </h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  We'll notify you when something important happens
+                </p>
               </div>
             ) : (
-              <ul className="divide-y divide-slate-200 dark:divide-slate-700">
-                {notifications.map((notification) => (
-                  <li 
+              <div className="py-2">
+                {notifications.map((notification, index) => (
+                  <div 
                     key={notification.id}
-                    className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors ${
-                      !notification.read ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
+                    className={`group relative px-6 py-4 cursor-pointer transition-all duration-200 ${
+                      !notification.read 
+                        ? 'bg-gradient-to-r from-blue-50/50 to-[#e1d4b1]/10 dark:from-blue-900/20 dark:to-[#e1d4b1]/5 border-l-4 border-l-blue-500' 
+                        : 'hover:bg-[#e1d4b1]/10 dark:hover:bg-slate-800/50'
                     }`}
                     onClick={() => handleNotificationClick(notification)}
                   >
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-slate-800 dark:text-slate-200">
-                          {notification.title}
-                        </h4>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    {/* Notification content */}
+                    <div className="flex items-start gap-4">
+                      {/* Icon */}
+                      <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+                        !notification.read ? 'bg-[#e1d4b1]/20' : 'bg-slate-100 dark:bg-slate-800'
+                      }`}>
+                        {getNotificationIcon(notification)}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className={`font-semibold text-sm leading-5 ${
+                            !notification.read 
+                              ? 'text-slate-900 dark:text-slate-100' 
+                              : 'text-slate-700 dark:text-slate-300'
+                          }`}>
+                            {notification.title}
+                          </h4>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                              <Clock className="h-3 w-3" />
+                              {formatRelativeTime(notification.created_at)}
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors duration-200" />
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
                           {notification.message}
                         </p>
-                        <div className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-                          {new Date(notification.created_at).toLocaleString()}
-                        </div>
+                        
+                        {!notification.read && (
+                          <div className="absolute top-4 right-6">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 shadow-lg" />
+                          </div>
+                        )}
                       </div>
-                      {!notification.read && (
-                        <div className="h-2 w-2 rounded-full bg-blue-500 mt-1 flex-shrink-0" />
-                      )}
                     </div>
-                  </li>
+                    
+                    {/* Divider */}
+                    {index < notifications.length - 1 && (
+                      <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-slate-700" />
+                    )}
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
+          
+          {/* Footer */}
+          {notifications.length > 0 && (
+            <div className="px-6 py-3 bg-[#e1d4b1]/10 border-t border-[#e1d4b1]/20">
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate('/dashboard/notifications');
+                }}
+                className="w-full text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-200"
+              >
+                View all notifications
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
