@@ -29,6 +29,7 @@ import GeneralToolsPage from "./pages/GeneralToolsPage";
 import ReseedDataPage from './pages/ReseedDataPage';
 import IssuanceRequisitionPage from './pages/IssuanceRequisitionPage';
 import { AuthDebugger } from './components/auth/AuthDebugger';
+import { NotificationsPage } from "./pages/NotificationsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +120,7 @@ const AppRoutes = () => {
       <Route path="/stationery" element={<Navigate to="/dashboard/stationery" replace />} />
       <Route path="/faulty-returns" element={<Navigate to="/dashboard/faulty-returns" replace />} />
       <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
+      <Route path="/notifications" element={<Navigate to="/dashboard/notifications" replace />} />
       <Route
         path="/dashboard"
         element={
@@ -148,6 +150,7 @@ const AppRoutes = () => {
         <Route path="tools" element={<ToolsPage />} />
         <Route path="general-tools" element={<GeneralToolsPage />} />
         <Route path="requisition" element={<RequisitionPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route element={<DevOnlyRoute />}>
           <Route path="reseed" element={<ReseedDataPage />} />
         </Route>
